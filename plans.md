@@ -45,10 +45,13 @@ A digital planner for students that combines a calendar and a task list, pulls c
  - **Reminder**: id, item_id, time
 
 ### Open Questions
- - What does Axis offer for integration — a public API, an export (iCal/CSV), or nothing? Do we need school/IT permission? This decides how Phase 2 works.
+ - What does Axis offer for integration — a public API, an export (iCal/CSV), or nothing? Do we need school/IT permission? This decides how Phase 2 works. 
+    - We know that it offers iCal, we are not sure if it has an API
  - If there is no API: fall back to an iCal feed import or manual entry until access is figured out.
  - Supabase or Firebase?
+  - Supabase
  - Tauri or Electron for desktop (or skip desktop until later)?
+  -Electron
 
 ### Milestones
  1. **Phase 0 — Setup**
