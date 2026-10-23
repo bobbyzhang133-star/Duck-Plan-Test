@@ -10,7 +10,7 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
    - both web and native apps for all platforms
 ## Plans
 ### Overview
-A digital planner for students that combines a calendar and a task list, pulls classes and assignments from Axis, and sorts everything by class automatically. One shared codebase ships to web, iOS, Android, and desktop.
+**DuckPlan** is a digital planner for students that combines a calendar and a task list, pulls classes and assignments from Axis, and sorts everything by class automatically. One shared codebase ships to web, iOS, Android, and desktop.
 
 ### Core Features
  - **Axis sync**: sign in, import classes, assignments, and due dates, then re-sync on a schedule
@@ -29,6 +29,9 @@ A digital planner for students that combines a calendar and a task list, pulls c
  - Breaking big assignments into subtasks
  - Time estimates and a "what should I work on now" suggestion
  - Grade view pulled from Axis
+
+### Theming
+ - Subtle duck theming throughout the project (e.g. a small duck logo/app icon, duck-inspired accent colors, light touches in empty states and loading screens) — present but never distracting from the planner itself
 
 ### Proposed Tech Stack (open for discussion)
  - **Language**: TypeScript
@@ -82,4 +85,5 @@ A digital planner for students that combines a calendar and a task list, pulls c
 
 ## Progress
  - 2026-10-23: Wrote the initial project plan above (features, tech stack, data model, open questions, milestones, roles).
+ - 2026-10-23: Named the project DuckPlan and added a Theming section calling for subtle duck theming throughout.
 
