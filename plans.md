@@ -5,4 +5,4 @@
    - mix of calendar and task list
    - automatically sorts things by class
    - lots of organization options
-   - both web and mobile
+   - both web and native apps for all platforms
