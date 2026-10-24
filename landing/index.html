@@ -7,6 +7,7 @@
       name="description"
       content="DuckPlan is a student planner that brings classes, assignments, tasks, and calendars together."
     />
+    <link rel="icon" type="image/png" href="./assets/duckplan-mascot.png" />
     <title>DuckPlan | Student planning, all in one place</title>
     <style>
       :root {
@@ -68,7 +69,14 @@
         border-radius: 14px;
         background: var(--yellow);
         box-shadow: 3px 3px 0 var(--ink);
-        font-size: 1.35rem;
+        overflow: hidden;
+      }
+
+      .duck img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        transform: translateY(3px);
       }
 
       .status {
@@ -164,13 +172,16 @@
         backdrop-filter: blur(12px);
       }
 
-      .preview::before {
+      .preview-duck {
         position: absolute;
-        top: -32px;
-        right: 28px;
-        content: "🦆";
-        font-size: 3.8rem;
-        transform: rotate(-9deg);
+        top: -72px;
+        right: 20px;
+        width: 112px;
+        height: 112px;
+        object-fit: contain;
+        filter: drop-shadow(4px 5px 0 rgba(23, 34, 27, 0.9));
+        pointer-events: none;
+        transform: rotate(-7deg);
       }
 
       .preview-header {
@@ -178,6 +189,7 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 22px;
+        padding-right: 104px;
       }
 
       .preview-header strong {
@@ -260,6 +272,17 @@
           margin: 0 auto;
           transform: rotate(0);
         }
+
+        .preview-duck {
+          top: -58px;
+          right: 14px;
+          width: 92px;
+          height: 92px;
+        }
+
+        .preview-header {
+          padding-right: 82px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -286,7 +309,12 @@
   <body>
     <main>
       <nav aria-label="Primary navigation">
-        <div class="brand"><span class="duck" aria-hidden="true">🦆</span> DuckPlan</div>
+        <div class="brand">
+          <span class="duck" aria-hidden="true">
+            <img src="./assets/duckplan-mascot.png" alt="" />
+          </span>
+          DuckPlan
+        </div>
         <div class="status">In development</div>
       </nav>
 
@@ -302,6 +330,11 @@
         </div>
 
         <div class="preview" aria-label="Preview of a DuckPlan task list">
+          <img
+            class="preview-duck"
+            src="./assets/duckplan-mascot.png"
+            alt="A friendly white-and-yellow DuckPlan mascot"
+          />
           <div class="preview-header">
             <strong>Today</strong>
             <span class="date">Your day at a glance</span>

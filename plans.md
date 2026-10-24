@@ -87,4 +87,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-23: Wrote the initial project plan above (features, tech stack, data model, open questions, milestones, roles).
  - 2026-10-23: Named the project DuckPlan and added a Theming section calling for subtle duck theming throughout.
  - 2026-10-23: Added a responsive DuckPlan coming-soon page and Netlify configuration, then deployed it publicly at https://duckplan-mbp.netlify.app. The placeholder lives in `landing/` and can be replaced by the Expo web build later.
+ - 2026-10-24: Replaced the generic duck emoji with an original white-and-yellow cartoon DuckPlan mascot, added it as the favicon and page accent, and disabled the public Powered by Netlify badge.
 
