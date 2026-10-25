@@ -12,6 +12,7 @@
     stiffness: 86,
     damping: 17,
     radius: 72,
+    recoveryDelay: 300,
   };
 
   if (!window.DuckFur) {
@@ -38,6 +39,7 @@
       stiffness: Number(form.get("stiffness")),
       damping: Number(form.get("damping")),
       radius: Number(form.get("radius")),
+      recoveryDelay: Number(form.get("recoveryDelay")),
     };
   }
 
@@ -48,6 +50,7 @@
     controls.querySelector('[data-output="stiffness"]').textContent = parameters.stiffness;
     controls.querySelector('[data-output="damping"]').textContent = parameters.damping;
     controls.querySelector('[data-output="radius"]').textContent = `${parameters.radius} px`;
+    controls.querySelector('[data-output="recoveryDelay"]').textContent = `${parameters.recoveryDelay} ms`;
   }
 
   let updateFrame = 0;

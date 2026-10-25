@@ -10,6 +10,7 @@
     radius: 54,
     brushStrength: 5.8,
     compression: 0.92,
+    recoveryDelay: 300,
   });
 
   const QUALITY = Object.freeze({
@@ -132,6 +133,7 @@
       this.visible = true;
       this.running = false;
       this.pressed = false;
+      this.recoveryDelayRemaining = 0;
       this.hovered = false;
       this.pointer = { x: 0, y: 0, previousX: 0, previousY: 0, time: 0 };
       this.lastFrame = 0;
@@ -353,6 +355,7 @@
       const point = this.localPointer(event);
       this.pointer = { ...point, previousX: point.x, previousY: point.y, time: event.timeStamp };
       this.pressed = true;
+      this.recoveryDelayRemaining = 0;
       this.host.classList.add("fur-pressed");
       if (this.host.setPointerCapture) this.host.setPointerCapture(event.pointerId);
       if (this.reducedMotion.matches) this.setReducedPress(true);
@@ -365,7 +368,12 @@
       this.pressed = false;
       this.host.classList.remove("fur-pressed");
       if (event.pointerId !== undefined && this.host.hasPointerCapture?.(event.pointerId)) this.host.releasePointerCapture(event.pointerId);
-      if (this.reducedMotion.matches) this.setReducedPress(false);
+      if (this.reducedMotion.matches) {
+        this.recoveryDelayRemaining = 0;
+        this.setReducedPress(false);
+      } else {
+        this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
+      }
       this.wake();
     }
 
@@ -380,6 +388,7 @@
       this.pointer.x = this.width / 2;
       this.pointer.y = this.height / 2;
       this.pressed = true;
+      this.recoveryDelayRemaining = 0;
       this.host.classList.add("fur-pressed");
       if (this.reducedMotion.matches) this.setReducedPress(true);
       else this.imprintPress();
@@ -390,7 +399,12 @@
       if (event.key !== "Enter" && event.key !== " ") return;
       this.pressed = false;
       this.host.classList.remove("fur-pressed");
-      if (this.reducedMotion.matches) this.setReducedPress(false);
+      if (this.reducedMotion.matches) {
+        this.recoveryDelayRemaining = 0;
+        this.setReducedPress(false);
+      } else {
+        this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
+      }
       this.wake();
     }
 
@@ -442,6 +456,9 @@
     simulate(step) {
       const stiffness = this.options.stiffness;
       const damping = this.options.damping;
+      const delayedRelease = !this.pressed && this.recoveryDelayRemaining > 0;
+      if (delayedRelease) this.recoveryDelayRemaining = Math.max(0, this.recoveryDelayRemaining - step);
+      const keepPressTarget = this.pressed || delayedRelease;
       let maximumEnergy = 0;
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
@@ -449,7 +466,7 @@
         let targetX = 0;
         let targetY = 0;
         let targetCompression = 0;
-        if (this.pressed) {
+        if (keepPressTarget) {
           const deltaX = this.roots[root] * this.width - this.pointer.x;
           const deltaY = this.roots[root + 1] * this.height - this.pointer.y;
           const distance = Math.hypot(deltaX, deltaY);
@@ -499,7 +516,7 @@
         this.frames = 0;
         this.fpsClock = time;
       }
-      if (this.pressed || energy > 0.0025) requestAnimationFrame(this.frame);
+      if (this.pressed || this.recoveryDelayRemaining > 0 || energy > 0.0025) requestAnimationFrame(this.frame);
       else {
         this.running = false;
         this.lastFrame = 0;
@@ -559,6 +576,7 @@
 
     onMotionChange() {
       if (this.reducedMotion.matches) {
+        this.recoveryDelayRemaining = 0;
         this.state.fill(0);
         this.velocity.fill(0);
         this.running = false;

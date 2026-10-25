@@ -4,7 +4,7 @@
 
 `fur-material.js` renders short duck-down-inspired fibers with native WebGL2. Each fiber is an instanced tapered strand with a fixed root, natural length/orientation variation, dynamic bend vector, compression value, and spring velocity. A surface uses one draw call rather than one DOM node per fiber.
 
-Pointer movement adds localized directional impulses with distance falloff. Pressing creates a persistent local compression target and bends nearby strands away from the contact point. A frame-rate-independent spring–damper simulation returns each strand to its resting state after release.
+Pointer movement adds localized directional impulses with distance falloff. Pressing creates a persistent local compression target and bends nearby strands away from the contact point. After release, a configurable recovery delay briefly preserves that target before the frame-rate-independent spring–damper simulation returns each strand to rest.
 
 The vertex shader changes the projected strand geometry. The fragment shader provides darker roots, cream-colored tips, orientation-dependent lighting, and compression-dependent occlusion. The approved PNG is used only when WebGL2 is unavailable or a context is lost.
 
@@ -31,7 +31,7 @@ Fur-enabled controls do not scale, translate, or darken as a whole while hovered
 
 ## Material lab
 
-Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, reset, and live renderer statistics.
+Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, recovery delay, reset, and live renderer statistics. Recovery delay is adjustable from 0–1,200 ms and defaults to 300 ms.
 
 ## Known limitations
 
