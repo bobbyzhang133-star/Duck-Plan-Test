@@ -90,4 +90,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Replaced the generic duck emoji with an original white-and-yellow cartoon DuckPlan mascot, added it as the favicon and page accent, and disabled the public Powered by Netlify badge.
  - 2026-10-24: Redrew the mascot from user-provided duck meme references as a tall white duck with sunglasses, orange bill and feet, loose cartoon linework, and a confident pose; kept the previous mascot asset for rollback.
  - 2026-10-24: Created and published a sunglasses-free v3 of the tall DuckPlan mascot while preserving the v2 artwork for rollback.
+ - 2026-10-24: Approved the refined v8 DuckPlan mascot with bead-like duck eyes, a confident temple-pointing pose, improved proportions, and a transparent background; updated the landing page and favicon to use it.
 
