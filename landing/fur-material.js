@@ -356,6 +356,7 @@
       this.host.classList.add("fur-pressed");
       if (this.host.setPointerCapture) this.host.setPointerCapture(event.pointerId);
       if (this.reducedMotion.matches) this.setReducedPress(true);
+      else this.imprintPress();
       this.wake();
     }
 
@@ -381,6 +382,7 @@
       this.pressed = true;
       this.host.classList.add("fur-pressed");
       if (this.reducedMotion.matches) this.setReducedPress(true);
+      else this.imprintPress();
       this.wake();
     }
 
@@ -404,6 +406,35 @@
         this.velocity[state] = 0;
         this.velocity[state + 1] = 0;
         this.velocity[state + 2] = 0;
+      }
+      this.draw();
+    }
+
+    imprintPress(strength = 0.82) {
+      for (let index = 0; index < this.count; index += 1) {
+        const root = index * 2;
+        const deltaX = this.roots[root] * this.width - this.pointer.x;
+        const deltaY = this.roots[root + 1] * this.height - this.pointer.y;
+        const distance = Math.hypot(deltaX, deltaY);
+        const falloff = 1 - smoothstep(0, this.options.radius, distance);
+        if (falloff <= 0) continue;
+
+        const safeDistance = Math.max(distance, 0.001);
+        const seedAngle = this.rootSeeds[index * 5 + 3];
+        const outwardX = distance > 0.5 ? deltaX / safeDistance : Math.cos(seedAngle);
+        const outwardY = distance > 0.5 ? deltaY / safeDistance : Math.sin(seedAngle);
+        const targetX = outwardX * falloff * 0.78;
+        const targetY = outwardY * falloff * 0.78;
+        const targetCompression = falloff * falloff * this.options.compression;
+        const blend = strength * smoothstep(0, 1, falloff);
+        const state = index * 3;
+
+        this.state[state] += (targetX - this.state[state]) * blend;
+        this.state[state + 1] += (targetY - this.state[state + 1]) * blend;
+        this.state[state + 2] += (targetCompression - this.state[state + 2]) * blend;
+        this.velocity[state] = clamp(this.velocity[state] + targetX * 2.4, -18, 18);
+        this.velocity[state + 1] = clamp(this.velocity[state + 1] + targetY * 2.4, -18, 18);
+        this.velocity[state + 2] = clamp(this.velocity[state + 2] + (targetCompression - this.state[state + 2]) * 5.2, -18, 18);
       }
       this.draw();
     }

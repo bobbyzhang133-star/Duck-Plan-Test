@@ -44,7 +44,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 button:disabled { opacity: 0.48; cursor: not-allowed; }
 button:not(:disabled):active { transform: scale(0.96); filter: brightness(0.93); transition-duration: 70ms; }
 .fur-material { position: relative; isolation: isolate; overflow: hidden; }
-.fur-material:not(:disabled):active { transform: none; filter: none; }
+.fur-material:not(:disabled):hover,
+.fur-material:not(:disabled):active {
+  transform: none !important;
+  translate: none;
+  scale: none;
+  filter: none;
+}
 .fur-canvas { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; border-radius: inherit; opacity: 0.94; pointer-events: none; transition: opacity 160ms ease; }
 .fur-material.fur-hovered .fur-canvas, .fur-material.fur-pressed .fur-canvas { opacity: 1; }
 .dark-button .fur-canvas { opacity: 0.34; mix-blend-mode: screen; }
