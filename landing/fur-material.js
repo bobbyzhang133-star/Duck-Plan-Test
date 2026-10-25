@@ -269,6 +269,7 @@
       this.rootSeeds = new Float32Array(this.count * 5);
       this.state = new Float32Array(this.count * 3);
       this.velocity = new Float32Array(this.count * 3);
+      this.pressTargets = new Float32Array(this.count * 3);
 
       const aspect = this.width / this.height;
       const columns = Math.ceil(Math.sqrt(this.count * aspect));
@@ -321,25 +322,33 @@
       if (this.host.disabled) return;
       const point = this.localPointer(event);
       const elapsed = Math.max(8, event.timeStamp - this.pointer.time);
-      const deltaX = point.x - this.pointer.x;
-      const deltaY = point.y - this.pointer.y;
-      if (!this.reducedMotion.matches && this.hovered) this.brush(point.x, point.y, deltaX, deltaY, elapsed);
+      if (!this.reducedMotion.matches && (this.hovered || this.pressed)) {
+        this.brush(this.pointer.x, this.pointer.y, point.x, point.y, elapsed);
+      }
       this.pointer = { ...point, previousX: this.pointer.x, previousY: this.pointer.y, time: event.timeStamp };
       this.wake();
     }
 
-    brush(x, y, deltaX, deltaY, elapsed) {
-      const distance = Math.hypot(deltaX, deltaY);
-      if (distance < 0.2) return;
-      const speed = distance / elapsed * 1000;
-      const directionX = deltaX / distance;
-      const directionY = deltaY / distance;
+    brush(fromX, fromY, toX, toY, elapsed) {
+      const segmentX = toX - fromX;
+      const segmentY = toY - fromY;
+      const segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+      const segmentLength = Math.sqrt(segmentLengthSquared);
+      if (segmentLength < 0.2) return;
+      const speed = segmentLength / elapsed * 1000;
+      const directionX = segmentX / segmentLength;
+      const directionY = segmentY / segmentLength;
       const impulse = clamp(speed / 560, 0.12, 1) * this.options.brushStrength;
       const radius = this.options.radius;
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
-        const dx = this.roots[root] * this.width - x;
-        const dy = this.roots[root + 1] * this.height - y;
+        const rootX = this.roots[root] * this.width;
+        const rootY = this.roots[root + 1] * this.height;
+        const projection = clamp(((rootX - fromX) * segmentX + (rootY - fromY) * segmentY) / segmentLengthSquared, 0, 1);
+        const closestX = fromX + segmentX * projection;
+        const closestY = fromY + segmentY * projection;
+        const dx = rootX - closestX;
+        const dy = rootY - closestY;
         const normalizedDistance = Math.hypot(dx, dy) / radius;
         if (normalizedDistance >= 1) continue;
         const falloff = 1 - smoothstep(0.05, 1, normalizedDistance);
@@ -347,6 +356,24 @@
         this.velocity[state] = clamp(this.velocity[state] + directionX * impulse * falloff, -12, 12);
         this.velocity[state + 1] = clamp(this.velocity[state + 1] + directionY * impulse * falloff, -12, 12);
         this.velocity[state + 2] = clamp(this.velocity[state + 2] + impulse * falloff * 0.035, -3, 3);
+        if (this.pressed) {
+          const sideDistance = Math.hypot(dx, dy);
+          const seedAngle = this.rootSeeds[index * 5 + 3];
+          const outwardX = sideDistance > 0.5 ? dx / sideDistance : Math.cos(seedAngle);
+          const outwardY = sideDistance > 0.5 ? dy / sideDistance : Math.sin(seedAngle);
+          const targetX = outwardX * falloff * 0.78;
+          const targetY = outwardY * falloff * 0.78;
+          const targetCompression = falloff * falloff * this.options.compression;
+          if (targetCompression >= this.pressTargets[state + 2]) {
+            const blend = 0.72 * smoothstep(0, 1, falloff);
+            this.pressTargets[state] = targetX;
+            this.pressTargets[state + 1] = targetY;
+            this.pressTargets[state + 2] = targetCompression;
+            this.state[state] += (targetX - this.state[state]) * blend;
+            this.state[state + 1] += (targetY - this.state[state + 1]) * blend;
+            this.state[state + 2] += (targetCompression - this.state[state + 2]) * blend;
+          }
+        }
       }
     }
 
@@ -356,10 +383,11 @@
       this.pointer = { ...point, previousX: point.x, previousY: point.y, time: event.timeStamp };
       this.pressed = true;
       this.recoveryDelayRemaining = 0;
+      this.pressTargets?.fill(0);
       this.host.classList.add("fur-pressed");
       if (this.host.setPointerCapture) this.host.setPointerCapture(event.pointerId);
       if (this.reducedMotion.matches) this.setReducedPress(true);
-      else this.imprintPress();
+      else if (this.gl) this.imprintPress();
       this.wake();
     }
 
@@ -373,6 +401,7 @@
         this.setReducedPress(false);
       } else {
         this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
+        if (this.recoveryDelayRemaining === 0) this.pressTargets?.fill(0);
       }
       this.wake();
     }
@@ -389,9 +418,10 @@
       this.pointer.y = this.height / 2;
       this.pressed = true;
       this.recoveryDelayRemaining = 0;
+      this.pressTargets?.fill(0);
       this.host.classList.add("fur-pressed");
       if (this.reducedMotion.matches) this.setReducedPress(true);
-      else this.imprintPress();
+      else if (this.gl) this.imprintPress();
       this.wake();
     }
 
@@ -404,11 +434,13 @@
         this.setReducedPress(false);
       } else {
         this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
+        if (this.recoveryDelayRemaining === 0) this.pressTargets?.fill(0);
       }
       this.wake();
     }
 
     setReducedPress(pressed) {
+      if (!this.state) return;
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
         const distance = Math.hypot(this.roots[root] * this.width - this.pointer.x, this.roots[root + 1] * this.height - this.pointer.y);
@@ -446,6 +478,9 @@
         this.state[state] += (targetX - this.state[state]) * blend;
         this.state[state + 1] += (targetY - this.state[state + 1]) * blend;
         this.state[state + 2] += (targetCompression - this.state[state + 2]) * blend;
+        this.pressTargets[state] = targetX;
+        this.pressTargets[state + 1] = targetY;
+        this.pressTargets[state + 2] = targetCompression;
         this.velocity[state] = clamp(this.velocity[state] + targetX * 2.4, -18, 18);
         this.velocity[state + 1] = clamp(this.velocity[state + 1] + targetY * 2.4, -18, 18);
         this.velocity[state + 2] = clamp(this.velocity[state + 2] + (targetCompression - this.state[state + 2]) * 5.2, -18, 18);
@@ -458,30 +493,15 @@
       const damping = this.options.damping;
       const delayedRelease = !this.pressed && this.recoveryDelayRemaining > 0;
       if (delayedRelease) this.recoveryDelayRemaining = Math.max(0, this.recoveryDelayRemaining - step);
-      const keepPressTarget = this.pressed || delayedRelease;
       const releaseJustEnded = delayedRelease && this.recoveryDelayRemaining === 0;
-      let maximumEnergy = releaseJustEnded ? 1 : 0;
+      if (releaseJustEnded) this.pressTargets.fill(0);
+      const keepPressTarget = this.pressed || (delayedRelease && !releaseJustEnded);
+      let maximumEnergy = 0;
       for (let index = 0; index < this.count; index += 1) {
-        const root = index * 2;
         const state = index * 3;
-        let targetX = 0;
-        let targetY = 0;
-        let targetCompression = 0;
-        if (keepPressTarget) {
-          const deltaX = this.roots[root] * this.width - this.pointer.x;
-          const deltaY = this.roots[root + 1] * this.height - this.pointer.y;
-          const distance = Math.hypot(deltaX, deltaY);
-          const falloff = 1 - smoothstep(0, this.options.radius, distance);
-          if (falloff > 0) {
-            const safeDistance = Math.max(distance, 0.001);
-            const seedAngle = this.rootSeeds[index * 5 + 3];
-            const outwardX = distance > 0.5 ? deltaX / safeDistance : Math.cos(seedAngle);
-            const outwardY = distance > 0.5 ? deltaY / safeDistance : Math.sin(seedAngle);
-            targetX = outwardX * falloff * 0.78;
-            targetY = outwardY * falloff * 0.78;
-            targetCompression = falloff * falloff * this.options.compression;
-          }
-        }
+        const targetX = keepPressTarget ? this.pressTargets[state] : 0;
+        const targetY = keepPressTarget ? this.pressTargets[state + 1] : 0;
+        const targetCompression = keepPressTarget ? this.pressTargets[state + 2] : 0;
 
         for (let component = 0; component < 3; component += 1) {
           const target = component === 0 ? targetX : component === 1 ? targetY : targetCompression;
@@ -578,8 +598,9 @@
     onMotionChange() {
       if (this.reducedMotion.matches) {
         this.recoveryDelayRemaining = 0;
-        this.state.fill(0);
-        this.velocity.fill(0);
+        this.pressTargets?.fill(0);
+        this.state?.fill(0);
+        this.velocity?.fill(0);
         this.running = false;
         this.draw();
       }
