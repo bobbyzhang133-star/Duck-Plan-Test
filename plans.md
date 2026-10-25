@@ -93,4 +93,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Approved the refined v8 DuckPlan mascot with bead-like duck eyes, a confident temple-pointing pose, improved proportions, and a transparent background; updated the landing page and favicon to use it.
  - 2026-10-24: Built the first interactive DuckPlan website draft from the project plan, including Today, Calendar, Tasks, Classes, and Settings views; responsive layouts; class-based organization; task filters, search, completion, local task creation, and clear prototype states for Axis integration.
  - 2026-10-24: Rethemed the interactive DuckPlan draft around a yellow-and-white visual system, using dark ink for accessible contrast while retaining class colors for organization.
+ - 2026-10-24: Refined the responsive web prototype using Apple Human Interface Guidelines: clearer visual hierarchy, system typography, larger readable labels, 44px-class touch targets, semantic selected states, restrained materials, and adaptive sidebar-to-tab-bar navigation on phones.
 

@@ -164,7 +164,12 @@ function renderAll() { renderTasks(); renderClasses(); renderCalendar(); }
 function setView(name) {
   const next = document.querySelector(`#view-${name}`) || document.querySelector("#view-today");
   els.views.forEach((view) => view.classList.toggle("active", view === next));
-  els.navItems.forEach((item) => item.classList.toggle("active", item.dataset.view === name));
+  els.navItems.forEach((item) => {
+    const isActive = item.dataset.view === name;
+    item.classList.toggle("active", isActive);
+    if (isActive) item.setAttribute("aria-current", "page");
+    else item.removeAttribute("aria-current");
+  });
   els.pageTitle.textContent = next.dataset.pageTitle;
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${name}`);
@@ -193,8 +198,12 @@ document.addEventListener("change", toggleTask);
 els.navItems.forEach((item) => item.addEventListener("click", () => setView(item.dataset.view)));
 document.querySelectorAll("[data-go]").forEach((item) => item.addEventListener("click", (event) => { event.preventDefault(); setView(item.dataset.go); }));
 document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListener("click", () => {
-  document.querySelectorAll(".filter-chip").forEach((item) => item.classList.remove("active"));
+  document.querySelectorAll(".filter-chip").forEach((item) => {
+    item.classList.remove("active");
+    item.setAttribute("aria-pressed", "false");
+  });
   chip.classList.add("active");
+  chip.setAttribute("aria-pressed", "true");
   currentFilter = chip.dataset.filter;
   renderTasks();
 }));

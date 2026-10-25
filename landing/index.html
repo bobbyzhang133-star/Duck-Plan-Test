@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="DuckPlan is a calm student planner for classes, assignments, tasks, and calendars." />
-    <meta name="theme-color" content="#173f33" />
+    <meta name="theme-color" content="#f8c943" />
     <link rel="icon" type="image/png" href="./assets/duckplan-mascot-v8.png" />
     <link rel="stylesheet" href="./styles.css" />
     <title>DuckPlan | Your school day, sorted</title>
@@ -21,6 +21,7 @@
           <button class="nav-item" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true">□</span><span>Calendar</span></button>
           <button class="nav-item" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true">✓</span><span>Tasks</span><span class="nav-count" id="task-count">5</span></button>
           <button class="nav-item" type="button" data-view="classes"><span class="nav-icon" aria-hidden="true">◫</span><span>Classes</span></button>
+          <button class="nav-item" type="button" data-view="settings"><span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span></button>
         </nav>
         <section class="sync-card" aria-label="Axis connection status">
           <div class="sync-icon" aria-hidden="true">↻</div>
@@ -28,7 +29,7 @@
           <button type="button" id="sync-info" aria-label="Learn about Axis sync">i</button>
         </section>
         <div class="sidebar-spacer"></div>
-        <button class="profile-card" type="button" data-view="settings">
+        <button class="profile-card" type="button" data-go="settings" aria-label="Open settings for Bobby">
           <span class="avatar" aria-hidden="true">BZ</span>
           <span><strong>Bobby</strong><small>Student account</small></span><span aria-hidden="true">›</span>
         </button>
@@ -95,7 +96,7 @@
           <section class="panel tasks-panel">
             <div class="panel-heading task-heading">
               <div><p class="section-kicker">Assignments and to-dos</p><h2>All tasks</h2></div>
-              <div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all">All</button><button class="filter-chip" type="button" data-filter="today">Today</button><button class="filter-chip" type="button" data-filter="upcoming">Upcoming</button><button class="filter-chip" type="button" data-filter="done">Done</button></div>
+              <div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All</button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today</button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done</button></div>
             </div>
             <div class="task-list expanded" id="all-task-list"></div>
             <div class="empty-state" id="task-empty" hidden><img src="./assets/duckplan-mascot-v8.png" alt="" /><h3>Nothing here yet.</h3><p>Try another filter or add a new task.</p></div>
