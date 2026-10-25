@@ -27,6 +27,8 @@ Each selected surface currently owns a small WebGL context. This is appropriate 
 
 The canvas is decorative, `aria-hidden`, and cannot receive pointer events. Native HTML buttons retain their focus, keyboard, disabled, and click behavior. Reduced Motion disables brushing physics and uses an immediate static press state. Context loss and missing WebGL2 switch the surface to the static approved texture.
 
+Fur-enabled controls do not scale, translate, or darken as a whole while pressed. Press feedback comes exclusively from the localized strand deformation so the underlying surface remains physically stationary.
+
 ## Material lab
 
 Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, reset, and live renderer statistics.

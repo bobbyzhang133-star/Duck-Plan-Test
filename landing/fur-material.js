@@ -495,6 +495,8 @@
       if (this.running || !this.gl || !this.visible || document.hidden) return;
       this.running = true;
       this.lastFrame = 0;
+      this.frames = 0;
+      this.fpsClock = performance.now();
       requestAnimationFrame(this.frame);
     }
 
