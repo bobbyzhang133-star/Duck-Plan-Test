@@ -51,23 +51,23 @@
             <input name="length" type="range" min="2.8" max="9" step="0.2" value="5.4" />
           </label>
           <label class="fur-control">
-            <span>Spring stiffness <output data-output="stiffness">86</output></span>
-            <input name="stiffness" type="range" min="30" max="150" step="2" value="86" />
+            <span>Spring stiffness <output data-output="stiffness">62</output></span>
+            <input name="stiffness" type="range" min="30" max="150" step="2" value="62" />
           </label>
           <label class="fur-control">
-            <span>Damping <output data-output="damping">17</output></span>
-            <input name="damping" type="range" min="6" max="32" step="1" value="17" />
+            <span>Damping <output data-output="damping">22</output></span>
+            <input name="damping" type="range" min="6" max="32" step="1" value="22" />
           </label>
           <label class="fur-control">
             <span>Interaction radius <output data-output="radius">72 px</output></span>
             <input name="radius" type="range" min="24" max="130" step="2" value="72" />
           </label>
           <label class="fur-control">
-            <span>Recovery delay <output data-output="recoveryDelay">300 ms</output></span>
-            <input name="recoveryDelay" type="range" min="0" max="2000" step="50" value="300" />
+            <span>Recovery delay <output data-output="recoveryDelay">450 ms</output></span>
+            <input name="recoveryDelay" type="range" min="0" max="2000" step="50" value="450" />
           </label>
           <button class="secondary-button fur-reset-button" id="fur-reset" type="button">Reset defaults</button>
-          <p class="fur-lab-note">Reduced Motion keeps the material static except for an immediate, non-animated press depression. If WebGL2 is unavailable, DuckPlan uses the approved texture image as a fallback.</p>
+          <p class="fur-lab-note">The default overdamped recovery lifts fibers progressively without a springy rebound. Higher damping makes the return softer. Reduced Motion keeps the material static except for an immediate, non-animated press depression. If WebGL2 is unavailable, DuckPlan uses the approved texture image as a fallback.</p>
         </form>
       </section>
     </main>

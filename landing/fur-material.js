@@ -5,12 +5,12 @@
     quality: "medium",
     density: 1,
     length: 5.4,
-    stiffness: 86,
-    damping: 17,
+    stiffness: 62,
+    damping: 22,
     radius: 54,
     brushStrength: 5.8,
     compression: 0.92,
-    recoveryDelay: 300,
+    recoveryDelay: 450,
   });
 
   const QUALITY = Object.freeze({

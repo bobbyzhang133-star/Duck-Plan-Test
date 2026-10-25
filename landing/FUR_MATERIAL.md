@@ -4,7 +4,7 @@
 
 `fur-material.js` renders short duck-down-inspired fibers with native WebGL2. Each fiber is an instanced tapered strand with a fixed root, natural length/orientation variation, dynamic bend vector, compression value, and spring velocity. A surface uses one draw call rather than one DOM node per fiber.
 
-Pointer movement adds localized directional impulses with distance falloff. Each event sweeps a continuous segment from the previous pointer position, so fast motion cannot leave untouched gaps between sparse browser events. During a pressed drag, every affected fiber stores its swept compression target, preserving a continuous physical trail instead of only the final cursor point. After release, the configurable recovery delay briefly preserves the whole trail before the frame-rate-independent spring–damper simulation returns each strand to rest.
+Pointer movement adds localized directional impulses with distance falloff. Each event sweeps a continuous segment from the previous pointer position, so fast motion cannot leave untouched gaps between sparse browser events. During a pressed drag, every affected fiber stores its swept compression target, preserving a continuous physical trail instead of only the final cursor point. After release, the configurable recovery delay briefly preserves the whole trail before the frame-rate-independent spring–damper simulation returns each strand to rest. The default spring uses an overdamped response, so fibers lift progressively with little to no overshoot instead of snapping back or bouncing.
 
 The vertex shader changes the projected strand geometry. The fragment shader provides darker roots, cream-colored tips, orientation-dependent lighting, and compression-dependent occlusion. The approved PNG is used only when WebGL2 is unavailable or a context is lost.
 
@@ -31,7 +31,7 @@ Fur-enabled controls do not scale, translate, or darken as a whole while hovered
 
 ## Material lab
 
-Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, recovery delay, reset, and live renderer statistics. Recovery delay is adjustable from 0–2,000 ms and defaults to 300 ms.
+Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, recovery delay, reset, and live renderer statistics. Recovery delay is adjustable from 0–2,000 ms and defaults to 450 ms. The default stiffness and damping are intentionally overdamped for a slower, non-bouncy return.
 
 ## Known limitations
 

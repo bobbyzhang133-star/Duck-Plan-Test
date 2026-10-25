@@ -166,8 +166,8 @@ function setupFurMaterial(root = document) {
       quality: "medium",
       density: 1,
       length: 5.2,
-      stiffness: 88,
-      damping: 18,
+      stiffness: 64,
+      damping: 23,
       radius: 48,
     });
   });

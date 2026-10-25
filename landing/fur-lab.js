@@ -9,10 +9,10 @@
     quality: "high",
     density: 1,
     length: 5.4,
-    stiffness: 86,
-    damping: 17,
+    stiffness: 62,
+    damping: 22,
     radius: 72,
-    recoveryDelay: 300,
+    recoveryDelay: 450,
   };
 
   if (!window.DuckFur) {
@@ -25,8 +25,8 @@
     quality: "medium",
     density: 1,
     length: 5.2,
-    stiffness: 88,
-    damping: 18,
+    stiffness: 64,
+    damping: 23,
     radius: 48,
   });
 
