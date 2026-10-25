@@ -104,4 +104,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Applied the button interaction rule to the current web prototype with project-wide pressed feedback and disabled behavior, plus tailored hover responses for navigation, primary controls, text actions, filters, profile controls, and icon buttons.
  - 2026-10-24: Created a reusable DuckPlan duck-down button material informed by Apple HIG material and motion guidance: fine feather fibers follow pointer or swipe direction, compress locally at the press point, recover with damped motion, preserve label contrast, support keyboard activation, and stop moving when reduced motion is enabled.
  - 2026-10-24: Replaced the illustrated button fibers with an original photorealistic top-down warm-ivory animal-fur texture, then added a masked duplicate texture at the pointer to simulate local flattening and darkened compression when pressed.
+ - 2026-10-24: Refined the button material into ultra-short, dense, end-on duck down in the mascot's ivory-white and pale buttery-yellow palette, preserving the existing pointer-follow and local press-compression behavior.
 
