@@ -102,4 +102,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Refined the New Task dialog into a distinct thick-material sheet: the form now carries the translucent blurred surface, inputs use a more opaque control fill for legibility, and the dimmed backdrop preserves page context.
  - 2026-10-24: Added a project-wide button interaction rule requiring distinct hover, pressed/click, keyboard-focus, disabled, and reduced-motion behavior for every button-like control.
  - 2026-10-24: Applied the button interaction rule to the current web prototype with project-wide pressed feedback and disabled behavior, plus tailored hover responses for navigation, primary controls, text actions, filters, profile controls, and icon buttons.
+ - 2026-10-24: Created a reusable DuckPlan duck-down button material informed by Apple HIG material and motion guidance: fine feather fibers follow pointer or swipe direction, compress locally at the press point, recover with damped motion, preserve label contrast, support keyboard activation, and stop moving when reduced motion is enabled.
 

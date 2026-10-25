@@ -36,6 +36,10 @@ let currentFilter = "all";
 let searchTerm = "";
 let weekOffset = 0;
 let toastTimer;
+const furPointers = new WeakMap();
+const furReleaseTimers = new WeakMap();
+const activeFurPresses = new Map();
+const reduceFurMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 const els = {
   navItems: [...document.querySelectorAll("[data-view]")],
@@ -159,7 +163,101 @@ function renderCalendar() {
   }).join("");
 }
 
-function renderAll() { renderTasks(); renderClasses(); renderCalendar(); }
+function setupFurMaterial(root = document) {
+  root.querySelectorAll("button").forEach((button) => {
+    if (button.classList.contains("fur-material")) return;
+    const surface = document.createElement("span");
+    surface.className = "fur-surface";
+    surface.setAttribute("aria-hidden", "true");
+    button.prepend(surface);
+    button.classList.add("fur-material");
+  });
+}
+
+function updateFurDirection(button, event) {
+  const rect = button.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+  const y = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
+  const previous = furPointers.get(button) || { x, y };
+  window.clearTimeout(previous.settleTimer);
+  const shiftX = reduceFurMotion.matches ? 0 : Math.max(-7, Math.min(7, (x - previous.x) * 0.58));
+  const shiftY = reduceFurMotion.matches ? 0 : Math.max(-5, Math.min(5, (y - previous.y) * 0.46));
+  const tilt = reduceFurMotion.matches ? 0 : Math.max(-8, Math.min(8, shiftX * 0.8));
+  button.style.setProperty("--fur-x", `${(x / rect.width) * 100}%`);
+  button.style.setProperty("--fur-y", `${(y / rect.height) * 100}%`);
+  button.style.setProperty("--fur-shift-x", `${shiftX}px`);
+  button.style.setProperty("--fur-shift-y", `${shiftY}px`);
+  button.style.setProperty("--fur-tilt", `${tilt}deg`);
+  const settleTimer = window.setTimeout(() => {
+    button.style.setProperty("--fur-shift-x", "0px");
+    button.style.setProperty("--fur-shift-y", "0px");
+    button.style.setProperty("--fur-tilt", "0deg");
+  }, 110);
+  furPointers.set(button, { x, y, settleTimer });
+}
+
+function pressFur(button) {
+  window.clearTimeout(furReleaseTimers.get(button));
+  button.classList.add("fur-pressed");
+}
+
+function releaseFur(button) {
+  if (!button) return;
+  window.clearTimeout(furReleaseTimers.get(button));
+  const timer = window.setTimeout(() => button.classList.remove("fur-pressed"), 90);
+  furReleaseTimers.set(button, timer);
+}
+
+document.addEventListener("pointerover", (event) => {
+  const button = event.target.closest("button.fur-material:not(:disabled)");
+  if (!button) return;
+  button.classList.add("fur-hovered");
+  updateFurDirection(button, event);
+});
+
+document.addEventListener("pointermove", (event) => {
+  const button = event.target.closest("button.fur-material:not(:disabled)");
+  if (button) updateFurDirection(button, event);
+});
+
+document.addEventListener("pointerout", (event) => {
+  const button = event.target.closest("button.fur-material");
+  if (!button || button.contains(event.relatedTarget)) return;
+  button.classList.remove("fur-hovered");
+  button.style.setProperty("--fur-shift-x", "0px");
+  button.style.setProperty("--fur-shift-y", "0px");
+  button.style.setProperty("--fur-tilt", "0deg");
+  window.clearTimeout(furPointers.get(button)?.settleTimer);
+  furPointers.delete(button);
+});
+
+document.addEventListener("pointerdown", (event) => {
+  const button = event.target.closest("button.fur-material:not(:disabled)");
+  if (!button) return;
+  updateFurDirection(button, event);
+  pressFur(button);
+  activeFurPresses.set(event.pointerId, button);
+});
+
+document.addEventListener("pointerup", (event) => {
+  releaseFur(activeFurPresses.get(event.pointerId));
+  activeFurPresses.delete(event.pointerId);
+});
+document.addEventListener("pointercancel", (event) => {
+  releaseFur(activeFurPresses.get(event.pointerId));
+  activeFurPresses.delete(event.pointerId);
+});
+document.addEventListener("keydown", (event) => {
+  const button = event.target.closest("button.fur-material:not(:disabled)");
+  if (!button || (event.key !== "Enter" && event.key !== " ")) return;
+  button.style.setProperty("--fur-x", "50%");
+  button.style.setProperty("--fur-y", "50%");
+  pressFur(button);
+});
+document.addEventListener("keyup", (event) => releaseFur(event.target.closest("button.fur-material")));
+
+function renderAll() { renderTasks(); renderClasses(); renderCalendar(); setupFurMaterial(); }
 
 function setView(name) {
   const next = document.querySelector(`#view-${name}`) || document.querySelector("#view-today");
