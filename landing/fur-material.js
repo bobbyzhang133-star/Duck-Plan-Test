@@ -69,7 +69,7 @@
     void main() {
       float compression = clamp(a_state.z, 0.0, 1.0);
       float lengthPx = u_length * u_dpr * a_seed.x;
-      float heightScale = 1.0 - compression * 0.72;
+      float heightScale = 1.0 - compression * 0.86;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z);
       vec2 bend = a_state.xy * lengthPx * 1.5;
       vec2 direction = naturalLean * heightScale + bend * mix(0.72, 1.3, compression);
@@ -109,7 +109,7 @@
       vec3 tip = mix(vec3(1.0, 0.95, 0.76), vec3(1.0, 0.985, 0.88), v_color);
       vec3 color = mix(root, middle, smoothstep(0.0, 0.58, v_height));
       color = mix(color, tip, smoothstep(0.58, 1.0, v_height));
-      float occlusion = mix(1.0, 0.56, v_compression * (1.0 - v_height * 0.45));
+      float occlusion = mix(1.0, 0.45, v_compression * (1.0 - v_height * 0.45));
       float tipGlow = 1.0 + smoothstep(0.76, 1.0, v_height) * 0.11;
       color *= v_light * occlusion * tipGlow;
       float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height);
@@ -352,20 +352,26 @@
         const normalizedDistance = Math.hypot(dx, dy) / radius;
         if (normalizedDistance >= 1) continue;
         const falloff = 1 - smoothstep(0.05, 1, normalizedDistance);
+        const pressCore = this.pressed ? 1 - smoothstep(0, 0.34, normalizedDistance) : 0;
+        const bendImpulseScale = 1 - pressCore * 0.86;
         const state = index * 3;
-        this.velocity[state] = clamp(this.velocity[state] + directionX * impulse * falloff, -12, 12);
-        this.velocity[state + 1] = clamp(this.velocity[state + 1] + directionY * impulse * falloff, -12, 12);
+        this.velocity[state] = clamp(this.velocity[state] + directionX * impulse * falloff * bendImpulseScale, -12, 12);
+        this.velocity[state + 1] = clamp(this.velocity[state + 1] + directionY * impulse * falloff * bendImpulseScale, -12, 12);
         this.velocity[state + 2] = clamp(this.velocity[state + 2] + impulse * falloff * 0.035, -3, 3);
         if (this.pressed) {
           const sideDistance = Math.hypot(dx, dy);
           const seedAngle = this.rootSeeds[index * 5 + 3];
           const outwardX = sideDistance > 0.5 ? dx / sideDistance : Math.cos(seedAngle);
           const outwardY = sideDistance > 0.5 ? dy / sideDistance : Math.sin(seedAngle);
-          const targetX = outwardX * falloff * 0.78;
-          const targetY = outwardY * falloff * 0.78;
-          const targetCompression = falloff * falloff * this.options.compression;
+          const splay = 1 - pressCore * 0.92;
+          const targetX = outwardX * falloff * 0.82 * splay;
+          const targetY = outwardY * falloff * 0.82 * splay;
+          const targetCompression = Math.max(
+            falloff * falloff * this.options.compression,
+            pressCore * Math.min(1, this.options.compression * 1.08),
+          );
           if (targetCompression >= this.pressTargets[state + 2]) {
-            const blend = 0.72 * smoothstep(0, 1, falloff);
+            const blend = (0.72 + pressCore * 0.18) * smoothstep(0, 1, falloff);
             this.pressTargets[state] = targetX;
             this.pressTargets[state + 1] = targetY;
             this.pressTargets[state + 2] = targetCompression;
@@ -373,7 +379,21 @@
             this.state[state + 1] += (targetY - this.state[state + 1]) * blend;
             this.state[state + 2] += (targetCompression - this.state[state + 2]) * blend;
           }
+        } else {
+          const hoverTargetX = directionX * falloff * 0.52;
+          const hoverTargetY = directionY * falloff * 0.52;
+          const hoverCompression = falloff * falloff * this.options.compression * 0.18;
+          const blend = 0.42 * smoothstep(0, 1, falloff);
+          this.pressTargets[state] = hoverTargetX;
+          this.pressTargets[state + 1] = hoverTargetY;
+          this.pressTargets[state + 2] = hoverCompression;
+          this.state[state] += (hoverTargetX - this.state[state]) * blend;
+          this.state[state + 1] += (hoverTargetY - this.state[state + 1]) * blend;
+          this.state[state + 2] += (hoverCompression - this.state[state + 2]) * blend;
         }
+      }
+      if (!this.pressed) {
+        this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
       }
     }
 
@@ -462,17 +482,23 @@
         const deltaX = this.roots[root] * this.width - this.pointer.x;
         const deltaY = this.roots[root + 1] * this.height - this.pointer.y;
         const distance = Math.hypot(deltaX, deltaY);
-        const falloff = 1 - smoothstep(0, this.options.radius, distance);
+        const normalizedDistance = distance / this.options.radius;
+        const falloff = 1 - smoothstep(0, 1, normalizedDistance);
         if (falloff <= 0) continue;
 
         const safeDistance = Math.max(distance, 0.001);
         const seedAngle = this.rootSeeds[index * 5 + 3];
         const outwardX = distance > 0.5 ? deltaX / safeDistance : Math.cos(seedAngle);
         const outwardY = distance > 0.5 ? deltaY / safeDistance : Math.sin(seedAngle);
-        const targetX = outwardX * falloff * 0.78;
-        const targetY = outwardY * falloff * 0.78;
-        const targetCompression = falloff * falloff * this.options.compression;
-        const blend = strength * smoothstep(0, 1, falloff);
+        const pressCore = 1 - smoothstep(0, 0.34, normalizedDistance);
+        const splay = 1 - pressCore * 0.92;
+        const targetX = outwardX * falloff * 0.82 * splay;
+        const targetY = outwardY * falloff * 0.82 * splay;
+        const targetCompression = Math.max(
+          falloff * falloff * this.options.compression,
+          pressCore * Math.min(1, this.options.compression * 1.08),
+        );
+        const blend = Math.min(0.98, strength + pressCore * 0.14) * smoothstep(0, 1, falloff);
         const state = index * 3;
 
         this.state[state] += (targetX - this.state[state]) * blend;
