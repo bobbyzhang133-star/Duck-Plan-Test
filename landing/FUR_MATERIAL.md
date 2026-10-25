@@ -31,7 +31,7 @@ Fur-enabled controls do not scale, translate, or darken as a whole while hovered
 
 ## Material lab
 
-Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, recovery delay, reset, and live renderer statistics. Recovery delay is adjustable from 0–1,200 ms and defaults to 300 ms.
+Open `fur-lab.html` directly or use Settings → Interactive fur lab. It provides a large inspection surface, a production-size button, quality controls, density, fiber length, stiffness, damping, interaction radius, recovery delay, reset, and live renderer statistics. Recovery delay is adjustable from 0–2,000 ms and defaults to 300 ms.
 
 ## Known limitations
 

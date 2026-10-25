@@ -112,4 +112,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-25: Strengthened the stationary fur-surface rule across hover and press states, and added an immediate pointer-down imprint so fibers visibly compress at contact before continuing through spring-based motion and recovery.
  - 2026-10-25: Added a local-first release rule requiring website changes to be previewed and explicitly approved locally before any public deployment.
  - 2026-10-25: Added a configurable 0–1,200 ms fur recovery delay, defaulting to 300 ms, so pressed fibers linger briefly before springing back; prepared the change for local approval only.
+ - 2026-10-25: Extended the local fur recovery-delay control to 2,000 ms so longer press impressions can be tested before publication approval.
 

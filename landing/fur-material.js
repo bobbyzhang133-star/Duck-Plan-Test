@@ -459,7 +459,8 @@
       const delayedRelease = !this.pressed && this.recoveryDelayRemaining > 0;
       if (delayedRelease) this.recoveryDelayRemaining = Math.max(0, this.recoveryDelayRemaining - step);
       const keepPressTarget = this.pressed || delayedRelease;
-      let maximumEnergy = 0;
+      const releaseJustEnded = delayedRelease && this.recoveryDelayRemaining === 0;
+      let maximumEnergy = releaseJustEnded ? 1 : 0;
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
         const state = index * 3;
