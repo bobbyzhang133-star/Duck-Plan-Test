@@ -69,15 +69,15 @@
     void main() {
       float compression = clamp(a_state.z, 0.0, 1.0);
       float lengthPx = u_length * u_dpr * a_seed.x;
-      float heightScale = 1.0 - compression * 0.86;
+      float heightScale = 1.0 - compression * 0.92;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z);
-      vec2 bend = a_state.xy * lengthPx * 1.5;
-      vec2 direction = naturalLean * heightScale + bend * mix(0.72, 1.3, compression);
+      vec2 bend = a_state.xy * lengthPx * 1.62;
+      vec2 direction = naturalLean * heightScale + bend * mix(0.68, 1.45, compression);
       float projectedLength = max(length(direction), 1.15 * u_dpr);
       vec2 tangent = direction / projectedLength;
       vec2 normal = vec2(-tangent.y, tangent.x);
       float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr;
-      float tipWidth = rootWidth * mix(0.82, 1.26, compression);
+      float tipWidth = rootWidth * mix(0.82, 1.68, compression);
       float width = mix(rootWidth, tipWidth, a_corner.y);
       vec2 rootPx = a_root * u_resolution;
       vec2 pixel = rootPx + direction * a_corner.y + normal * a_corner.x * width;
@@ -109,7 +109,7 @@
       vec3 tip = mix(vec3(1.0, 0.95, 0.76), vec3(1.0, 0.985, 0.88), v_color);
       vec3 color = mix(root, middle, smoothstep(0.0, 0.58, v_height));
       color = mix(color, tip, smoothstep(0.58, 1.0, v_height));
-      float occlusion = mix(1.0, 0.45, v_compression * (1.0 - v_height * 0.45));
+      float occlusion = mix(1.0, 0.40, v_compression * (1.0 - v_height * 0.38));
       float tipGlow = 1.0 + smoothstep(0.76, 1.0, v_height) * 0.11;
       color *= v_light * occlusion * tipGlow;
       float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height);
@@ -352,26 +352,26 @@
         const normalizedDistance = Math.hypot(dx, dy) / radius;
         if (normalizedDistance >= 1) continue;
         const falloff = 1 - smoothstep(0.05, 1, normalizedDistance);
-        const pressCore = this.pressed ? 1 - smoothstep(0, 0.34, normalizedDistance) : 0;
-        const bendImpulseScale = 1 - pressCore * 0.86;
+        const pressCore = this.pressed ? 1 - smoothstep(0.04, 0.42, normalizedDistance) : 0;
+        const bendImpulseScale = 1 - pressCore * 0.92;
         const state = index * 3;
         this.velocity[state] = clamp(this.velocity[state] + directionX * impulse * falloff * bendImpulseScale, -12, 12);
         this.velocity[state + 1] = clamp(this.velocity[state + 1] + directionY * impulse * falloff * bendImpulseScale, -12, 12);
-        this.velocity[state + 2] = clamp(this.velocity[state + 2] + impulse * falloff * 0.035, -3, 3);
+        this.velocity[state + 2] = clamp(this.velocity[state + 2] + impulse * falloff * (this.pressed ? 0.08 : 0.045), -3, 3);
         if (this.pressed) {
           const sideDistance = Math.hypot(dx, dy);
           const seedAngle = this.rootSeeds[index * 5 + 3];
           const outwardX = sideDistance > 0.5 ? dx / sideDistance : Math.cos(seedAngle);
           const outwardY = sideDistance > 0.5 ? dy / sideDistance : Math.sin(seedAngle);
-          const splay = 1 - pressCore * 0.92;
-          const targetX = outwardX * falloff * 0.82 * splay;
-          const targetY = outwardY * falloff * 0.82 * splay;
+          const splay = 1 - pressCore * 0.96;
+          const targetX = outwardX * falloff * 0.88 * splay;
+          const targetY = outwardY * falloff * 0.88 * splay;
           const targetCompression = Math.max(
             falloff * falloff * this.options.compression,
-            pressCore * Math.min(1, this.options.compression * 1.08),
+            pressCore * Math.min(1, this.options.compression * 1.12),
           );
           if (targetCompression >= this.pressTargets[state + 2]) {
-            const blend = (0.72 + pressCore * 0.18) * smoothstep(0, 1, falloff);
+            const blend = (0.72 + pressCore * 0.23) * smoothstep(0, 1, falloff);
             this.pressTargets[state] = targetX;
             this.pressTargets[state + 1] = targetY;
             this.pressTargets[state + 2] = targetCompression;
@@ -380,10 +380,10 @@
             this.state[state + 2] += (targetCompression - this.state[state + 2]) * blend;
           }
         } else {
-          const hoverTargetX = directionX * falloff * 0.52;
-          const hoverTargetY = directionY * falloff * 0.52;
-          const hoverCompression = falloff * falloff * this.options.compression * 0.18;
-          const blend = 0.42 * smoothstep(0, 1, falloff);
+          const hoverTargetX = directionX * falloff * 0.68;
+          const hoverTargetY = directionY * falloff * 0.68;
+          const hoverCompression = falloff * falloff * this.options.compression * 0.34;
+          const blend = 0.55 * smoothstep(0, 1, falloff);
           this.pressTargets[state] = hoverTargetX;
           this.pressTargets[state + 1] = hoverTargetY;
           this.pressTargets[state + 2] = hoverCompression;
@@ -421,7 +421,6 @@
         this.setReducedPress(false);
       } else {
         this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
-        if (this.recoveryDelayRemaining === 0) this.pressTargets?.fill(0);
       }
       this.wake();
     }
@@ -454,7 +453,6 @@
         this.setReducedPress(false);
       } else {
         this.recoveryDelayRemaining = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
-        if (this.recoveryDelayRemaining === 0) this.pressTargets?.fill(0);
       }
       this.wake();
     }
@@ -490,15 +488,15 @@
         const seedAngle = this.rootSeeds[index * 5 + 3];
         const outwardX = distance > 0.5 ? deltaX / safeDistance : Math.cos(seedAngle);
         const outwardY = distance > 0.5 ? deltaY / safeDistance : Math.sin(seedAngle);
-        const pressCore = 1 - smoothstep(0, 0.34, normalizedDistance);
-        const splay = 1 - pressCore * 0.92;
-        const targetX = outwardX * falloff * 0.82 * splay;
-        const targetY = outwardY * falloff * 0.82 * splay;
+        const pressCore = 1 - smoothstep(0.04, 0.42, normalizedDistance);
+        const splay = 1 - pressCore * 0.96;
+        const targetX = outwardX * falloff * 0.88 * splay;
+        const targetY = outwardY * falloff * 0.88 * splay;
         const targetCompression = Math.max(
           falloff * falloff * this.options.compression,
-          pressCore * Math.min(1, this.options.compression * 1.08),
+          pressCore * Math.min(1, this.options.compression * 1.12),
         );
-        const blend = Math.min(0.98, strength + pressCore * 0.14) * smoothstep(0, 1, falloff);
+        const blend = Math.min(0.99, strength + pressCore * 0.17) * smoothstep(0, 1, falloff);
         const state = index * 3;
 
         this.state[state] += (targetX - this.state[state]) * blend;
@@ -519,15 +517,24 @@
       const damping = this.options.damping;
       const delayedRelease = !this.pressed && this.recoveryDelayRemaining > 0;
       if (delayedRelease) this.recoveryDelayRemaining = Math.max(0, this.recoveryDelayRemaining - step);
-      const releaseJustEnded = delayedRelease && this.recoveryDelayRemaining === 0;
-      if (releaseJustEnded) this.pressTargets.fill(0);
-      const keepPressTarget = this.pressed || (delayedRelease && !releaseJustEnded);
+      const releasing = !this.pressed && this.recoveryDelayRemaining === 0;
       let maximumEnergy = 0;
       for (let index = 0; index < this.count; index += 1) {
         const state = index * 3;
-        const targetX = keepPressTarget ? this.pressTargets[state] : 0;
-        const targetY = keepPressTarget ? this.pressTargets[state + 1] : 0;
-        const targetCompression = keepPressTarget ? this.pressTargets[state + 2] : 0;
+        if (releasing) {
+          const recoveryVariation = this.rootSeeds[index * 5 + 4];
+          const bendRetention = Math.exp(-step * (1.55 + recoveryVariation * 1.15));
+          const compressionRetention = Math.exp(-step * (1.15 + recoveryVariation * 0.85));
+          this.pressTargets[state] *= bendRetention;
+          this.pressTargets[state + 1] *= bendRetention;
+          this.pressTargets[state + 2] *= compressionRetention;
+          if (Math.abs(this.pressTargets[state]) < 0.001) this.pressTargets[state] = 0;
+          if (Math.abs(this.pressTargets[state + 1]) < 0.001) this.pressTargets[state + 1] = 0;
+          if (this.pressTargets[state + 2] < 0.001) this.pressTargets[state + 2] = 0;
+        }
+        const targetX = this.pressTargets[state];
+        const targetY = this.pressTargets[state + 1];
+        const targetCompression = this.pressTargets[state + 2];
 
         for (let component = 0; component < 3; component += 1) {
           const target = component === 0 ? targetX : component === 1 ? targetY : targetCompression;
@@ -537,7 +544,12 @@
           this.state[offset] += this.velocity[offset] * step;
           if (component < 2) this.state[offset] = clamp(this.state[offset], -1.35, 1.35);
           else this.state[offset] = clamp(this.state[offset], -0.08, 1);
-          maximumEnergy = Math.max(maximumEnergy, Math.abs(this.state[offset] - target), Math.abs(this.velocity[offset]) * 0.08);
+          maximumEnergy = Math.max(
+            maximumEnergy,
+            Math.abs(target) * 0.22,
+            Math.abs(this.state[offset] - target),
+            Math.abs(this.velocity[offset]) * 0.08,
+          );
         }
       }
       return maximumEnergy;

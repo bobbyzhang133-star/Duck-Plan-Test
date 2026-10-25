@@ -4,7 +4,12 @@
 
 `fur-material.js` renders short duck-down-inspired fibers with native WebGL2. Each fiber is an instanced tapered strand with a fixed root, natural length/orientation variation, dynamic bend vector, compression value, and spring velocity. A surface uses one draw call rather than one DOM node per fiber.
 
-Pointer movement adds localized directional impulses with distance falloff. Each event sweeps a continuous segment from the previous pointer position, so fast motion cannot leave untouched gaps between sparse browser events. Hover-brushed and pressed drags both store their swept targets, preserving continuous physical trails that share the configurable recovery delay. A press uses a two-part contact profile: fibers in the center compress almost straight down while the surrounding ring bends outward. After the delay, the frame-rate-independent spring–damper simulation returns each strand to rest. The default spring uses an overdamped response, so fibers lift progressively with little to no overshoot instead of snapping back or bouncing.
+Pointer movement adds localized directional impulses with distance falloff. Each event sweeps a continuous segment from the previous pointer position, so fast motion cannot leave untouched gaps between sparse browser events. Hover-brushed and pressed drags both store their swept targets, preserving continuous physical trails that share the configurable recovery delay. A press uses a layered contact profile: the broad center mats almost flat and exposes darker roots, a transition ring bends strongly, and the outer pile splays away from the force. After the delay, stored targets decay at slightly different seed-based rates to approximate friction and entanglement between neighboring fibers. The frame-rate-independent overdamped spring then lifts each strand without a synchronized snap or bounce.
+
+## Physical references
+
+- Matthew Fuller's University of Leeds research on duck, goose, and eider down describes branching barbules that occupy space efficiently and reports excellent compressibility and compression recovery: <https://etheses.whiterose.ac.uk/id/eprint/9268/>
+- Experiments on indentation of hairy surfaces attribute loading–unloading hysteresis to friction between fibers and between the pile and the indenter. DuckPlan approximates that effect with delayed, varied target decay rather than a perfectly simultaneous release: <https://doi.org/10.1016/j.triboint.2014.11.009>
 
 The vertex shader changes the projected strand geometry. The fragment shader provides darker roots, cream-colored tips, orientation-dependent lighting, and compression-dependent occlusion. The approved PNG is used only when WebGL2 is unavailable or a context is lost.
 
