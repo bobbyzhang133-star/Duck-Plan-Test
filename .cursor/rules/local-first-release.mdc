@@ -1,0 +1,14 @@
+---
+description: Require local review and explicit approval before publishing website changes.
+alwaysApply: true
+---
+
+# Local-First Release Workflow
+
+- Build and revise website changes in the local project first.
+- Run appropriate checks, start a loopback preview, and open that local preview for the user to review.
+- Clearly identify the preview as local so it is not confused with the current public deployment.
+- Continue iterating locally until the user explicitly approves the local version for publication.
+- Do not deploy to Netlify or another public host, trigger a production release, or claim the public URL is updated before that approval.
+- A collaborative feature-branch push is allowed when required by the project workflow, but it does not authorize a public deployment.
+- After approval, pull the latest shared changes, run final verification, publish the approved version, and verify the resulting public URL.

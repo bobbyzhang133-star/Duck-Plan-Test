@@ -4,6 +4,7 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
 
 ### Project Rules
  - Follow `.cursor/rules/button-interactions.mdc` for every button and button-like control across the project.
+ - Follow `.cursor/rules/local-first-release.mdc` for all website work: review changes locally and obtain explicit approval before any public deployment.
 ## Ideation
  - ~~flashcard app~~
  - [x] digital planner linked with Axis
@@ -109,4 +110,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-25: Increased procedural strand density several-fold across all quality levels, raising the inspection surface to 30,000 fibers and production controls to a much denser area-scaled profile so the resting material reads as continuous duck down rather than separated points.
  - 2026-10-25: Removed whole-control scaling and brightness changes from pressed fur surfaces so the panel stays stationary and all tactile feedback comes from localized strand compression and bending.
  - 2026-10-25: Strengthened the stationary fur-surface rule across hover and press states, and added an immediate pointer-down imprint so fibers visibly compress at contact before continuing through spring-based motion and recovery.
+ - 2026-10-25: Added a local-first release rule requiring website changes to be previewed and explicitly approved locally before any public deployment.
 
