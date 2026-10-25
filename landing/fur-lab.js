@@ -12,7 +12,7 @@
     stiffness: 62,
     damping: 22,
     radius: 72,
-    recoveryDelay: 450,
+    recoveryDelay: 2000,
   };
 
   if (!window.DuckFur) {

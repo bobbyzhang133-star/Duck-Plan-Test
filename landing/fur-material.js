@@ -10,7 +10,7 @@
     radius: 54,
     brushStrength: 5.8,
     compression: 0.92,
-    recoveryDelay: 450,
+    recoveryDelay: 2000,
   });
 
   const QUALITY = Object.freeze({

@@ -115,4 +115,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-25: Extended the local fur recovery-delay control to 2,000 ms so longer press impressions can be tested before publication approval.
  - 2026-10-25: Replaced point-sampled brushing with continuous swept-segment interaction and stored per-fiber press targets so quick mouse movement cannot miss the middle of the trail, and the whole pressed path respects the recovery delay.
  - 2026-10-25: Retuned fur recovery as an overdamped motion with a 450 ms default linger, slower progressive lift, and little to no springy rebound; preserved the adjustable 0–2,000 ms recovery-delay range for local testing.
+ - 2026-10-25: Extended the fur impression to linger for 2 seconds by default, with a locally adjustable recovery delay up to 5 seconds before the smooth overdamped lift begins.
 
