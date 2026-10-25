@@ -101,4 +101,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Strengthened the web material treatment after visual review by lowering control-layer opacity, adding visible color behind the glass, increasing blur and saturation, and adding bright edge highlights while keeping content surfaces opaque and readable.
  - 2026-10-24: Refined the New Task dialog into a distinct thick-material sheet: the form now carries the translucent blurred surface, inputs use a more opaque control fill for legibility, and the dimmed backdrop preserves page context.
  - 2026-10-24: Added a project-wide button interaction rule requiring distinct hover, pressed/click, keyboard-focus, disabled, and reduced-motion behavior for every button-like control.
+ - 2026-10-24: Applied the button interaction rule to the current web prototype with project-wide pressed feedback and disabled behavior, plus tailored hover responses for navigation, primary controls, text actions, filters, profile controls, and icon buttons.
 
