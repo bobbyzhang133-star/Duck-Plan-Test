@@ -3,373 +3,130 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="DuckPlan is a student planner that brings classes, assignments, tasks, and calendars together."
-    />
+    <meta name="description" content="DuckPlan is a calm student planner for classes, assignments, tasks, and calendars." />
+    <meta name="theme-color" content="#173f33" />
     <link rel="icon" type="image/png" href="./assets/duckplan-mascot-v8.png" />
-    <title>DuckPlan | Student planning, all in one place</title>
-    <style>
-      :root {
-        color-scheme: light;
-        --ink: #17221b;
-        --muted: #536157;
-        --cream: #fffaf0;
-        --yellow: #ffd45a;
-        --orange: #e98731;
-        --green: #244d38;
-        --green-light: #d9eadf;
-        --card: rgba(255, 255, 255, 0.82);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        min-height: 100vh;
-        color: var(--ink);
-        font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
-        background:
-          radial-gradient(circle at 12% 15%, rgba(255, 212, 90, 0.38), transparent 30%),
-          radial-gradient(circle at 88% 80%, rgba(36, 77, 56, 0.18), transparent 33%),
-          var(--cream);
-      }
-
-      main {
-        width: min(1080px, calc(100% - 36px));
-        margin: 0 auto;
-        padding: 28px 0 48px;
-      }
-
-      nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1.15rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-
-      .duck {
-        display: grid;
-        width: 42px;
-        height: 42px;
-        place-items: center;
-        border: 2px solid var(--ink);
-        border-radius: 14px;
-        background: var(--yellow);
-        box-shadow: 3px 3px 0 var(--ink);
-        overflow: hidden;
-      }
-
-      .duck img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: 62% top;
-      }
-
-      .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 13px;
-        border: 1px solid rgba(23, 34, 27, 0.16);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.6);
-        color: var(--muted);
-        font-size: 0.86rem;
-        font-weight: 650;
-      }
-
-      .status::before {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: var(--orange);
-        content: "";
-        box-shadow: 0 0 0 4px rgba(233, 135, 49, 0.14);
-      }
-
-      .hero {
-        display: grid;
-        min-height: calc(100vh - 150px);
-        align-items: center;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: clamp(38px, 7vw, 96px);
-        padding: 80px 0 56px;
-      }
-
-      .eyebrow {
-        margin: 0 0 18px;
-        color: var(--green);
-        font-size: 0.78rem;
-        font-weight: 850;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-      }
-
-      h1 {
-        max-width: 760px;
-        margin: 0;
-        font-size: clamp(3.4rem, 8vw, 7.2rem);
-        line-height: 0.9;
-        letter-spacing: -0.07em;
-      }
-
-      h1 span {
-        position: relative;
-        color: var(--green);
-        white-space: nowrap;
-      }
-
-      h1 span::after {
-        position: absolute;
-        right: 0;
-        bottom: 0.02em;
-        left: 0;
-        z-index: -1;
-        height: 0.18em;
-        border-radius: 999px;
-        background: var(--yellow);
-        content: "";
-        transform: rotate(-1.5deg);
-      }
-
-      .lede {
-        max-width: 620px;
-        margin: 28px 0 0;
-        color: var(--muted);
-        font-size: clamp(1.05rem, 2vw, 1.28rem);
-        line-height: 1.65;
-      }
-
-      .team {
-        margin: 24px 0 0;
-        color: var(--green);
-        font-size: 0.93rem;
-        font-weight: 720;
-      }
-
-      .preview {
-        position: relative;
-        padding: 22px;
-        border: 2px solid var(--ink);
-        border-radius: 30px;
-        background: var(--card);
-        box-shadow: 10px 10px 0 var(--ink);
-        transform: rotate(2deg);
-        backdrop-filter: blur(12px);
-      }
-
-      .preview-duck {
-        position: absolute;
-        top: -96px;
-        right: 10px;
-        width: 148px;
-        height: 148px;
-        object-fit: contain;
-        filter: drop-shadow(4px 5px 0 rgba(23, 34, 27, 0.9));
-        pointer-events: none;
-        transform: rotate(-7deg);
-      }
-
-      .preview-header {
-        display: flex;
-        align-items: flex-start;
-        flex-direction: column;
-        justify-content: flex-start;
-        gap: 4px;
-        margin-bottom: 22px;
-        padding-right: 104px;
-      }
-
-      .preview-header strong {
-        font-size: 1.05rem;
-      }
-
-      .date {
-        color: var(--muted);
-        font-size: 0.8rem;
-        font-weight: 650;
-      }
-
-      .task {
-        display: grid;
-        align-items: center;
-        grid-template-columns: 12px 1fr auto;
-        gap: 12px;
-        padding: 15px 0;
-        border-top: 1px solid rgba(23, 34, 27, 0.12);
-      }
-
-      .task-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: var(--yellow);
-        box-shadow: inset 0 0 0 2px rgba(23, 34, 27, 0.18);
-      }
-
-      .task:nth-child(3) .task-dot {
-        background: #83b6e2;
-      }
-
-      .task:nth-child(4) .task-dot {
-        background: #ec9aa7;
-      }
-
-      .task-name {
-        font-size: 0.91rem;
-        font-weight: 720;
-      }
-
-      .task-class {
-        margin-top: 4px;
-        color: var(--muted);
-        font-size: 0.76rem;
-      }
-
-      .task time {
-        color: var(--green);
-        font-size: 0.76rem;
-        font-weight: 760;
-      }
-
-      .coming-soon {
-        margin-top: 18px;
-        padding: 14px 16px;
-        border-radius: 16px;
-        background: var(--green-light);
-        color: var(--green);
-        font-size: 0.84rem;
-        font-weight: 760;
-        text-align: center;
-      }
-
-      footer {
-        color: var(--muted);
-        font-size: 0.78rem;
-        text-align: center;
-      }
-
-      @media (max-width: 780px) {
-        .hero {
-          grid-template-columns: 1fr;
-          padding-top: 64px;
-        }
-
-        .preview {
-          width: min(100%, 520px);
-          margin: 0 auto;
-          transform: rotate(0);
-        }
-
-        .preview-duck {
-          top: -78px;
-          right: 8px;
-          width: 124px;
-          height: 124px;
-        }
-
-        .preview-header {
-          padding-right: 82px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        main {
-          width: min(100% - 26px, 1080px);
-        }
-
-        .status {
-          padding: 8px 10px;
-          font-size: 0.74rem;
-        }
-
-        .hero {
-          min-height: auto;
-          padding-top: 54px;
-        }
-
-        h1 {
-          font-size: clamp(3.1rem, 17vw, 4.8rem);
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="./styles.css" />
+    <title>DuckPlan | Your school day, sorted</title>
   </head>
   <body>
-    <main>
-      <nav aria-label="Primary navigation">
-        <div class="brand">
-          <span class="duck" aria-hidden="true">
-            <img src="./assets/duckplan-mascot-v8.png" alt="" />
-          </span>
-          DuckPlan
-        </div>
-        <div class="status">In development</div>
-      </nav>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#today" data-go="today" aria-label="DuckPlan home">
+          <span class="brand-mark"><img src="./assets/duckplan-mascot-v8.png" alt="" /></span>
+          <span>DuckPlan</span>
+        </a>
+        <nav class="primary-nav" aria-label="Planner navigation">
+          <button class="nav-item active" type="button" data-view="today"><span class="nav-icon" aria-hidden="true">⌂</span><span>Today</span></button>
+          <button class="nav-item" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true">□</span><span>Calendar</span></button>
+          <button class="nav-item" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true">✓</span><span>Tasks</span><span class="nav-count" id="task-count">5</span></button>
+          <button class="nav-item" type="button" data-view="classes"><span class="nav-icon" aria-hidden="true">◫</span><span>Classes</span></button>
+        </nav>
+        <section class="sync-card" aria-label="Axis connection status">
+          <div class="sync-icon" aria-hidden="true">↻</div>
+          <div><p class="sync-title">Axis sync</p><p class="sync-copy">Prototype mode</p></div>
+          <button type="button" id="sync-info" aria-label="Learn about Axis sync">i</button>
+        </section>
+        <div class="sidebar-spacer"></div>
+        <button class="profile-card" type="button" data-view="settings">
+          <span class="avatar" aria-hidden="true">BZ</span>
+          <span><strong>Bobby</strong><small>Student account</small></span><span aria-hidden="true">›</span>
+        </button>
+      </aside>
 
-      <section class="hero">
-        <div>
-          <p class="eyebrow">A smarter student planner</p>
-          <h1>Plan less.<br /><span>Do more.</span></h1>
-          <p class="lede">
-            DuckPlan brings classes, assignments, personal tasks, and your calendar into one
-            organized place—so you always know what is next.
-          </p>
-          <p class="team">Built by Michael, Bobby, and Priya.</p>
-        </div>
+      <main class="workspace">
+        <header class="topbar">
+          <div><p class="eyebrow" id="page-eyebrow">Your plan for today</p><h1 id="page-title">Good afternoon, Bobby.</h1></div>
+          <div class="topbar-actions">
+            <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">Search tasks</span><input id="global-search" type="search" placeholder="Search your planner" autocomplete="off" /></label>
+            <button class="icon-button" type="button" id="notification-button" aria-label="Notifications"><span aria-hidden="true">♢</span><span class="notification-dot"></span></button>
+            <button class="primary-button" type="button" id="open-task-modal"><span aria-hidden="true">＋</span> Add task</button>
+          </div>
+        </header>
 
-        <div class="preview" aria-label="Preview of a DuckPlan task list">
-          <img
-            class="preview-duck"
-            src="./assets/duckplan-mascot-v8.png"
-            alt="A confident white-and-yellow DuckPlan mascot"
-          />
-          <div class="preview-header">
-            <strong>Today</strong>
-            <span class="date">Your day at a glance</span>
+        <section class="view active" id="view-today" data-page-title="Good afternoon, Bobby." data-eyebrow="Your plan for today">
+          <div class="summary-grid">
+            <article class="summary-card progress-card">
+              <div class="summary-head"><span class="summary-icon yellow" aria-hidden="true">✓</span><span class="trend">On track</span></div>
+              <p class="summary-value"><span id="done-count">2</span>/<span id="total-count">7</span></p><p class="summary-label">Tasks completed</p>
+              <div class="progress-track" aria-label="Task completion progress"><span id="progress-fill"></span></div>
+            </article>
+            <article class="summary-card">
+              <div class="summary-head"><span class="summary-icon blue" aria-hidden="true">◫</span><span class="muted-label">Next up</span></div>
+              <p class="summary-value compact">Calculus</p><p class="summary-label">Practice set · 3:30 PM</p>
+              <button class="text-button" type="button" data-go="calendar">View schedule <span>→</span></button>
+            </article>
+            <article class="summary-card">
+              <div class="summary-head"><span class="summary-icon coral" aria-hidden="true">!</span><span class="muted-label">This week</span></div>
+              <p class="summary-value">3</p><p class="summary-label">Assignments due</p>
+              <div class="mini-avatars" aria-label="Classes with assignments due"><span class="class-avatar math">M</span><span class="class-avatar english">E</span><span class="class-avatar physics">P</span></div>
+            </article>
           </div>
-          <div class="task">
-            <span class="task-dot" aria-hidden="true"></span>
-            <div>
-              <div class="task-name">Finish reading response</div>
-              <div class="task-class">English</div>
-            </div>
-            <time>3:30 PM</time>
-          </div>
-          <div class="task">
-            <span class="task-dot" aria-hidden="true"></span>
-            <div>
-              <div class="task-name">Review practice problems</div>
-              <div class="task-class">Calculus</div>
-            </div>
-            <time>5:00 PM</time>
-          </div>
-          <div class="task">
-            <span class="task-dot" aria-hidden="true"></span>
-            <div>
-              <div class="task-name">Prepare lab notes</div>
-              <div class="task-class">Physics</div>
-            </div>
-            <time>Tomorrow</time>
-          </div>
-          <div class="coming-soon">The full planner is coming soon.</div>
-        </div>
-      </section>
 
-      <footer>DuckPlan · Student planning with a little more calm.</footer>
-    </main>
+          <div class="dashboard-grid">
+            <section class="panel today-panel">
+              <div class="panel-heading"><div><p class="section-kicker">Focus list</p><h2>Today</h2></div><button class="text-button" type="button" data-go="tasks">All tasks <span>→</span></button></div>
+              <div class="task-list" id="today-task-list"></div>
+            </section>
+            <aside class="right-stack">
+              <section class="focus-card">
+                <div class="focus-copy"><span class="focus-pill">Smart suggestion</span><h2>Start with calculus.</h2><p>It is due soon and should take about 35 minutes.</p><button type="button" class="dark-button" data-focus-task="calculus-practice">Start focus</button></div>
+                <img src="./assets/duckplan-mascot-v8.png" alt="DuckPlan mascot pointing thoughtfully" />
+              </section>
+              <section class="panel class-panel">
+                <div class="panel-heading compact-heading"><div><p class="section-kicker">At a glance</p><h2>My classes</h2></div><button class="text-button" type="button" data-go="classes">Manage</button></div>
+                <div id="mini-class-list"></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-calendar" data-page-title="Your week, organized." data-eyebrow="Calendar">
+          <section class="panel calendar-panel">
+            <div class="panel-heading calendar-heading">
+              <div><p class="section-kicker">Week view</p><h2 id="calendar-range">October 19–25</h2></div>
+              <div class="calendar-controls" aria-label="Calendar controls"><button type="button" id="previous-week" aria-label="Previous week">←</button><button type="button" id="current-week">Today</button><button type="button" id="next-week" aria-label="Next week">→</button></div>
+            </div>
+            <div class="week-calendar" id="week-calendar" aria-label="Weekly calendar"></div>
+          </section>
+        </section>
+
+        <section class="view" id="view-tasks" data-page-title="Everything in one place." data-eyebrow="Tasks">
+          <section class="panel tasks-panel">
+            <div class="panel-heading task-heading">
+              <div><p class="section-kicker">Assignments and to-dos</p><h2>All tasks</h2></div>
+              <div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all">All</button><button class="filter-chip" type="button" data-filter="today">Today</button><button class="filter-chip" type="button" data-filter="upcoming">Upcoming</button><button class="filter-chip" type="button" data-filter="done">Done</button></div>
+            </div>
+            <div class="task-list expanded" id="all-task-list"></div>
+            <div class="empty-state" id="task-empty" hidden><img src="./assets/duckplan-mascot-v8.png" alt="" /><h3>Nothing here yet.</h3><p>Try another filter or add a new task.</p></div>
+          </section>
+        </section>
+
+        <section class="view" id="view-classes" data-page-title="Keep every class sorted." data-eyebrow="Classes"><div class="class-grid" id="class-grid"></div></section>
+
+        <section class="view" id="view-settings" data-page-title="Make DuckPlan yours." data-eyebrow="Settings">
+          <section class="panel settings-panel">
+            <div class="settings-row"><div><h2>Axis connection</h2><p>Import classes and assignments when integration details are confirmed.</p></div><button type="button" class="secondary-button" id="connect-axis">Connect later</button></div>
+            <div class="settings-row"><div><h2>Reminders</h2><p>Get a nudge before important assignments are due.</p></div><label class="switch"><input type="checkbox" checked /><span></span><span class="sr-only">Enable reminders</span></label></div>
+            <div class="settings-row"><div><h2>Local demo data</h2><p>Reset the tasks in this prototype to their original state.</p></div><button type="button" class="secondary-button" id="reset-demo">Reset demo</button></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="task-modal" id="task-modal">
+      <form method="dialog" id="task-form">
+        <div class="modal-heading"><div><p class="section-kicker">Quick add</p><h2>New task</h2></div><button class="close-button" type="button" id="close-task-modal" aria-label="Close">×</button></div>
+        <label>Task name<input name="title" required maxlength="80" placeholder="What needs to get done?" /></label>
+        <div class="form-grid">
+          <label>Class<select name="className"><option>Calculus</option><option>English</option><option>Physics</option><option>Computer Science</option><option>Personal</option></select></label>
+          <label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label>
+          <label>Due date<input name="dueDate" type="date" required /></label><label>Time<input name="dueTime" type="time" value="15:30" /></label>
+        </div>
+        <div class="modal-actions"><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit">Add to DuckPlan</button></div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
   </body>
 </html>
