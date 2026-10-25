@@ -96,4 +96,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Refined the responsive web prototype using Apple Human Interface Guidelines: clearer visual hierarchy, system typography, larger readable labels, 44px-class touch targets, semantic selected states, restrained materials, and adaptive sidebar-to-tab-bar navigation on phones.
  - 2026-10-24: Applied Apple material guidance to DuckPlan: regular translucent materials now distinguish navigation and controls from opaque content surfaces, with stronger contrast, restrained blur, reduced-transparency support, and solid fallbacks for browsers without backdrop filtering.
  - 2026-10-24: Strengthened the web material treatment after visual review by lowering control-layer opacity, adding visible color behind the glass, increasing blur and saturation, and adding bright edge highlights while keeping content surfaces opaque and readable.
+ - 2026-10-24: Refined the New Task dialog into a distinct thick-material sheet: the form now carries the translucent blurred surface, inputs use a more opaque control fill for legibility, and the dimmed backdrop preserves page context.
 

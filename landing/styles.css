@@ -215,14 +215,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .switch input:checked + span::before { transform: translateX(20px); }
 .switch input:focus-visible + span { outline: 3px solid #8c5b00; outline-offset: 3px; }
 
-.task-modal { width: min(560px, calc(100% - 28px)); padding: 0; border: 1px solid var(--material-border); border-radius: 24px; color: var(--ink-deep); background: linear-gradient(145deg, rgba(255,255,255,0.86), rgba(255,255,255,0.64)); box-shadow: 0 30px 90px rgba(62,43,7,0.3), inset 0 1px 0 rgba(255,255,255,0.96); -webkit-backdrop-filter: blur(32px) saturate(155%); backdrop-filter: blur(32px) saturate(155%); }
-.task-modal::backdrop { background: rgba(43, 33, 13, 0.5); backdrop-filter: blur(3px); }
-.task-modal form { padding: 25px; }
+.task-modal { width: min(560px, calc(100% - 28px)); padding: 0; overflow: visible; border: 0; color: var(--ink-deep); background: transparent; }
+.task-modal::backdrop { background: rgba(43, 33, 13, 0.38); -webkit-backdrop-filter: blur(6px) saturate(115%); backdrop-filter: blur(6px) saturate(115%); }
+.task-modal form { position: relative; padding: 25px; overflow: hidden; border: 1px solid rgba(255,255,255,0.9); border-radius: 24px; background: linear-gradient(145deg, rgba(255,255,255,0.72), rgba(255,255,255,0.36)), linear-gradient(100deg, rgba(255,202,50,0.12), rgba(154,210,244,0.14)); box-shadow: 0 30px 90px rgba(62,43,7,0.28), inset 0 1px 0 rgba(255,255,255,0.98), inset 0 0 0 1px rgba(255,255,255,0.24); -webkit-backdrop-filter: blur(36px) saturate(180%); backdrop-filter: blur(36px) saturate(180%); }
+.task-modal form::before { position: absolute; inset: 0; z-index: 0; background: radial-gradient(circle at 0 0, rgba(255,202,50,0.18), transparent 42%), radial-gradient(circle at 100% 100%, rgba(154,210,244,0.2), transparent 44%); content: ""; pointer-events: none; }
+.task-modal form > * { position: relative; z-index: 1; }
 .modal-heading { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; }
 .modal-heading h2 { margin: 0; font-size: 1.35rem; }
-.close-button { border: 0; background: var(--canvas); font-size: 1.4rem; }
+.close-button { border: 1px solid rgba(255,255,255,0.88); background: linear-gradient(145deg, rgba(255,255,255,0.74), rgba(255,255,255,0.36)); font-size: 1.4rem; }
 .task-modal label { display: grid; gap: 7px; color: var(--ink); font-size: 0.82rem; font-weight: 700; }
-.task-modal input, .task-modal select { width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--ink-deep); background: white; }
+.task-modal input, .task-modal select { width: 100%; height: 44px; padding: 0 12px; border: 1px solid rgba(255,255,255,0.9); border-radius: 11px; color: var(--ink-deep); background: rgba(255,255,255,0.86); box-shadow: inset 0 1px 0 rgba(255,255,255,0.96), 0 4px 14px rgba(74,52,10,0.06); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 24px; }
 .toast { position: fixed; right: 24px; bottom: 24px; z-index: 20; max-width: 340px; padding: 13px 16px; border-radius: 14px; color: white; background: var(--ink-deep); box-shadow: 0 12px 34px rgba(0,0,0,0.22); font-size: 0.84rem; font-weight: 650; opacity: 0; pointer-events: none; transform: translateY(12px); transition: 180ms ease; }
@@ -275,13 +277,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 @media (prefers-reduced-transparency: reduce) {
   .sidebar { background: linear-gradient(155deg, #ffe58d, #f8c943 72%, #efb72a); }
-  .topbar, .primary-nav, .search-box, .icon-button, .calendar-controls button, .close-button, .secondary-button, .filter-chip, .task-modal { background: #fffdf7; }
+  .topbar, .primary-nav, .search-box, .icon-button, .calendar-controls button, .close-button, .secondary-button, .filter-chip, .task-modal form { background: #fffdf7; }
   .nav-item.active, .sync-card { background: white; }
-  .sidebar, .topbar, .primary-nav, .search-box, .icon-button, .calendar-controls button, .close-button, .secondary-button, .filter-chip, .task-modal, .nav-item.active, .sync-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .sidebar, .topbar, .primary-nav, .search-box, .icon-button, .calendar-controls button, .close-button, .secondary-button, .filter-chip, .task-modal form, .nav-item.active, .sync-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .sidebar { background: linear-gradient(155deg, #ffe58d, #f8c943 72%, #efb72a); }
-  .topbar, .primary-nav, .search-box, .icon-button, .calendar-controls button, .close-button, .secondary-button, .filter-chip, .task-modal { background: #fffdf7; }
+  .topbar, .primary-nav, .search-box, .icon-button, .calendar-controls button, .close-button, .secondary-button, .filter-chip, .task-modal form { background: #fffdf7; }
   .nav-item.active, .sync-card { background: white; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
