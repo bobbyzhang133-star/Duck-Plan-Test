@@ -19,7 +19,7 @@
     return;
   }
 
-  const stage = window.DuckFur.mount(stageElement, { ...defaults, maxFibers: 9000 });
+  const stage = window.DuckFur.mount(stageElement, { ...defaults, maxFibers: 30000 });
   const button = window.DuckFur.mount(buttonElement, {
     quality: "medium",
     density: 1,
@@ -56,7 +56,7 @@
     updateFrame = requestAnimationFrame(() => {
       const parameters = values();
       updateOutputs(parameters);
-      stage.setParameters({ ...parameters, maxFibers: 9000 });
+      stage.setParameters({ ...parameters, maxFibers: 30000 });
     });
   }
 

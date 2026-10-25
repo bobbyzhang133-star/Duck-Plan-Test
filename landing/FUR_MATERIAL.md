@@ -17,10 +17,10 @@ Each selected surface currently owns a small WebGL context. This is appropriate 
 ## Performance and lifecycle
 
 - Low, medium, and high quality levels centralize pixel density, strand density, and fiber caps.
-- Production buttons use medium quality and generally render a few hundred fibers.
-- The lab's high-quality surface renders up to 9,000 fibers in one instanced draw call.
+- Production buttons use medium quality and generally render roughly 1,000–2,000 fibers, depending on their area.
+- The lab's high-quality surface renders up to 30,000 fibers in one instanced draw call, while production controls use a denser medium-quality profile sized to their area.
 - Rendering stops when the spring reaches rest, the surface leaves the viewport, or the document becomes hidden.
-- On the development machine, the 9,000-fiber lab surface sustained 60 FPS during a held press.
+- Performance is displayed live in the material lab so high-density tuning can be checked on the current device. The 30,000-fiber surface sustained 60 FPS during a held-press test on the development machine.
 - Low-power devices reduce device-pixel ratio automatically.
 
 ## Accessibility and fallback

@@ -13,9 +13,9 @@
   });
 
   const QUALITY = Object.freeze({
-    low: { fibersPerPixel: 0.045, maxFibers: 680, dpr: 1.25 },
-    medium: { fibersPerPixel: 0.068, maxFibers: 1400, dpr: 1.75 },
-    high: { fibersPerPixel: 0.082, maxFibers: 9000, dpr: 2 },
+    low: { fibersPerPixel: 0.12, maxFibers: 1800, dpr: 1.25 },
+    medium: { fibersPerPixel: 0.28, maxFibers: 5200, dpr: 1.75 },
+    high: { fibersPerPixel: 0.35, maxFibers: 30000, dpr: 2 },
   });
 
   const registry = new WeakMap();
