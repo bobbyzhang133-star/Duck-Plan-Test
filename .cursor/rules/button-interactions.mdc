@@ -1,0 +1,14 @@
+---
+description: Require visible hover, pressed, and keyboard-focus feedback for every button-like control.
+alwaysApply: true
+---
+
+# Button Interaction Feedback
+
+- Every button and button-like control must have a visually distinct hover state on devices that support hover.
+- Every button must provide immediate pressed feedback on click or tap, such as a subtle scale, tint, elevation, or shadow change.
+- Hover and pressed effects must not shift the surrounding layout or reduce text readability.
+- Keep a clear `:focus-visible` state for keyboard users; hover must never be the only interaction cue.
+- Disabled controls must not show hover or pressed feedback and must look unavailable.
+- Respect reduced-motion preferences when an effect uses animation or movement.
+- Verify these states whenever a button is added or visually changed.

@@ -1,6 +1,9 @@
 # Plans and Discussion
 ## Procedures
 Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pull the agents.md file and check what has been done before beginning work, and ALWAYS record what you did in the agents.md file once finished, and ALWAYS push the agents.md file when work is being done.
+
+### Project Rules
+ - Follow `.cursor/rules/button-interactions.mdc` for every button and button-like control across the project.
 ## Ideation
  - ~~flashcard app~~
  - [x] digital planner linked with Axis
@@ -97,4 +100,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-24: Applied Apple material guidance to DuckPlan: regular translucent materials now distinguish navigation and controls from opaque content surfaces, with stronger contrast, restrained blur, reduced-transparency support, and solid fallbacks for browsers without backdrop filtering.
  - 2026-10-24: Strengthened the web material treatment after visual review by lowering control-layer opacity, adding visible color behind the glass, increasing blur and saturation, and adding bright edge highlights while keeping content surfaces opaque and readable.
  - 2026-10-24: Refined the New Task dialog into a distinct thick-material sheet: the form now carries the translucent blurred surface, inputs use a more opaque control fill for legibility, and the dimmed backdrop preserves page context.
+ - 2026-10-24: Added a project-wide button interaction rule requiring distinct hover, pressed/click, keyboard-focus, disabled, and reduced-motion behavior for every button-like control.
 
