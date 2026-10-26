@@ -1,0 +1,17 @@
+---
+description: Run the reusable Chat Check workflow against the test repository
+alwaysApply: true
+---
+
+# Chat Check
+
+When the user asks for a **Chat Check**:
+
+1. Verify the intended changes and project documentation are committed and pushed to `bobbyzhang133-star/Duck-Plan-Test`.
+2. Never publish or deploy the website as part of a Chat Check.
+3. Ask the user's Duck Plan ChatGPT project to inspect the current GitHub version and compare it with the repository plan and acceptance criteria.
+4. Include the current commit identifier and any review focus specified by the user.
+5. Ask for concrete mismatches, source-level causes, severity, and recommended next changes; do not ask for vague general feedback.
+6. Report where the review request was sent and summarize the response when one is available.
+
+Example: “Chat Check, focus on lettering” means push the test repository, then request a plan-compliance review centered on whether fur-formed words are readable at production button size.
