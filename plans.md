@@ -119,4 +119,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-25: Applied the recovery delay to hover-brushed trails as well as pressed drags, and refined click deformation into a deeply compressed center with an outward-splayed surrounding ring.
  - 2026-10-25: Refined the fur model from real down and hairy-surface mechanics: broader near-flat contact matting, stronger bent transition fibers, darker compressed roots, and friction-inspired staggered recovery across neighboring strands.
  - 2026-10-25: Rebuilt production fur buttons as fur-only silhouettes with no painted border or background: longer outward edge strands define the pill shape and darker masked strands form the visible label text while preserving semantic HTML labels and keyboard focus.
+ - 2026-10-26: Sharpened fur-built button lettering at production size by increasing silhouette density, shortening and aligning dark label strands, and tightening the glyph mask so words remain distinctly readable without painted text.
 

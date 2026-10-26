@@ -74,7 +74,8 @@
       float compression = clamp(a_state.z, 0.0, 1.0);
       float labelFiber = clamp(a_material.x, 0.0, 1.0);
       float edgeFiber = clamp(a_material.y, 0.0, 1.0);
-      float lengthPx = u_length * u_dpr * a_seed.x * (1.0 + labelFiber * 0.18 + edgeFiber * 0.24);
+      float labelLengthScale = mix(1.0, 0.36, labelFiber);
+      float lengthPx = u_length * u_dpr * a_seed.x * labelLengthScale * (1.0 + edgeFiber * 0.24);
       float heightScale = 1.0 - compression * 0.92;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z);
       vec2 bend = a_state.xy * lengthPx * 1.62;
@@ -82,7 +83,7 @@
       float projectedLength = max(length(direction), 1.15 * u_dpr);
       vec2 tangent = direction / projectedLength;
       vec2 normal = vec2(-tangent.y, tangent.x);
-      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * (1.0 + labelFiber * 0.42 + edgeFiber * 0.1);
+      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, 0.48, labelFiber) * (1.0 + edgeFiber * 0.1);
       float tipWidth = rootWidth * mix(0.82, 1.68, compression);
       float width = mix(rootWidth, tipWidth, a_corner.y);
       vec2 rootPx = a_root * u_resolution;
@@ -292,8 +293,9 @@
     rebuildFibers() {
       if (!this.gl || !this.width || !this.height) return;
       const quality = QUALITY[this.options.quality] || QUALITY.medium;
-      const customCap = Number(this.options.maxFibers) || quality.maxFibers;
-      const silhouetteDensity = this.options.silhouette ? 2.15 : 1;
+      const baseCap = Number(this.options.maxFibers) || quality.maxFibers;
+      const customCap = this.options.silhouette ? Math.round(baseCap * 2.2) : baseCap;
+      const silhouetteDensity = this.options.silhouette ? 3.15 : 1;
       this.count = Math.max(90, Math.min(customCap, Math.round(this.width * this.height * quality.fibersPerPixel * this.options.density * silhouetteDensity)));
       this.roots = new Float32Array(this.count * 2);
       this.rootSeeds = new Float32Array(this.count * 5);
@@ -329,14 +331,15 @@
           const outwardAngle = Math.atan2(pixelY - centerY, pixelX - centerX);
           const randomAngle = Math.random() * Math.PI * 2;
           const labelIndex = (Math.floor(pixelY) * this.width + Math.floor(pixelX)) * 4 + 3;
-          const labelFiber = labelRaster ? labelRaster[labelIndex] / 255 : 0;
+          const labelAlpha = labelRaster ? labelRaster[labelIndex] / 255 : 0;
+          const labelFiber = smoothstep(0.48, 0.9, labelAlpha);
           this.roots[rootOffset] = x;
           this.roots[rootOffset + 1] = y;
           this.rootSeeds[seedOffset] = x;
           this.rootSeeds[seedOffset + 1] = y;
           this.rootSeeds[seedOffset + 2] = 0.78 + Math.random() * 0.44;
           this.rootSeeds[seedOffset + 3] = labelFiber > 0.08
-            ? -Math.PI / 2 + (Math.random() - 0.5) * 0.34
+            ? -Math.PI / 2 + (Math.random() - 0.5) * 0.12
             : edgeFiber > 0.08
               ? outwardAngle + (Math.random() - 0.5) * 0.62
               : randomAngle;
@@ -388,12 +391,8 @@
       }
       context.clearRect(0, 0, this.width, this.height);
       context.fillStyle = "#fff";
-      context.strokeStyle = "#fff";
-      context.lineWidth = Math.max(1.2, size * 0.1);
-      context.lineJoin = "round";
       context.textAlign = "center";
       context.textBaseline = "middle";
-      context.strokeText(label, this.width / 2, this.height / 2 + size * 0.03);
       context.fillText(label, this.width / 2, this.height / 2 + size * 0.03);
       return context.getImageData(0, 0, this.width, this.height).data;
     }

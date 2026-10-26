@@ -13,7 +13,7 @@ Pointer movement adds localized directional impulses with distance falloff. Each
 
 The vertex shader changes the projected strand geometry. The fragment shader provides darker roots, cream-colored tips, orientation-dependent lighting, and compression-dependent occlusion. The approved PNG is used only when WebGL2 is unavailable or a context is lost.
 
-Production buttons use a fur-only silhouette mode. A rounded-rectangle distance field removes corner fibers without drawing a CSS border, while longer boundary strands lean outward to make a soft natural edge. The semantic DOM label is rasterized into a per-fiber mask; those selected fibers grow slightly longer and use a dark-brown duck-down palette to form the visible lettering. The original HTML label remains in the accessibility tree but is visually transparent, and keyboard focus keeps its separate high-contrast outline.
+Production buttons use a fur-only silhouette mode. A rounded-rectangle distance field removes corner fibers without drawing a CSS border, while longer boundary strands lean outward to make a soft natural edge. The semantic DOM label is rasterized into a per-fiber mask; a denser grid of short, consistently oriented dark-brown strands forms crisp visible lettering at production scale. The original HTML label remains in the accessibility tree but is visually transparent, and keyboard focus keeps its separate high-contrast outline.
 
 ## Integration choice
 
@@ -24,7 +24,7 @@ Each selected surface currently owns a small WebGL context. This is appropriate 
 ## Performance and lifecycle
 
 - Low, medium, and high quality levels centralize pixel density, strand density, and fiber caps.
-- Production buttons use medium quality and generally render roughly 1,000–2,000 fibers, depending on their area.
+- Production buttons use medium quality and generally render roughly 5,000–8,000 fibers, depending on their area, to keep fur-built lettering legible.
 - The lab's high-quality surface renders up to 30,000 fibers in one instanced draw call, while production controls use a denser medium-quality profile sized to their area.
 - Rendering stops when the spring reaches rest, the surface leaves the viewport, or the document becomes hidden.
 - Performance is displayed live in the material lab so high-density tuning can be checked on the current device. The 30,000-fiber surface sustained 60 FPS during a held-press test on the development machine.
