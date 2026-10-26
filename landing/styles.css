@@ -262,7 +262,7 @@ a.secondary-button { color: var(--ink-deep); text-decoration: none; }
 .fur-lab-header p:last-child { max-width: 680px; margin: 14px 0 0; color: var(--muted); }
 .fur-lab-back { display: inline-flex; min-height: 44px; align-items: center; color: var(--ink-deep); font-size: 0.86rem; font-weight: 780; text-decoration: none; }
 .fur-lab-badge { padding: 8px 11px; border: 1px solid rgba(95,62,0,0.18); border-radius: 999px; color: #5f3e00; background: var(--yellow-soft); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
-.fur-lab-grid { display: grid; align-items: start; grid-template-columns: minmax(0, 1fr) 310px; gap: 20px; margin-top: 20px; }
+.fur-lab-grid { display: grid; align-items: start; grid-template-columns: minmax(0, 1fr) 330px; gap: 20px; margin-top: 20px; }
 .fur-lab-preview-panel, .fur-controls { border: 1px solid rgba(158,116,31,0.18); border-radius: 24px; background: rgba(255,255,255,0.92); box-shadow: var(--shadow); }
 .fur-lab-preview-panel { padding: 22px; }
 .fur-lab-preview-heading, .fur-lab-button-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
@@ -270,9 +270,18 @@ a.secondary-button { color: var(--ink-deep); text-decoration: none; }
 #fur-performance { color: var(--muted); font-size: 0.72rem; text-align: right; }
 .fur-lab-stage { position: relative; display: grid; width: 100%; min-height: 430px; margin: 18px 0; place-items: center; overflow: hidden; border: 1px solid #d7aa2a; border-radius: 24px; color: rgba(43,33,13,0.7); background: linear-gradient(145deg, #f6c63d, #f8d76d); box-shadow: inset 0 1px 0 rgba(255,255,255,0.62), inset 0 -18px 42px rgba(126,78,0,0.08), 0 18px 42px rgba(76,52,6,0.14); cursor: crosshair; touch-action: none; }
 .fur-lab-stage > span { position: relative; z-index: 1; padding: 9px 13px; border: 1px solid rgba(255,255,255,0.58); border-radius: 999px; background: rgba(255,255,255,0.62); box-shadow: 0 7px 24px rgba(78,55,10,0.12); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-size: 0.8rem; font-weight: 760; pointer-events: none; }
+.fur-debug { display: flex; min-height: 34px; align-items: center; gap: 10px; margin: -7px 0 11px; color: var(--muted); font-size: 0.68rem; }
+.fur-debug-state { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; color: #315f27; background: #e4f3d9; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+.fur-debug-state.is-recovering { color: #714d00; background: #fff0b7; }
+.fur-debug code { overflow: hidden; font: 600 0.68rem/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .fur-lab-button-row { min-height: 86px; padding: 14px 4px 0; border-top: 1px solid var(--line); }
 .fur-demo-button { min-width: 192px; }
-.fur-controls { position: sticky; top: 20px; display: grid; gap: 17px; padding: 22px; }
+.fur-letter-comparisons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--line); }
+.fur-letter-comparisons article { display: grid; justify-items: start; gap: 8px; min-width: 0; }
+.fur-letter-comparisons article > span { color: var(--muted); font-size: 0.68rem; font-weight: 760; }
+.fur-compare-button { width: 100%; min-width: 0; min-height: 44px; padding-inline: 12px; }
+.fur-compare-production { max-width: 154px; min-height: 40px; font-size: 0.76rem; }
+.fur-controls { position: sticky; top: 12px; display: grid; max-height: calc(100vh - 24px); gap: 14px; overflow: auto; padding: 22px; scrollbar-width: thin; }
 .fur-controls-heading { padding-bottom: 4px; }
 .fur-control { display: grid; gap: 7px; }
 .fur-control > span { display: flex; justify-content: space-between; gap: 18px; color: var(--ink); font-size: 0.79rem; font-weight: 720; }
@@ -280,6 +289,7 @@ a.secondary-button { color: var(--ink-deep); text-decoration: none; }
 .fur-control input[type="range"] { width: 100%; accent-color: #d59c08; }
 .fur-control select { width: 100%; min-height: 42px; padding: 0 10px; border: 1px solid var(--line); border-radius: 11px; color: var(--ink-deep); background: #fffdf7; }
 .fur-reset-button { width: 100%; margin-top: 4px; }
+.fur-reset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .fur-lab-note { margin: 0; color: var(--muted); font-size: 0.72rem; line-height: 1.5; }
 
 @media (max-width: 1080px) {
