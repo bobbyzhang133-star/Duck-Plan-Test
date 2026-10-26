@@ -28,6 +28,7 @@
     stiffness: 64,
     damping: 23,
     radius: 48,
+    silhouette: true,
   });
 
   function values() {

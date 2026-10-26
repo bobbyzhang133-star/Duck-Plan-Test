@@ -11,6 +11,7 @@
     brushStrength: 5.8,
     compression: 0.92,
     recoveryDelay: 2000,
+    silhouette: false,
   });
 
   const QUALITY = Object.freeze({
@@ -55,6 +56,7 @@
     layout(location = 1) in vec2 a_root;
     layout(location = 2) in vec3 a_seed;
     layout(location = 3) in vec3 a_state;
+    layout(location = 4) in vec2 a_material;
 
     uniform vec2 u_resolution;
     uniform float u_length;
@@ -65,10 +67,14 @@
     out float v_color;
     out float v_compression;
     out float v_light;
+    out float v_label;
+    out float v_edge;
 
     void main() {
       float compression = clamp(a_state.z, 0.0, 1.0);
-      float lengthPx = u_length * u_dpr * a_seed.x;
+      float labelFiber = clamp(a_material.x, 0.0, 1.0);
+      float edgeFiber = clamp(a_material.y, 0.0, 1.0);
+      float lengthPx = u_length * u_dpr * a_seed.x * (1.0 + labelFiber * 0.18 + edgeFiber * 0.24);
       float heightScale = 1.0 - compression * 0.92;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z);
       vec2 bend = a_state.xy * lengthPx * 1.62;
@@ -76,7 +82,7 @@
       float projectedLength = max(length(direction), 1.15 * u_dpr);
       vec2 tangent = direction / projectedLength;
       vec2 normal = vec2(-tangent.y, tangent.x);
-      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr;
+      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * (1.0 + labelFiber * 0.42 + edgeFiber * 0.1);
       float tipWidth = rootWidth * mix(0.82, 1.68, compression);
       float width = mix(rootWidth, tipWidth, a_corner.y);
       vec2 rootPx = a_root * u_resolution;
@@ -89,6 +95,8 @@
       v_color = a_seed.z;
       v_compression = compression;
       v_light = 0.78 + 0.22 * clamp(dot(normalize(vec3(tangent, 0.7)), normalize(vec3(-0.35, -0.45, 0.82))), 0.0, 1.0);
+      v_label = labelFiber;
+      v_edge = edgeFiber;
     }
   `;
 
@@ -99,6 +107,8 @@
     in float v_color;
     in float v_compression;
     in float v_light;
+    in float v_label;
+    in float v_edge;
     out vec4 outColor;
 
     void main() {
@@ -109,10 +119,17 @@
       vec3 tip = mix(vec3(1.0, 0.95, 0.76), vec3(1.0, 0.985, 0.88), v_color);
       vec3 color = mix(root, middle, smoothstep(0.0, 0.58, v_height));
       color = mix(color, tip, smoothstep(0.58, 1.0, v_height));
+      vec3 labelRoot = vec3(0.025, 0.014, 0.002);
+      vec3 labelMiddle = vec3(0.095, 0.054, 0.008);
+      vec3 labelTip = vec3(0.2, 0.115, 0.018);
+      vec3 labelColor = mix(labelRoot, labelMiddle, smoothstep(0.0, 0.58, v_height));
+      labelColor = mix(labelColor, labelTip, smoothstep(0.58, 1.0, v_height));
+      color = mix(color, labelColor, v_label);
+      color *= mix(1.0, 0.76, v_edge * (1.0 - v_label));
       float occlusion = mix(1.0, 0.40, v_compression * (1.0 - v_height * 0.38));
       float tipGlow = 1.0 + smoothstep(0.76, 1.0, v_height) * 0.11;
       color *= v_light * occlusion * tipGlow;
-      float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height);
+      float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height) * (1.0 + v_edge * 0.08);
       outColor = vec4(color, alpha);
     }
   `;
@@ -126,6 +143,7 @@
       this.canvas.setAttribute("aria-hidden", "true");
       this.host.prepend(this.canvas);
       this.host.classList.add("fur-material");
+      this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
 
       this.width = 0;
       this.height = 0;
@@ -155,6 +173,11 @@
       this.onContextLost = this.onContextLost.bind(this);
       this.onContextRestored = this.onContextRestored.bind(this);
       this.frame = this.frame.bind(this);
+
+      this.labelObserver = new MutationObserver(() => {
+        if (this.options.silhouette && this.width && this.gl) this.rebuildFibers();
+      });
+      this.labelObserver.observe(this.host, { childList: true, characterData: true, subtree: true });
 
       this.bindEvents();
       this.initializeGraphics();
@@ -239,6 +262,12 @@
       gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 12, 0);
       gl.vertexAttribDivisor(3, 1);
 
+      this.materialBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.materialBuffer);
+      gl.enableVertexAttribArray(4);
+      gl.vertexAttribPointer(4, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribDivisor(4, 1);
+
       gl.bindVertexArray(null);
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -264,12 +293,16 @@
       if (!this.gl || !this.width || !this.height) return;
       const quality = QUALITY[this.options.quality] || QUALITY.medium;
       const customCap = Number(this.options.maxFibers) || quality.maxFibers;
-      this.count = Math.max(90, Math.min(customCap, Math.round(this.width * this.height * quality.fibersPerPixel * this.options.density)));
+      const silhouetteDensity = this.options.silhouette ? 2.15 : 1;
+      this.count = Math.max(90, Math.min(customCap, Math.round(this.width * this.height * quality.fibersPerPixel * this.options.density * silhouetteDensity)));
       this.roots = new Float32Array(this.count * 2);
       this.rootSeeds = new Float32Array(this.count * 5);
+      this.materialMask = new Float32Array(this.count * 2);
       this.state = new Float32Array(this.count * 3);
       this.velocity = new Float32Array(this.count * 3);
       this.pressTargets = new Float32Array(this.count * 3);
+      const labelRaster = this.createLabelRaster();
+      const silhouetteRadius = Math.min(this.height / 2, this.width / 2);
 
       const aspect = this.width / this.height;
       const columns = Math.ceil(Math.sqrt(this.count * aspect));
@@ -281,25 +314,88 @@
           const jitterY = (Math.random() - 0.5) * 0.78;
           const x = clamp((column + 0.5 + jitterX) / columns, 0.002, 0.998);
           const y = clamp((row + 0.5 + jitterY) / rows, 0.002, 0.998);
+          const pixelX = x * this.width;
+          const pixelY = y * this.height;
+          const silhouetteDistance = this.options.silhouette
+            ? this.roundedRectDistance(pixelX, pixelY, silhouetteRadius)
+            : -Math.min(this.width, this.height);
+          if (this.options.silhouette && silhouetteDistance > -0.45) continue;
           const rootOffset = index * 2;
           const seedOffset = index * 5;
+          const materialOffset = index * 2;
+          const edgeFiber = this.options.silhouette ? smoothstep(-6.5, -0.45, silhouetteDistance) : 0;
+          const centerX = clamp(pixelX, silhouetteRadius, this.width - silhouetteRadius);
+          const centerY = this.height / 2;
+          const outwardAngle = Math.atan2(pixelY - centerY, pixelX - centerX);
+          const randomAngle = Math.random() * Math.PI * 2;
+          const labelIndex = (Math.floor(pixelY) * this.width + Math.floor(pixelX)) * 4 + 3;
+          const labelFiber = labelRaster ? labelRaster[labelIndex] / 255 : 0;
           this.roots[rootOffset] = x;
           this.roots[rootOffset + 1] = y;
           this.rootSeeds[seedOffset] = x;
           this.rootSeeds[seedOffset + 1] = y;
           this.rootSeeds[seedOffset + 2] = 0.78 + Math.random() * 0.44;
-          this.rootSeeds[seedOffset + 3] = Math.random() * Math.PI * 2;
+          this.rootSeeds[seedOffset + 3] = labelFiber > 0.08
+            ? -Math.PI / 2 + (Math.random() - 0.5) * 0.34
+            : edgeFiber > 0.08
+              ? outwardAngle + (Math.random() - 0.5) * 0.62
+              : randomAngle;
           this.rootSeeds[seedOffset + 4] = Math.random();
+          this.materialMask[materialOffset] = labelFiber;
+          this.materialMask[materialOffset + 1] = edgeFiber;
           index += 1;
         }
       }
+      this.count = index;
 
       const gl = this.gl;
       gl.bindBuffer(gl.ARRAY_BUFFER, this.rootBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, this.rootSeeds, gl.STATIC_DRAW);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.stateBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, this.state, gl.DYNAMIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.materialBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, this.materialMask, gl.STATIC_DRAW);
       this.draw();
+    }
+
+    roundedRectDistance(x, y, radius) {
+      const halfWidth = this.width / 2;
+      const halfHeight = this.height / 2;
+      const qx = Math.abs(x - halfWidth) - (halfWidth - radius);
+      const qy = Math.abs(y - halfHeight) - (halfHeight - radius);
+      return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - radius;
+    }
+
+    createLabelRaster() {
+      if (!this.options.silhouette) return null;
+      const label = String(this.options.label || this.host.textContent || "").replace(/\s+/g, " ").trim();
+      if (!label) return null;
+      const canvas = document.createElement("canvas");
+      canvas.width = this.width;
+      canvas.height = this.height;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return null;
+      const style = getComputedStyle(this.host);
+      const family = style.fontFamily || "sans-serif";
+      const weight = style.fontWeight || "700";
+      let size = Number.parseFloat(style.fontSize) || 14;
+      const maxWidth = Math.max(20, this.width - 28);
+      const setFont = () => { context.font = `${weight} ${size}px ${family}`; };
+      setFont();
+      while (size > 9 && context.measureText(label).width > maxWidth) {
+        size -= 0.5;
+        setFont();
+      }
+      context.clearRect(0, 0, this.width, this.height);
+      context.fillStyle = "#fff";
+      context.strokeStyle = "#fff";
+      context.lineWidth = Math.max(1.2, size * 0.1);
+      context.lineJoin = "round";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.strokeText(label, this.width / 2, this.height / 2 + size * 0.03);
+      context.fillText(label, this.width / 2, this.height / 2 + size * 0.03);
+      return context.getImageData(0, 0, this.width, this.height).data;
     }
 
     localPointer(event) {
@@ -610,8 +706,16 @@
     setParameters(parameters) {
       const previousDensity = this.options.density;
       const previousQuality = this.options.quality;
+      const previousSilhouette = this.options.silhouette;
+      const previousLabel = this.options.label;
       this.options = { ...this.options, ...parameters };
-      if (previousDensity !== this.options.density || previousQuality !== this.options.quality) this.resize();
+      this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
+      if (
+        previousDensity !== this.options.density
+        || previousQuality !== this.options.quality
+        || previousSilhouette !== this.options.silhouette
+        || previousLabel !== this.options.label
+      ) this.resize();
       else {
         this.draw();
         this.wake();

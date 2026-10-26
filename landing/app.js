@@ -169,6 +169,7 @@ function setupFurMaterial(root = document) {
       stiffness: 64,
       damping: 23,
       radius: 48,
+      silhouette: true,
     });
   });
 }

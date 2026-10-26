@@ -55,8 +55,16 @@ button:not(:disabled):active { transform: scale(0.96); filter: brightness(0.93);
 .fur-material.fur-hovered .fur-canvas, .fur-material.fur-pressed .fur-canvas { opacity: 1; }
 .dark-button .fur-canvas { opacity: 0.34; mix-blend-mode: screen; }
 .dark-button.fur-hovered .fur-canvas, .dark-button.fur-pressed .fur-canvas { opacity: 0.5; }
+.fur-button-silhouette { border-color: transparent !important; color: transparent !important; background: transparent !important; box-shadow: none !important; text-shadow: none !important; }
+.fur-button-silhouette .fur-canvas,
+.dark-button.fur-button-silhouette .fur-canvas,
+.dark-button.fur-button-silhouette.fur-hovered .fur-canvas,
+.dark-button.fur-button-silhouette.fur-pressed .fur-canvas { opacity: 1; mix-blend-mode: normal; }
+.fur-button-silhouette > :not(.fur-canvas) { color: transparent !important; text-shadow: none !important; }
 .fur-static-fallback::before { position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: url("assets/duck-fur-end-on-v2.png") center / cover; content: ""; opacity: 0.48; pointer-events: none; }
 .fur-static-fallback .fur-canvas { display: none; }
+.fur-button-silhouette.fur-static-fallback { color: var(--ink-deep) !important; background: var(--yellow) !important; }
+.fur-button-silhouette.fur-static-fallback > :not(.fur-canvas) { color: inherit !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 .app-shell { position: relative; z-index: 1; display: grid; min-height: 100vh; grid-template-columns: 238px minmax(0, 1fr); }

@@ -13,6 +13,8 @@ Pointer movement adds localized directional impulses with distance falloff. Each
 
 The vertex shader changes the projected strand geometry. The fragment shader provides darker roots, cream-colored tips, orientation-dependent lighting, and compression-dependent occlusion. The approved PNG is used only when WebGL2 is unavailable or a context is lost.
 
+Production buttons use a fur-only silhouette mode. A rounded-rectangle distance field removes corner fibers without drawing a CSS border, while longer boundary strands lean outward to make a soft natural edge. The semantic DOM label is rasterized into a per-fiber mask; those selected fibers grow slightly longer and use a dark-brown duck-down palette to form the visible lettering. The original HTML label remains in the accessibility tree but is visually transparent, and keyboard focus keeps its separate high-contrast outline.
+
 ## Integration choice
 
 The app is buildless, and this material does not need Three.js scene management, cameras, loaders, or a general-purpose object graph. Native WebGL2 keeps the production payload dependency-free. DuckPlan creates renderers only for `.primary-button` and `.dark-button` controls, rather than every button.
