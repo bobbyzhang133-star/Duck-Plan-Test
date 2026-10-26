@@ -16,12 +16,20 @@
     transitionWidth: 0.36,
     labelScale: 2,
     labelSharpness: 1.15,
+    labelLengthScale: 0.48,
+    labelWidthScale: 0.52,
+    labelOrientationVariance: 0.06,
+    labelDensity: 1.55,
+    glyphTransition: 0.55,
+    glyphGuardWidth: 1.4,
+    fragmentGlyphMask: true,
     silhouette: false,
   });
 
   const ROOT_STRIDE = 6;
   const STATE_STRIDE = 4;
-  const MATERIAL_STRIDE = 2;
+  const MATERIAL_STRIDE = 3;
+  const GLYPH_SDF_RANGE = 12;
   const REST_TOLERANCE = Object.freeze({ state: 0.0015, velocity: 0.002, target: 0.0015 });
 
   const QUALITY = Object.freeze({
@@ -35,6 +43,17 @@
   const smoothstep = (edge0, edge1, value) => {
     const t = clamp((value - edge0) / (edge1 - edge0), 0, 1);
     return t * t * (3 - 2 * t);
+  };
+  const stableRandom = (index, salt = 0) => {
+    const value = Math.sin((index + 1) * 12.9898 + (salt + 1) * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  };
+  const encodeSignedDistance = (data, range = GLYPH_SDF_RANGE) => {
+    const encoded = new Uint8Array(data.length);
+    for (let index = 0; index < data.length; index += 1) {
+      encoded[index] = Math.round((clamp(data[index], -range, range) / range * 0.5 + 0.5) * 255);
+    }
+    return encoded;
   };
   const pressProfile = (normalizedDistance, options) => {
     const distance = clamp(normalizedDistance, 0, 1);
@@ -85,11 +104,13 @@
     layout(location = 1) in vec2 a_root;
     layout(location = 2) in vec4 a_seed;
     layout(location = 3) in vec4 a_state;
-    layout(location = 4) in vec2 a_material;
+    layout(location = 4) in vec3 a_material;
 
     uniform vec2 u_resolution;
     uniform float u_length;
     uniform float u_dpr;
+    uniform float u_labelLengthScale;
+    uniform float u_labelWidthScale;
 
     out float v_height;
     out float v_side;
@@ -99,13 +120,15 @@
     out float v_label;
     out float v_edge;
     out float v_depression;
+    out float v_boundary;
+    out vec2 v_surfaceUv;
 
     void main() {
       float compression = clamp(a_state.z, 0.0, 1.0);
       float depression = clamp(a_state.w, 0.0, 1.0);
       float labelFiber = clamp(a_material.x, 0.0, 1.0);
       float edgeFiber = clamp(a_material.y, 0.0, 1.0);
-      float labelLengthScale = mix(1.0, 0.54, labelFiber);
+      float labelLengthScale = mix(1.0, u_labelLengthScale, labelFiber);
       float lengthPx = u_length * u_dpr * a_seed.x * labelLengthScale * (1.0 + edgeFiber * 0.24);
       float heightScale = 1.0 - compression * 0.78 - depression * 0.16;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z);
@@ -114,7 +137,7 @@
       float projectedLength = max(length(direction), 1.15 * u_dpr);
       vec2 tangent = direction / projectedLength;
       vec2 normal = vec2(-tangent.y, tangent.x);
-      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, 0.76, labelFiber) * (1.0 + edgeFiber * 0.1 + compression * 0.3 + depression * 0.18);
+      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, u_labelWidthScale, labelFiber) * (1.0 + edgeFiber * 0.1 + compression * 0.3 + depression * 0.18);
       float tipWidth = rootWidth * mix(0.82, 1.68, compression);
       float width = mix(rootWidth, tipWidth, a_corner.y);
       vec2 rootPx = a_root * u_resolution;
@@ -130,6 +153,8 @@
       v_label = labelFiber;
       v_edge = edgeFiber;
       v_depression = depression;
+      v_boundary = clamp(a_material.z, 0.0, 1.0);
+      v_surfaceUv = clamp(pixel / u_resolution, 0.0, 1.0);
     }
   `;
 
@@ -143,10 +168,23 @@
     in float v_label;
     in float v_edge;
     in float v_depression;
+    in float v_boundary;
+    in vec2 v_surfaceUv;
+    uniform sampler2D u_glyphField;
+    uniform float u_hasGlyph;
+    uniform float u_fragmentGlyphMask;
+    uniform float u_sdfRange;
+    uniform float u_glyphTransition;
     out vec4 outColor;
 
     void main() {
-      float softEdge = 1.0 - smoothstep(0.62, 1.0, abs(v_side));
+      float signedDistance = (texture(u_glyphField, v_surfaceUv).r * 2.0 - 1.0) * u_sdfRange;
+      float sampledGlyph = smoothstep(-u_glyphTransition, u_glyphTransition, signedDistance);
+      float rootGlyph = clamp(v_label, 0.0, 1.0);
+      float glyph = mix(rootGlyph, sampledGlyph, u_fragmentGlyphMask) * u_hasGlyph;
+      float backgroundSoftEdge = 1.0 - smoothstep(0.62, 1.0, abs(v_side));
+      float labelSoftEdge = 1.0 - smoothstep(0.80, 1.0, abs(v_side));
+      float softEdge = mix(backgroundSoftEdge, labelSoftEdge, glyph);
       float taperedTip = 1.0 - smoothstep(0.86, 1.0, v_height) * 0.24;
       vec3 root = mix(vec3(0.72, 0.49, 0.10), vec3(0.86, 0.66, 0.22), v_color);
       vec3 middle = mix(vec3(0.98, 0.84, 0.46), vec3(1.0, 0.92, 0.65), v_color);
@@ -158,15 +196,18 @@
       vec3 labelTip = vec3(0.075, 0.041, 0.004);
       vec3 labelColor = mix(labelRoot, labelMiddle, smoothstep(0.0, 0.58, v_height));
       labelColor = mix(labelColor, labelTip, smoothstep(0.58, 1.0, v_height));
-      color = mix(color, labelColor, v_label);
-      color *= mix(1.0, 0.76, v_edge * (1.0 - v_label));
+      color = mix(color, labelColor, glyph);
+      color *= mix(1.0, 0.76, v_edge * (1.0 - glyph));
       float pressure = max(v_compression, v_depression * 0.92);
       float occlusion = mix(1.0, 0.36, pressure * (1.0 - v_height * 0.42));
       float depressionShade = mix(1.0, 0.72, v_depression * (0.82 - v_height * 0.28));
       float tipGlow = 1.0 + smoothstep(0.76, 1.0, v_height) * 0.11;
       color *= v_light * occlusion * depressionShade * tipGlow;
       float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height) * (1.0 + v_edge * 0.08 + pressure * 0.12);
-      alpha = mix(alpha, max(alpha, 0.96 * softEdge), v_label);
+      alpha = mix(alpha, max(alpha, 0.98 * softEdge), glyph);
+      float ownershipMismatch = abs(sampledGlyph - rootGlyph);
+      float boundaryProtection = 1.0 - v_boundary * ownershipMismatch * 0.78 * u_fragmentGlyphMask;
+      alpha *= mix(1.0, boundaryProtection, u_hasGlyph);
       outColor = vec4(color, alpha);
     }
   `;
@@ -195,6 +236,9 @@
       this.frames = 0;
       this.fpsClock = performance.now();
       this.fps = 0;
+      this.lastRebuildMs = 0;
+      this.glyphTextureBytes = 0;
+      this.labelFieldCache = new Map();
       this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
       this.lowPower = (navigator.deviceMemory && navigator.deviceMemory <= 4) || navigator.hardwareConcurrency <= 4;
 
@@ -265,6 +309,13 @@
         this.resolutionLocation = this.gl.getUniformLocation(this.program, "u_resolution");
         this.lengthLocation = this.gl.getUniformLocation(this.program, "u_length");
         this.dprLocation = this.gl.getUniformLocation(this.program, "u_dpr");
+        this.labelLengthScaleLocation = this.gl.getUniformLocation(this.program, "u_labelLengthScale");
+        this.labelWidthScaleLocation = this.gl.getUniformLocation(this.program, "u_labelWidthScale");
+        this.glyphFieldLocation = this.gl.getUniformLocation(this.program, "u_glyphField");
+        this.hasGlyphLocation = this.gl.getUniformLocation(this.program, "u_hasGlyph");
+        this.fragmentGlyphMaskLocation = this.gl.getUniformLocation(this.program, "u_fragmentGlyphMask");
+        this.sdfRangeLocation = this.gl.getUniformLocation(this.program, "u_sdfRange");
+        this.glyphTransitionLocation = this.gl.getUniformLocation(this.program, "u_glyphTransition");
         this.createBuffers();
         this.host.classList.remove("fur-static-fallback");
       } catch (error) {
@@ -307,7 +358,7 @@
       this.materialBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, this.materialBuffer);
       gl.enableVertexAttribArray(4);
-      gl.vertexAttribPointer(4, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(4, 3, gl.FLOAT, false, MATERIAL_STRIDE * 4, 0);
       gl.vertexAttribDivisor(4, 1);
 
       gl.bindVertexArray(null);
@@ -333,30 +384,58 @@
 
     rebuildFibers() {
       if (!this.gl || !this.width || !this.height) return;
+      const rebuildStarted = performance.now();
       const quality = QUALITY[this.options.quality] || QUALITY.medium;
       const baseCap = Number(this.options.maxFibers) || quality.maxFibers;
       const customCap = this.options.silhouette ? Math.round(baseCap * 2.2) : baseCap;
       const silhouetteDensity = this.options.silhouette ? 3.15 : 1;
-      this.count = Math.max(90, Math.min(customCap, Math.round(this.width * this.height * quality.fibersPerPixel * this.options.density * silhouetteDensity)));
-      this.roots = new Float32Array(this.count * 2);
-      this.rootSeeds = new Float32Array(this.count * ROOT_STRIDE);
-      this.materialMask = new Float32Array(this.count * MATERIAL_STRIDE);
-      this.state = new Float32Array(this.count * STATE_STRIDE);
-      this.velocity = new Float32Array(this.count * STATE_STRIDE);
-      this.pressTargets = new Float32Array(this.count * STATE_STRIDE);
-      this.recoveryHold = new Float32Array(this.count);
-      this.activePress = new Uint8Array(this.count);
+      const baseCount = Math.max(90, Math.min(customCap, Math.round(this.width * this.height * quality.fibersPerPixel * this.options.density * silhouetteDensity)));
       const labelField = this.createLabelField();
+      this.uploadLabelField(labelField);
       const silhouetteRadius = Math.min(this.height / 2, this.width / 2);
-
+      const rootValues = [];
+      const seedValues = [];
+      const materialValues = [];
       const aspect = this.width / this.height;
-      const columns = Math.ceil(Math.sqrt(this.count * aspect));
-      const rows = Math.ceil(this.count / columns);
-      let index = 0;
-      for (let row = 0; row < rows && index < this.count; row += 1) {
-        for (let column = 0; column < columns && index < this.count; column += 1) {
-          const jitterX = (Math.random() - 0.5) * 0.78;
-          const jitterY = (Math.random() - 0.5) * 0.78;
+      const candidateCount = this.options.silhouette ? Math.ceil(baseCount * 1.18) : baseCount;
+      const columns = Math.ceil(Math.sqrt(candidateCount * aspect));
+      const rows = Math.ceil(candidateCount / columns);
+      const labelDensity = Math.max(1, Number(this.options.labelDensity) || 1);
+      const labelSharpness = Math.max(0.45, Number(this.options.labelSharpness) || 1.15);
+      const labelSoftness = Math.max(0.28, 1.2 / labelSharpness);
+      const guardWidth = Math.max(0.25, Number(this.options.glyphGuardWidth) || 1.4);
+      const orientationVariance = Math.max(0, Number(this.options.labelOrientationVariance) || 0);
+
+      const appendFiber = (x, y, labelDistance, edgeFiber, outwardAngle, randomKey) => {
+        if (rootValues.length / 2 >= customCap) return false;
+        const labelFiber = smoothstep(-labelSoftness, labelSoftness, labelDistance);
+        const boundaryFiber = 1 - smoothstep(0, guardWidth, Math.abs(labelDistance));
+        rootValues.push(x, y);
+        seedValues.push(
+          x,
+          y,
+          0.78 + stableRandom(randomKey, 4) * 0.44,
+          labelFiber > 0.08
+            ? -Math.PI / 2 + (stableRandom(randomKey, 5) - 0.5) * orientationVariance
+            : edgeFiber > 0.08
+              ? outwardAngle + (stableRandom(randomKey, 6) - 0.5) * 0.62
+              : stableRandom(randomKey, 7) * Math.PI * 2,
+          stableRandom(randomKey, 8),
+          stableRandom(randomKey, 9),
+        );
+        materialValues.push(labelFiber, edgeFiber, boundaryFiber);
+        return true;
+      };
+
+      let baseIndex = 0;
+      for (let row = 0; row < rows && rootValues.length / 2 < customCap; row += 1) {
+        for (let column = 0; column < columns && rootValues.length / 2 < customCap; column += 1) {
+          const centerX = (column + 0.5) / columns;
+          const centerY = (row + 0.5) / rows;
+          const centerDistance = labelField ? this.sampleLabelField(labelField, centerX * this.width, centerY * this.height) : -100;
+          const jitterScale = centerDistance > -guardWidth ? 0.22 : 0.78;
+          const jitterX = (stableRandom(baseIndex, 0) - 0.5) * jitterScale;
+          const jitterY = (stableRandom(baseIndex, 1) - 0.5) * jitterScale;
           const x = clamp((column + 0.5 + jitterX) / columns, 0.002, 0.998);
           const y = clamp((row + 0.5 + jitterY) / rows, 0.002, 0.998);
           const pixelX = x * this.width;
@@ -364,37 +443,48 @@
           const silhouetteDistance = this.options.silhouette
             ? this.roundedRectDistance(pixelX, pixelY, silhouetteRadius)
             : -Math.min(this.width, this.height);
-          if (this.options.silhouette && silhouetteDistance > -0.45) continue;
-          const rootOffset = index * 2;
-          const seedOffset = index * ROOT_STRIDE;
-          const materialOffset = index * MATERIAL_STRIDE;
+          if (this.options.silhouette && silhouetteDistance > -0.45) {
+            baseIndex += 1;
+            continue;
+          }
           const edgeFiber = this.options.silhouette ? smoothstep(-6.5, -0.45, silhouetteDistance) : 0;
-          const centerX = clamp(pixelX, silhouetteRadius, this.width - silhouetteRadius);
-          const centerY = this.height / 2;
-          const outwardAngle = Math.atan2(pixelY - centerY, pixelX - centerX);
-          const randomAngle = Math.random() * Math.PI * 2;
+          const silhouetteCenterX = clamp(pixelX, silhouetteRadius, this.width - silhouetteRadius);
+          const silhouetteCenterY = this.height / 2;
+          const outwardAngle = Math.atan2(pixelY - silhouetteCenterY, pixelX - silhouetteCenterX);
           const labelDistance = labelField ? this.sampleLabelField(labelField, pixelX, pixelY) : -100;
-          const labelSharpness = Math.max(0.45, Number(this.options.labelSharpness) || 1.15);
-          const labelSoftness = Math.max(0.28, 1.2 / labelSharpness);
-          const labelFiber = smoothstep(-labelSoftness, labelSoftness, labelDistance);
-          this.roots[rootOffset] = x;
-          this.roots[rootOffset + 1] = y;
-          this.rootSeeds[seedOffset] = x;
-          this.rootSeeds[seedOffset + 1] = y;
-          this.rootSeeds[seedOffset + 2] = 0.78 + Math.random() * 0.44;
-          this.rootSeeds[seedOffset + 3] = labelFiber > 0.08
-            ? -Math.PI / 2 + (Math.random() - 0.5) * 0.12
-            : edgeFiber > 0.08
-              ? outwardAngle + (Math.random() - 0.5) * 0.62
-              : randomAngle;
-          this.rootSeeds[seedOffset + 4] = Math.random();
-          this.rootSeeds[seedOffset + 5] = Math.random();
-          this.materialMask[materialOffset] = labelFiber;
-          this.materialMask[materialOffset + 1] = edgeFiber;
-          index += 1;
+          appendFiber(x, y, labelDistance, edgeFiber, outwardAngle, baseIndex * 4);
+
+          if (labelField && labelDistance > -guardWidth) {
+            const extraTarget = Math.max(0, labelDensity - 1);
+            const wholeExtras = Math.floor(extraTarget);
+            const probabilisticExtra = stableRandom(baseIndex, 11) < extraTarget - wholeExtras ? 1 : 0;
+            const extras = wholeExtras + probabilisticExtra;
+            for (let extra = 0; extra < extras; extra += 1) {
+              const extraKey = baseIndex * 4 + extra + 1;
+              const extraX = clamp(x + (stableRandom(extraKey, 12) - 0.5) / columns * 0.62, 0.002, 0.998);
+              const extraY = clamp(y + (stableRandom(extraKey, 13) - 0.5) / rows * 0.62, 0.002, 0.998);
+              const extraPixelX = extraX * this.width;
+              const extraPixelY = extraY * this.height;
+              const extraDistance = this.sampleLabelField(labelField, extraPixelX, extraPixelY);
+              if (extraDistance > -guardWidth) appendFiber(extraX, extraY, extraDistance, edgeFiber, outwardAngle, extraKey);
+            }
+          }
+          baseIndex += 1;
         }
       }
-      this.count = index;
+      this.roots = Float32Array.from(rootValues);
+      this.rootSeeds = Float32Array.from(seedValues);
+      this.materialMask = Float32Array.from(materialValues);
+      this.count = this.roots.length / 2;
+      this.labelFiberCount = 0;
+      for (let index = 0; index < this.count; index += 1) {
+        if (this.materialMask[index * MATERIAL_STRIDE] >= 0.5) this.labelFiberCount += 1;
+      }
+      this.state = new Float32Array(this.count * STATE_STRIDE);
+      this.velocity = new Float32Array(this.count * STATE_STRIDE);
+      this.pressTargets = new Float32Array(this.count * STATE_STRIDE);
+      this.recoveryHold = new Float32Array(this.count);
+      this.activePress = new Uint8Array(this.count);
 
       const gl = this.gl;
       gl.bindBuffer(gl.ARRAY_BUFFER, this.rootBuffer);
@@ -403,6 +493,7 @@
       gl.bufferData(gl.ARRAY_BUFFER, this.state, gl.DYNAMIC_DRAW);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.materialBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, this.materialMask, gl.STATIC_DRAW);
+      this.lastRebuildMs = performance.now() - rebuildStarted;
       this.draw();
     }
 
@@ -419,16 +510,20 @@
       const label = String(this.options.label || this.host.textContent || "").replace(/\s+/g, " ").trim();
       if (!label) return null;
       const scale = clamp(Math.round(Number(this.options.labelScale) || 2), 1, 3);
+      const style = getComputedStyle(this.host);
+      const family = style.fontFamily || "sans-serif";
+      const weight = style.fontWeight || "700";
+      const styledSize = Number.parseFloat(style.fontSize) || 14;
+      const maxWidth = Math.max(20, this.width - 28);
+      const cacheKey = [label, this.width, this.height, scale, family, weight, styledSize, maxWidth].join("|");
+      const cached = this.labelFieldCache.get(cacheKey);
+      if (cached) return cached;
       const canvas = document.createElement("canvas");
       canvas.width = Math.max(1, Math.round(this.width * scale));
       canvas.height = Math.max(1, Math.round(this.height * scale));
       const context = canvas.getContext("2d", { willReadFrequently: true });
       if (!context) return null;
-      const style = getComputedStyle(this.host);
-      const family = style.fontFamily || "sans-serif";
-      const weight = style.fontWeight || "700";
-      let size = Number.parseFloat(style.fontSize) || 14;
-      const maxWidth = Math.max(20, this.width - 28);
+      let size = styledSize;
       const setFont = () => { context.font = `${weight} ${size * scale}px ${family}`; };
       setFont();
       while (size > 9 && context.measureText(label).width > maxWidth * scale) {
@@ -450,7 +545,33 @@
       for (let index = 0; index < inside.length; index += 1) {
         signedDistance[index] = (inside[index] ? distanceToOutside[index] : -distanceToInside[index]) / scale;
       }
-      return { data: signedDistance, width: canvas.width, height: canvas.height, scale };
+      const field = { data: signedDistance, width: canvas.width, height: canvas.height, scale, cacheKey };
+      this.labelFieldCache.set(cacheKey, field);
+      if (this.labelFieldCache.size > 6) this.labelFieldCache.delete(this.labelFieldCache.keys().next().value);
+      return field;
+    }
+
+    uploadLabelField(field) {
+      const gl = this.gl;
+      if (!gl) return;
+      if (!this.glyphTexture) this.glyphTexture = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.glyphTexture);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      if (field) {
+        const encoded = encodeSignedDistance(field.data);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, field.width, field.height, 0, gl.RED, gl.UNSIGNED_BYTE, encoded);
+        this.hasGlyphTexture = true;
+        this.glyphTextureBytes = encoded.byteLength;
+      } else {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, 1, 1, 0, gl.RED, gl.UNSIGNED_BYTE, new Uint8Array([0]));
+        this.hasGlyphTexture = false;
+        this.glyphTextureBytes = 1;
+      }
     }
 
     chamferDistance(mask, width, height, feature) {
@@ -824,6 +945,15 @@
       gl.uniform2f(this.resolutionLocation, this.canvas.width, this.canvas.height);
       gl.uniform1f(this.lengthLocation, this.options.length);
       gl.uniform1f(this.dprLocation, this.dpr);
+      gl.uniform1f(this.labelLengthScaleLocation, clamp(Number(this.options.labelLengthScale) || 0.48, 0.2, 1));
+      gl.uniform1f(this.labelWidthScaleLocation, clamp(Number(this.options.labelWidthScale) || 0.52, 0.2, 1));
+      gl.uniform1i(this.glyphFieldLocation, 0);
+      gl.uniform1f(this.hasGlyphLocation, this.hasGlyphTexture ? 1 : 0);
+      gl.uniform1f(this.fragmentGlyphMaskLocation, this.options.fragmentGlyphMask === false ? 0 : 1);
+      gl.uniform1f(this.sdfRangeLocation, GLYPH_SDF_RANGE);
+      gl.uniform1f(this.glyphTransitionLocation, Math.max(0.12, Number(this.options.glyphTransition) || 0.55));
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.glyphTexture);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.stateBuffer);
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.state);
       gl.bindVertexArray(this.vertexArray);
@@ -847,6 +977,9 @@
       const previousLabel = this.options.label;
       const previousLabelScale = this.options.labelScale;
       const previousLabelSharpness = this.options.labelSharpness;
+      const previousLabelDensity = this.options.labelDensity;
+      const previousLabelOrientationVariance = this.options.labelOrientationVariance;
+      const previousGlyphGuardWidth = this.options.glyphGuardWidth;
       this.options = { ...this.options, ...parameters };
       this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
       if (
@@ -856,6 +989,9 @@
         || previousLabel !== this.options.label
         || previousLabelScale !== this.options.labelScale
         || previousLabelSharpness !== this.options.labelSharpness
+        || previousLabelDensity !== this.options.labelDensity
+        || previousLabelOrientationVariance !== this.options.labelOrientationVariance
+        || previousGlyphGuardWidth !== this.options.glyphGuardWidth
       ) this.resize();
       else {
         this.draw();
@@ -868,7 +1004,13 @@
       return {
         renderer: this.gl ? "WebGL2 instanced strands" : "static fallback",
         fibers: this.count,
+        labelFibers: this.labelFiberCount || 0,
         fps: this.running ? this.fps : 0,
+        drawCalls: this.gl ? 1 : 0,
+        rebuildMs: this.lastRebuildMs,
+        gpuBytes: (this.rootSeeds?.byteLength || 0) + (this.state?.byteLength || 0) + (this.materialMask?.byteLength || 0) + this.glyphTextureBytes,
+        glyphTextureBytes: this.glyphTextureBytes,
+        cachedGlyphFields: this.labelFieldCache?.size || 0,
         settled: diagnostic.recoveringFibers === 0,
         recoveringFibers: diagnostic.recoveringFibers,
         maximumDisplacement: diagnostic.maximumDisplacement,
@@ -974,6 +1116,7 @@
     onContextLost(event) {
       event.preventDefault();
       this.running = false;
+      this.glyphTexture = null;
       this.gl = null;
       this.host.classList.add("fur-static-fallback");
       this.fallbackReason = "WebGL context lost";
@@ -1005,6 +1148,6 @@
     mount,
     mountAll,
     defaults: { ...DEFAULTS },
-    __testing: { DuckFurSurface, pressProfile, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
+    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };
 })();

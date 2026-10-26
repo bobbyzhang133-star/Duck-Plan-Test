@@ -38,11 +38,31 @@
             <div><p class="section-kicker">Production scale</p><h2>Normal DuckPlan button</h2></div>
             <button class="primary-button fur-demo-button" id="fur-demo-button" type="button"><span id="fur-demo-label">Add to DuckPlan</span></button>
           </div>
-          <div class="fur-letter-comparisons" aria-label="Fur lettering quality comparison">
-            <article><span>1× glyph field</span><button class="primary-button fur-compare-button" id="fur-label-1x" type="button"><span>Plan task</span></button></article>
-            <article><span>2× glyph field</span><button class="primary-button fur-compare-button" id="fur-label-2x" type="button"><span>Plan task</span></button></article>
-            <article><span>Production size</span><button class="primary-button fur-compare-button fur-compare-production" id="fur-label-production" type="button"><span>Plan task</span></button></article>
-          </div>
+          <section class="fur-comparison-group" aria-labelledby="resolution-comparison-title">
+            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison A</p><h2 id="resolution-comparison-title">Glyph resolution only</h2></div><span>Identical 208 × 44 px controls</span></div>
+            <div class="fur-letter-comparisons">
+              <article><span>1× SDF</span><button class="primary-button fur-compare-button" id="fur-resolution-1x" type="button"><span>Plan task</span></button></article>
+              <article><span>2× SDF</span><button class="primary-button fur-compare-button" id="fur-resolution-2x" type="button"><span>Plan task</span></button></article>
+              <article><span>3× SDF</span><button class="primary-button fur-compare-button" id="fur-resolution-3x" type="button"><span>Plan task</span></button></article>
+            </div>
+          </section>
+          <section class="fur-comparison-group" aria-labelledby="geometry-comparison-title">
+            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison B</p><h2 id="geometry-comparison-title">Fiber geometry</h2></div><span>Same mask, font, density, and size</span></div>
+            <div class="fur-letter-comparisons">
+              <article><span>Root-sampled baseline</span><button class="primary-button fur-compare-button" id="fur-geometry-baseline" type="button"><span>Plan task</span></button></article>
+              <article><span>Narrow label fibers</span><button class="primary-button fur-compare-button" id="fur-geometry-narrow" type="button"><span>Plan task</span></button></article>
+              <article><span>Boundary-aware</span><button class="primary-button fur-compare-button" id="fur-geometry-revised" type="button"><span>Plan task</span></button></article>
+            </div>
+          </section>
+          <section class="fur-comparison-group" aria-labelledby="production-comparison-title">
+            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison C + D</p><h2 id="production-comparison-title">Production labels and interaction</h2></div><output id="fur-comparison-performance">Measuring…</output></div>
+            <div class="fur-production-comparisons">
+              <article><span>40 px · short counters</span><button class="primary-button fur-production-button fur-height-40" id="fur-production-plan" type="button"><span>Plan task</span></button></article>
+              <article><span>44 px · long label</span><button class="primary-button fur-production-button fur-height-44" id="fur-production-add" type="button"><span>Add to DuckPlan</span></button></article>
+              <article><span>48 px · varied forms</span><button class="primary-button fur-production-button fur-height-48" id="fur-production-focus" type="button"><span>Start focus</span></button></article>
+            </div>
+            <p class="fur-comparison-note">Hover, brush, press, release, and wait for recovery on every button. Judge readability at this 100% production scale—not from magnification.</p>
+          </section>
         </div>
 
         <form class="fur-controls" id="fur-controls">
@@ -66,6 +86,30 @@
           <label class="fur-control">
             <span>Letter sharpness <output data-output="labelSharpness">1.15 px</output></span>
             <input name="labelSharpness" type="range" min="0.45" max="2.2" step="0.05" value="1.15" />
+          </label>
+          <label class="fur-control">
+            <span>Label length <output data-output="labelLengthScale">0.48×</output></span>
+            <input name="labelLengthScale" type="range" min="0.25" max="0.8" step="0.01" value="0.48" />
+          </label>
+          <label class="fur-control">
+            <span>Label width <output data-output="labelWidthScale">0.52×</output></span>
+            <input name="labelWidthScale" type="range" min="0.25" max="0.9" step="0.01" value="0.52" />
+          </label>
+          <label class="fur-control">
+            <span>Orientation variance <output data-output="labelOrientationVariance">0.06 rad</output></span>
+            <input name="labelOrientationVariance" type="range" min="0" max="0.3" step="0.01" value="0.06" />
+          </label>
+          <label class="fur-control">
+            <span>Label density <output data-output="labelDensity">1.55×</output></span>
+            <input name="labelDensity" type="range" min="1" max="2.4" step="0.05" value="1.55" />
+          </label>
+          <label class="fur-control">
+            <span>Glyph transition <output data-output="glyphTransition">0.55 px</output></span>
+            <input name="glyphTransition" type="range" min="0.15" max="1.5" step="0.05" value="0.55" />
+          </label>
+          <label class="fur-control">
+            <span>Boundary guard <output data-output="glyphGuardWidth">1.40 px</output></span>
+            <input name="glyphGuardWidth" type="range" min="0.4" max="3" step="0.1" value="1.4" />
           </label>
           <label class="fur-control">
             <span>Spring stiffness <output data-output="stiffness">62</output></span>

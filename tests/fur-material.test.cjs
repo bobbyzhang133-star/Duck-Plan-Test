@@ -8,11 +8,25 @@ require("../landing/fur-material.js");
 
 const {
   DuckFurSurface,
+  encodeSignedDistance,
   pressProfile,
+  stableRandom,
   REST_TOLERANCE,
   ROOT_STRIDE,
   STATE_STRIDE,
 } = window.DuckFur.__testing;
+
+test("signed-distance texture encoding preserves outside, boundary, and inside order", () => {
+  const encoded = encodeSignedDistance(new Float32Array([-12, -1, 0, 1, 12]));
+  assert.deepEqual([...encoded], [0, 117, 128, 138, 255]);
+});
+
+test("stratified fiber randomness is stable across rebuilds", () => {
+  const first = Array.from({ length: 12 }, (_, index) => stableRandom(index, 4));
+  const second = Array.from({ length: 12 }, (_, index) => stableRandom(index, 4));
+  assert.deepEqual(first, second);
+  assert.ok(new Set(first).size > 10);
+});
 
 function makeSurface(points, overrides = {}) {
   const surface = Object.create(DuckFurSurface.prototype);
