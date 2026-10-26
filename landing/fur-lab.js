@@ -25,7 +25,7 @@
     labelLengthScale: 0.48,
     labelWidthScale: 0.52,
     labelOrientationVariance: 0.06,
-    labelDensity: 1.55,
+    labelDensity: 2.4,
     glyphTransition: 0.55,
     glyphGuardWidth: 1.4,
   };

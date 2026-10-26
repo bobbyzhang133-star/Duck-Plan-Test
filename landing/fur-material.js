@@ -19,7 +19,7 @@
     labelLengthScale: 0.48,
     labelWidthScale: 0.52,
     labelOrientationVariance: 0.06,
-    labelDensity: 1.55,
+    labelDensity: 2.4,
     glyphTransition: 0.55,
     glyphGuardWidth: 1.4,
     fragmentGlyphMask: true,
@@ -121,6 +121,7 @@
     out float v_edge;
     out float v_depression;
     out float v_boundary;
+    out float v_motion;
     out vec2 v_surfaceUv;
 
     void main() {
@@ -154,6 +155,7 @@
       v_edge = edgeFiber;
       v_depression = depression;
       v_boundary = clamp(a_material.z, 0.0, 1.0);
+      v_motion = clamp(length(a_state.xy) * 0.9 + compression * 0.55 + depression * 0.55, 0.0, 1.0);
       v_surfaceUv = clamp(pixel / u_resolution, 0.0, 1.0);
     }
   `;
@@ -169,6 +171,7 @@
     in float v_edge;
     in float v_depression;
     in float v_boundary;
+    in float v_motion;
     in vec2 v_surfaceUv;
     uniform sampler2D u_glyphField;
     uniform float u_hasGlyph;
@@ -181,7 +184,7 @@
       float signedDistance = (texture(u_glyphField, v_surfaceUv).r * 2.0 - 1.0) * u_sdfRange;
       float sampledGlyph = smoothstep(-u_glyphTransition, u_glyphTransition, signedDistance);
       float rootGlyph = clamp(v_label, 0.0, 1.0);
-      float glyph = mix(rootGlyph, sampledGlyph, u_fragmentGlyphMask) * u_hasGlyph;
+      float glyph = rootGlyph * u_hasGlyph;
       float backgroundSoftEdge = 1.0 - smoothstep(0.62, 1.0, abs(v_side));
       float labelSoftEdge = 1.0 - smoothstep(0.80, 1.0, abs(v_side));
       float softEdge = mix(backgroundSoftEdge, labelSoftEdge, glyph);
@@ -206,7 +209,8 @@
       float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height) * (1.0 + v_edge * 0.08 + pressure * 0.12);
       alpha = mix(alpha, max(alpha, 0.98 * softEdge), glyph);
       float ownershipMismatch = abs(sampledGlyph - rootGlyph);
-      float boundaryProtection = 1.0 - v_boundary * ownershipMismatch * 0.78 * u_fragmentGlyphMask;
+      float restingProtection = 1.0 - v_motion * 0.92;
+      float boundaryProtection = 1.0 - v_boundary * ownershipMismatch * 0.78 * u_fragmentGlyphMask * restingProtection;
       alpha *= mix(1.0, boundaryProtection, u_hasGlyph);
       outColor = vec4(color, alpha);
     }
@@ -387,7 +391,7 @@
       const rebuildStarted = performance.now();
       const quality = QUALITY[this.options.quality] || QUALITY.medium;
       const baseCap = Number(this.options.maxFibers) || quality.maxFibers;
-      const customCap = this.options.silhouette ? Math.round(baseCap * 2.2) : baseCap;
+      const customCap = this.options.silhouette ? Math.round(baseCap * 3.2) : baseCap;
       const silhouetteDensity = this.options.silhouette ? 3.15 : 1;
       const baseCount = Math.max(90, Math.min(customCap, Math.round(this.width * this.height * quality.fibersPerPixel * this.options.density * silhouetteDensity)));
       const labelField = this.createLabelField();
@@ -454,22 +458,34 @@
           const labelDistance = labelField ? this.sampleLabelField(labelField, pixelX, pixelY) : -100;
           appendFiber(x, y, labelDistance, edgeFiber, outwardAngle, baseIndex * 4);
 
-          if (labelField && labelDistance > -guardWidth) {
-            const extraTarget = Math.max(0, labelDensity - 1);
-            const wholeExtras = Math.floor(extraTarget);
-            const probabilisticExtra = stableRandom(baseIndex, 11) < extraTarget - wholeExtras ? 1 : 0;
-            const extras = wholeExtras + probabilisticExtra;
-            for (let extra = 0; extra < extras; extra += 1) {
-              const extraKey = baseIndex * 4 + extra + 1;
-              const extraX = clamp(x + (stableRandom(extraKey, 12) - 0.5) / columns * 0.62, 0.002, 0.998);
-              const extraY = clamp(y + (stableRandom(extraKey, 13) - 0.5) / rows * 0.62, 0.002, 0.998);
-              const extraPixelX = extraX * this.width;
-              const extraPixelY = extraY * this.height;
-              const extraDistance = this.sampleLabelField(labelField, extraPixelX, extraPixelY);
-              if (extraDistance > -guardWidth) appendFiber(extraX, extraY, extraDistance, edgeFiber, outwardAngle, extraKey);
-            }
-          }
           baseIndex += 1;
+        }
+      }
+
+      if (labelField && labelDensity > 1 && rootValues.length / 2 < customCap) {
+        const extraScale = Math.sqrt(labelDensity - 1);
+        const extraColumns = Math.max(1, Math.round(columns * extraScale));
+        const extraRows = Math.max(1, Math.round(rows * extraScale));
+        let extraIndex = 0;
+        for (let row = 0; row < extraRows && rootValues.length / 2 < customCap; row += 1) {
+          for (let column = 0; column < extraColumns && rootValues.length / 2 < customCap; column += 1) {
+            const randomKey = candidateCount * 8 + extraIndex;
+            const x = clamp((column + 0.5 + (stableRandom(randomKey, 20) - 0.5) * 0.08) / extraColumns, 0.002, 0.998);
+            const y = clamp((row + 0.5 + (stableRandom(randomKey, 21) - 0.5) * 0.08) / extraRows, 0.002, 0.998);
+            const pixelX = x * this.width;
+            const pixelY = y * this.height;
+            const labelDistance = this.sampleLabelField(labelField, pixelX, pixelY);
+            if (labelDistance >= -labelSoftness * 0.35) {
+              const silhouetteDistance = this.roundedRectDistance(pixelX, pixelY, silhouetteRadius);
+              if (silhouetteDistance <= -0.45) {
+                const edgeFiber = smoothstep(-6.5, -0.45, silhouetteDistance);
+                const silhouetteCenterX = clamp(pixelX, silhouetteRadius, this.width - silhouetteRadius);
+                const outwardAngle = Math.atan2(pixelY - this.height / 2, pixelX - silhouetteCenterX);
+                appendFiber(x, y, labelDistance, edgeFiber, outwardAngle, randomKey);
+              }
+            }
+            extraIndex += 1;
+          }
         }
       }
       this.roots = Float32Array.from(rootValues);
