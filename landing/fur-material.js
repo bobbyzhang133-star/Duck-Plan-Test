@@ -16,8 +16,8 @@
     transitionWidth: 0.36,
     labelScale: 2,
     labelSharpness: 1.15,
-    labelLengthScale: 0.48,
-    labelWidthScale: 0.52,
+    labelLengthScale: 0.8,
+    labelWidthScale: 0.9,
     labelOrientationVariance: 0.06,
     labelDensity: 2.4,
     glyphTransition: 0.55,
@@ -28,7 +28,7 @@
     boundaryLabelWidthScale: 0.72,
     boundaryLabelLeanScale: 0.62,
     silhouetteOverscan: 18,
-    silhouetteFringe: 0.9,
+    silhouetteFringe: 0.55,
     fragmentGlyphMask: true,
     silhouette: false,
   });
@@ -67,7 +67,7 @@
     surfaceHeight: height * dpr,
     offset: overscan * dpr,
   });
-  const silhouetteRootIncluded = (distance, fringe = 0.9) => distance <= fringe;
+  const silhouetteRootIncluded = (distance, fringe = 0.55) => distance <= fringe;
   const encodeSignedDistance = (data, range = GLYPH_SDF_RANGE) => {
     const encoded = new Uint8Array(data.length);
     for (let index = 0; index < data.length; index += 1) {
@@ -155,7 +155,8 @@
       float edgeFiber = clamp(a_material.y, 0.0, 1.0);
       float glyphBoundary = labelFiber * clamp(a_material.z, 0.0, 1.0);
       float labelLengthScale = mix(1.0, u_labelLengthScale, labelFiber);
-      float lengthPx = u_length * u_dpr * a_seed.x * labelLengthScale * (1.0 + edgeFiber * 0.44);
+      float lengthVariation = mix(a_seed.x, 1.0, edgeFiber * 0.78);
+      float lengthPx = u_length * u_dpr * lengthVariation * labelLengthScale * (1.0 + edgeFiber * 0.4);
       float heightScale = 1.0 - compression * 0.78 - depression * 0.16;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z) * mix(1.0, u_boundaryLabelLeanScale, glyphBoundary);
       vec2 bend = a_state.xy * lengthPx * 1.62;
@@ -443,7 +444,7 @@
       const silhouetteRadius = Math.min(this.height / 2, this.width / 2);
       const configuredFringe = Number(this.options.silhouetteFringe);
       const silhouetteFringe = this.options.silhouette
-        ? Math.max(0, Number.isFinite(configuredFringe) ? configuredFringe : 0.9)
+        ? Math.max(0, Number.isFinite(configuredFringe) ? configuredFringe : 0.55)
         : 0;
       const rootValues = [];
       const seedValues = [];
@@ -473,7 +474,7 @@
           labelFiber > 0.08
             ? -Math.PI / 2 + (stableRandom(randomKey, 5) - 0.5) * orientationVariance
             : edgeFiber > 0.08
-              ? outwardAngle + (stableRandom(randomKey, 6) - 0.5) * 0.26
+              ? outwardAngle + (stableRandom(randomKey, 6) - 0.5) * 0.12
               : stableRandom(randomKey, 7) * Math.PI * 2,
           stableRandom(randomKey, 8),
           stableRandom(randomKey, 9),
@@ -1028,8 +1029,8 @@
       gl.uniform2f(this.surfaceOffsetLocation, this.overscan * this.dpr, this.overscan * this.dpr);
       gl.uniform1f(this.lengthLocation, this.options.length);
       gl.uniform1f(this.dprLocation, this.dpr);
-      gl.uniform1f(this.labelLengthScaleLocation, clamp(Number(this.options.labelLengthScale) || 0.48, 0.2, 1));
-      gl.uniform1f(this.labelWidthScaleLocation, clamp(Number(this.options.labelWidthScale) || 0.52, 0.2, 1));
+      gl.uniform1f(this.labelLengthScaleLocation, clamp(Number(this.options.labelLengthScale) || 0.8, 0.2, 1));
+      gl.uniform1f(this.labelWidthScaleLocation, clamp(Number(this.options.labelWidthScale) || 0.9, 0.2, 1));
       gl.uniform1f(this.boundaryLabelWidthScaleLocation, clamp(Number(this.options.boundaryLabelWidthScale) || 0.72, 0.35, 1));
       gl.uniform1f(this.boundaryLabelLeanScaleLocation, clamp(Number(this.options.boundaryLabelLeanScale) || 0.62, 0.2, 1));
       gl.uniform1i(this.glyphFieldLocation, 0);
@@ -1107,7 +1108,7 @@
         fiberCapReached: Boolean(this.fiberCapReached),
         glyphAllocationLimited: Boolean(this.glyphAllocationLimited),
         overscan: this.overscan || 0,
-        fringe: this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 0.9) : 0,
+        fringe: this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 0.55) : 0,
         fps: this.running ? this.fps : 0,
         drawCalls: this.gl ? 1 : 0,
         rebuildMs: this.lastRebuildMs,

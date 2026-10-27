@@ -54,9 +54,14 @@ test("silhouette overscan keeps the semantic surface centered inside a larger ca
 });
 
 test("silhouette fringe keeps roots in a narrow aligned boundary", () => {
-  assert.equal(silhouetteRootIncluded(-0.45, 0.9), true);
-  assert.equal(silhouetteRootIncluded(0.9, 0.9), true);
-  assert.equal(silhouetteRootIncluded(0.901, 0.9), false);
+  assert.equal(silhouetteRootIncluded(-0.45, 0.55), true);
+  assert.equal(silhouetteRootIncluded(0.55, 0.55), true);
+  assert.equal(silhouetteRootIncluded(0.551, 0.55), false);
+});
+
+test("approved label tuning is saved as the material default", () => {
+  assert.equal(window.DuckFur.defaults.labelLengthScale, 0.8);
+  assert.equal(window.DuckFur.defaults.labelWidthScale, 0.9);
 });
 
 function makeSurface(points, overrides = {}) {
