@@ -27,6 +27,7 @@
     motionGuardEnd: 0.58,
     boundaryLabelWidthScale: 0.72,
     boundaryLabelLeanScale: 0.62,
+    silhouetteOverscan: 10,
     fragmentGlyphMask: true,
     silhouette: false,
   });
@@ -58,6 +59,13 @@
     const release = smoothstep(start, Math.max(start + 0.001, end), clamp(motion, 0, 1));
     return 1 - (1 - MOTION_GUARD_MIN) * release;
   };
+  const overscanLayout = (width, height, overscan, dpr) => ({
+    canvasWidth: Math.max(1, Math.round((width + overscan * 2) * dpr)),
+    canvasHeight: Math.max(1, Math.round((height + overscan * 2) * dpr)),
+    surfaceWidth: width * dpr,
+    surfaceHeight: height * dpr,
+    offset: overscan * dpr,
+  });
   const encodeSignedDistance = (data, range = GLYPH_SDF_RANGE) => {
     const encoded = new Uint8Array(data.length);
     for (let index = 0; index < data.length; index += 1) {
@@ -116,7 +124,9 @@
     layout(location = 3) in vec4 a_state;
     layout(location = 4) in vec3 a_material;
 
-    uniform vec2 u_resolution;
+    uniform vec2 u_canvasResolution;
+    uniform vec2 u_surfaceResolution;
+    uniform vec2 u_surfaceOffset;
     uniform float u_length;
     uniform float u_dpr;
     uniform float u_labelLengthScale;
@@ -154,9 +164,9 @@
       float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, u_labelWidthScale, labelFiber) * mix(1.0, u_boundaryLabelWidthScale, glyphBoundary) * (1.0 + edgeFiber * 0.1 + compression * 0.3 + depression * 0.18);
       float tipWidth = rootWidth * mix(0.82, 1.68, compression);
       float width = mix(rootWidth, tipWidth, a_corner.y);
-      vec2 rootPx = a_root * u_resolution;
+      vec2 rootPx = a_root * u_surfaceResolution + u_surfaceOffset;
       vec2 pixel = rootPx + direction * a_corner.y + normal * a_corner.x * width;
-      vec2 clip = pixel / u_resolution * 2.0 - 1.0;
+      vec2 clip = pixel / u_canvasResolution * 2.0 - 1.0;
       gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
 
       v_height = a_corner.y;
@@ -169,7 +179,7 @@
       v_depression = depression;
       v_boundary = clamp(a_material.z, 0.0, 1.0);
       v_motion = clamp(length(a_state.xy) * 0.9 + compression * 0.55 + depression * 0.55, 0.0, 1.0);
-      v_surfaceUv = clamp(pixel / u_resolution, 0.0, 1.0);
+      v_surfaceUv = clamp((pixel - u_surfaceOffset) / u_surfaceResolution, 0.0, 1.0);
     }
   `;
 
@@ -327,7 +337,9 @@
         });
         if (!this.gl) throw new Error("WebGL 2 unavailable");
         this.program = program(this.gl, VERTEX_SHADER, FRAGMENT_SHADER);
-        this.resolutionLocation = this.gl.getUniformLocation(this.program, "u_resolution");
+        this.canvasResolutionLocation = this.gl.getUniformLocation(this.program, "u_canvasResolution");
+        this.surfaceResolutionLocation = this.gl.getUniformLocation(this.program, "u_surfaceResolution");
+        this.surfaceOffsetLocation = this.gl.getUniformLocation(this.program, "u_surfaceOffset");
         this.lengthLocation = this.gl.getUniformLocation(this.program, "u_length");
         this.dprLocation = this.gl.getUniformLocation(this.program, "u_dpr");
         this.labelLengthScaleLocation = this.gl.getUniformLocation(this.program, "u_labelLengthScale");
@@ -400,8 +412,15 @@
       const quality = QUALITY[this.options.quality] || QUALITY.medium;
       const dprLimit = this.lowPower ? Math.min(quality.dpr, 1.25) : quality.dpr;
       this.dpr = Math.min(window.devicePixelRatio || 1, dprLimit);
-      this.canvas.width = Math.max(1, Math.round(width * this.dpr));
-      this.canvas.height = Math.max(1, Math.round(height * this.dpr));
+      this.overscan = this.options.silhouette ? Math.max(0, Number(this.options.silhouetteOverscan) || 10) : 0;
+      const canvasWidth = width + this.overscan * 2;
+      const canvasHeight = height + this.overscan * 2;
+      const layout = overscanLayout(width, height, this.overscan, this.dpr);
+      this.canvas.style.inset = `${-this.overscan}px`;
+      this.canvas.style.width = `${canvasWidth}px`;
+      this.canvas.style.height = `${canvasHeight}px`;
+      this.canvas.width = layout.canvasWidth;
+      this.canvas.height = layout.canvasHeight;
       this.width = width;
       this.height = height;
       if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
@@ -990,7 +1009,9 @@
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.useProgram(this.program);
-      gl.uniform2f(this.resolutionLocation, this.canvas.width, this.canvas.height);
+      gl.uniform2f(this.canvasResolutionLocation, this.canvas.width, this.canvas.height);
+      gl.uniform2f(this.surfaceResolutionLocation, this.width * this.dpr, this.height * this.dpr);
+      gl.uniform2f(this.surfaceOffsetLocation, this.overscan * this.dpr, this.overscan * this.dpr);
       gl.uniform1f(this.lengthLocation, this.options.length);
       gl.uniform1f(this.dprLocation, this.dpr);
       gl.uniform1f(this.labelLengthScaleLocation, clamp(Number(this.options.labelLengthScale) || 0.48, 0.2, 1));
@@ -1035,6 +1056,7 @@
       const previousLabelDensity = this.options.labelDensity;
       const previousLabelOrientationVariance = this.options.labelOrientationVariance;
       const previousGlyphGuardWidth = this.options.glyphGuardWidth;
+      const previousSilhouetteOverscan = this.options.silhouetteOverscan;
       this.options = { ...this.options, ...parameters };
       this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
       if (
@@ -1047,6 +1069,7 @@
         || previousLabelDensity !== this.options.labelDensity
         || previousLabelOrientationVariance !== this.options.labelOrientationVariance
         || previousGlyphGuardWidth !== this.options.glyphGuardWidth
+        || previousSilhouetteOverscan !== this.options.silhouetteOverscan
       ) this.resize();
       else {
         this.draw();
@@ -1067,6 +1090,7 @@
         fiberCapUtilization: this.fiberCap ? this.count / this.fiberCap : 0,
         fiberCapReached: Boolean(this.fiberCapReached),
         glyphAllocationLimited: Boolean(this.glyphAllocationLimited),
+        overscan: this.overscan || 0,
         fps: this.running ? this.fps : 0,
         drawCalls: this.gl ? 1 : 0,
         rebuildMs: this.lastRebuildMs,
@@ -1210,6 +1234,6 @@
     mount,
     mountAll,
     defaults: { ...DEFAULTS },
-    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
+    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };
 })();

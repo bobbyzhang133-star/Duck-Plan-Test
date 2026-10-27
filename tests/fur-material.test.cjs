@@ -12,6 +12,7 @@ const {
   pressProfile,
   stableRandom,
   motionGuardProtection,
+  overscanLayout,
   REST_TOLERANCE,
   ROOT_STRIDE,
   STATE_STRIDE,
@@ -36,6 +37,19 @@ test("motion guard keeps tiny movement sharp and releases smoothly for strong de
   assert.ok(ordinaryMotion < 1 && ordinaryMotion > strongerMotion);
   assert.ok(strongerMotion > 0.04);
   assert.ok(Math.abs(motionGuardProtection(0.7) - 0.04) < 1e-9);
+});
+
+test("silhouette overscan keeps the semantic surface centered inside a larger canvas", () => {
+  const layout = overscanLayout(208, 44, 10, 2);
+  assert.deepEqual(layout, {
+    canvasWidth: 456,
+    canvasHeight: 128,
+    surfaceWidth: 416,
+    surfaceHeight: 88,
+    offset: 20,
+  });
+  assert.equal(layout.offset + layout.surfaceWidth / 2, layout.canvasWidth / 2);
+  assert.equal(layout.offset + layout.surfaceHeight / 2, layout.canvasHeight / 2);
 });
 
 function makeSurface(points, overrides = {}) {
