@@ -28,7 +28,7 @@
     boundaryLabelWidthScale: 0.72,
     boundaryLabelLeanScale: 0.62,
     silhouetteOverscan: 18,
-    silhouetteFringe: 5,
+    silhouetteFringe: 0.9,
     fragmentGlyphMask: true,
     silhouette: false,
   });
@@ -67,11 +67,7 @@
     surfaceHeight: height * dpr,
     offset: overscan * dpr,
   });
-  const silhouetteFringeOpacity = (distance, fringe = 5) => {
-    if (distance <= -0.45) return 1;
-    if (distance >= fringe) return 0;
-    return (1 - smoothstep(-0.45, fringe, distance)) ** 1.35;
-  };
+  const silhouetteRootIncluded = (distance, fringe = 0.9) => distance <= fringe;
   const encodeSignedDistance = (data, range = GLYPH_SDF_RANGE) => {
     const encoded = new Uint8Array(data.length);
     for (let index = 0; index < data.length; index += 1) {
@@ -159,7 +155,7 @@
       float edgeFiber = clamp(a_material.y, 0.0, 1.0);
       float glyphBoundary = labelFiber * clamp(a_material.z, 0.0, 1.0);
       float labelLengthScale = mix(1.0, u_labelLengthScale, labelFiber);
-      float lengthPx = u_length * u_dpr * a_seed.x * labelLengthScale * (1.0 + edgeFiber * 0.24);
+      float lengthPx = u_length * u_dpr * a_seed.x * labelLengthScale * (1.0 + edgeFiber * 0.44);
       float heightScale = 1.0 - compression * 0.78 - depression * 0.16;
       vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z) * mix(1.0, u_boundaryLabelLeanScale, glyphBoundary);
       vec2 bend = a_state.xy * lengthPx * 1.62;
@@ -445,7 +441,10 @@
       const labelField = this.createLabelField();
       this.uploadLabelField(labelField);
       const silhouetteRadius = Math.min(this.height / 2, this.width / 2);
-      const silhouetteFringe = this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 5) : 0;
+      const configuredFringe = Number(this.options.silhouetteFringe);
+      const silhouetteFringe = this.options.silhouette
+        ? Math.max(0, Number.isFinite(configuredFringe) ? configuredFringe : 0.9)
+        : 0;
       const rootValues = [];
       const seedValues = [];
       const materialValues = [];
@@ -474,7 +473,7 @@
           labelFiber > 0.08
             ? -Math.PI / 2 + (stableRandom(randomKey, 5) - 0.5) * orientationVariance
             : edgeFiber > 0.08
-              ? outwardAngle + (stableRandom(randomKey, 6) - 0.5) * 0.62
+              ? outwardAngle + (stableRandom(randomKey, 6) - 0.5) * 0.26
               : stableRandom(randomKey, 7) * Math.PI * 2,
           stableRandom(randomKey, 8),
           stableRandom(randomKey, 9),
@@ -501,8 +500,7 @@
           const silhouetteDistance = this.options.silhouette
             ? this.roundedRectDistance(pixelX, pixelY, silhouetteRadius)
             : -Math.min(this.width, this.height);
-          const fringeOpacity = this.options.silhouette ? silhouetteFringeOpacity(silhouetteDistance, silhouetteFringe) : 1;
-          if (this.options.silhouette && stableRandom(baseIndex, 12) > fringeOpacity) {
+          if (this.options.silhouette && !silhouetteRootIncluded(silhouetteDistance, silhouetteFringe)) {
             baseIndex += 1;
             continue;
           }
@@ -1109,7 +1107,7 @@
         fiberCapReached: Boolean(this.fiberCapReached),
         glyphAllocationLimited: Boolean(this.glyphAllocationLimited),
         overscan: this.overscan || 0,
-        fringe: this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 5) : 0,
+        fringe: this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 0.9) : 0,
         fps: this.running ? this.fps : 0,
         drawCalls: this.gl ? 1 : 0,
         rebuildMs: this.lastRebuildMs,
@@ -1253,6 +1251,6 @@
     mount,
     mountAll,
     defaults: { ...DEFAULTS },
-    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteFringeOpacity, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
+    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteRootIncluded, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };
 })();

@@ -13,7 +13,7 @@ const {
   stableRandom,
   motionGuardProtection,
   overscanLayout,
-  silhouetteFringeOpacity,
+  silhouetteRootIncluded,
   REST_TOLERANCE,
   ROOT_STRIDE,
   STATE_STRIDE,
@@ -53,11 +53,10 @@ test("silhouette overscan keeps the semantic surface centered inside a larger ca
   assert.equal(layout.offset + layout.surfaceHeight / 2, layout.canvasHeight / 2);
 });
 
-test("silhouette fringe fades roots beyond the semantic button edge", () => {
-  assert.equal(silhouetteFringeOpacity(-0.45, 5), 1);
-  assert.ok(silhouetteFringeOpacity(1, 5) < 1);
-  assert.ok(silhouetteFringeOpacity(1, 5) > silhouetteFringeOpacity(3.5, 5));
-  assert.equal(silhouetteFringeOpacity(5, 5), 0);
+test("silhouette fringe keeps roots in a narrow aligned boundary", () => {
+  assert.equal(silhouetteRootIncluded(-0.45, 0.9), true);
+  assert.equal(silhouetteRootIncluded(0.9, 0.9), true);
+  assert.equal(silhouetteRootIncluded(0.901, 0.9), false);
 });
 
 function makeSurface(points, overrides = {}) {
