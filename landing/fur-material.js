@@ -22,6 +22,11 @@
     labelDensity: 2.4,
     glyphTransition: 0.55,
     glyphGuardWidth: 1.4,
+    glyphGuardStrength: 0.9,
+    motionGuardStart: 0.12,
+    motionGuardEnd: 0.58,
+    boundaryLabelWidthScale: 0.72,
+    boundaryLabelLeanScale: 0.62,
     fragmentGlyphMask: true,
     silhouette: false,
   });
@@ -30,6 +35,7 @@
   const STATE_STRIDE = 4;
   const MATERIAL_STRIDE = 3;
   const GLYPH_SDF_RANGE = 12;
+  const MOTION_GUARD_MIN = 0.04;
   const REST_TOLERANCE = Object.freeze({ state: 0.0015, velocity: 0.002, target: 0.0015 });
 
   const QUALITY = Object.freeze({
@@ -47,6 +53,10 @@
   const stableRandom = (index, salt = 0) => {
     const value = Math.sin((index + 1) * 12.9898 + (salt + 1) * 78.233) * 43758.5453;
     return value - Math.floor(value);
+  };
+  const motionGuardProtection = (motion, start = 0.12, end = 0.58) => {
+    const release = smoothstep(start, Math.max(start + 0.001, end), clamp(motion, 0, 1));
+    return 1 - (1 - MOTION_GUARD_MIN) * release;
   };
   const encodeSignedDistance = (data, range = GLYPH_SDF_RANGE) => {
     const encoded = new Uint8Array(data.length);
@@ -111,6 +121,8 @@
     uniform float u_dpr;
     uniform float u_labelLengthScale;
     uniform float u_labelWidthScale;
+    uniform float u_boundaryLabelWidthScale;
+    uniform float u_boundaryLabelLeanScale;
 
     out float v_height;
     out float v_side;
@@ -129,16 +141,17 @@
       float depression = clamp(a_state.w, 0.0, 1.0);
       float labelFiber = clamp(a_material.x, 0.0, 1.0);
       float edgeFiber = clamp(a_material.y, 0.0, 1.0);
+      float glyphBoundary = labelFiber * clamp(a_material.z, 0.0, 1.0);
       float labelLengthScale = mix(1.0, u_labelLengthScale, labelFiber);
       float lengthPx = u_length * u_dpr * a_seed.x * labelLengthScale * (1.0 + edgeFiber * 0.24);
       float heightScale = 1.0 - compression * 0.78 - depression * 0.16;
-      vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z);
+      vec2 naturalLean = vec2(cos(a_seed.y), sin(a_seed.y)) * lengthPx * mix(0.28, 0.38, a_seed.z) * mix(1.0, u_boundaryLabelLeanScale, glyphBoundary);
       vec2 bend = a_state.xy * lengthPx * 1.62;
       vec2 direction = naturalLean * heightScale + bend * mix(0.68, 1.45, compression);
       float projectedLength = max(length(direction), 1.15 * u_dpr);
       vec2 tangent = direction / projectedLength;
       vec2 normal = vec2(-tangent.y, tangent.x);
-      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, u_labelWidthScale, labelFiber) * (1.0 + edgeFiber * 0.1 + compression * 0.3 + depression * 0.18);
+      float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, u_labelWidthScale, labelFiber) * mix(1.0, u_boundaryLabelWidthScale, glyphBoundary) * (1.0 + edgeFiber * 0.1 + compression * 0.3 + depression * 0.18);
       float tipWidth = rootWidth * mix(0.82, 1.68, compression);
       float width = mix(rootWidth, tipWidth, a_corner.y);
       vec2 rootPx = a_root * u_resolution;
@@ -178,6 +191,9 @@
     uniform float u_fragmentGlyphMask;
     uniform float u_sdfRange;
     uniform float u_glyphTransition;
+    uniform float u_glyphGuardStrength;
+    uniform float u_motionGuardStart;
+    uniform float u_motionGuardEnd;
     out vec4 outColor;
 
     void main() {
@@ -209,8 +225,9 @@
       float alpha = softEdge * taperedTip * mix(0.82, 0.94, v_height) * (1.0 + v_edge * 0.08 + pressure * 0.12);
       alpha = mix(alpha, max(alpha, 0.98 * softEdge), glyph);
       float ownershipMismatch = abs(sampledGlyph - rootGlyph);
-      float restingProtection = 1.0 - v_motion * 0.92;
-      float boundaryProtection = 1.0 - v_boundary * ownershipMismatch * 0.78 * u_fragmentGlyphMask * restingProtection;
+      float motionRelease = smoothstep(u_motionGuardStart, u_motionGuardEnd, v_motion);
+      float restingProtection = mix(1.0, ${MOTION_GUARD_MIN.toFixed(2)}, motionRelease);
+      float boundaryProtection = 1.0 - v_boundary * ownershipMismatch * u_glyphGuardStrength * u_fragmentGlyphMask * restingProtection;
       alpha *= mix(1.0, boundaryProtection, u_hasGlyph);
       outColor = vec4(color, alpha);
     }
@@ -315,11 +332,16 @@
         this.dprLocation = this.gl.getUniformLocation(this.program, "u_dpr");
         this.labelLengthScaleLocation = this.gl.getUniformLocation(this.program, "u_labelLengthScale");
         this.labelWidthScaleLocation = this.gl.getUniformLocation(this.program, "u_labelWidthScale");
+        this.boundaryLabelWidthScaleLocation = this.gl.getUniformLocation(this.program, "u_boundaryLabelWidthScale");
+        this.boundaryLabelLeanScaleLocation = this.gl.getUniformLocation(this.program, "u_boundaryLabelLeanScale");
         this.glyphFieldLocation = this.gl.getUniformLocation(this.program, "u_glyphField");
         this.hasGlyphLocation = this.gl.getUniformLocation(this.program, "u_hasGlyph");
         this.fragmentGlyphMaskLocation = this.gl.getUniformLocation(this.program, "u_fragmentGlyphMask");
         this.sdfRangeLocation = this.gl.getUniformLocation(this.program, "u_sdfRange");
         this.glyphTransitionLocation = this.gl.getUniformLocation(this.program, "u_glyphTransition");
+        this.glyphGuardStrengthLocation = this.gl.getUniformLocation(this.program, "u_glyphGuardStrength");
+        this.motionGuardStartLocation = this.gl.getUniformLocation(this.program, "u_motionGuardStart");
+        this.motionGuardEndLocation = this.gl.getUniformLocation(this.program, "u_motionGuardEnd");
         this.createBuffers();
         this.host.classList.remove("fur-static-fallback");
       } catch (error) {
@@ -462,13 +484,16 @@
         }
       }
 
-      if (labelField && labelDensity > 1 && rootValues.length / 2 < customCap) {
+      const baseFiberCount = rootValues.length / 2;
+      let requestedGlyphFibers = 0;
+      let allocatedGlyphFibers = 0;
+      if (labelField && labelDensity > 1) {
         const extraScale = Math.sqrt(labelDensity - 1);
         const extraColumns = Math.max(1, Math.round(columns * extraScale));
         const extraRows = Math.max(1, Math.round(rows * extraScale));
         let extraIndex = 0;
-        for (let row = 0; row < extraRows && rootValues.length / 2 < customCap; row += 1) {
-          for (let column = 0; column < extraColumns && rootValues.length / 2 < customCap; column += 1) {
+        for (let row = 0; row < extraRows; row += 1) {
+          for (let column = 0; column < extraColumns; column += 1) {
             const randomKey = candidateCount * 8 + extraIndex;
             const x = clamp((column + 0.5 + (stableRandom(randomKey, 20) - 0.5) * 0.08) / extraColumns, 0.002, 0.998);
             const y = clamp((row + 0.5 + (stableRandom(randomKey, 21) - 0.5) * 0.08) / extraRows, 0.002, 0.998);
@@ -478,10 +503,11 @@
             if (labelDistance >= -labelSoftness * 0.35) {
               const silhouetteDistance = this.roundedRectDistance(pixelX, pixelY, silhouetteRadius);
               if (silhouetteDistance <= -0.45) {
+                requestedGlyphFibers += 1;
                 const edgeFiber = smoothstep(-6.5, -0.45, silhouetteDistance);
                 const silhouetteCenterX = clamp(pixelX, silhouetteRadius, this.width - silhouetteRadius);
                 const outwardAngle = Math.atan2(pixelY - this.height / 2, pixelX - silhouetteCenterX);
-                appendFiber(x, y, labelDistance, edgeFiber, outwardAngle, randomKey);
+                if (appendFiber(x, y, labelDistance, edgeFiber, outwardAngle, randomKey)) allocatedGlyphFibers += 1;
               }
             }
             extraIndex += 1;
@@ -492,6 +518,12 @@
       this.rootSeeds = Float32Array.from(seedValues);
       this.materialMask = Float32Array.from(materialValues);
       this.count = this.roots.length / 2;
+      this.baseFiberCount = baseFiberCount;
+      this.requestedGlyphFibers = requestedGlyphFibers;
+      this.allocatedGlyphFibers = allocatedGlyphFibers;
+      this.fiberCap = customCap;
+      this.fiberCapReached = this.count >= customCap;
+      this.glyphAllocationLimited = allocatedGlyphFibers < requestedGlyphFibers;
       this.labelFiberCount = 0;
       for (let index = 0; index < this.count; index += 1) {
         if (this.materialMask[index * MATERIAL_STRIDE] >= 0.5) this.labelFiberCount += 1;
@@ -963,11 +995,18 @@
       gl.uniform1f(this.dprLocation, this.dpr);
       gl.uniform1f(this.labelLengthScaleLocation, clamp(Number(this.options.labelLengthScale) || 0.48, 0.2, 1));
       gl.uniform1f(this.labelWidthScaleLocation, clamp(Number(this.options.labelWidthScale) || 0.52, 0.2, 1));
+      gl.uniform1f(this.boundaryLabelWidthScaleLocation, clamp(Number(this.options.boundaryLabelWidthScale) || 0.72, 0.35, 1));
+      gl.uniform1f(this.boundaryLabelLeanScaleLocation, clamp(Number(this.options.boundaryLabelLeanScale) || 0.62, 0.2, 1));
       gl.uniform1i(this.glyphFieldLocation, 0);
       gl.uniform1f(this.hasGlyphLocation, this.hasGlyphTexture ? 1 : 0);
       gl.uniform1f(this.fragmentGlyphMaskLocation, this.options.fragmentGlyphMask === false ? 0 : 1);
       gl.uniform1f(this.sdfRangeLocation, GLYPH_SDF_RANGE);
       gl.uniform1f(this.glyphTransitionLocation, Math.max(0.12, Number(this.options.glyphTransition) || 0.55));
+      gl.uniform1f(this.glyphGuardStrengthLocation, clamp(Number(this.options.glyphGuardStrength) || 0.9, 0, 0.98));
+      const motionGuardStart = clamp(Number(this.options.motionGuardStart) || 0.12, 0, 0.8);
+      const motionGuardEnd = clamp(Number(this.options.motionGuardEnd) || 0.58, motionGuardStart + 0.05, 1);
+      gl.uniform1f(this.motionGuardStartLocation, motionGuardStart);
+      gl.uniform1f(this.motionGuardEndLocation, motionGuardEnd);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, this.glyphTexture);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.stateBuffer);
@@ -1021,6 +1060,13 @@
         renderer: this.gl ? "WebGL2 instanced strands" : "static fallback",
         fibers: this.count,
         labelFibers: this.labelFiberCount || 0,
+        requestedGlyphFibers: this.requestedGlyphFibers || 0,
+        allocatedGlyphFibers: this.allocatedGlyphFibers || 0,
+        baseFibers: this.baseFiberCount || 0,
+        fiberCap: this.fiberCap || 0,
+        fiberCapUtilization: this.fiberCap ? this.count / this.fiberCap : 0,
+        fiberCapReached: Boolean(this.fiberCapReached),
+        glyphAllocationLimited: Boolean(this.glyphAllocationLimited),
         fps: this.running ? this.fps : 0,
         drawCalls: this.gl ? 1 : 0,
         rebuildMs: this.lastRebuildMs,
@@ -1164,6 +1210,6 @@
     mount,
     mountAll,
     defaults: { ...DEFAULTS },
-    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
+    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };
 })();

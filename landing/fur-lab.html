@@ -46,8 +46,17 @@
               <article><span>3× SDF</span><button class="primary-button fur-compare-button" id="fur-resolution-3x" type="button"><span>Plan task</span></button></article>
             </div>
           </section>
+          <section class="fur-comparison-group" aria-labelledby="guard-comparison-title">
+            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison B</p><h2 id="guard-comparison-title">Boundary suppression</h2></div><span>Only mismatch suppression changes</span></div>
+            <div class="fur-guard-comparisons" aria-labelledby="guard-comparison-title">
+              <article><span>78% guard</span><button class="primary-button fur-compare-button" id="fur-guard-78" type="button"><span>Plan task</span></button></article>
+              <article><span>85%</span><button class="primary-button fur-compare-button" id="fur-guard-85" type="button"><span>Plan task</span></button></article>
+              <article><span>90%</span><button class="primary-button fur-compare-button" id="fur-guard-90" type="button"><span>Plan task</span></button></article>
+              <article><span>95%</span><button class="primary-button fur-compare-button" id="fur-guard-95" type="button"><span>Plan task</span></button></article>
+            </div>
+          </section>
           <section class="fur-comparison-group" aria-labelledby="geometry-comparison-title">
-            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison B</p><h2 id="geometry-comparison-title">Fiber geometry</h2></div><span>Same mask, font, density, and size</span></div>
+            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison C</p><h2 id="geometry-comparison-title">Fiber geometry</h2></div><span>Same mask, font, density, and size</span></div>
             <div class="fur-letter-comparisons">
               <article><span>Root-sampled baseline</span><button class="primary-button fur-compare-button" id="fur-geometry-baseline" type="button"><span>Plan task</span></button></article>
               <article><span>Narrow label fibers</span><button class="primary-button fur-compare-button" id="fur-geometry-narrow" type="button"><span>Plan task</span></button></article>
@@ -55,7 +64,7 @@
             </div>
           </section>
           <section class="fur-comparison-group" aria-labelledby="production-comparison-title">
-            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison C + D</p><h2 id="production-comparison-title">Production labels and interaction</h2></div><output id="fur-comparison-performance">Measuring…</output></div>
+            <div class="fur-comparison-heading"><div><p class="section-kicker">Comparison D + E</p><h2 id="production-comparison-title">Production labels and interaction</h2></div><output id="fur-comparison-performance">Measuring…</output></div>
             <div class="fur-production-comparisons">
               <article><span>40 px · short counters</span><button class="primary-button fur-production-button fur-height-40" id="fur-production-plan" type="button"><span>Plan task</span></button></article>
               <article><span>44 px · long label</span><button class="primary-button fur-production-button fur-height-44" id="fur-production-add" type="button"><span>Add to DuckPlan</span></button></article>
@@ -112,6 +121,26 @@
             <input name="glyphGuardWidth" type="range" min="0.4" max="3" step="0.1" value="1.4" />
           </label>
           <label class="fur-control">
+            <span>Boundary suppression <output data-output="glyphGuardStrength">90%</output></span>
+            <input name="glyphGuardStrength" type="range" min="0.78" max="0.95" step="0.01" value="0.9" />
+          </label>
+          <label class="fur-control">
+            <span>Guard fade starts <output data-output="motionGuardStart">0.12</output></span>
+            <input name="motionGuardStart" type="range" min="0.04" max="0.3" step="0.01" value="0.12" />
+          </label>
+          <label class="fur-control">
+            <span>Guard released by <output data-output="motionGuardEnd">0.58</output></span>
+            <input name="motionGuardEnd" type="range" min="0.35" max="0.9" step="0.01" value="0.58" />
+          </label>
+          <label class="fur-control">
+            <span>Boundary-fiber width <output data-output="boundaryLabelWidthScale">0.72×</output></span>
+            <input name="boundaryLabelWidthScale" type="range" min="0.4" max="1" step="0.01" value="0.72" />
+          </label>
+          <label class="fur-control">
+            <span>Boundary-fiber lean <output data-output="boundaryLabelLeanScale">0.62×</output></span>
+            <input name="boundaryLabelLeanScale" type="range" min="0.3" max="1" step="0.01" value="0.62" />
+          </label>
+          <label class="fur-control">
             <span>Spring stiffness <output data-output="stiffness">62</output></span>
             <input name="stiffness" type="range" min="30" max="150" step="2" value="62" />
           </label>
@@ -147,7 +176,7 @@
             <button class="secondary-button fur-reset-button" id="fur-neutral" type="button">Reset fibers</button>
             <button class="secondary-button fur-reset-button" id="fur-reset" type="button">Reset defaults</button>
           </div>
-          <p class="fur-lab-note">Each disturbed strand owns its recovery delay; untouched regions are never held by activity elsewhere. The default 280 ms linger is short and adjustable to 5 seconds. Production labels use a high-DPI signed-distance glyph field while retaining semantic HTML text for accessibility.</p>
+          <p class="fur-lab-note">Each disturbed strand owns its recovery delay; untouched regions are never held by activity elsewhere. Production diagnostics report targeted glyph allocation and cap use. Semantic HTML text remains available for accessibility.</p>
         </form>
       </section>
     </main>

@@ -28,6 +28,11 @@
     labelDensity: 2.4,
     glyphTransition: 0.55,
     glyphGuardWidth: 1.4,
+    glyphGuardStrength: 0.9,
+    motionGuardStart: 0.12,
+    motionGuardEnd: 0.58,
+    boundaryLabelWidthScale: 0.72,
+    boundaryLabelLeanScale: 0.62,
   };
 
   if (!window.DuckFur) {
@@ -57,6 +62,11 @@
     labelDensity: defaults.labelDensity,
     glyphTransition: defaults.glyphTransition,
     glyphGuardWidth: defaults.glyphGuardWidth,
+    glyphGuardStrength: defaults.glyphGuardStrength,
+    motionGuardStart: defaults.motionGuardStart,
+    motionGuardEnd: defaults.motionGuardEnd,
+    boundaryLabelWidthScale: defaults.boundaryLabelWidthScale,
+    boundaryLabelLeanScale: defaults.boundaryLabelLeanScale,
     fragmentGlyphMask: true,
     silhouette: true,
   };
@@ -65,6 +75,12 @@
   const resolutionSurfaces = [1, 2, 3].map((scale) => window.DuckFur.mount(
     document.querySelector(`#fur-resolution-${scale}x`),
     { ...improvedButtonOptions, labelScale: scale },
+  ));
+
+  const guardStrengths = [0.78, 0.85, 0.9, 0.95];
+  const guardSurfaces = guardStrengths.map((strength) => window.DuckFur.mount(
+    document.querySelector(`#fur-guard-${Math.round(strength * 100)}`),
+    { ...improvedButtonOptions, glyphGuardStrength: strength },
   ));
 
   const geometrySurfaces = [
@@ -87,7 +103,7 @@
     window.DuckFur.mount(document.querySelector("#fur-production-add"), improvedButtonOptions),
     window.DuckFur.mount(document.querySelector("#fur-production-focus"), improvedButtonOptions),
   ];
-  const allSurfaces = [stage, button, ...resolutionSurfaces, ...geometrySurfaces, ...productionSurfaces];
+  const allSurfaces = [stage, button, ...resolutionSurfaces, ...guardSurfaces, ...geometrySurfaces, ...productionSurfaces];
 
   function values() {
     const form = new FormData(controls);
@@ -111,6 +127,11 @@
       labelDensity: Number(form.get("labelDensity")),
       glyphTransition: Number(form.get("glyphTransition")),
       glyphGuardWidth: Number(form.get("glyphGuardWidth")),
+      glyphGuardStrength: Number(form.get("glyphGuardStrength")),
+      motionGuardStart: Number(form.get("motionGuardStart")),
+      motionGuardEnd: Number(form.get("motionGuardEnd")),
+      boundaryLabelWidthScale: Number(form.get("boundaryLabelWidthScale")),
+      boundaryLabelLeanScale: Number(form.get("boundaryLabelLeanScale")),
     };
   }
 
@@ -135,6 +156,11 @@
       labelDensity: `${parameters.labelDensity.toFixed(2)}×`,
       glyphTransition: `${parameters.glyphTransition.toFixed(2)} px`,
       glyphGuardWidth: `${parameters.glyphGuardWidth.toFixed(2)} px`,
+      glyphGuardStrength: `${Math.round(parameters.glyphGuardStrength * 100)}%`,
+      motionGuardStart: parameters.motionGuardStart.toFixed(2),
+      motionGuardEnd: parameters.motionGuardEnd.toFixed(2),
+      boundaryLabelWidthScale: `${parameters.boundaryLabelWidthScale.toFixed(2)}×`,
+      boundaryLabelLeanScale: `${parameters.boundaryLabelLeanScale.toFixed(2)}×`,
     };
     Object.entries(formats).forEach(([name, value]) => {
       controls.querySelector(`[data-output="${name}"]`).textContent = value;
@@ -165,6 +191,11 @@
         labelDensity: parameters.labelDensity,
         glyphTransition: parameters.glyphTransition,
         glyphGuardWidth: parameters.glyphGuardWidth,
+        glyphGuardStrength: parameters.glyphGuardStrength,
+        motionGuardStart: parameters.motionGuardStart,
+        motionGuardEnd: parameters.motionGuardEnd,
+        boundaryLabelWidthScale: parameters.boundaryLabelWidthScale,
+        boundaryLabelLeanScale: parameters.boundaryLabelLeanScale,
       };
       [button, ...productionSurfaces].forEach((surface) => surface.setParameters(productionParameters));
     });
@@ -193,9 +224,12 @@
       ? `strand ${sample.index} · bend ${Math.hypot(sample.bendX, sample.bendY).toFixed(3)} · compression ${sample.compression.toFixed(3)} · depth ${sample.depression.toFixed(3)} · hold ${Math.round(sample.hold * 1000)} ms`
       : "Move over the surface to inspect its nearest strand.";
 
-    const productionStats = productionSurfaces[1].getStats();
+    const productionSizeStats = productionSurfaces.map((surface) => surface.getStats());
+    const productionStats = productionSizeStats[1];
     const productionMotion = productionStats.settled ? "idle" : `${productionStats.fps || "—"} FPS`;
-    comparisonPerformance.textContent = `${productionStats.fibers.toLocaleString()} fibers (${productionStats.labelFibers.toLocaleString()} label) · ${productionStats.drawCalls} draw · ${productionStats.rebuildMs.toFixed(1)} ms rebuild · ${(productionStats.gpuBytes / 1024).toFixed(0)} KB GPU data · ${productionMotion}`;
+    const capUse = `${Math.round(productionStats.fiberCapUtilization * 100)}% cap${productionStats.glyphAllocationLimited ? " · limited" : ""}`;
+    const allocationBySize = productionSizeStats.map((stats, index) => `${[40, 44, 48][index]}px ${stats.allocatedGlyphFibers}/${stats.requestedGlyphFibers}${stats.glyphAllocationLimited ? "!" : ""}`).join(" · ");
+    comparisonPerformance.textContent = `${allocationBySize} · 44px ${productionStats.fibers.toLocaleString()} fibers (${productionStats.labelFibers.toLocaleString()} label) · ${capUse} · ${productionStats.drawCalls} draw · ${productionStats.rebuildMs.toFixed(1)} ms · ${(productionStats.gpuBytes / 1024).toFixed(0)} KB · ${productionMotion}`;
   }, 500);
 
   buttonElement.addEventListener("click", () => {

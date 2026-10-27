@@ -11,6 +11,7 @@ const {
   encodeSignedDistance,
   pressProfile,
   stableRandom,
+  motionGuardProtection,
   REST_TOLERANCE,
   ROOT_STRIDE,
   STATE_STRIDE,
@@ -26,6 +27,15 @@ test("stratified fiber randomness is stable across rebuilds", () => {
   const second = Array.from({ length: 12 }, (_, index) => stableRandom(index, 4));
   assert.deepEqual(first, second);
   assert.ok(new Set(first).size > 10);
+});
+
+test("motion guard keeps tiny movement sharp and releases smoothly for strong deformation", () => {
+  assert.equal(motionGuardProtection(0.08), 1);
+  const ordinaryMotion = motionGuardProtection(0.24);
+  const strongerMotion = motionGuardProtection(0.42);
+  assert.ok(ordinaryMotion < 1 && ordinaryMotion > strongerMotion);
+  assert.ok(strongerMotion > 0.04);
+  assert.ok(Math.abs(motionGuardProtection(0.7) - 0.04) < 1e-9);
 });
 
 function makeSurface(points, overrides = {}) {
