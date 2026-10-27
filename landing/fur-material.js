@@ -27,7 +27,8 @@
     motionGuardEnd: 0.58,
     boundaryLabelWidthScale: 0.72,
     boundaryLabelLeanScale: 0.62,
-    silhouetteOverscan: 10,
+    silhouetteOverscan: 18,
+    silhouetteFringe: 5,
     fragmentGlyphMask: true,
     silhouette: false,
   });
@@ -66,6 +67,11 @@
     surfaceHeight: height * dpr,
     offset: overscan * dpr,
   });
+  const silhouetteFringeOpacity = (distance, fringe = 5) => {
+    if (distance <= -0.45) return 1;
+    if (distance >= fringe) return 0;
+    return (1 - smoothstep(-0.45, fringe, distance)) ** 1.35;
+  };
   const encodeSignedDistance = (data, range = GLYPH_SDF_RANGE) => {
     const encoded = new Uint8Array(data.length);
     for (let index = 0; index < data.length; index += 1) {
@@ -412,7 +418,8 @@
       const quality = QUALITY[this.options.quality] || QUALITY.medium;
       const dprLimit = this.lowPower ? Math.min(quality.dpr, 1.25) : quality.dpr;
       this.dpr = Math.min(window.devicePixelRatio || 1, dprLimit);
-      this.overscan = this.options.silhouette ? Math.max(0, Number(this.options.silhouetteOverscan) || 10) : 0;
+      const configuredOverscan = Number(this.options.silhouetteOverscan);
+      this.overscan = this.options.silhouette ? Math.max(0, Number.isFinite(configuredOverscan) ? configuredOverscan : 18) : 0;
       const canvasWidth = width + this.overscan * 2;
       const canvasHeight = height + this.overscan * 2;
       const layout = overscanLayout(width, height, this.overscan, this.dpr);
@@ -438,11 +445,15 @@
       const labelField = this.createLabelField();
       this.uploadLabelField(labelField);
       const silhouetteRadius = Math.min(this.height / 2, this.width / 2);
+      const silhouetteFringe = this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 5) : 0;
       const rootValues = [];
       const seedValues = [];
       const materialValues = [];
-      const aspect = this.width / this.height;
-      const candidateCount = this.options.silhouette ? Math.ceil(baseCount * 1.18) : baseCount;
+      const samplingWidth = this.width + silhouetteFringe * 2;
+      const samplingHeight = this.height + silhouetteFringe * 2;
+      const aspect = samplingWidth / samplingHeight;
+      const samplingAreaScale = samplingWidth * samplingHeight / (this.width * this.height);
+      const candidateCount = this.options.silhouette ? Math.ceil(baseCount * 1.18 * samplingAreaScale) : baseCount;
       const columns = Math.ceil(Math.sqrt(candidateCount * aspect));
       const rows = Math.ceil(candidateCount / columns);
       const labelDensity = Math.max(1, Number(this.options.labelDensity) || 1);
@@ -475,28 +486,33 @@
       let baseIndex = 0;
       for (let row = 0; row < rows && rootValues.length / 2 < customCap; row += 1) {
         for (let column = 0; column < columns && rootValues.length / 2 < customCap; column += 1) {
-          const centerX = (column + 0.5) / columns;
-          const centerY = (row + 0.5) / rows;
-          const centerDistance = labelField ? this.sampleLabelField(labelField, centerX * this.width, centerY * this.height) : -100;
+          const centerX = -silhouetteFringe + (column + 0.5) / columns * samplingWidth;
+          const centerY = -silhouetteFringe + (row + 0.5) / rows * samplingHeight;
+          const centerDistance = labelField && centerX >= 0 && centerX <= this.width && centerY >= 0 && centerY <= this.height
+            ? this.sampleLabelField(labelField, centerX, centerY)
+            : -100;
           const jitterScale = centerDistance > -guardWidth ? 0.22 : 0.78;
           const jitterX = (stableRandom(baseIndex, 0) - 0.5) * jitterScale;
           const jitterY = (stableRandom(baseIndex, 1) - 0.5) * jitterScale;
-          const x = clamp((column + 0.5 + jitterX) / columns, 0.002, 0.998);
-          const y = clamp((row + 0.5 + jitterY) / rows, 0.002, 0.998);
-          const pixelX = x * this.width;
-          const pixelY = y * this.height;
+          const pixelX = -silhouetteFringe + (column + 0.5 + jitterX) / columns * samplingWidth;
+          const pixelY = -silhouetteFringe + (row + 0.5 + jitterY) / rows * samplingHeight;
+          const x = pixelX / this.width;
+          const y = pixelY / this.height;
           const silhouetteDistance = this.options.silhouette
             ? this.roundedRectDistance(pixelX, pixelY, silhouetteRadius)
             : -Math.min(this.width, this.height);
-          if (this.options.silhouette && silhouetteDistance > -0.45) {
+          const fringeOpacity = this.options.silhouette ? silhouetteFringeOpacity(silhouetteDistance, silhouetteFringe) : 1;
+          if (this.options.silhouette && stableRandom(baseIndex, 12) > fringeOpacity) {
             baseIndex += 1;
             continue;
           }
-          const edgeFiber = this.options.silhouette ? smoothstep(-6.5, -0.45, silhouetteDistance) : 0;
+          const edgeFiber = this.options.silhouette ? smoothstep(-6.5, silhouetteFringe, silhouetteDistance) : 0;
           const silhouetteCenterX = clamp(pixelX, silhouetteRadius, this.width - silhouetteRadius);
           const silhouetteCenterY = this.height / 2;
           const outwardAngle = Math.atan2(pixelY - silhouetteCenterY, pixelX - silhouetteCenterX);
-          const labelDistance = labelField ? this.sampleLabelField(labelField, pixelX, pixelY) : -100;
+          const labelDistance = labelField && pixelX >= 0 && pixelX <= this.width && pixelY >= 0 && pixelY <= this.height
+            ? this.sampleLabelField(labelField, pixelX, pixelY)
+            : -100;
           appendFiber(x, y, labelDistance, edgeFiber, outwardAngle, baseIndex * 4);
 
           baseIndex += 1;
@@ -1057,6 +1073,7 @@
       const previousLabelOrientationVariance = this.options.labelOrientationVariance;
       const previousGlyphGuardWidth = this.options.glyphGuardWidth;
       const previousSilhouetteOverscan = this.options.silhouetteOverscan;
+      const previousSilhouetteFringe = this.options.silhouetteFringe;
       this.options = { ...this.options, ...parameters };
       this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
       if (
@@ -1070,6 +1087,7 @@
         || previousLabelOrientationVariance !== this.options.labelOrientationVariance
         || previousGlyphGuardWidth !== this.options.glyphGuardWidth
         || previousSilhouetteOverscan !== this.options.silhouetteOverscan
+        || previousSilhouetteFringe !== this.options.silhouetteFringe
       ) this.resize();
       else {
         this.draw();
@@ -1091,6 +1109,7 @@
         fiberCapReached: Boolean(this.fiberCapReached),
         glyphAllocationLimited: Boolean(this.glyphAllocationLimited),
         overscan: this.overscan || 0,
+        fringe: this.options.silhouette ? Math.max(0, Number(this.options.silhouetteFringe) || 5) : 0,
         fps: this.running ? this.fps : 0,
         drawCalls: this.gl ? 1 : 0,
         rebuildMs: this.lastRebuildMs,
@@ -1234,6 +1253,6 @@
     mount,
     mountAll,
     defaults: { ...DEFAULTS },
-    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
+    __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteFringeOpacity, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };
 })();
