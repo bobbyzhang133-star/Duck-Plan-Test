@@ -3,6 +3,11 @@
 
   const DEFAULTS = Object.freeze({
     quality: "medium",
+    waveSpeed: 540,
+    waveWidth: 22,
+    waveBend: 0.56,
+    waveCompression: 0.22,
+    waveEnabled: true,
     density: 1,
     length: 5.4,
     stiffness: 62,
@@ -48,6 +53,7 @@
   });
 
   const registry = new WeakMap();
+  const liveSurfaces = new Set();
   const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
   const smoothstep = (edge0, edge1, value) => {
     const t = clamp((value - edge0) / (edge1 - edge0), 0, 1);
@@ -267,6 +273,7 @@
       this.pressed = false;
       this.activePointerId = null;
       this.hovered = false;
+      this.waves = [];
       this.pointer = { x: 0, y: 0, previousX: 0, previousY: 0, time: 0 };
       this.lastFrame = 0;
       this.frames = 0;
@@ -287,6 +294,7 @@
       this.onPointerLeave = this.onPointerLeave.bind(this);
       this.onKeyDown = this.onKeyDown.bind(this);
       this.onKeyUp = this.onKeyUp.bind(this);
+      this.onActivate = this.onActivate.bind(this);
       this.onVisibility = this.onVisibility.bind(this);
       this.onWindowBlur = this.onWindowBlur.bind(this);
       this.onMotionChange = this.onMotionChange.bind(this);
@@ -323,6 +331,7 @@
       this.host.addEventListener("pointerleave", this.onPointerLeave);
       this.host.addEventListener("keydown", this.onKeyDown);
       this.host.addEventListener("keyup", this.onKeyUp);
+      this.host.addEventListener("click", this.onActivate);
       document.addEventListener("visibilitychange", this.onVisibility);
       window.addEventListener("blur", this.onWindowBlur);
       this.canvas.addEventListener("webglcontextlost", this.onContextLost);
@@ -410,6 +419,7 @@
     }
 
     resize() {
+      this.waves = [];
       const rect = this.host.getBoundingClientRect();
       const width = Math.round(rect.width);
       const height = Math.round(rect.height);
@@ -721,7 +731,7 @@
       if (this.host.disabled) return;
       const point = this.localPointer(event);
       const elapsed = Math.max(8, event.timeStamp - this.pointer.time);
-      if (!this.reducedMotion.matches && (this.hovered || this.pressed)) {
+      if (!this.reducedMotion.matches && !this.options.reducedMotion && (this.hovered || this.pressed)) {
         this.brush(this.pointer.x, this.pointer.y, point.x, point.y, elapsed);
       }
       this.pointer = { ...point, previousX: this.pointer.x, previousY: this.pointer.y, time: event.timeStamp };
@@ -822,7 +832,7 @@
       this.releaseActivePressFibers();
       this.host.classList.add("fur-pressed");
       if (this.host.setPointerCapture) this.host.setPointerCapture(event.pointerId);
-      if (this.reducedMotion.matches) this.setReducedPress(true);
+      if (this.reducedMotion.matches || this.options.reducedMotion) this.setReducedPress(true);
       else if (this.gl) this.imprintPress();
       this.wake();
     }
@@ -847,7 +857,7 @@
       const pointerId = event.pointerId ?? this.activePointerId;
       if (releaseCapture && pointerId !== null && pointerId !== undefined && this.host.hasPointerCapture?.(pointerId)) this.host.releasePointerCapture(pointerId);
       this.activePointerId = null;
-      if (this.reducedMotion.matches) {
+      if (this.reducedMotion.matches || this.options.reducedMotion) {
         this.setReducedPress(false);
       }
       this.wake();
@@ -867,7 +877,7 @@
       this.activePointerId = null;
       this.releaseActivePressFibers();
       this.host.classList.add("fur-pressed");
-      if (this.reducedMotion.matches) this.setReducedPress(true);
+      if (this.reducedMotion.matches || this.options.reducedMotion) this.setReducedPress(true);
       else if (this.gl) this.imprintPress();
       this.wake();
     }
@@ -937,7 +947,49 @@
       this.draw();
     }
 
+    onActivate(event) {
+      if (this.host.disabled || this.host.dataset.transition === "none" || this.options.waveEnabled === false) return;
+      const point = event.detail ? this.localPointer(event) : { x: this.width / 2, y: this.height / 2 };
+      this.emitWave(point);
+    }
+
+    emitWave(point = { x: this.width / 2, y: this.height / 2 }) {
+      if (this.destroyed || this.reducedMotion?.matches || this.options.reducedMotion || !this.gl) return;
+      const reach = Math.max(...[[0, 0], [this.width, 0], [0, this.height], [this.width, this.height]].map(([x,y]) => Math.hypot(x-point.x,y-point.y)));
+      this.waves ||= [];
+      this.waves.push({ x: point.x, y: point.y, radius: 0, reach });
+      this.waves = this.waves.slice(-3);
+      this.wake();
+    }
+
+    advanceWaves(step) {
+      const width = Math.max(4, Number(this.options.waveWidth) || 22);
+      const speed = Math.max(60, Number(this.options.waveSpeed) || 540);
+      this.waves = (this.waves || []).filter((wave) => wave.radius < wave.reach + width);
+      for (const wave of this.waves) {
+        const previous = wave.radius;
+        wave.radius += speed * step;
+        for (let index = 0; index < this.count; index += 1) {
+          if (this.pressed && this.activePress[index]) continue;
+          const dx = this.roots[index*2] * this.width - wave.x;
+          const dy = this.roots[index*2+1] * this.height - wave.y;
+          const distance = Math.hypot(dx,dy);
+          // Swept wavefront sampling prevents gaps at low frame rates.
+          const nearest = clamp(distance, previous, wave.radius);
+          const envelope = 1 - smoothstep(0, width, Math.abs(distance-nearest));
+          const amplitude = envelope * Math.exp(-distance / Math.max(1,wave.reach) * 0.6);
+          if (amplitude <= 0) continue;
+          const offset = index*STATE_STRIDE;
+          const bend = amplitude * (Number(this.options.waveBend) || 0);
+          this.state[offset] += (dx / Math.max(1,distance) * bend - this.state[offset]) * Math.min(1,step*35);
+          this.state[offset+1] += (dy / Math.max(1,distance) * bend - this.state[offset+1]) * Math.min(1,step*35);
+          this.state[offset+2] = Math.max(this.state[offset+2],amplitude * (Number(this.options.waveCompression) || 0));
+        }
+      }
+    }
+
     simulate(step) {
+      this.advanceWaves(step);
       const stiffness = this.options.stiffness;
       const damping = this.options.damping;
       let maximumEnergy = 0;
@@ -1024,7 +1076,7 @@
         this.frames = 0;
         this.fpsClock = time;
       }
-      if (this.pressed || this.recoveringFibers > 0 || energy > REST_TOLERANCE.target) requestAnimationFrame(this.frame);
+      if (this.pressed || this.waves?.length || this.recoveringFibers > 0 || energy > REST_TOLERANCE.target) requestAnimationFrame(this.frame);
       else {
         this.running = false;
         this.lastFrame = 0;
@@ -1087,6 +1139,7 @@
       const previousSilhouetteOverscan = this.options.silhouetteOverscan;
       const previousSilhouetteFringe = this.options.silhouetteFringe;
       this.options = { ...this.options, ...parameters };
+      if(this.options.reducedMotion) this.resetFibers();
       this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
       if (
         previousDensity !== this.options.density
@@ -1195,6 +1248,7 @@
     }
 
     resetFibers() {
+      this.waves = [];
       this.pressed = false;
       this.activePointerId = null;
       this.host.classList.remove("fur-pressed", "fur-hovered");
@@ -1212,6 +1266,7 @@
 
     onVisibility() {
       if (document.hidden) {
+        this.waves = [];
         this.finishPress({}, false);
         this.running = false;
         this.lastFrame = 0;
@@ -1248,6 +1303,7 @@
     destroy() {
       if (this.destroyed) return;
       this.destroyed = true;
+      liveSurfaces.delete(this);
       this.running = false;
       this.resizeObserver?.disconnect();
       this.intersectionObserver?.disconnect();
@@ -1261,6 +1317,7 @@
       this.host.removeEventListener("pointerleave", this.onPointerLeave);
       this.host.removeEventListener("keydown", this.onKeyDown);
       this.host.removeEventListener("keyup", this.onKeyUp);
+      this.host.removeEventListener("click", this.onActivate);
       document.removeEventListener("visibilitychange", this.onVisibility);
       window.removeEventListener("blur", this.onWindowBlur);
       this.canvas.removeEventListener("webglcontextlost", this.onContextLost);
@@ -1293,6 +1350,7 @@
     }
     const surface = new DuckFurSurface(host, options);
     registry.set(host, surface);
+    liveSurfaces.add(surface);
     return surface;
   }
 
@@ -1308,10 +1366,21 @@
     return true;
   }
 
+  // Dynamic task/calendar rendering may remove controls before a view refresh.
+  // Release their contexts explicitly instead of retaining detached surfaces.
+  if(typeof MutationObserver !== "undefined" && typeof document !== "undefined") {
+    new MutationObserver(records=> {
+      if(!records.some(record=>record.removedNodes.length))return;
+      for(const surface of [...liveSurfaces])if(!surface.host.isConnected)unmount(surface.host);
+    }).observe(document.documentElement,{childList:true,subtree:true});
+  }
+
   window.DuckFur = {
     mount,
     mountAll,
     unmount,
+    get: (host) => registry.get(host),
+    getRendererStats: () => ({ contexts: [...liveSurfaces].filter(surface=>Boolean(surface.gl)).length, gpuBytes: [...liveSurfaces].reduce((sum,surface)=>sum+surface.getStats().gpuBytes,0) }),
     defaults: { ...DEFAULTS },
     __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteRootIncluded, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };

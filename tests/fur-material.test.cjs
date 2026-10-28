@@ -204,3 +204,24 @@ test("rapid repeated brush and press gestures cannot leave residual deformation"
   assertAtRest(surface);
   assert.equal(surface.recoveringFibers, 0);
 });
+
+test("wavefront reaches near fibers before distant fibers and fully recovers", () => {
+  const surface=makeSurface([[10,50],[60,50],[95,50]],{waveSpeed:100,waveWidth:5,waveBend:.6,waveCompression:.2});
+  surface.waves=[{x:0,y:50,radius:0,reach:100}];
+  surface.advanceWaves(.1);
+  assert.ok(surface.state[0]>.1);
+  assert.equal(surface.state[4],0);
+  surface.advanceWaves(.5);
+  assert.ok(surface.state[4]>.1);
+  assert.equal(surface.state[8],0);
+  for(let i=0;i<1200;i++)surface.simulate(1/120);
+  assert.equal(surface.waves.length,0);
+  assertAtRest(surface);
+});
+
+test("swept wavefront does not skip fibers when the frame interval is long",()=> {
+  const surface=makeSurface([[30,50],[40,50],[50,50]],{waveSpeed:600,waveWidth:4,waveBend:.5,waveCompression:.2});
+  surface.waves=[{x:0,y:50,radius:0,reach:100}];
+  surface.advanceWaves(.1);
+  assert.ok(surface.state[0]>0 && surface.state[4]>0 && surface.state[8]>0);
+});
