@@ -1057,6 +1057,7 @@
     }
 
     frame(time) {
+      this.frameId = 0;
       if (this.destroyed || !this.running) return;
       if (!this.visible || document.hidden) {
         this.running = false;
@@ -1076,7 +1077,7 @@
         this.frames = 0;
         this.fpsClock = time;
       }
-      if (this.pressed || this.waves?.length || this.recoveringFibers > 0 || energy > REST_TOLERANCE.target) requestAnimationFrame(this.frame);
+      if (this.pressed || this.waves?.length || this.recoveringFibers > 0 || energy > REST_TOLERANCE.target) this.frameId = requestAnimationFrame(this.frame);
       else {
         this.running = false;
         this.lastFrame = 0;
@@ -1123,7 +1124,7 @@
       this.lastFrame = 0;
       this.frames = 0;
       this.fpsClock = performance.now();
-      requestAnimationFrame(this.frame);
+      this.frameId = requestAnimationFrame(this.frame);
     }
 
     setParameters(parameters) {
@@ -1248,6 +1249,8 @@
     }
 
     resetFibers() {
+      if(this.frameId) cancelAnimationFrame(this.frameId);
+      this.frameId = 0;
       this.waves = [];
       this.pressed = false;
       this.activePointerId = null;
@@ -1266,6 +1269,8 @@
 
     onVisibility() {
       if (document.hidden) {
+        if(this.frameId) cancelAnimationFrame(this.frameId);
+        this.frameId = 0;
         this.waves = [];
         this.finishPress({}, false);
         this.running = false;
@@ -1302,6 +1307,8 @@
 
     destroy() {
       if (this.destroyed) return;
+      if(this.frameId) cancelAnimationFrame(this.frameId);
+      this.frameId = 0;
       this.destroyed = true;
       liveSurfaces.delete(this);
       this.running = false;
