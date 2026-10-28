@@ -25,7 +25,7 @@
     output.value=`${stats.fps} FPS · max frame ${stats.maxFrameMs.toFixed(1)} ms · ${stats.longFrames} frames >25 ms · capture ${stats.snapshotMs.toFixed(1)} ms · ${stats.layers} workspace layers · ${stats.morphs} morphs · ${stats.contexts} WebGL contexts · snapshot ${(stats.snapshotBytes/1048576).toFixed(2)} MiB · demo GPU ${(gpuBytes/1048576).toFixed(2)} MiB · cancelled ${stats.cancelled}`;
   }
   function show(source,event,next=page,toggle=false) {
-    DuckTransitions.workspace({root,source,event,update:()=> {
+    DuckTransitions.workspace({root,source,event,effect:"radial",update:()=> {
       page=next;if(toggle)week=!week;
       root.querySelector("h3").textContent=page==="tasks"?"Tasks":"Calendar";
       document.querySelector("#wave-calendar-content").innerHTML=week?'<div class="wave-demo-days">'+["M","T","W","T","F","S","S"].map(day=>`<span>${day}</span>`).join("")+'</div>':'<p>Today · Calculus practice · 3:30 PM</p>';

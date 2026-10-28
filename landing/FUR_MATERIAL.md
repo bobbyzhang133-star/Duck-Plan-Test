@@ -1,5 +1,17 @@
 # DuckPlan interactive fur material
 
+## Physical fur-sheet checkpoint (2026-10-28, paused at user request)
+
+Branch: `codex/physical-fur-sheet`, based on reviewed wave commit `ab705cd`.
+
+Implemented a separate temporary WebGL2 renderer in `fur-sheet.js`. A tessellated front/back ribbon has an elevated, overturning parametric cross-section, normal-directed thickness, underside shading, and instanced tapered fibers attached to the deforming surface. The material grows laterally from the activation origin, with additional visible instances as area increases. Its initially bowed front broadens during travel. The old DOM snapshot is clipped against the same grounded trailing edge used by the mesh; the incoming interface remains native HTML. Main navigation loads the geometric renderer, while the previous radial effect is explicitly retained in the older wave lab and comparison button.
+
+The new `fur-lab.html#sheet-lab` section includes geometry controls, a held inspection pose, old/new comparison, rapid activations, and an actual WebGL context-loss control. Temporary contexts, buffers, programs and canvas estimates are instrumented. Smaller surfaces use 21,600 mesh vertices and a 9,000-instance capacity; larger surfaces use 49,728 vertices and a 26,000-instance capacity. Draw counts grow with the sheet. Adaptive reduction lowers resolution and active fiber count; normal completion, interruption and context loss release resources. A recent refinement reuses a compatible active renderer across interrupted turns to avoid repeated shader compilation; this refinement still needs browser profiling.
+
+Verified at this checkpoint: 29 automated tests pass, changed JavaScript files parse, and diff whitespace checks pass. Browser inspection showed an elevated furry roll and shaded underside in a held pose, old/new DOM on opposite sides, and zero live sheet contexts/buffers/programs after reset and simulated context loss. A 390 px browser capture exercised the smaller quality tier; it is not testing on physical mobile hardware. Before the latest reuse refinement, initialization measurements ranged about 18–90 ms, and captured rapid runs measured roughly 47–52 FPS with 67–83 ms worst frames. Estimates ranged 1.73 MiB for a smaller inspection surface to about 7.92 MiB for the larger stage. These observations include development-tool overhead and must not be presented as final benchmarks.
+
+Resume work: visually recheck the latest renderer reuse, growing instance count and page-reveal alignment; profile desktop and phone-width transitions without screenshot capture; test actual main navigation, resize, dialog interruption, keyboard and reduced-motion paths with the geometric renderer; validate early growth and material continuity; refine the physical appearance before requesting user approval. The mesh is parametric rather than a cloth solver; underside lighting, shadow and fiber shading remain approximations. The old page is occluded by the rolling material rather than texture-mapped onto it. No visual approval, public deployment or shared-repository changes have occurred. This checkpoint is saved locally, not uploaded.
+
 ## Wave transition prototype (2026-10-28)
 
 The current test branch retains the unified Home workspace and fur text/icon button system. Earlier integration notes below describe the original selective rollout. `material-transitions.js` now coordinates three related responses:

@@ -32,7 +32,8 @@ function animatedSetup() {
     matchMedia:()=>({matches:false,addEventListener(){}}),addEventListener(type,fn){events[type]=fn;},
     requestAnimationFrame(fn){frames.set(++next,fn);return next;},cancelAnimationFrame(id){frames.delete(id);}};
   vm.runInNewContext(code,context);
-  return {transitions:context.window.DuckTransitions,root:node(),layers,events,frames,tick(time){for(const [id,fn]of [...frames]){frames.delete(id);fn(time);}}};
+  context.window.DuckTransitions.configure({effect:"radial"});
+  return {context,transitions:context.window.DuckTransitions,root:node(),layers,events,frames,tick(time){for(const [id,fn]of [...frames]){frames.delete(id);fn(time);}}};
 }
 test("rapid workspace navigation commits the latest action and removes every old layer",()=> {
   const env=animatedSetup();let destination="home",cancelled=0;
@@ -40,7 +41,7 @@ test("rapid workspace navigation commits the latest action and removes every old
   env.tick(0);
   env.transitions.workspace({root:env.root,update:()=>{destination="settings";}});
   assert.equal(destination,"settings");assert.equal(cancelled,1);assert.equal(env.layers.size,1);
-  env.tick(20);env.tick(600);
+  env.tick(20);env.tick(700);
   assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);assert.equal(env.transitions.metrics.layers,0);
 });
 test("resize interrupts visual layers without undoing the destination state",()=> {
@@ -48,4 +49,17 @@ test("resize interrupts visual layers without undoing the destination state",()=
   env.transitions.workspace({root:env.root,update:()=>{updated=true;}});
   env.events.resize();
   assert.equal(updated,true);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});
+test("GPU initialization failure commits the real state and removes the overlay",()=>{
+  const env=animatedSetup();let updated=0,completed=0;
+  env.context.window.DuckFurSheet={FurSheet:class{constructor(){throw Error("GPU unavailable");}}};
+  env.transitions.workspace({root:env.root,effect:"sheet",update:()=>updated++,complete:()=>completed++});
+  assert.equal(updated,1);assert.equal(completed,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});
+test("rapid sheet turns dispose the previous GPU renderer and final renderer",()=>{
+  const env=animatedSetup();let disposals=0;
+  env.context.window.DuckFurSheet={FurSheet:class{getStats(){return {};}draw(){return {};}dispose(){disposals++;}},revealPolygon(){return "polygon(0 0,100% 0,100% 100%)";}};
+  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(0);
+  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(20);env.tick(700);
+  assert.equal(disposals,2);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });

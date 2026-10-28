@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const settings = { duration: 560, fold: 0.55, reducedMotion: false };
+  const settings = { duration: 620, fold: 0.55, reducedMotion: false, effect: "sheet" };
   const metrics = { frames: 0, longFrames: 0, maxFrameMs: 0, durationMs: 0, layers: 0, snapshotMs: 0, snapshotBytes: 0, cancelled: 0 };
   let active = null;
   const morphs = new Map();
@@ -50,14 +50,17 @@
     if (!active) return;
     const current=active; active=null;
     cancelAnimationFrame(current.frame);
+    if(current.sheet){metrics.sheetPeak=current.sheet.getStats();current.sheet.dispose();}
     current.layer.remove(); metrics.layers=0;
     metrics.cancelled++;
     current.complete?.({cancelled:true,reason});
   }
 
-  function workspace({root=document.querySelector(".workspace"),source=activation?.source,event=activation?.event,update,complete}={}) {
+  function workspace({root=document.querySelector(".workspace"),source=activation?.source,event=activation?.event,update,complete,effect=settings.effect,sheetOptions={},holdProgress=null}={}) {
+    let reusable=effect==="sheet" && active?.sheet?.canRetarget ? active.sheet : null;
+    if(reusable)active.sheet=null;
     cancel();
-    if (!root || reduced() || document.hidden || !root.getClientRects().length) { update?.(); complete?.({cancelled:false}); return; }
+    if (!root || reduced() || document.hidden || !root.getClientRects().length) { reusable?.dispose(); update?.(); complete?.({cancelled:false}); return; }
     const rect=root.getBoundingClientRect();
     const bounds={left:Math.max(0,rect.left),top:Math.max(0,rect.top),width:Math.min(rect.width,innerWidth-Math.max(0,rect.left)),height:Math.min(rect.height,innerHeight-Math.max(0,rect.top))};
     const point=origin(source,event,bounds);
@@ -68,7 +71,8 @@
     }
     metrics.snapshotBytes=0;
     const started=performance.now();
-    const copy=snapshot(root);
+    let copy;
+    try{copy=snapshot(root);}catch(error){reusable?.dispose();update?.();complete?.({cancelled:false,fallback:true});return;}
     const layer=document.createElement("div");
     layer.className="material-transition-layer"; layer.inert=true; layer.setAttribute("aria-hidden","true");
     Object.assign(layer.style,{left:`${bounds.left}px`,top:`${bounds.top}px`,width:`${bounds.width}px`,height:`${bounds.height}px`});
@@ -79,16 +83,34 @@
     wrapper.append(copy); layer.append(wrapper);
     const curved=document.createElement("div"); curved.className="material-outgoing material-curved";
     curved.dataset.view=wrapper.dataset.view;
-    const curvedCopy=snapshot(root); curvedCopy.style.cssText=copy.style.cssText;
+    const curvedCopy=effect==="sheet" ? document.createElement("div") : snapshot(root); curvedCopy.style.cssText=copy.style.cssText;
     curved.append(curvedCopy); layer.append(curved);
     const fold=document.createElement("div"); fold.className="material-fold-band"; layer.append(fold);
+    const snapshotElapsed=performance.now()-started;
+    let sheet=null;
+    if(effect === "sheet" && window.DuckFurSheet) {
+      try {
+        const options={...settings,...sheetOptions};
+        if(reusable?.canRetarget(bounds.width,bounds.height,options)){
+          sheet=reusable;reusable=null;sheet.retarget(layer,point,options);metrics.reusedSheets=(metrics.reusedSheets||0)+1;
+        }else{
+          reusable?.dispose();reusable=null;
+          sheet=new window.DuckFurSheet.FurSheet(layer,{width:bounds.width,height:bounds.height,origin:point,options,onFailure:()=>cancel("sheet-context-lost")});
+        }
+        curved.style.display="none";fold.style.display="none";
+        metrics.sheetPeak=sheet.getStats();metrics.sheetFailure=null;
+      }catch(error){reusable?.dispose();sheet?.dispose();sheet=null;metrics.sheetFailure=String(error.message);}
+    }
     document.body.append(layer);
-    metrics.snapshotMs=performance.now()-started;
+    metrics.snapshotMs=snapshotElapsed;
+    metrics.totalInitializationMs=performance.now()-started;
     metrics.layers=1; metrics.frames=0; metrics.longFrames=0; metrics.maxFrameMs=0; metrics.durationMs=0;
+    metrics.qualityReduced=false;
     const focus=document.activeElement;
-    try { update?.(); } catch(error) { layer.remove(); metrics.layers=0; throw error; }
+    try { update?.(); } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0; throw error; }
+    if(effect === "sheet" && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
-    const job={layer,frame:0,complete}; active=job;
+    const job={layer,frame:0,complete,sheet}; active=job;
     let start=null,previous=null;
     function frame(time) {
       if(active!==job) return;
@@ -96,7 +118,17 @@
       const elapsed=time-start;
       const interval=previous===null?0:time-previous; previous=time;
       metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;
-      const progress=clamp((elapsed-35)/Math.max(1,settings.duration-35),0,1);
+      const held=typeof holdProgress === "function" ? holdProgress() : holdProgress;
+      const progress=held===null ? clamp((elapsed-35)/Math.max(1,settings.duration-35),0,1) : clamp(held,0.02,0.98);
+      if(sheet){
+        try {
+          const model=sheet.draw(progress);
+          if(!model){cancel("sheet-unavailable");return;}
+          metrics.sheetPeak=sheet.getStats();
+          wrapper.style.clipPath=window.DuckFurSheet.revealPolygon(model);
+          if(interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();job.reducedQuality=true;metrics.qualityReduced=true;}
+        }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}
+      }else{
       const radius=ease(progress)*reach;
       const mask=`radial-gradient(circle at ${point.x}px ${point.y}px,transparent ${Math.max(0,radius-2)}px,#000 ${radius+1}px)`;
       wrapper.style.maskImage=mask; wrapper.style.webkitMaskImage=mask;
@@ -109,8 +141,10 @@
       fold.style.opacity=String(Math.min(1,progress*12,(1-progress)*12));
       // Restrained curvature confined to the moving band, never the sidebar.
       fold.style.filter=`blur(${settings.fold*0.7}px)`;
+      }
       if(progress<1) job.frame=requestAnimationFrame(frame);
       else {
+        if(sheet){metrics.sheetPeak=sheet.getStats();sheet.dispose();}
         metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
         if(focus && !focus.isConnected && !document.querySelector("dialog[open]")) {
           const heading=root.querySelector(".view.active h2,.view.active h1");
@@ -163,8 +197,9 @@
   },true);
   const interrupt=()=>{cancel();for(const cleanup of [...morphs.values()])cleanup();};
   addEventListener("resize",interrupt);
+  document.addEventListener("scroll",()=>cancel("scroll"),true);
   document.addEventListener("visibilitychange",()=>{if(document.hidden)interrupt();});
   document.addEventListener("toggle",event=>{if(event.target.matches("dialog"))interrupt();},true);
   motion.addEventListener("change",interrupt);
-  window.DuckTransitions={workspace,morph,cancel:interrupt,settings,metrics,reduced,configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0};}};
+  window.DuckTransitions={workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:{...window.DuckFurSheet?.resources}};}};
 })();

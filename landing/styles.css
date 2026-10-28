@@ -87,6 +87,17 @@ button:not(:disabled):active, .interaction-pressed { transform: scale(0.96); fil
 .material-outgoing[data-view="home"] .planner-calendar { min-height:0;flex:1; }
 .material-fold-band { mix-blend-mode:multiply; }
 .fur-morph-outgoing { border-radius:0!important; }
+.fur-sheet-canvas { position:absolute;inset:0;width:100%;height:100%;pointer-events:none; }
+.sheet-example { min-height:360px;padding:26px;border:1px solid #dfcf9d;border-radius:20px;background:#fff9e8; }
+.sheet-example.destination {background:#ecf5fa;border-color:#c9dce6;}
+.sheet-example-heading {display:flex;justify-content:space-between;align-items:center;gap:14px;}
+.sheet-example-heading h3 {font-size:1.5rem;margin:6px 0 24px;}
+.sheet-example-cards {display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.sheet-example-cards article {padding:24px 18px;border-radius:14px;background:white;border-left:4px solid #ddb546;box-shadow:var(--shadow);}
+.sheet-example.destination .sheet-example-cards {grid-template-columns:1fr;gap:9px;}
+.sheet-example.destination .sheet-example-cards article {padding:12px 18px;display:flex;justify-content:space-between;gap:12px;border-left-color:#538fc5;}
+.sheet-example.destination .sheet-example-cards p {margin:0;}
+@media(max-width:700px){.sheet-example-cards{grid-template-columns:1fr;}.sheet-example-heading{flex-wrap:wrap;}.sheet-example.destination .sheet-example-cards article{display:block;}}
 .wave-lab { margin-top:28px; padding:26px; border:1px solid var(--line);border-radius:24px;background:var(--card); }
 .wave-controls { display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin:24px 0; }
 .wave-controls label { display:grid;gap:8px;font-size:.85rem; }
