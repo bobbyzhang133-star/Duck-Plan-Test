@@ -70,9 +70,39 @@
           <p class="fur-lab-note">Hover-brushed and pressed trails share the recovery delay: 2 seconds by default and up to 5 seconds. Production buttons use only fur for their silhouette and lettering: longer edge strands form the outline and darker label strands form the words. Pressing mats the center nearly flat before staggered recovery.</p>
         </form>
       </section>
+      <section class="wave-lab" id="wave-lab" aria-labelledby="wave-lab-heading">
+        <p class="section-kicker">Transition study · local prototype</p><h2 id="wave-lab-heading">A wave through the material</h2>
+        <p>Compare the unchanged material above with a traveling strand crest, a Start/Pause morph, and a fold across the workspace below. The left navigation stays stationary.</p>
+        <form id="wave-controls" class="wave-controls">
+          <label>Wave speed (px/s)<input name="waveSpeed" type="range" min="160" max="1200" step="20" value="540"><output></output></label>
+          <label>Wavefront width (px)<input name="waveWidth" type="range" min="6" max="55" value="22"><output></output></label>
+          <label>Radial bend<input name="waveBend" type="range" min="0" max="1" step=".05" value=".56"><output></output></label>
+          <label>Compression amplitude<input name="waveCompression" type="range" min="0" max=".65" step=".01" value=".22"><output></output></label>
+          <label>Recovery damping<input name="damping" type="range" min="18" max="40" value="22"><output></output></label>
+          <label>Fold intensity<input name="fold" type="range" min="0" max="1" step=".05" value=".55"><output></output></label>
+          <label>Workspace duration (ms)<input name="duration" type="range" min="450" max="650" step="10" value="560"><output></output></label>
+          <label>Reduced-motion preview<input name="reducedMotion" type="checkbox"></label>
+        </form>
+        <div class="wave-demo-actions">
+          <button type="button" class="primary-button" id="wave-ripple" data-transition="local">Local ripple</button>
+          <button type="button" class="primary-button" id="wave-morph" data-transition="morph" aria-pressed="false">Start</button>
+          <button type="button" class="secondary-button" id="wave-rapid">Rapid activation</button>
+          <button type="button" class="secondary-button" id="wave-reset">Reset waves</button>
+        </div>
+        <div class="wave-demo-shell">
+          <nav class="wave-demo-nav" aria-label="Transition demo navigation">
+            <button type="button" class="secondary-button" data-wave-page="tasks">Tasks</button>
+            <button type="button" class="secondary-button" data-wave-page="calendar">Calendar</button>
+          </nav>
+          <section class="wave-demo-workspace" id="wave-workspace" aria-live="polite"><h3>Tasks</h3><p>Your next study session, all in one place.</p><button class="secondary-button" type="button" id="wave-calendar-mode">Show week</button><div id="wave-calendar-content"><p>Today · Calculus practice · 3:30 PM</p></div></section>
+        </div>
+        <output class="wave-metrics" id="wave-metrics">Metrics appear after a workspace transition.</output>
+      </section>
     </main>
     <script src="./fur-material.js"></script>
     <script src="./button-interactions.js"></script>
+    <script src="./material-transitions.js"></script>
     <script src="./fur-lab.js"></script>
+    <script src="./wave-lab.js"></script>
   </body>
 </html>

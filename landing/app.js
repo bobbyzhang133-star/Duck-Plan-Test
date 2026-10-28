@@ -271,7 +271,7 @@ function setupFurMaterial(root = document) {
 }
 function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); requestAnimationFrame(() => setupFurMaterial()); }
 
-function setView(name) {
+function setView(name, preserveDrawer = false) {
   const normalized = ["today", "calendar"].includes(name) ? "home" : name;
   const next = document.querySelector(`#view-${normalized}`) || document.querySelector("#view-home");
   document.body.dataset.view = normalized;
@@ -280,7 +280,7 @@ function setView(name) {
   els.pageTitle.textContent = next.dataset.pageTitle;
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${normalized}`);
-  setSidebar(false);
+  if(!preserveDrawer) setSidebar(false);
   window.scrollTo({ top: 0, behavior: "smooth" });
   requestAnimationFrame(() => setupFurMaterial());
 }
@@ -309,10 +309,18 @@ function openModal(prefill = {}) {
 }
 function closeModal() { els.modal.close(); editingTaskId = null; setupFurMaterial(); }
 
+// Actions opt in declaratively; data edits, typing and scrolling remain immediate.
+document.querySelectorAll('.nav-item,[data-go],[data-calendar-view]').forEach(control => { control.dataset.transition="workspace"; });
+function commitMaterialAction(source, update, event) {
+  if(source?.dataset.transition === "workspace" && window.DuckTransitions) {
+    window.DuckTransitions.workspace({root:workspace,source,event,update});
+  } else update();
+}
+
 document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest("[data-view]"); if (viewButton) setView(viewButton.dataset.view);
-  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); setView(goButton.dataset.go); }
+  const viewButton = event.target.closest("[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>setView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
+  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>setView(goButton.dataset.go,sidebar.contains(goButton)),event); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) openModal({ scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate });
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
@@ -329,7 +337,7 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
   currentFilter = chip.dataset.filter; renderAllTasks(); setupFurMaterial();
 }));
-document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", () => { calendarView = button.dataset.calendarView; renderCalendar(); }));
+document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", () => setSidebar(true)));
 document.addEventListener("keydown", (event) => { if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) setSidebar(false); });
 window.addEventListener("hashchange", () => { if (location.hash === "#planner-sidebar") setSidebar(true); });
