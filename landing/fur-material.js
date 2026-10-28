@@ -8,6 +8,7 @@
     stiffness: 62,
     damping: 22,
     radius: 54,
+    pressRadius: null,
     brushStrength: 5.8,
     compression: 0.92,
     recoveryDelay: 280,
@@ -257,6 +258,7 @@
       this.host.classList.add("fur-material");
       this.host.classList.toggle("fur-button-silhouette", Boolean(this.options.silhouette));
 
+      this.destroyed = false;
       this.width = 0;
       this.height = 0;
       this.count = 0;
@@ -734,6 +736,15 @@
       this.activePress.fill(0);
     }
 
+    interactionRadius(pressed = this.pressed) {
+      const baseRadius = Math.max(0.1, Number(this.options.radius) || DEFAULTS.radius);
+      if (!pressed) return baseRadius;
+      const configuredPressRadius = Number(this.options.pressRadius);
+      return Number.isFinite(configuredPressRadius) && configuredPressRadius > 0
+        ? configuredPressRadius
+        : baseRadius;
+    }
+
     brush(fromX, fromY, toX, toY, elapsed) {
       const segmentX = toX - fromX;
       const segmentY = toY - fromY;
@@ -744,7 +755,7 @@
       const directionX = segmentX / segmentLength;
       const directionY = segmentY / segmentLength;
       const impulse = clamp(speed / 560, 0.12, 1) * this.options.brushStrength;
-      const radius = this.options.radius;
+      const radius = this.interactionRadius(this.pressed);
       const recoveryDelay = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
       if (this.pressed) this.releaseActivePressFibers();
       for (let index = 0; index < this.count; index += 1) {
@@ -868,10 +879,11 @@
 
     setReducedPress(pressed) {
       if (!this.state) return;
+      const radius = this.interactionRadius(true);
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
         const distance = Math.hypot(this.roots[root] * this.width - this.pointer.x, this.roots[root + 1] * this.height - this.pointer.y);
-        const falloff = 1 - smoothstep(0, this.options.radius, distance);
+        const falloff = 1 - smoothstep(0, radius, distance);
         const state = index * STATE_STRIDE;
         this.state[state] = 0;
         this.state[state + 1] = 0;
@@ -887,13 +899,14 @@
 
     imprintPress(strength = 0.82) {
       const recoveryDelay = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
+      const radius = this.interactionRadius(true);
       this.releaseActivePressFibers();
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
         const deltaX = this.roots[root] * this.width - this.pointer.x;
         const deltaY = this.roots[root + 1] * this.height - this.pointer.y;
         const distance = Math.hypot(deltaX, deltaY);
-        const normalizedDistance = distance / this.options.radius;
+        const normalizedDistance = distance / radius;
         const profile = pressProfile(normalizedDistance, this.options);
         if (profile.influence <= 0) continue;
 
@@ -992,7 +1005,7 @@
     }
 
     frame(time) {
-      if (!this.running) return;
+      if (this.destroyed || !this.running) return;
       if (!this.visible || document.hidden) {
         this.running = false;
         this.lastFrame = 0;
@@ -1053,7 +1066,7 @@
     }
 
     wake() {
-      if (this.running || !this.gl || !this.visible || document.hidden) return;
+      if (this.destroyed || this.running || !this.gl || !this.visible || document.hidden) return;
       this.running = true;
       this.lastFrame = 0;
       this.frames = 0;
@@ -1227,8 +1240,47 @@
     }
 
     onContextRestored() {
+      if (this.destroyed) return;
       this.initializeGraphics();
       this.resize();
+    }
+
+    destroy() {
+      if (this.destroyed) return;
+      this.destroyed = true;
+      this.running = false;
+      this.resizeObserver?.disconnect();
+      this.intersectionObserver?.disconnect();
+      this.labelObserver?.disconnect();
+      this.host.removeEventListener("pointerenter", this.onPointerEnter);
+      this.host.removeEventListener("pointermove", this.onPointerMove);
+      this.host.removeEventListener("pointerdown", this.onPointerDown);
+      this.host.removeEventListener("pointerup", this.onPointerUp);
+      this.host.removeEventListener("pointercancel", this.onPointerCancel);
+      this.host.removeEventListener("lostpointercapture", this.onLostPointerCapture);
+      this.host.removeEventListener("pointerleave", this.onPointerLeave);
+      this.host.removeEventListener("keydown", this.onKeyDown);
+      this.host.removeEventListener("keyup", this.onKeyUp);
+      document.removeEventListener("visibilitychange", this.onVisibility);
+      window.removeEventListener("blur", this.onWindowBlur);
+      this.canvas.removeEventListener("webglcontextlost", this.onContextLost);
+      this.canvas.removeEventListener("webglcontextrestored", this.onContextRestored);
+      if (this.reducedMotion.removeEventListener) this.reducedMotion.removeEventListener("change", this.onMotionChange);
+
+      const gl = this.gl;
+      if (gl) {
+        if (this.glyphTexture) gl.deleteTexture(this.glyphTexture);
+        if (this.cornerBuffer) gl.deleteBuffer(this.cornerBuffer);
+        if (this.rootBuffer) gl.deleteBuffer(this.rootBuffer);
+        if (this.stateBuffer) gl.deleteBuffer(this.stateBuffer);
+        if (this.materialBuffer) gl.deleteBuffer(this.materialBuffer);
+        if (this.vertexArray) gl.deleteVertexArray(this.vertexArray);
+        if (this.program) gl.deleteProgram(this.program);
+        gl.getExtension("WEBGL_lose_context")?.loseContext();
+      }
+      this.gl = null;
+      this.canvas.remove();
+      this.host.classList.remove("fur-material", "fur-button-silhouette", "fur-static-fallback", "fur-hovered", "fur-pressed");
     }
   }
 
@@ -1248,9 +1300,18 @@
     return [...root.querySelectorAll(selector)].map((host) => mount(host));
   }
 
+  function unmount(host) {
+    const surface = registry.get(host);
+    if (!surface) return false;
+    surface.destroy();
+    registry.delete(host);
+    return true;
+  }
+
   window.DuckFur = {
     mount,
     mountAll,
+    unmount,
     defaults: { ...DEFAULTS },
     __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteRootIncluded, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };

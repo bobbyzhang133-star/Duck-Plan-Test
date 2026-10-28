@@ -122,6 +122,7 @@ function renderTasks() {
 }
 
 function renderClasses() {
+  if (window.DuckFur) els.classGrid.querySelectorAll("button").forEach((button) => window.DuckFur.unmount(button));
   const entries = Object.entries(CLASS_INFO);
   els.miniClassList.innerHTML = entries.slice(0, 4).map(([name, info]) => {
     const open = tasks.filter((task) => task.className === name && !task.completed).length;
@@ -159,17 +160,69 @@ function renderCalendar() {
   }).join("");
 }
 
+function furLabelForButton(button) {
+  const navLabel = button.matches(".nav-item") ? button.querySelector("span:not(.nav-icon):not(.nav-count)")?.textContent : "";
+  if (navLabel?.trim()) return navLabel.trim();
+  const profileLabel = button.matches(".profile-card") ? button.querySelector("strong")?.textContent : "";
+  if (profileLabel?.trim()) return profileLabel.trim();
+  const iconLabel = button.matches(".icon-button") ? button.querySelector("[aria-hidden='true']")?.textContent : "";
+  if (iconLabel?.trim()) return iconLabel.trim();
+
+  const clone = button.cloneNode(true);
+  clone.querySelectorAll(".notification-dot, .nav-count, small, [aria-hidden='true']").forEach((element) => element.remove());
+  const visibleText = clone.textContent.replace(/\s+/g, " ").trim().replace(/[→←›]+$/, "").trim();
+  return visibleText || button.getAttribute("aria-label") || "Button";
+}
+
+function shouldUseFurButton(button) {
+  if (button.matches("[data-fur-button]")) return true;
+  if (button.matches(".nav-item, .icon-button, .profile-card, .class-menu, .close-button, #sync-info")) return false;
+  if (button.querySelector("[aria-hidden='true'], .notification-dot, .nav-icon, .nav-count, .avatar, small")) return false;
+  const text = button.textContent.replace(/\s+/g, " ").trim();
+  if (!text || !/[a-z0-9]/i.test(text)) return false;
+  return !/[→←›×♢⌂□✓◫⚙＋•]/u.test(text);
+}
+
 function setupFurMaterial(root = document) {
   if (!window.DuckFur) return;
-  root.querySelectorAll(".primary-button, .dark-button").forEach((button) => {
+  const modalIsOpen = els.modal.open;
+  root.querySelectorAll("button").forEach((button) => {
+    const shouldMount = shouldUseFurButton(button)
+      && button.getClientRects().length
+      && (!modalIsOpen || els.modal.contains(button));
+    if (!shouldMount) {
+      window.DuckFur.unmount(button);
+      return;
+    }
     window.DuckFur.mount(button, {
       quality: "medium",
       density: 1,
       length: 5.2,
-      stiffness: 64,
-      damping: 23,
-      radius: 48,
+      stiffness: 62,
+      damping: 22,
+      radius: 12.8,
+      pressRadius: 38.4,
+      recoveryDelay: 280,
+      pressDepth: 0.78,
+      compression: 0.92,
+      splay: 0.76,
+      transitionWidth: 0.36,
+      labelScale: 2,
+      labelSharpness: 1.15,
+      labelLengthScale: 0.8,
+      labelWidthScale: 0.9,
+      labelOrientationVariance: 0.06,
+      labelDensity: 2.4,
+      glyphTransition: 0.55,
+      glyphGuardWidth: 1.4,
+      glyphGuardStrength: 0.9,
+      motionGuardStart: 0.12,
+      motionGuardEnd: 0.58,
+      boundaryLabelWidthScale: 0.72,
+      boundaryLabelLeanScale: 0.62,
+      fragmentGlyphMask: true,
       silhouette: true,
+      label: furLabelForButton(button),
     });
   });
 }
@@ -189,6 +242,7 @@ function setView(name) {
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${name}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
+  setupFurMaterial();
 }
 
 function showToast(message) {
@@ -233,9 +287,13 @@ const openModal = () => {
   els.form.elements.dueDate.value = isoOffset(0);
   els.form.elements.dueTime.value = "15:30";
   els.modal.showModal();
+  setupFurMaterial();
   els.form.elements.title.focus();
 };
-const closeModal = () => els.modal.close();
+const closeModal = () => {
+  els.modal.close();
+  setupFurMaterial();
+};
 document.querySelector("#open-task-modal").addEventListener("click", openModal);
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);

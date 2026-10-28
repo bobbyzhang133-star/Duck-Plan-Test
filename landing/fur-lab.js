@@ -5,9 +5,6 @@
   const stageElement = document.querySelector("#fur-stage");
   const buttonElement = document.querySelector("#fur-demo-button");
   const performanceOutput = document.querySelector("#fur-performance");
-  const comparisonPerformance = document.querySelector("#fur-comparison-performance");
-  const debugState = document.querySelector("#fur-debug-state");
-  const debugValues = document.querySelector("#fur-debug-values");
   const defaults = {
     quality: "high",
     density: 1,
@@ -15,95 +12,24 @@
     stiffness: 62,
     damping: 22,
     radius: 72,
-    recoveryDelay: 280,
-    pressDepth: 0.78,
-    compression: 0.92,
-    splay: 0.76,
-    transitionWidth: 0.36,
-    labelScale: 2,
-    labelSharpness: 1.15,
-    labelLengthScale: 0.8,
-    labelWidthScale: 0.9,
-    labelOrientationVariance: 0.06,
-    labelDensity: 2.4,
-    glyphTransition: 0.55,
-    glyphGuardWidth: 1.4,
-    glyphGuardStrength: 0.9,
-    motionGuardStart: 0.12,
-    motionGuardEnd: 0.58,
-    boundaryLabelWidthScale: 0.72,
-    boundaryLabelLeanScale: 0.62,
+    recoveryDelay: 2000,
   };
 
   if (!window.DuckFur) {
     performanceOutput.textContent = "Renderer unavailable";
-    comparisonPerformance.textContent = "Static fallback";
     return;
   }
 
   const stage = window.DuckFur.mount(stageElement, { ...defaults, maxFibers: 30000 });
-  const improvedButtonOptions = {
+  const button = window.DuckFur.mount(buttonElement, {
     quality: "medium",
     density: 1,
     length: 5.2,
     stiffness: 64,
     damping: 23,
     radius: 48,
-    recoveryDelay: defaults.recoveryDelay,
-    pressDepth: defaults.pressDepth,
-    compression: defaults.compression,
-    splay: defaults.splay,
-    transitionWidth: defaults.transitionWidth,
-    labelScale: defaults.labelScale,
-    labelSharpness: defaults.labelSharpness,
-    labelLengthScale: defaults.labelLengthScale,
-    labelWidthScale: defaults.labelWidthScale,
-    labelOrientationVariance: defaults.labelOrientationVariance,
-    labelDensity: defaults.labelDensity,
-    glyphTransition: defaults.glyphTransition,
-    glyphGuardWidth: defaults.glyphGuardWidth,
-    glyphGuardStrength: defaults.glyphGuardStrength,
-    motionGuardStart: defaults.motionGuardStart,
-    motionGuardEnd: defaults.motionGuardEnd,
-    boundaryLabelWidthScale: defaults.boundaryLabelWidthScale,
-    boundaryLabelLeanScale: defaults.boundaryLabelLeanScale,
-    fragmentGlyphMask: true,
     silhouette: true,
-  };
-  const button = window.DuckFur.mount(buttonElement, improvedButtonOptions);
-
-  const resolutionSurfaces = [1, 2, 3].map((scale) => window.DuckFur.mount(
-    document.querySelector(`#fur-resolution-${scale}x`),
-    { ...improvedButtonOptions, labelScale: scale },
-  ));
-
-  const guardStrengths = [0.78, 0.85, 0.9, 0.95];
-  const guardSurfaces = guardStrengths.map((strength) => window.DuckFur.mount(
-    document.querySelector(`#fur-guard-${Math.round(strength * 100)}`),
-    { ...improvedButtonOptions, glyphGuardStrength: strength },
-  ));
-
-  const geometrySurfaces = [
-    window.DuckFur.mount(document.querySelector("#fur-geometry-baseline"), {
-      ...improvedButtonOptions,
-      fragmentGlyphMask: false,
-      labelLengthScale: 0.54,
-      labelWidthScale: 0.76,
-      labelOrientationVariance: 0.12,
-    }),
-    window.DuckFur.mount(document.querySelector("#fur-geometry-narrow"), {
-      ...improvedButtonOptions,
-      fragmentGlyphMask: false,
-    }),
-    window.DuckFur.mount(document.querySelector("#fur-geometry-revised"), improvedButtonOptions),
-  ];
-
-  const productionSurfaces = [
-    window.DuckFur.mount(document.querySelector("#fur-production-plan"), improvedButtonOptions),
-    window.DuckFur.mount(document.querySelector("#fur-production-add"), improvedButtonOptions),
-    window.DuckFur.mount(document.querySelector("#fur-production-focus"), improvedButtonOptions),
-  ];
-  const allSurfaces = [stage, button, ...resolutionSurfaces, ...guardSurfaces, ...geometrySurfaces, ...productionSurfaces];
+  });
 
   function values() {
     const form = new FormData(controls);
@@ -115,56 +41,17 @@
       damping: Number(form.get("damping")),
       radius: Number(form.get("radius")),
       recoveryDelay: Number(form.get("recoveryDelay")),
-      pressDepth: Number(form.get("pressDepth")),
-      compression: Number(form.get("compression")),
-      splay: Number(form.get("splay")),
-      transitionWidth: Number(form.get("transitionWidth")),
-      labelScale: Number(form.get("labelScale")),
-      labelSharpness: Number(form.get("labelSharpness")),
-      labelLengthScale: Number(form.get("labelLengthScale")),
-      labelWidthScale: Number(form.get("labelWidthScale")),
-      labelOrientationVariance: Number(form.get("labelOrientationVariance")),
-      labelDensity: Number(form.get("labelDensity")),
-      glyphTransition: Number(form.get("glyphTransition")),
-      glyphGuardWidth: Number(form.get("glyphGuardWidth")),
-      glyphGuardStrength: Number(form.get("glyphGuardStrength")),
-      motionGuardStart: Number(form.get("motionGuardStart")),
-      motionGuardEnd: Number(form.get("motionGuardEnd")),
-      boundaryLabelWidthScale: Number(form.get("boundaryLabelWidthScale")),
-      boundaryLabelLeanScale: Number(form.get("boundaryLabelLeanScale")),
     };
   }
 
   function updateOutputs(parameters) {
-    const formats = {
-      quality: `${parameters.quality[0].toUpperCase()}${parameters.quality.slice(1)}`,
-      density: `${parameters.density.toFixed(2)}×`,
-      length: `${parameters.length.toFixed(1)} px`,
-      stiffness: parameters.stiffness,
-      damping: parameters.damping,
-      radius: `${parameters.radius} px`,
-      recoveryDelay: `${parameters.recoveryDelay} ms`,
-      pressDepth: parameters.pressDepth.toFixed(2),
-      compression: parameters.compression.toFixed(2),
-      splay: parameters.splay.toFixed(2),
-      transitionWidth: parameters.transitionWidth.toFixed(2),
-      labelScale: `${parameters.labelScale.toFixed(0)}×`,
-      labelSharpness: `${parameters.labelSharpness.toFixed(2)} px`,
-      labelLengthScale: `${parameters.labelLengthScale.toFixed(2)}×`,
-      labelWidthScale: `${parameters.labelWidthScale.toFixed(2)}×`,
-      labelOrientationVariance: `${parameters.labelOrientationVariance.toFixed(2)} rad`,
-      labelDensity: `${parameters.labelDensity.toFixed(2)}×`,
-      glyphTransition: `${parameters.glyphTransition.toFixed(2)} px`,
-      glyphGuardWidth: `${parameters.glyphGuardWidth.toFixed(2)} px`,
-      glyphGuardStrength: `${Math.round(parameters.glyphGuardStrength * 100)}%`,
-      motionGuardStart: parameters.motionGuardStart.toFixed(2),
-      motionGuardEnd: parameters.motionGuardEnd.toFixed(2),
-      boundaryLabelWidthScale: `${parameters.boundaryLabelWidthScale.toFixed(2)}×`,
-      boundaryLabelLeanScale: `${parameters.boundaryLabelLeanScale.toFixed(2)}×`,
-    };
-    Object.entries(formats).forEach(([name, value]) => {
-      controls.querySelector(`[data-output="${name}"]`).textContent = value;
-    });
+    controls.querySelector('[data-output="quality"]').textContent = `${parameters.quality[0].toUpperCase()}${parameters.quality.slice(1)}`;
+    controls.querySelector('[data-output="density"]').textContent = `${parameters.density.toFixed(2)}×`;
+    controls.querySelector('[data-output="length"]').textContent = `${parameters.length.toFixed(1)} px`;
+    controls.querySelector('[data-output="stiffness"]').textContent = parameters.stiffness;
+    controls.querySelector('[data-output="damping"]').textContent = parameters.damping;
+    controls.querySelector('[data-output="radius"]').textContent = `${parameters.radius} px`;
+    controls.querySelector('[data-output="recoveryDelay"]').textContent = `${parameters.recoveryDelay} ms`;
   }
 
   let updateFrame = 0;
@@ -174,30 +61,6 @@
       const parameters = values();
       updateOutputs(parameters);
       stage.setParameters({ ...parameters, maxFibers: 30000 });
-      const productionParameters = {
-        stiffness: parameters.stiffness,
-        damping: parameters.damping,
-        radius: Math.min(parameters.radius, 64),
-        recoveryDelay: parameters.recoveryDelay,
-        pressDepth: parameters.pressDepth,
-        compression: parameters.compression,
-        splay: parameters.splay,
-        transitionWidth: parameters.transitionWidth,
-        labelScale: parameters.labelScale,
-        labelSharpness: parameters.labelSharpness,
-        labelLengthScale: parameters.labelLengthScale,
-        labelWidthScale: parameters.labelWidthScale,
-        labelOrientationVariance: parameters.labelOrientationVariance,
-        labelDensity: parameters.labelDensity,
-        glyphTransition: parameters.glyphTransition,
-        glyphGuardWidth: parameters.glyphGuardWidth,
-        glyphGuardStrength: parameters.glyphGuardStrength,
-        motionGuardStart: parameters.motionGuardStart,
-        motionGuardEnd: parameters.motionGuardEnd,
-        boundaryLabelWidthScale: parameters.boundaryLabelWidthScale,
-        boundaryLabelLeanScale: parameters.boundaryLabelLeanScale,
-      };
-      [button, ...productionSurfaces].forEach((surface) => surface.setParameters(productionParameters));
     });
   }
 
@@ -209,27 +72,11 @@
     });
     update();
   });
-  document.querySelector("#fur-neutral").addEventListener("click", () => {
-    allSurfaces.forEach((surface) => surface.resetFibers());
-  });
 
   window.setInterval(() => {
     const stats = stage.getStats();
-    const activity = stats.settled ? "settled" : `${stats.recoveringFibers.toLocaleString()} recovering · ${stats.fps || "—"} FPS`;
+    const activity = stats.settled ? "settled" : `${stats.fps || "—"} FPS`;
     performanceOutput.textContent = `${stats.renderer} · ${stats.fibers.toLocaleString()} fibers · ${activity}`;
-    debugState.textContent = stats.settled ? "Settled" : "Recovering";
-    debugState.classList.toggle("is-recovering", !stats.settled);
-    const sample = stats.sample;
-    debugValues.textContent = sample
-      ? `strand ${sample.index} · bend ${Math.hypot(sample.bendX, sample.bendY).toFixed(3)} · compression ${sample.compression.toFixed(3)} · depth ${sample.depression.toFixed(3)} · hold ${Math.round(sample.hold * 1000)} ms`
-      : "Move over the surface to inspect its nearest strand.";
-
-    const productionSizeStats = productionSurfaces.map((surface) => surface.getStats());
-    const productionStats = productionSizeStats[1];
-    const productionMotion = productionStats.settled ? "idle" : `${productionStats.fps || "—"} FPS`;
-    const capUse = `${Math.round(productionStats.fiberCapUtilization * 100)}% cap${productionStats.glyphAllocationLimited ? " · limited" : ""}`;
-    const allocationBySize = productionSizeStats.map((stats, index) => `${[40, 44, 48][index]}px ${stats.allocatedGlyphFibers}/${stats.requestedGlyphFibers}${stats.glyphAllocationLimited ? "!" : ""}`).join(" · ");
-    comparisonPerformance.textContent = `${allocationBySize} · 44px ${productionStats.fibers.toLocaleString()} fibers (${productionStats.labelFibers.toLocaleString()} label) · ${capUse} · ${productionStats.drawCalls} draw · ${productionStats.rebuildMs.toFixed(1)} ms · ${(productionStats.gpuBytes / 1024).toFixed(0)} KB · ${productionMotion}`;
   }, 500);
 
   buttonElement.addEventListener("click", () => {
