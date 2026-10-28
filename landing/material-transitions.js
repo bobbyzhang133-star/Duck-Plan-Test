@@ -62,7 +62,10 @@
     cancel();
     if (!root || reduced() || document.hidden || !root.getClientRects().length) { reusable?.dispose(); update?.(); complete?.({cancelled:false}); return; }
     const rect=root.getBoundingClientRect();
-    const bounds={left:Math.max(0,rect.left),top:Math.max(0,rect.top),width:Math.min(rect.width,innerWidth-Math.max(0,rect.left)),height:Math.min(rect.height,innerHeight-Math.max(0,rect.top))};
+    const drawer=document.querySelector(".sidebar-open .sidebar")?.getBoundingClientRect();
+    const left=Math.max(0,rect.left,drawer?.right||0);
+    const bounds={left,top:Math.max(0,rect.top),width:Math.max(0,Math.min(rect.right??rect.left+rect.width,innerWidth)-left),height:Math.min(rect.height,innerHeight-Math.max(0,rect.top))};
+    if(!bounds.width || !bounds.height){reusable?.dispose();update?.();complete?.({cancelled:false});return;}
     const point=origin(source,event,bounds);
     if(source && root.contains?.(source) === false) {
       const distances=[point.x,bounds.width-point.x,point.y,bounds.height-point.y];
@@ -105,7 +108,7 @@
     metrics.snapshotMs=snapshotElapsed;
     metrics.totalInitializationMs=performance.now()-started;
     metrics.layers=1; metrics.frames=0; metrics.longFrames=0; metrics.maxFrameMs=0; metrics.durationMs=0;
-    metrics.qualityReduced=false;
+    metrics.qualityReduced=Boolean(sheet?.qualityReduced);
     const focus=document.activeElement;
     try { update?.(); } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0; throw error; }
     if(effect === "sheet" && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}

@@ -231,7 +231,7 @@
       gl.drawArraysInstanced(gl.TRIANGLES,0,6,this.visibleFibers);gl.vertexAttribDivisor(0,0);
       return model;
     }
-    reduceQuality(){if(this.disposed)return;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+this.canvas.width*this.canvas.height*8;}
+    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+this.canvas.width*this.canvas.height*8;}
     canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.furDensity===(options.furDensity??defaults.furDensity);}
     retarget(container,origin,options){this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
     getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,...resources};}

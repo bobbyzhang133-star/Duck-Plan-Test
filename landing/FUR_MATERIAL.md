@@ -1,5 +1,21 @@
 # DuckPlan interactive fur material
 
+## Physical sheet: local review build
+
+Open `http://127.0.0.1:4205/fur-lab.html#sheet-lab` while the local server is running, or start it with `python3 -m http.server 4205 --bind 127.0.0.1 --directory landing` from the repository root. The planner is at `http://127.0.0.1:4205/index.html#home`.
+
+`fur-sheet.js` owns mesh deformation, projection, attached fibers, shading and temporary GPU resources. `material-transitions.js` owns real application state, outgoing decorative snapshots, reveal clipping and interruption. `sheet-lab.js` owns comparison and inspection controls. The existing button renderer remains intact. Default major workspace transitions use the geometric sheet; the previous radial composition remains explicitly available for comparison.
+
+The cross-section combines a rising sinusoidal height with a forward curl whose derivative can turn negative. This overturns the surface normal rather than merely shading a flat wave. A second surface is offset along that normal to give the material thickness and a darker underside. A bowed wavefront broadens during travel. Fibers use the same deformed root position and normal, and draw counts increase as the sheet grows. The palette matches the button's root/middle/tip colors. The grounded trailing edge supplies the DOM clip polygon, exposing sharp destination HTML behind the roll while outgoing HTML remains ahead. No screenshot of UI text is mapped permanently into WebGL.
+
+The sheet uses one temporary canvas/context, two buffers and two shader programs, with three draws (shadow, body and instanced fibers). Compatible interrupted turns transfer that temporary renderer into the replacement layer instead of recompiling shaders. Completion, cancellation, scrolling, resize, native dialog toggles, hidden tabs and actual context loss remove it. An open sidebar is excluded from the renderer's rectangle, not merely placed visually above the effect. Reduced motion and GPU initialization failure commit real state without the spatial overlay. Estimated GPU bytes include buffers and an approximate color/depth drawing buffer, excluding driver/antialias/compositor overhead.
+
+Validation: all **32 tests** pass, including mesh elevation/overturn, thickness, reveal alignment, growth, rapid state changes, renderer reuse/disposal, initialization failure, sidebar exclusion and interruption. JavaScript syntax and diff checks pass. Browser inspection covered held geometry, sampled main calendar/keyboard and sidebar frames, final destination interactivity, planning-dialog open/close, reduced-motion updates, rapid activation cleanup and actual context loss. A 390 px capture at the earlier checkpoint exercised the 9,000-fiber/21,600-vertex tier. The current browser viewport override was inconsistent, so the latest performance figures are desktop observations rather than a final phone benchmark.
+
+Two resumed rapid-turn samples finished at **60 FPS**, maximum frame **17.4–17.6 ms**, no frames over 25 ms on the final turn, and three renderer reuses. One retained a prior adaptive reduction to 18,200 active fibers and an estimated 4.06 MiB; another used 26,000 and about 7.92 MiB for the visible lab stage. Both ended with **zero sheet contexts, buffers, programs and overlays**. Reuse initialization measured 0 ms; new-context measurements at the earlier checkpoint ranged roughly 18–90 ms. Capture-heavy/cold samples were slower (47–52 FPS), so smoothness and startup latency remain device dependent.
+
+Limitations: this is parametric rolling geometry, not cloth dynamics. Fur is a hybrid of actual short instanced strands and inexpensive base microtexture; underside lighting and projected shadow are approximations. The outgoing HTML is covered/clipped by the material rather than itself bent into a mesh. The existing per-button contexts remain; this addition allocates only one temporary sheet context. Physical mobile hardware, detailed heap profiling and final aesthetic approval are still outstanding. No public deployment or shared group repository changes were made.
+
 ## Physical fur-sheet checkpoint (2026-10-28, paused at user request)
 
 Branch: `codex/physical-fur-sheet`, based on reviewed wave commit `ab705cd`.

@@ -63,3 +63,32 @@ test("rapid sheet turns dispose the previous GPU renderer and final renderer",()
   env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(20);env.tick(700);
   assert.equal(disposals,2);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });
+test("compatible interrupted sheets reuse one renderer and dispose it at final completion",()=>{
+  const env=animatedSetup();let allocations=0,reuses=0,disposals=0;
+  env.context.window.DuckFurSheet={FurSheet:class{
+    constructor(){allocations++;}getStats(){return {};}draw(){return {};}dispose(){disposals++;}
+    canRetarget(){return true;}retarget(){reuses++;}
+  },revealPolygon(){return "polygon(0 0,100% 0,100% 100%)";}};
+  for(let i=0;i<4;i++){env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(i*50);}
+  env.tick(900);
+  assert.equal(allocations,1);assert.equal(reuses,3);assert.equal(disposals,1);assert.equal(env.layers.size,0);
+});
+test("dialog opening and hidden tabs remove transition layers without reversing state",()=>{
+  const env=animatedSetup();let actions=0;
+  env.transitions.workspace({root:env.root,update:()=>actions++});
+  env.events.toggle({target:{matches:selector=>selector==="dialog"}});
+  assert.equal(env.layers.size,0);
+  env.transitions.workspace({root:env.root,update:()=>actions++});
+  env.context.document.hidden=true;env.events.visibilitychange();
+  assert.equal(actions,2);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});
+test("an open sidebar is excluded from the sheet viewport",()=>{
+  const env=animatedSetup();let dimensions;
+  env.context.document.querySelector=selector=>selector===".sidebar-open .sidebar"?{getBoundingClientRect:()=>({right:250})}:null;
+  env.context.window.DuckFurSheet={FurSheet:class{
+    constructor(container,options){dimensions=options;}getStats(){return {};}draw(){return {};}dispose(){}
+  },revealPolygon(){return "polygon(0 0,100% 0,100% 100%)";}};
+  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});
+  assert.equal(dimensions.width,550);assert.equal(dimensions.height,600);
+  env.transitions.cancel();assert.equal(env.layers.size,0);
+});
