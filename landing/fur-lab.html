@@ -100,7 +100,7 @@
       </section>
       <section class="wave-lab" id="sheet-lab" aria-labelledby="sheet-heading">
         <p class="section-kicker">Experimental geometry · local review</p><h2 id="sheet-heading">Growing fur · rolling sheet</h2>
-        <p>Inspect contact markers first, then filled growth without a page reveal, then the rolling sheet. Blue: growth edge · pink: projected crest · green: reveal foot · red: contact · violet: emergence.</p>
+        <p>One raised fur wave lays out the full sheet. Then the entire fur surface lowers and compresses together to form the new UI, with no second traveling wave. Leave Growth only unchecked. Diagnostics: blue growth edge · pink crest · red contact · violet emergence.</p>
         <details open class="sheet-tuning"><summary>Geometry controls</summary><form class="wave-controls" id="sheet-controls">
           <label>Fur growth speed<input name="growthSpeed" type="range" min=".5" max="2" step=".1" value="1"><output></output></label>
           <label>Sheet thickness (px)<input name="thickness" type="range" min="1" max="12" value="5"><output></output></label>
@@ -112,9 +112,10 @@
           <label>Duration (ms)<input name="duration" type="range" min="450" max="1000" step="10" value="620"><output></output></label>
           <label>Lighting / shadow<input name="lighting" type="range" min=".2" max="1" step=".05" value=".8"><output></output></label>
           <label>Inspect progress<input name="inspectProgress" type="range" min="0" max="1" step=".01" value=".42"><output></output></label>
-          <label>Origin / boundary diagnostics<input name="debug" type="checkbox" checked></label>
+          <label>Origin / boundary diagnostics<input name="debug" type="checkbox"></label>
           <label>Use rejected ribbon for in-workspace comparison<input name="ribbon" type="checkbox"></label>
-          <label>Growth only (no page reveal)<input name="growthOnly" type="checkbox" checked></label>
+          <label>Growth only (no page reveal)<input name="growthOnly" type="checkbox"></label>
+          <label>Previous fade handoff (comparison)<input name="legacyFade" type="checkbox"></label>
           <label>Hold geometry pose<input name="hold" type="checkbox"></label>
           <label>Simulate sheet context loss<input name="contextLoss" type="checkbox"></label>
         </form></details>
@@ -128,15 +129,15 @@
         </div>
         <div class="sheet-example" id="sheet-workspace" aria-live="polite">
           <div class="sheet-example-heading"><div><p class="section-kicker">Outgoing workspace</p><h3>Today’s study plan</h3></div><button class="primary-button" type="button" id="sheet-inside">Turn workspace</button></div>
-          <div class="sheet-example-cards"><article><strong>Calculus</strong><p>Practice set · 3:30 PM</p></article><article><strong>English</strong><p>Reading response · 6 PM</p></article><article><strong>Physics</strong><p>Lab notes · tomorrow</p></article></div>
+          <div class="sheet-example-cards"><article data-formation-surface><strong>Calculus</strong><p>Practice set · 3:30 PM</p></article><article data-formation-surface><strong>English</strong><p>Reading response · 6 PM</p></article><article data-formation-surface><strong>Physics</strong><p>Lab notes · tomorrow</p></article></div>
         </div>
-        <div id="sheet-frames" class="wave-demo-actions" aria-label="Hold animation frame"><button type="button" data-progress="0.0" class="secondary-button">0%</button><button type="button" data-progress="0.05" class="secondary-button">5%</button><button type="button" data-progress="0.1" class="secondary-button">10%</button><button type="button" data-progress="0.2" class="secondary-button">20%</button><button type="button" data-progress="0.4" class="secondary-button">40%</button><button type="button" data-progress="0.6" class="secondary-button">60%</button><button type="button" data-progress="0.8" class="secondary-button">80%</button><button type="button" data-progress="1.0" class="secondary-button">100%</button></div>
+        <div id="sheet-frames" class="wave-demo-actions" aria-label="Hold animation frame"><button type="button" data-progress="0.0" class="secondary-button">0%</button><button type="button" data-progress="0.05" class="secondary-button">5%</button><button type="button" data-progress="0.1" class="secondary-button">10%</button><button type="button" data-progress="0.2" class="secondary-button">20%</button><button type="button" data-progress="0.4" class="secondary-button">40%</button><button type="button" data-progress="0.5" class="secondary-button">50%</button><button type="button" data-progress="0.6" class="secondary-button">60%</button><button type="button" data-progress="0.7" class="secondary-button">70%</button><button type="button" data-progress="0.8" class="secondary-button">80%</button><button type="button" data-progress="0.9" class="secondary-button">90%</button><button type="button" data-progress="0.95" class="secondary-button">95%</button><button type="button" data-progress="1.0" class="secondary-button">100%</button></div>
         <output class="wave-metrics" id="sheet-metrics">Ready to inspect geometry.</output>
       </section>
     </main>
     <script src="./fur-material.js"></script>
     <script src="./button-interactions.js"></script>
-    <script src="./fur-ribbon.js"></script><script src="./fur-sheet.js"></script><script src="./material-transitions.js"></script>
+    <script src="./fur-ribbon.js"></script><script src="./fur-sheet.js"></script><script src="./formation-surface.js"></script><script src="./material-transitions.js"></script>
     <script src="./fur-lab.js"></script>
     <script src="./wave-lab.js"></script>
     <script src="./sheet-lab.js"></script>

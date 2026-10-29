@@ -313,7 +313,8 @@ function closeModal() { els.modal.close(); editingTaskId = null; setupFurMateria
 document.querySelectorAll('.nav-item,[data-go],[data-calendar-view]').forEach(control => { control.dataset.transition="workspace"; });
 function commitMaterialAction(source, update, event) {
   if(source?.dataset.transition === "workspace" && window.DuckTransitions) {
-    window.DuckTransitions.workspace({root:workspace,source,event,update});
+    window.DuckTransitions.workspace({root:workspace,source,event,update,sheetOptions:{formation:true,
+      surfaceSelector:".panel,.daily-task-card,.class-card,.timeline-days,.timeline-column,.calendar-date-button,.deadline-cell,.calendar-slot,.calendar-event-block,.month-day"}});
   } else update();
 }
 

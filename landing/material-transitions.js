@@ -122,7 +122,13 @@
     metrics.layers=1; metrics.frames=0; metrics.longFrames=0; metrics.maxFrameMs=0; metrics.durationMs=0;
     metrics.qualityReduced=Boolean(sheet?.qualityReduced);
     const focus=document.activeElement;
-    try { update?.(); } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0; throw error; }
+    try {
+      update?.();
+      if(sheet && sheetOptions.formation){
+        if(!window.DuckFormation || !sheet.setDestination)throw Error("Formation capture unavailable");
+        sheet.setDestination(window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector));
+      }
+    } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0;if(sheetOptions.formation){metrics.sheetFailure=String(error.message);complete?.({cancelled:false,fallback:true});return;}throw error; }
     if((effect === "sheet" || effect==="ribbon") && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
     const job={layer,frame:0,complete,sheet,effect}; active=job;
@@ -139,7 +145,7 @@
       if(!debug || effect!=="sheet")return;
       const paths=renderer.boundaries(model);
       const circle=(x,y,color,label,dy=-8)=>`<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white"/><text x="${x+8}" y="${Math.max(14,y+dy)}" fill="${color}" stroke="white" stroke-width=".4" font-size="12">${label}</text>`;
-      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18);
+      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/><path d="${paths.flatten||""}" fill="none" stroke="#ea580c" stroke-dasharray="6 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18);
     }
     function frame(time) {
       if(active!==job) return;
@@ -154,7 +160,7 @@
           if(!model){cancel("sheet-unavailable");return;}
           metrics.sheetPeak=sheet.getStats();
           wrapper.style.clipPath=sheetOptions.growthOnly?"none":renderer.revealPolygon(model);
-          diagnostics(model);metrics.materialArea=model.coverageArea||0;metrics.progress=progress;
+          diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
           if(held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}
       }else if(!sheet){
@@ -240,5 +246,5 @@
   document.addEventListener("visibilitychange",()=>{if(document.hidden)interrupt();});
   document.addEventListener("toggle",event=>{if(event.target.matches("dialog"))interrupt();},true);
   motion.addEventListener("change",interrupt);
-  window.DuckTransitions={captureActivation,mapActivation,getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources[key]||0)+(window.DuckFurRibbon?.resources[key]||0)]))};}};
+  window.DuckTransitions={captureActivation,mapActivation,getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
 })();

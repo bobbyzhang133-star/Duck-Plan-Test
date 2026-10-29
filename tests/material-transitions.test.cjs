@@ -124,3 +124,20 @@ test("programmatic rapid turns accept an explicit null event and retain control-
   for(let i=0;i<4;i++){env.transitions.workspace({root:env.root,source,event:null,update(){}});env.tick(i*50);}
   env.tick(900);assert.equal(env.layers.size,0);
 });
+test("formation captures destination structure after real state update and cleans up on interruption",()=>{
+  const env=animatedSetup();let updated=false,captured=0,uploads=0,disposed=0;
+  env.context.window.DuckFormation={capture(root,bounds){assert.equal(updated,true);assert.equal(bounds.width,800);captured++;return {width:800,height:600};}};
+  env.context.window.DuckFurSheet={FurSheet:class{
+    getStats(){return {};}setDestination(canvas){assert.equal(canvas.width,800);uploads++;}dispose(){disposed++;}
+  }};
+  env.transitions.workspace({root:env.root,effect:"sheet",sheetOptions:{formation:true},update(){updated=true;}});
+  assert.equal(captured,1);assert.equal(uploads,1);env.events.resize();
+  assert.equal(disposed,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});
+test("formation capture failure keeps the destination usable and removes GPU/DOM resources",()=>{
+  const env=animatedSetup();let updated=0,completed=0,disposed=0;
+  env.context.window.DuckFormation={capture(){throw Error("capture unavailable");}};
+  env.context.window.DuckFurSheet={FurSheet:class{getStats(){return {};}setDestination(){}dispose(){disposed++;}}};
+  env.transitions.workspace({root:env.root,effect:"sheet",sheetOptions:{formation:true},update(){updated++;},complete(result){assert.equal(result.fallback,true);completed++;}});
+  assert.equal(updated,1);assert.equal(completed,1);assert.equal(disposed,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});

@@ -48,3 +48,58 @@ test("every growth-speed tuning still covers and settles the whole workspace",()
     assert.equal(m.radius,m.reach);assert.equal(m.opacity,0);
   }
 });
+const {flattenAmount,settlement}=window.DuckFurSheet;
+const forming=p=>geometry(900,600,{x:410,y:250},{formation:true,flattenWidth:90},p);
+test("settlement is uniform across the full sheet with no radial reveal front",()=>{
+  const m=forming(.735);
+  for(const r of [0,40,200,600,m.reach])assert.ok(Math.abs(flattenAmount(m,r)-.5)<1e-8);
+  assert.equal(revealRadius(m),0);
+  const state=settlement(m,200);assert.ok(Math.abs(state.thicknessScale-.5)<1e-8);
+});
+test("a fixed material region physically lowers, loses thickness and becomes native without global fade",()=>{
+  const m=forming(.735),r=200,q=2*r/m.reach-1;
+  const top=sample(m,0,q),bottom=sample(m,0,q,1);
+  assert.ok(top.z>0);assert.ok(Math.abs(Math.hypot(top.x-bottom.x,top.y-bottom.y,top.z-bottom.z)-2.5)<1e-5);
+  const end=forming(1),settled=sample(end,0,q),under=sample(end,0,q,1);
+  assert.equal(settlement(end,r).formed,true);assert.equal(settled.z,0);assert.equal(settled.normal.z,1);
+  assert.equal(settled.x,under.x);assert.equal(settled.z,under.z);assert.equal(settled.visible,false);
+  for(const p of [.05,.2,.4,.6,.8,.95,1])assert.equal(forming(p).opacity,1);
+});
+test("native boundary is on the resting plane and reaches every viewport point before cleanup",()=>{
+  for(const p of [.4,.6,.8,.95,1]){
+    const m=forming(p),r=revealRadius(m);
+    if(r>0){const point=sample(m,0,2*r/m.reach-1);assert.ok(Math.abs(point.z)<1e-7);assert.equal(flattenAmount(m,r),1);}
+  }
+  const end=forming(1);
+  for(const [x,y]of [[0,0],[900,0],[0,600],[900,600],[410,250]]){
+    const r=Math.hypot(x-end.origin.x,y-end.origin.y);
+    assert.equal(settlement(end,r).formed,true);assert.equal(sample(end,0,2*r/end.reach-1).visible,false);
+  }
+});
+test("settlement never reverses for a fixed root and no region is handed off while raised",()=>{
+  for(const r of [0,40,180,400,590]){
+    let previous=0;
+    for(let step=0;step<=100;step++){
+      const m=forming(step/100),flat=flattenAmount(m,r);assert.ok(flat>=previous);previous=flat;
+      if(flat===1){const point=sample(m,0,2*r/m.reach-1);assert.equal(point.z,0);assert.equal(point.visible,false);}
+    }
+  }
+});
+
+test("one raised wave clears the workspace before the whole sheet starts settling",()=>{
+  const m=forming(.5);assert.equal(m.radius,m.reach);assert.equal(m.settleProgress,0);
+  for(const [x,y]of [[0,0],[900,0],[0,600],[900,600]])assert.ok(Math.hypot(x-m.origin.x,y-m.origin.y)<m.radius-m.band);
+  for(const p of [.1,.3,.5,.52])assert.equal(flattenAmount(forming(p),0),0);
+  assert.ok(forming(.6).settleProgress>0);
+});
+test("whole-sheet settlement has no second ridge, curl or spatial slope",()=>{
+  const m=forming(.75);let previous=-1;
+  const maxRadius=Math.max(...[[0,0],[900,0],[0,600],[900,600]].map(([x,y])=>Math.hypot(x-m.origin.x,y-m.origin.y)));
+  for(let r=0;r<=maxRadius;r+=2){
+    const point=sample(m,0,2*r/m.reach-1);
+    assert.ok(Math.abs(point.x-m.origin.x-r)<1e-6); // No second radial curl.
+    assert.ok(point.z<=m.settings.elevation*.32+1e-6);
+    if(previous>=0)assert.ok(Math.abs(point.z-previous)<1e-6);
+    previous=point.z;
+  }
+});
