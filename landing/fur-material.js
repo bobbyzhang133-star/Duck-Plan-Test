@@ -949,15 +949,18 @@
 
     onActivate(event) {
       if (this.host.disabled || this.host.dataset.transition === "none" || this.options.waveEnabled === false) return;
-      const point = event.detail ? this.localPointer(event) : { x: this.width / 2, y: this.height / 2 };
-      this.emitWave(point);
+      const record=window.DuckTransitions?.getActivation(this.host);
+      const rect=this.host.getBoundingClientRect();
+      const point = record ? {x:record.contact.x-rect.left,y:record.contact.y-rect.top} : event.detail ? this.localPointer(event) : { x: this.width / 2, y: this.height / 2 };
+      this.emitWave(point,record?{timeline:record.timeline,activationId:record.id}:{});
     }
 
-    emitWave(point = { x: this.width / 2, y: this.height / 2 }) {
+    emitWave(point = { x: this.width / 2, y: this.height / 2 }, shared = {}) {
       if (this.destroyed || this.reducedMotion?.matches || this.options.reducedMotion || !this.gl) return;
       const reach = Math.max(...[[0, 0], [this.width, 0], [0, this.height], [this.width, this.height]].map(([x,y]) => Math.hypot(x-point.x,y-point.y)));
       this.waves ||= [];
-      this.waves.push({ x: point.x, y: point.y, radius: 0, reach });
+      if(shared.activationId && this.waves.some(w=>w.activationId===shared.activationId))return;
+      this.waves.push({ x: point.x, y: point.y, radius: 0, reach, ...shared });
       this.waves = this.waves.slice(-3);
       this.wake();
     }
@@ -968,7 +971,7 @@
       this.waves = (this.waves || []).filter((wave) => wave.radius < wave.reach + width);
       for (const wave of this.waves) {
         const previous = wave.radius;
-        wave.radius += speed * step;
+        wave.radius = wave.timeline?.radiusAt ? Math.max(previous,wave.timeline.radiusAt(performance.now())) : previous+speed*step;
         for (let index = 0; index < this.count; index += 1) {
           if (this.pressed && this.activePress[index]) continue;
           const dx = this.roots[index*2] * this.width - wave.x;
@@ -1388,6 +1391,9 @@
     unmount,
     get: (host) => registry.get(host),
     getRendererStats: () => ({ contexts: [...liveSurfaces].filter(surface=>Boolean(surface.gl)).length, gpuBytes: [...liveSurfaces].reduce((sum,surface)=>sum+surface.getStats().gpuBytes,0) }),
+    // Reuse the approved resting pile on temporary deforming surfaces.
+    materialShaders: Object.freeze({vertex:VERTEX_SHADER,fragment:FRAGMENT_SHADER,
+      fibersPerPixel:QUALITY.medium.fibersPerPixel*3.15}),
     defaults: { ...DEFAULTS },
     __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteRootIncluded, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
   };

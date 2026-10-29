@@ -10,13 +10,27 @@
   const ease = (t) => t*t*(3-2*t);
   const reduced = () => motion.matches || settings.reducedMotion;
 
+  let activationSequence=0;
+  const contacts=new WeakMap();
+  function captureActivation(source,event={},previous=null) {
+    event ||= {};
+    const bounds=source?.getBoundingClientRect?.()||{left:0,top:0,width:0,height:0};
+    const pointer=previous?.modality!=="keyboard" && (event.pointerType || event.type?.startsWith("pointer") || event.detail>0);
+    const contact=previous?.modality!=="keyboard" && previous?.contact ? {...previous.contact} : pointer && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
+      ? {x:event.clientX,y:event.clientY} : previous?.modality!=="keyboard" && previous?.contact
+      ? {...previous.contact} : {x:bounds.left+bounds.width/2,y:bounds.top+bounds.height/2};
+    return {id:previous?.id||++activationSequence,source,bounds:previous?.bounds||{left:bounds.left,top:bounds.top,width:bounds.width,height:bounds.height},
+      contact,modality:pointer?(event.pointerType||"pointer"):(previous?.modality||(event.type==="keydown"||event.type==="click"?"keyboard":"programmatic")),
+      contactAt:previous?.contactAt??performance.now(),timeline:{startedAt:performance.now(),duration:settings.duration}};
+  }
+  function mapActivation(record,rect) {
+    // Physical contact remains in viewport coordinates. Only emergence is clipped.
+    return {contact:{...record.contact},emergence:{x:clamp(record.contact.x-rect.left,0,rect.width),y:clamp(record.contact.y-rect.top,0,rect.height)},
+      external:record.contact.x<rect.left || record.contact.x>rect.left+rect.width || record.contact.y<rect.top || record.contact.y>rect.top+rect.height};
+  }
   function origin(source,event,rect) {
-    const sourceRect = source?.getBoundingClientRect();
-    const pointer = event?.detail && Number.isFinite(event.clientX);
-    return {
-      x: clamp((pointer ? event.clientX : sourceRect ? sourceRect.left+sourceRect.width/2 : rect.left+rect.width/2)-rect.left,0,rect.width),
-      y: clamp((pointer ? event.clientY : sourceRect ? sourceRect.top+sourceRect.height/2 : rect.top+rect.height/2)-rect.top,0,rect.height),
-    };
+    const record=activation && activation.source===source ? activation : captureActivation(source,event);
+    return mapActivation(record,rect).emergence;
   }
 
   function snapshot(root) {
@@ -52,12 +66,12 @@
     cancelAnimationFrame(current.frame);
     if(current.sheet){metrics.sheetPeak=current.sheet.getStats();current.sheet.dispose();}
     current.layer.remove(); metrics.layers=0;
-    metrics.cancelled++;
+    metrics.cancelled++;metrics.lastCancellation=reason;
     current.complete?.({cancelled:true,reason});
   }
 
   function workspace({root=document.querySelector(".workspace"),source=activation?.source,event=activation?.event,update,complete,effect=settings.effect,sheetOptions={},holdProgress=null}={}) {
-    let reusable=effect==="sheet" && active?.sheet?.canRetarget ? active.sheet : null;
+    let reusable=(effect==="sheet" || effect==="ribbon") && active?.sheet?.canRetarget && active.effect===effect ? active.sheet : null;
     if(reusable)active.sheet=null;
     cancel();
     if (!root || reduced() || document.hidden || !root.getClientRects().length) { reusable?.dispose(); update?.(); complete?.({cancelled:false}); return; }
@@ -66,12 +80,9 @@
     const left=Math.max(0,rect.left,drawer?.right||0);
     const bounds={left,top:Math.max(0,rect.top),width:Math.max(0,Math.min(rect.right??rect.left+rect.width,innerWidth)-left),height:Math.min(rect.height,innerHeight-Math.max(0,rect.top))};
     if(!bounds.width || !bounds.height){reusable?.dispose();update?.();complete?.({cancelled:false});return;}
-    const point=origin(source,event,bounds);
-    if(source && root.contains?.(source) === false) {
-      const distances=[point.x,bounds.width-point.x,point.y,bounds.height-point.y];
-      const side=distances.indexOf(Math.min(...distances));
-      if(side===0)point.x=0;else if(side===1)point.x=bounds.width;else if(side===2)point.y=0;else point.y=bounds.height;
-    }
+    const record=activation && activation.source===source ? activation : captureActivation(source,event);
+    const mapped=mapActivation(record,bounds),point=mapped.emergence;
+    metrics.activation={id:record.id,modality:record.modality,contact:record.contact,emergence:point,external:mapped.external};
     metrics.snapshotBytes=0;
     const started=performance.now();
     let copy;
@@ -86,19 +97,20 @@
     wrapper.append(copy); layer.append(wrapper);
     const curved=document.createElement("div"); curved.className="material-outgoing material-curved";
     curved.dataset.view=wrapper.dataset.view;
-    const curvedCopy=effect==="sheet" ? document.createElement("div") : snapshot(root); curvedCopy.style.cssText=copy.style.cssText;
+    const curvedCopy=(effect==="sheet" || effect==="ribbon") ? document.createElement("div") : snapshot(root); curvedCopy.style.cssText=copy.style.cssText;
     curved.append(curvedCopy); layer.append(curved);
     const fold=document.createElement("div"); fold.className="material-fold-band"; layer.append(fold);
     const snapshotElapsed=performance.now()-started;
     let sheet=null;
-    if(effect === "sheet" && window.DuckFurSheet) {
+    const renderer=effect==="ribbon"?window.DuckFurRibbon:window.DuckFurSheet;
+    if((effect === "sheet" || effect==="ribbon") && renderer) {
       try {
-        const options={...settings,...sheetOptions};
+        const options={...settings,...sheetOptions,renderer:effect};
         if(reusable?.canRetarget(bounds.width,bounds.height,options)){
           sheet=reusable;reusable=null;sheet.retarget(layer,point,options);metrics.reusedSheets=(metrics.reusedSheets||0)+1;
         }else{
           reusable?.dispose();reusable=null;
-          sheet=new window.DuckFurSheet.FurSheet(layer,{width:bounds.width,height:bounds.height,origin:point,options,onFailure:()=>cancel("sheet-context-lost")});
+          sheet=new renderer.FurSheet(layer,{width:bounds.width,height:bounds.height,origin:point,options,onFailure:()=>cancel("sheet-context-lost")});
         }
         curved.style.display="none";fold.style.display="none";
         metrics.sheetPeak=sheet.getStats();metrics.sheetFailure=null;
@@ -111,27 +123,41 @@
     metrics.qualityReduced=Boolean(sheet?.qualityReduced);
     const focus=document.activeElement;
     try { update?.(); } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0; throw error; }
-    if(effect === "sheet" && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
+    if((effect === "sheet" || effect==="ribbon") && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
-    const job={layer,frame:0,complete,sheet}; active=job;
-    let start=null,previous=null;
+    const job={layer,frame:0,complete,sheet,effect}; active=job;
+    // Compilation/snapshot latency must not consume the physical animation.
+    record.timeline.startedAt=performance.now();record.timeline.duration=settings.duration;
+    record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;return held===null?clamp((time-record.timeline.startedAt)/record.timeline.duration,0,1):clamp(held,0,1);};
+    record.timeline.radiusAt=time=>window.DuckFurSheet?.geometry(bounds.width,bounds.height,point,sheetOptions,record.timeline.progressAt(time)).radius||0;
+    const surface=source && window.DuckFur?.get(source);
+    if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).emergence,{timeline:record.timeline,activationId:record.id});
+    let previous=null,lastProgress=null;
+    const debug=sheetOptions.debug && document.createElementNS ? document.createElementNS("http://www.w3.org/2000/svg","svg"):null;
+    if(debug){debug.setAttribute("viewBox",`0 0 ${bounds.width} ${bounds.height}`);debug.style.cssText="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none";layer.append(debug);}
+    function diagnostics(model){
+      if(!debug || effect!=="sheet")return;
+      const paths=renderer.boundaries(model);
+      const circle=(x,y,color,label,dy=-8)=>`<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white"/><text x="${x+8}" y="${Math.max(14,y+dy)}" fill="${color}" stroke="white" stroke-width=".4" font-size="12">${label}</text>`;
+      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18);
+    }
     function frame(time) {
       if(active!==job) return;
-      start??=time;
-      const elapsed=time-start;
+      const elapsed=time-record.timeline.startedAt;
       const interval=previous===null?0:time-previous; previous=time;
       metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;
       const held=typeof holdProgress === "function" ? holdProgress() : holdProgress;
-      const progress=held===null ? clamp((elapsed-35)/Math.max(1,settings.duration-35),0,1) : clamp(held,0.02,0.98);
-      if(sheet){
+      const progress=record.timeline.progressAt(time);
+      if(sheet && progress!==lastProgress){
         try {
-          const model=sheet.draw(progress);
+          const model=sheet.draw(progress);lastProgress=progress;
           if(!model){cancel("sheet-unavailable");return;}
           metrics.sheetPeak=sheet.getStats();
-          wrapper.style.clipPath=window.DuckFurSheet.revealPolygon(model);
-          if(interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();job.reducedQuality=true;metrics.qualityReduced=true;}
+          wrapper.style.clipPath=sheetOptions.growthOnly?"none":renderer.revealPolygon(model);
+          diagnostics(model);metrics.materialArea=model.coverageArea||0;metrics.progress=progress;
+          if(held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}
-      }else{
+      }else if(!sheet){
       const radius=ease(progress)*reach;
       const mask=`radial-gradient(circle at ${point.x}px ${point.y}px,transparent ${Math.max(0,radius-2)}px,#000 ${radius+1}px)`;
       wrapper.style.maskImage=mask; wrapper.style.webkitMaskImage=mask;
@@ -145,7 +171,7 @@
       // Restrained curvature confined to the moving band, never the sidebar.
       fold.style.filter=`blur(${settings.fold*0.7}px)`;
       }
-      if(progress<1) job.frame=requestAnimationFrame(frame);
+      if(progress<1 || held!==null) job.frame=requestAnimationFrame(frame);
       else {
         if(sheet){metrics.sheetPeak=sheet.getStats();sheet.dispose();}
         metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
@@ -192,11 +218,21 @@
     handle=requestAnimationFrame(frame);
   }
 
+  document.addEventListener("pointerdown",event=>{
+    const source=event.target.closest("button,a");if(!source || source.disabled)return;
+    contacts.set(source,captureActivation(source,event));
+  },true);
+  document.addEventListener("keydown",event=>{
+    if(!["Enter"," "].includes(event.key))return;const source=event.target.closest("button,a");
+    if(source && !source.disabled)contacts.set(source,captureActivation(source,{type:"keydown"}));
+  },true);
+  document.addEventListener("pointercancel",event=>{const source=event.target.closest("button,a");if(source)contacts.delete(source);},true);
   document.addEventListener("click",event=> {
     const source=event.target.closest("button,a");
     if(!source || source.disabled) return;
-    activation={source,event};
-    queueMicrotask(()=>{ if(activation?.event===event)activation=null; });
+    const previous=contacts.get(source);contacts.delete(source);
+    activation=captureActivation(source,event,previous);
+    const record=activation;queueMicrotask(()=>{if(activation===record)activation=null;});
   },true);
   const interrupt=()=>{cancel();for(const cleanup of [...morphs.values()])cleanup();};
   addEventListener("resize",interrupt);
@@ -204,5 +240,5 @@
   document.addEventListener("visibilitychange",()=>{if(document.hidden)interrupt();});
   document.addEventListener("toggle",event=>{if(event.target.matches("dialog"))interrupt();},true);
   motion.addEventListener("change",interrupt);
-  window.DuckTransitions={workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:{...window.DuckFurSheet?.resources}};}};
+  window.DuckTransitions={captureActivation,mapActivation,getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources[key]||0)+(window.DuckFurRibbon?.resources[key]||0)]))};}};
 })();

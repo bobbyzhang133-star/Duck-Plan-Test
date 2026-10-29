@@ -92,3 +92,35 @@ test("an open sidebar is excluded from the sheet viewport",()=>{
   assert.equal(dimensions.width,550);assert.equal(dimensions.height,600);
   env.transitions.cancel();assert.equal(env.layers.size,0);
 });
+test("pointer contact survives delayed click displacement and maps exactly inside workspace",()=>{
+  const {transitions:t}=animatedSetup();const source={getBoundingClientRect:()=>({left:300,top:200,width:120,height:44})};
+  const down=t.captureActivation(source,{type:"pointerdown",pointerType:"mouse",clientX:317,clientY:211});
+  const click=t.captureActivation(source,{type:"click",detail:1,clientX:370,clientY:220},down);
+  assert.equal(click.id,down.id);assert.equal(click.contact.x,317);assert.equal(click.contact.y,211);
+  const mapped=t.mapActivation(click,{left:100,top:150,width:800,height:500});
+  assert.equal(mapped.emergence.x,217);assert.equal(mapped.emergence.y,61);assert.equal(mapped.external,false);
+});
+test("keyboard activation is deliberately centered; external contact remains separate",()=>{
+  const {transitions:t}=animatedSetup();const source={getBoundingClientRect:()=>({left:20,top:100,width:100,height:40})};
+  const key=t.captureActivation(source,{type:"keydown"});assert.equal(key.modality,"keyboard");
+  assert.equal(key.contact.x,70);assert.equal(key.contact.y,120);
+  const mapped=t.mapActivation(key,{left:250,top:50,width:550,height:600});
+  assert.equal(mapped.contact.x,70);assert.equal(mapped.emergence.x,0);assert.equal(mapped.emergence.y,70);assert.equal(mapped.external,true);
+});
+test("button wave and sheet receive one shared timeline and activation ID",()=>{
+  const env=animatedSetup();let shared,drawProgress;
+  const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:40})};
+  const surface={waves:[],emitWave(point,options){shared=options;this.waves.push(options);}};
+  env.context.window.DuckFur={get:()=>surface};
+  env.context.window.DuckFurSheet={FurSheet:class{getStats(){return {};}draw(p){drawProgress=p;return {};}dispose(){}},geometry:(w,h,o,s,p)=>({radius:p*100}),revealPolygon:()=>"none"};
+  env.transitions.workspace({root:env.root,source,effect:"sheet",holdProgress:.2,update(){}});env.tick(70);
+  assert.equal(shared.timeline.progressAt(70),drawProgress);assert.equal(shared.timeline.radiusAt(70),20);
+  assert.ok(shared.activationId);env.transitions.cancel();assert.equal(env.layers.size,0);
+});
+test("programmatic rapid turns accept an explicit null event and retain control-centered origin",()=>{
+  const env=animatedSetup();const source={getBoundingClientRect:()=>({left:50,top:100,width:120,height:40})};
+  const record=env.transitions.captureActivation(source,null);
+  assert.equal(record.modality,"programmatic");assert.equal(record.contact.x,110);
+  for(let i=0;i<4;i++){env.transitions.workspace({root:env.root,source,event:null,update(){}});env.tick(i*50);}
+  env.tick(900);assert.equal(env.layers.size,0);
+});

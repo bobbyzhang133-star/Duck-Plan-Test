@@ -1,6 +1,52 @@
 # DuckPlan interactive fur material
 
-## Physical sheet: local review build
+## Shared button texture on the growing surface
+
+The growing sheet now reuses the approved button's original vertex and fragment shaders to bake a seamless 64 CSS-pixel pile tile at 2× resolution. This replaces the separate grain/ridge shader. Wrapped neighboring strands keep tile borders continuous. The same medium-quality silhouette density, random lean, root/middle/tip color, soft edge, tip glow and canvas alpha composition are preserved. Fixed material-space UVs retain the button's strand scale as the area expands. Actual attached crest fibers now use matching width, lean and tip softness; curvature still changes their lighting naturally. The underside uses the same pile with restrained shading rather than a separate brown material.
+
+The bake uses the existing temporary sheet context, with no additional canvas/context. Its framebuffer, glyph texture, buffers, vertex array and shader program are released immediately. One approximately 85 KiB mipmapped texture remains until the sheet is disposed. A bounded four-entry CPU pixel cache (at most 256 KiB) avoids shader rebakes on later turns with the same length/density. Texture and framebuffer counts are included in lab cleanup metrics. The resting tile follows the mesh; individually animated geometry remains concentrated in the attached fibers. The approved button's own shader output and interaction equations are unchanged.
+
+Browser inspection compared the held surface with the existing button material. First-bake initialization measured about 181–332 ms in cold samples; subsequent same-tuning construction measured about 42 ms using cached pixels. Reset/cancellation returned textures and framebuffers to zero along with all existing temporary resources. Existing geometry/timeline tests remain applicable. This remains a local visual revision, not a public deployment.
+
+## Click-seeded persistent growth — local revision
+
+This revision addresses the Chat Check against `36197fa`: the previous mesh was a traveling ribbon with no persistent body. It is a local prototype pending visual approval, with no deployment or shared-repository changes.
+
+Preview: `http://127.0.0.1:4205/fur-lab.html#sheet-lab`. From this test repository run `python3 -m http.server 4205 --bind 127.0.0.1 --directory landing` if the server is stopped. Use **Turn workspace** inside the example for exact contact-point inspection. The separate **Grow furry sheet** control is outside the workspace and deliberately emerges at its boundary.
+
+### Origin and shared timeline
+
+`material-transitions.js` captures an activation ID, viewport contact, input modality, original source bounds and contact timestamp at pointer-down or keyboard activation. Click preserves the original pointer contact even when release coordinates differ. Keyboard activation uses the source center. The physical contact remains separate from the workspace-clamped emergence coordinate; the sidebar stays outside the temporary renderer bounds.
+
+After snapshot/renderer initialization, one timeline supplies both sheet progression and the button wave radius. The timeline starts after compilation so cold setup cannot skip the contact phase. Existing pointer-down compression remains immediate. `fur-material.js` accepts the activation timeline and ID through its existing wave API, suppressing duplicate waves. Its approved geometry, lettering, compression, brushing and recovery equations are preserved. Held lab frames also hold the shared wave radius. The outgoing DOM snapshot is still decorative: a source destroyed by application rerender is represented by its captured appearance plus the temporary growing material, rather than a second live button renderer.
+
+### Filled surface and attached fur
+
+`fur-sheet.js` now has a fixed polar material domain around the seed. At zero progress its visible area is empty. A compact early tuft rises at the seed, then the domain activates outward monotonically. Every radial section contains the body from the seed to a localized rolling crest. The interior does not translate with the crest or disappear when the boundary advances.
+
+A capped growth radius controls coverage. A localized sinusoidal rise and forward curl can overturn the crest normal; thickness follows the normal, with a darker underside and a dynamic outer seam. Projection is anchored about the seed. Thickness and initial elevation grow from zero rather than exposing an offset initial band. All speed settings still reach full coverage before settlement.
+
+Fiber material coordinates are fixed for an activation. Growth activates roots rather than redistributing them over a changing ribbon. The 26,000 desktop / 9,000 small-tier capacity is unchanged; a portion is concentrated near the seed so the first tuft has enough strands. Fibers follow the same deformed position and normal as the mesh. Procedural micro-strand shading supplements actual instanced strands in the broad body. Adaptive quality can lower the submitted instance count and drawing-buffer resolution.
+
+### Reveal and diagnostics
+
+The outer growth boundary, projected crest and grounded inner roll foot are separate contours. An even-odd DOM clip exposes the real destination behind the inner foot. The settled inner fur becomes translucent (42% base opacity) so sharp HTML can show through while the persistent body remains present. Geometry-only mode keeps that body opaque and leaves the example UI unchanged. Final settlement removes all temporary material. This is a composited page transformation, not a cloth simulation of the HTML itself.
+
+The lab defaults to geometry-only inspection. Uncheck **Growth only (no page reveal)** to inspect the synchronized UI transition. Debug contours: blue growth edge, pink projected crest, green reveal foot; red contact and violet emergence markers distinguish an external source. Coverage reports the full material-domain disk area, including portions outside the clipped viewport, not visible screen-pixel coverage.
+
+Hold controls cover 0%, 5%, 10%, 20%, 40%, 60%, 80% and 100%. Held poses retain the temporary renderer until released or reset; unchanged holds skip repeated GPU draws. The baseline is preserved in `fur-ribbon.js`, allocated only when selected. **Use rejected ribbon for in-workspace comparison** allows the same control/contact and tuning to drive either model. The older radial-mask comparison remains available.
+
+### Verification and practical limits
+
+All 41 automated tests pass, along with JavaScript syntax and diff checks. The regression suite covers original pointer preservation, centered keyboard input, external-origin mapping, zero footprint, connected monotonically growing material, fixed roots, normal thickness, crest/reveal-foot alignment, final coverage at all speed settings, shared wave timing/deduplication, explicit-null programmatic activations, interruption, renderer reuse, context-loss/initialization fallback, sidebar exclusion and existing planner/fur behavior. Run `node --test tests/*.test.cjs` and syntax checks before handoff.
+
+Browser evidence captured actual-size 0%, 5%, 20%, 40% and 80% states, an off-center pointer contact, keyboard-centered reveal, and the rejected ribbon at matching 40% progress. The filled body is visibly present behind the advancing rim. Screenshot files are in `/private/tmp/duckplan-growth-*.png`; these are still frames, not a screen recording. Visual acceptance remains the user's decision.
+
+One final rapid-turn sample reached 60 FPS, maximum 17.1 ms, no long frames on the last turn, three renderer reuses, and zero remaining sheet contexts/buffers/programs/overlays. It retained adaptive reduction to 18,200 submitted fibers and about 2.81 MiB estimated GPU storage. Cold setup varied roughly 27–147 ms in browser samples; capture-heavy held sessions showed intervals up to 150 ms and must not be treated as a live-animation benchmark. GPU estimates exclude driver and antialias/compositor overhead. The revised desktop mesh has 104,400 vertices; the smaller tier has 46,560. Physical phone hardware has not been benchmarked for this revision.
+
+Actual browser context loss removed all temporary GPU resources and overlays while preserving the destination. Planner smoke checks also exercised Day switching, sidebar Classes navigation and closing the drawer on the final interactive destination. Scrolling intentionally cancels a turn to avoid a detached screen-space overlay; browser automation that scrolls a target into view during activation can therefore cancel before its first visible frame. Focused Return activation was inspected separately. The broad body still reads as a stylized short-pile material, and its circular roll, underside shading, final translucency/settlement and perceived button-to-sheet continuity need local visual review. Passing tests do not establish realism or approval.
+
+## Historical ribbon baseline (36197fa; superseded)
 
 Open `http://127.0.0.1:4205/fur-lab.html#sheet-lab` while the local server is running, or start it with `python3 -m http.server 4205 --bind 127.0.0.1 --directory landing` from the repository root. The planner is at `http://127.0.0.1:4205/index.html#home`.
 
