@@ -281,7 +281,7 @@ function setView(name, preserveDrawer = false) {
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${normalized}`);
   if(!preserveDrawer) setSidebar(false);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if(!window.DuckTransitions?.isActive()) window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupFurMaterial());
 }
 function showToast(message) { clearTimeout(toastTimer); els.toast.textContent = message; els.toast.classList.add("show"); toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2600); }

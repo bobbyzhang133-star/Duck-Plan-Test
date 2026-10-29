@@ -23,9 +23,9 @@ test("reduced motion updates the destination without snapshots or animation fram
 
 function animatedSetup() {
   const frames=new Map(),layers=new Set(),events={};let next=0;
-  function node() {return {style:{cssText:""},dataset:{},scrollTop:0,scrollLeft:0,isConnected:true,
+  function node() {return {children:[],style:{cssText:""},dataset:{},scrollTop:0,scrollLeft:0,isConnected:true,
     removeAttribute(){},setAttribute(){},matches(){return false;},querySelectorAll(){return [];},querySelector(){return null;},
-    append(){},remove(){layers.delete(this);},cloneNode(){return node();},
+    append(...nodes){this.children.push(...nodes);},remove(){layers.delete(this);},cloneNode(){return node();},
     getClientRects(){return [{}];},getBoundingClientRect(){return {left:0,top:0,width:800,height:600};}};}
   const context={window:{},innerWidth:1024,innerHeight:768,performance:{now:()=>0},
     document:{hidden:false,activeElement:null,body:{dataset:{view:"home"},append(layer){layers.add(layer);}},createElement:node,addEventListener(type,fn){events[type]=fn;},querySelector(){return null;}},
@@ -41,7 +41,7 @@ test("rapid workspace navigation commits the latest action and removes every old
   env.tick(0);
   env.transitions.workspace({root:env.root,update:()=>{destination="settings";}});
   assert.equal(destination,"settings");assert.equal(cancelled,1);assert.equal(env.layers.size,1);
-  env.tick(20);env.tick(700);
+  env.tick(20);env.tick(1100);
   assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);assert.equal(env.transitions.metrics.layers,0);
 });
 test("resize interrupts visual layers without undoing the destination state",()=> {
@@ -60,7 +60,7 @@ test("rapid sheet turns dispose the previous GPU renderer and final renderer",()
   const env=animatedSetup();let disposals=0;
   env.context.window.DuckFurSheet={FurSheet:class{getStats(){return {};}draw(){return {};}dispose(){disposals++;}},revealPolygon(){return "polygon(0 0,100% 0,100% 100%)";}};
   env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(0);
-  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(20);env.tick(700);
+  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(20);env.tick(1100);
   assert.equal(disposals,2);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });
 test("compatible interrupted sheets reuse one renderer and dispose it at final completion",()=>{
@@ -70,7 +70,7 @@ test("compatible interrupted sheets reuse one renderer and dispose it at final c
     canRetarget(){return true;}retarget(){reuses++;}
   },revealPolygon(){return "polygon(0 0,100% 0,100% 100%)";}};
   for(let i=0;i<4;i++){env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(i*50);}
-  env.tick(900);
+  env.tick(1100);
   assert.equal(allocations,1);assert.equal(reuses,3);assert.equal(disposals,1);assert.equal(env.layers.size,0);
 });
 test("dialog opening and hidden tabs remove transition layers without reversing state",()=>{
@@ -122,7 +122,7 @@ test("programmatic rapid turns accept an explicit null event and retain control-
   const record=env.transitions.captureActivation(source,null);
   assert.equal(record.modality,"programmatic");assert.equal(record.contact.x,110);
   for(let i=0;i<4;i++){env.transitions.workspace({root:env.root,source,event:null,update(){}});env.tick(i*50);}
-  env.tick(900);assert.equal(env.layers.size,0);
+  env.tick(1100);assert.equal(env.layers.size,0);
 });
 test("formation captures destination structure after real state update and cleans up on interruption",()=>{
   const env=animatedSetup();let updated=false,captured=0,uploads=0,disposed=0;
@@ -140,4 +140,22 @@ test("formation capture failure keeps the destination usable and removes GPU/DOM
   env.context.window.DuckFurSheet={FurSheet:class{getStats(){return {};}setDestination(){}dispose(){disposed++;}}};
   env.transitions.workspace({root:env.root,effect:"sheet",sheetOptions:{formation:true},update(){updated++;},complete(result){assert.equal(result.fallback,true);completed++;}});
   assert.equal(updated,1);assert.equal(completed,1);assert.equal(disposed,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});
+test("scrolled workspace bounds intersect the viewport instead of keeping the unclipped height",()=>{
+  const env=animatedSetup();let rendererHeight;
+  env.root.getBoundingClientRect=()=>({left:20,top:-100,width:800,height:600,right:820,bottom:500});
+  env.context.window.DuckFurSheet={FurSheet:class{constructor(layer,{height}){rendererHeight=height;}getStats(){return {};}dispose(){}}};
+  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});
+  assert.equal(rendererHeight,500);env.transitions.cancel();
+});
+
+test("native destination is available under resolving fur once complete growth hides the old snapshot",()=>{
+  const env=animatedSetup();
+  env.context.window.DuckFormation={capture:()=>({width:800,height:600})};
+  env.context.window.DuckFurSheet={FurSheet:class{getStats(){return {};}setDestination(){}dispose(){}draw(p){return {settleProgress:p,coverageArea:1};}},revealPolygon:()=>"none",revealRadius:()=>0};
+  env.transitions.workspace({root:env.root,effect:"sheet",sheetOptions:{formation:true},update(){}});
+  const wrapper=[...env.layers][0].children[0];
+  env.tick(0);assert.equal(wrapper.style.visibility,"visible");
+  env.tick(600);assert.equal(wrapper.style.visibility,"hidden");
+  env.tick(1100);assert.equal(env.layers.size,0);
 });

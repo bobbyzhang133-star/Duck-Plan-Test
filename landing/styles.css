@@ -78,13 +78,6 @@ button:not(:disabled):active, .interaction-pressed { transform: scale(0.96); fil
 .material-outgoing,.material-fold-band { position:absolute; inset:0; pointer-events:none; }
 .material-outgoing { overflow:hidden; background:var(--canvas); }
 .material-outgoing .view { animation:none!important; }
-.material-outgoing[data-view="home"] .compact-topbar,.material-outgoing[data-view="home"] .home-heading { display:none!important; }
-.material-outgoing[data-view="home"] .unified-workspace { height:100dvh; padding:12px; }
-.material-outgoing[data-view="home"] .planner-workspace { height:100%; grid-template-columns:minmax(340px,38%) minmax(0,62%); gap:12px; }
-.material-outgoing[data-view="home"] #view-home { height:100%; }
-.material-outgoing[data-view="home"] .daily-panel,.material-outgoing[data-view="home"] .unified-calendar-panel { height:100%;min-height:0;border-radius:22px; }
-.material-outgoing[data-view="home"] .unified-calendar-panel { display:flex;flex-direction:column; }
-.material-outgoing[data-view="home"] .planner-calendar { min-height:0;flex:1; }
 .material-fold-band { mix-blend-mode:multiply; }
 .fur-morph-outgoing { border-radius:0!important; }
 .fur-sheet-canvas { position:absolute;inset:0;width:100%;height:100%;pointer-events:none; }
@@ -111,7 +104,6 @@ button:not(:disabled):active, .interaction-pressed { transform: scale(0.96); fil
 .wave-demo-days span { padding:35px 4px;background:#f8eab5;border-radius:8px;text-align:center; }
 .wave-metrics { display:block;margin-top:20px;font:12px/1.6 ui-monospace,monospace;overflow-wrap:anywhere; }
 @media(max-width:700px) {
- .material-outgoing[data-view="home"] .planner-workspace { height:auto;grid-template-columns:1fr; }
  .wave-demo-shell {grid-template-columns:1fr;}.wave-demo-nav{flex-direction:row;}
 }
 
@@ -583,3 +575,13 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   .calendar-date-button:hover, .month-day:hover { background: #fff8df; }
   .calendar-event-block:hover { z-index: 4; filter: brightness(.96); transform: translateY(-1px); }
 }
+
+/* One stable viewport for navigation; destination content scrolls within it. */
+.unified-workspace,body[data-view="home"] .unified-workspace {height:100dvh;min-height:0;max-height:100dvh;overflow:auto;overflow-anchor:none;scrollbar-gutter:stable;}
+.sheet-example {height:420px;min-height:420px;overflow:auto;scrollbar-gutter:stable;}
+@media(max-width:700px){.sheet-example{height:640px;min-height:640px;}}
+.sheet-registration {font:11px/1.5 ui-monospace,monospace;white-space:pre-wrap;max-height:190px;overflow:auto;}
+/* Metrics update without pushing the inspection workspace around. */
+.fur-lab-body {overflow-anchor:none;}
+.fur-lab-body .wave-metrics {height:96px;overflow:auto;}
+@media(max-width:700px){.fur-lab-body .wave-metrics{height:180px;}}

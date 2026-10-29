@@ -2,27 +2,29 @@
   "use strict";
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
   const smooth=(x)=>{const t=clamp(x,0,1);return t*t*(3-2*t);};
+  const soft=(x)=>{const t=clamp(x,0,1);return t>=1-1e-12?1:t*t*t*(t*(t*6-15)+10);};
   const defaults={growthSpeed:1,thickness:5,elevation:64,curvature:0.72,furDensity:1,fiberLength:5.5,sheetWidth:110,lighting:0.8,formation:false};
   const pileCache=new Map(); // Bounded CPU-only tiles; never retain a GPU context.
   const resources={contexts:0,buffers:0,programs:0,textures:0,framebuffers:0};
 
   // The domain is fixed in material space: angle v in [-1,1], radius q in [-1,1].
   // Growth activates roots; it never stretches or redistributes existing roots.
+  function formationState(progress){return {tint:soft((progress-.5)/.2),flatten:soft((progress-.7)/.28)};}
   function geometry(width,height,origin,options={},progress=0) {
     const settings={...defaults,...options},p=clamp(progress,0,1);
     const reach=Math.max(...[[0,0],[width,0],[0,height],[width,height]].map(([x,y])=>Math.hypot(x-origin.x,y-origin.y)))+settings.sheetWidth+8;
     // One raised growth/rolling wave finishes crossing before the whole sheet settles together.
-    const radius=reach*Math.pow(smooth(Math.min(1,p/(settings.formation?.5:.88))),1/settings.growthSpeed);
-    const settleProgress=settings.formation?smooth((p-.52)/.43):0;
+    const radius=reach*Math.pow((settings.formation?soft:smooth)(Math.min(1,p/(settings.formation?.5:.88))),1/settings.growthSpeed);
+    const state=formationState(p),settleProgress=settings.formation?state.flatten:0,tintProgress=settings.formation?state.tint:0;
     const band=Math.min(settings.sheetWidth,radius*.55);
     const amplitude=smooth(p/.18)*(settings.formation?1:(1-smooth((p-.88)/.12)));
-    return {width,height,origin,settings,progress:p,reach,radius,settleProgress,band,amplitude,phase:settings.formation?(p<.52?"Grow / roll":"Whole sheet settles / forms UI"):"Growth / baseline",
+    return {width,height,origin,settings,progress:p,reach,radius,settleProgress,tintProgress,band,amplitude,phase:settings.formation?(p<.5?"Grow / roll":p<.7?"Fur takes UI colors":"Colored fur settles into UI"):"Growth / baseline",
       opacity:settings.formation?1:1-smooth((p-.92)/.08),coverageArea:Math.PI*radius*radius};
   }
   function flattenAmount(model,r) {
     return model.settings.formation?model.settleProgress:0;
   }
-  function settlement(model,r){const flat=flattenAmount(model,r);return {flat,heightScale:(1-flat)**2,thicknessScale:1-flat,appearance:smooth((flat-.12)/.88),formed:flat>=1};}
+  function settlement(model,r){const flat=flattenAmount(model,r);return {flat,heightScale:(1-flat)**2,thicknessScale:1-flat,appearance:model.tintProgress||0,formed:flat>=1};}
   function profile(model,r) {
     const {settings:s,radius,band,amplitude}=model;
     const t=clamp((r-radius+band)/Math.max(.001,band),0,1);
@@ -48,7 +50,7 @@
       y:model.origin.y+ny*center.u-normal.y*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),
       z:center.z-normal.z*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),normal,r,visible:r<=model.radius && model.radius>0 && flattenAmount(model,r)<1};
   }
-  function project(model,p){const scale=1800/(1800-p.z);return {x:model.origin.x+(p.x-model.origin.x)*scale,y:model.origin.y+(p.y-model.origin.y)*scale-p.z*.65};}
+  function project(model,p){const lift=model.settings.formation && !model.settings.colorOnly?p.z*smooth((p.z-model.settings.elevation*.34)/Math.max(1,model.settings.elevation*.4)):p.z;const scale=1800/(1800-lift);return {x:model.origin.x+(p.x-model.origin.x)*scale,y:model.origin.y+(p.y-model.origin.y)*scale-lift*.65};}
   function contour(model,r,projected=false){return Array.from({length:129},(_,i)=>{
     const p=sample(model,i/64-1,2*r/model.reach-1);return projected?project(model,p):p;
   });}
@@ -65,8 +67,14 @@
   const common=`
     precision highp float;
     uniform vec2 u_size,u_origin;
-    uniform float u_progress,u_reach,u_radius,u_settleProgress,u_band,u_opacity,u_bodyFloor,u_amplitude,u_formation;
-    uniform float u_width,u_elevation,u_curvature,u_thickness,u_lighting,u_length;
+    uniform float u_progress,u_reach,u_radius,u_settleProgress,u_tintProgress,u_band,u_opacity,u_bodyFloor,u_amplitude,u_formation;
+    uniform float u_width,u_elevation,u_curvature,u_thickness,u_lighting,u_length,u_hasField,u_colorOnly;
+    uniform sampler2D u_targets;
+    vec3 targetAt(vec2 pixel){if(u_hasField<0.5)return vec3(0.0);return texture(u_targets,clamp(pixel/u_size,vec2(0.0),vec2(1.0))).rgb*u_hasField;}
+    float reliefAt(vec2 pixel){if(u_settleProgress<=0.12 || u_settleProgress>=1.0)return 0.0;vec3 f=targetAt(pixel);return (f.r*7.0+f.g*3.0)*smoothstep(0.12,0.55,u_settleProgress)*(1.0-smoothstep(0.72,1.0,u_settleProgress));}
+    float resolveAt(vec2 pixel,float amount){return max(targetAt(pixel).b*smoothstep(0.60,0.92,amount),smoothstep(0.86,1.0,amount));}
+
+
     float flattenAmount(float r){return u_formation*u_settleProgress;}
     vec2 profile(float r){
       float t=clamp((r-u_radius+u_band)/max(0.001,u_band),0.0,1.0);
@@ -85,12 +93,17 @@
       vec2 center=profile(r),delta=profile(r+0.05)-profile(max(0.0,r-0.05));
       tangent=normalize(vec3(direction*delta.x,delta.y));
       normal=normalize(vec3(-direction*delta.y,delta.x));
-      return vec3(u_origin+direction*center.x,center.y);
+      vec2 pixel=u_origin+direction*center.x;
+      float relief=reliefAt(pixel);
+      vec2 gradient=vec2(reliefAt(pixel+vec2(1,0))-reliefAt(pixel-vec2(1,0)),reliefAt(pixel+vec2(0,1))-reliefAt(pixel-vec2(0,1)))*0.5;
+      normal=normalize(normal+vec3(-gradient,0));
+      return vec3(pixel,center.y+relief);
     }
     vec4 project(vec3 p) {
-      float perspective=1800.0/(1800.0-p.z);
+      float lift=mix(p.z,p.z*smoothstep(u_elevation*0.34,u_elevation*0.74,p.z),u_formation*(1.0-u_colorOnly));
+      float perspective=1800.0/(1800.0-lift);
       vec2 pixel=(p.xy-u_origin)*perspective+u_origin;
-      pixel.y-=p.z*0.65;vec2 clip=pixel/u_size*2.0-1.0;
+      pixel.y-=lift*0.65;vec2 clip=pixel/u_size*2.0-1.0;
       return vec4(clip.x,-clip.y,clamp(-p.z/400.0,-0.95,0.95),1.0);
     }
     float bodyVisibility(float r){
@@ -127,11 +140,20 @@
     in vec3 v_normal;in vec2 v_uv;in float v_layer,v_height,v_radius;out vec4 color;
     void main(){
       float settled=flattenAmount(v_radius);
+      vec2 pixel=v_uv+u_origin;
+      float coverage=1.0;
+      if(u_formation>0.5 && u_hasField>0.5){
+        float resolve=resolveAt(pixel,settled);
+        float distanceToFiber=length(fract(pixel/2.0)-0.5),radius=0.708*(1.0-resolve);
+        float feather=max(0.02,fwidth(distanceToFiber));
+        coverage=resolve<=0.0?1.0:resolve>=0.999?0.0:1.0-smoothstep(radius-feather,radius+feather,distanceToFiber);
+        if(coverage<0.001)discard;
+      }
       if(v_radius>u_radius || u_radius<0.01 || u_opacity<0.001)discard;
       // Fully settled regions have already become the native UI. No alpha ghost.
       if(u_formation>0.5 && settled>=1.0)discard;
       float edge=(1.0-smoothstep(max(0.0,u_radius-1.0),u_radius,v_radius))*u_opacity*bodyVisibility(v_radius);
-      if(u_shadow>0.5){color=vec4(0.18,0.12,0.025,edge*u_amplitude*u_lighting*0.16*(1.0-settled));return;}
+      if(u_shadow>0.5){color=vec4(0.18,0.12,0.025,edge*coverage*u_amplitude*u_lighting*0.16*(1.0-settled));return;}
       vec3 n=normalize(v_normal);
       // The underlying pile is baked with the *button's* unmodified shaders.
       // UVs are material-space CSS pixels: growth does not enlarge the fibers.
@@ -141,9 +163,12 @@
       vec3 pile=min(vec3(1.0),texel.rgb+vec3(1.0,0.99,0.96)*(1.0-texel.a));
       vec3 base=pile*mix(1.0,0.87,smoothstep(0.25,0.75,v_layer));
       vec3 destination=texture(u_destination,(v_uv+u_origin)/u_size).rgb;
-      float appearance=smoothstep(0.12,1.0,settled)*u_hasDestination;
-      vec3 surface=mix(base*mix(1.0,light,u_lighting),destination,appearance);
-      color=vec4(surface,edge);
+      // Dye the existing pile first: retain strand luminance, lighting and depth.
+      float pileDetail=clamp(dot(base,vec3(0.2126,0.7152,0.0722))/0.91,0.72,1.12);
+      vec3 dyed=destination*pileDetail*mix(1.0,light,u_lighting);
+      vec3 coloredPile=mix(base*mix(1.0,light,u_lighting),dyed,u_tintProgress*u_hasDestination);
+      vec3 surface=mix(coloredPile,destination,smoothstep(0.30,0.9,settled)*u_hasDestination);
+      color=vec4(surface,edge*coverage);
     }
   `;
   const furVertex=`#version 300 es
@@ -161,20 +186,25 @@
       vec3 side=normalize(cross(normal,lean));
       float r=(q+1.0)*0.5*u_reach;
       float settled=flattenAmount(r);v_flat=settled;v_materialUv=(u_origin+vec2(cos(v*3.14159265),sin(v*3.14159265))*r)/u_size;
-      float length=u_length*(0.78+a_seed.z*0.44)*(1.0-settled*0.8);
+      vec2 pixel=v_materialUv*u_size;
+      vec2 gradient=vec2(targetAt(pixel+vec2(2,0)).g-targetAt(pixel-vec2(2,0)).g,targetAt(pixel+vec2(0,2)).g-targetAt(pixel-vec2(0,2)).g);
+      if(length(gradient)>0.01){lean=normalize(mix(lean,vec3(-gradient.y,gradient.x,0.05),smoothstep(0.15,0.65,settled)*0.85));side=normalize(cross(normal,lean));}
+      float resolve=resolveAt(pixel,settled);
+      float length=u_length*(0.78+a_seed.z*0.44)*(1.0-smoothstep(0.50,1.0,settled));
       p+=(normal*0.5*pow(1.0-settled,2.0)+lean*(mix(0.28,0.38,a_seed.z)+settled*0.5))*length*corner.y;
-      float rootWidth=mix(1.05,1.5,a_seed.z);
+      float rootWidth=mix(1.05,1.5,a_seed.z)*(1.0-resolve);
       p+=side*corner.x*mix(rootWidth,rootWidth*0.82,corner.y);
       gl_Position=project(p);
       v_height=corner.y;v_side=corner.x;v_seed=a_seed.z;
       v_light=(0.78+0.22*max(0.0,dot(normalize(vec3(cos(angle),sin(angle),0.7)),normalize(vec3(-0.35,-0.45,0.82)))))*(0.82+0.18*max(0.0,dot(normal,normalize(vec3(-0.3,-0.5,1.0)))));
       v_edge=step(r,u_radius)*step(0.01,u_radius)*u_opacity*bodyVisibility(r);
-      if(v_edge<0.001 || settled>=1.0)gl_Position=vec4(2.0,2.0,2.0,1.0);
+      if(v_edge<0.001 || settled>=1.0 || resolve>=0.999)gl_Position=vec4(2.0,2.0,2.0,1.0);
     }
   `;
   const furFragment=`#version 300 es
     precision highp float;
     uniform sampler2D u_destination;
+    uniform float u_tintProgress;
     uniform vec2 u_size,u_origin;
     in float v_height,v_side,v_light,v_seed,v_edge,v_flat;in vec2 v_materialUv;out vec4 color;
     void main(){
@@ -187,7 +217,11 @@
       float alpha=(1.0-smoothstep(0.62,1.0,abs(v_side)))*(1.0-smoothstep(0.86,1.0,v_height)*0.24)*mix(0.82,0.94,v_height);
       // Geometry collapses into the forming surface; opacity is not the mechanism.
       // Small final fibers no longer project above finished native text.
-      color=vec4(mix(fur*v_light*tipGlow,texture(u_destination,v_materialUv).rgb,smoothstep(0.12,1.0,v_flat)),alpha*v_edge);
+      vec3 destination=texture(u_destination,v_materialUv).rgb;
+      float strandDetail=mix(0.57,1.08,smoothstep(0.0,1.0,v_height))*(0.96+0.08*v_seed);
+      vec3 dyed=destination*strandDetail*v_light*tipGlow;
+      vec3 colored=mix(fur*v_light*tipGlow,dyed,u_tintProgress);
+      color=vec4(mix(colored,destination,smoothstep(0.30,0.9,v_flat)),alpha*v_edge);
     }
   `;
 
@@ -252,9 +286,9 @@
         this.sortedRadii=Array.from({length:this.fibers},(_,i)=>(seeds[i*4+1]+1)*.5).sort((a,b)=>a-b);
         this.furBuffer=this.buffer(seeds);
         this.bufferBytes=mesh.byteLength+seeds.byteLength;
-        this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+this.canvas.width*this.canvas.height*8;
+        this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;
         this.uniforms=new Map();
-        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","formation"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
+        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
         this.bakeButtonPile();
         gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
         // Compile/validate the first draw before starting the visible frame clock.
@@ -333,15 +367,25 @@
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
       this.destinationBytes=canvas.width*canvas.height*4;
-      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+this.destinationBytes+this.canvas.width*this.canvas.height*8;
+      if(canvas.formation?.field){
+        const field=canvas.formation.field;
+        if(!this.targetTexture){this.targetTexture=gl.createTexture();resources.textures++;}
+        gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.targetTexture);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,field);
+        for(const name of [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,name,gl.LINEAR);
+        for(const name of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,name,gl.CLAMP_TO_EDGE);
+        this.targetBytes=field.width*field.height*4;this.formationTargets=canvas.formation.targets;
+      }
+      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+this.destinationBytes+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;
     }
     buffer(data){const gl=this.gl,buffer=gl.createBuffer();this.buffers.push(buffer);resources.buffers++;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return buffer;}
-    uniformsFor(target,model){const gl=this.gl,u=this.uniforms.get(target),s=this.options;gl.useProgram(target);gl.uniform1i(u.destination,1);
+    uniformsFor(target,model){const gl=this.gl,u=this.uniforms.get(target),s=this.options;gl.useProgram(target);gl.uniform1i(u.destination,1);gl.uniform1i(u.targets,2);
       gl.uniform2f(u.size,this.width,this.height);gl.uniform2f(u.origin,this.origin.x,this.origin.y);
-      for(const [name,value]of Object.entries({progress:model.progress,reach:model.reach,radius:model.radius,settleProgress:model.settleProgress,band:model.band,opacity:model.opacity,formation:s.formation?1:0,hasDestination:this.destinationTexture?1:0,bodyFloor:s.growthOnly?1:.42,amplitude:model.amplitude,width:s.sheetWidth,elevation:s.elevation,curvature:s.curvature,thickness:s.thickness*Math.min(1,model.radius/20),lighting:s.lighting,length:s.fiberLength}))gl.uniform1f(u[name],value);
+      for(const [name,value]of Object.entries({progress:model.progress,reach:model.reach,radius:model.radius,settleProgress:model.settleProgress,tintProgress:model.tintProgress,band:model.band,opacity:model.opacity,formation:s.formation?1:0,hasDestination:this.destinationTexture?1:0,hasField:this.targetTexture && !s.colorOnly?1:0,colorOnly:s.colorOnly?1:0,bodyFloor:s.growthOnly?1:.42,amplitude:model.amplitude,width:s.sheetWidth,elevation:s.elevation,curvature:s.curvature,thickness:s.thickness*Math.min(1,model.radius/20),lighting:s.lighting,length:s.fiberLength}))gl.uniform1f(u[name],value);
     }
     draw(progress){if(this.disposed)return null;const gl=this.gl;
       const model=geometry(this.width,this.height,this.origin,this.options,progress);
+      gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.targetTexture||this.materialTexture);
       gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.destinationTexture||this.materialTexture);
       gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
       this.uniformsFor(this.meshProgram,model);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.materialTexture);gl.uniform1i(this.uniforms.get(this.meshProgram).pile,0);gl.bindBuffer(gl.ARRAY_BUFFER,this.meshBuffer);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);gl.vertexAttribDivisor(0,0);
@@ -356,15 +400,15 @@
       gl.drawArraysInstanced(gl.TRIANGLES,0,6,this.fibers);gl.vertexAttribDivisor(0,0);
       return model;
     }
-    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+this.canvas.width*this.canvas.height*8;}
+    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;}
     canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
     retarget(container,origin,options){this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
-    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",textureBytes:(this.textureBytes||0)+(this.destinationBytes||0),...resources};}
+    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",textureBytes:(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0),...resources};}
     dispose(){if(this.disposed)return;this.disposed=true;const gl=this.gl;
-      if(gl){if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
+      if(gl){if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
         this.canvas.removeEventListener("webglcontextlost",this.onLost);gl.getExtension("WEBGL_lose_context")?.loseContext();resources.contexts--;}
       this.gl=null;this.canvas.remove();
     }
   }
-  window.DuckFurSheet={FurSheet,defaults,geometry,sample,project,profile,flattenAmount,settlement,revealRadius,revealPolygon,boundaries,resources};
+  window.DuckFurSheet={FurSheet,defaults,formationState,geometry,sample,project,profile,flattenAmount,settlement,revealRadius,revealPolygon,boundaries,resources};
 })();

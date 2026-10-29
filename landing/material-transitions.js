@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const settings = { duration: 620, fold: 0.55, reducedMotion: false, effect: "sheet" };
+  const settings = { duration: 1000, fold: 0.55, reducedMotion: false, effect: "sheet" };
   const metrics = { frames: 0, longFrames: 0, maxFrameMs: 0, durationMs: 0, layers: 0, snapshotMs: 0, snapshotBytes: 0, cancelled: 0 };
   let active = null;
   const morphs = new Map();
@@ -33,6 +33,12 @@
     return mapActivation(record,rect).emergence;
   }
 
+  function measure(root,layer){
+    if(typeof getComputedStyle!=="function")return null;
+    const box=node=>{if(!node)return null;const r=node.getBoundingClientRect(),s=getComputedStyle(node);return {x:r.x,y:r.y,width:r.width,height:r.height,position:s.position,heightStyle:s.height,minHeight:s.minHeight,overflow:s.overflow,transform:s.transform,scroll:[node.scrollLeft,node.scrollTop]};};
+    const canvas=layer?.querySelector(".fur-sheet-canvas");
+    return {viewport:[innerWidth,innerHeight],visual:window.visualViewport?[window.visualViewport.width,window.visualViewport.height,window.visualViewport.scale]:null,clientWidth:document.documentElement.clientWidth,scroll:[window.scrollX,window.scrollY],root:box(root),overlay:box(layer),canvas:box(canvas),backing:canvas?[canvas.width,canvas.height]:null,panels:[...root.querySelectorAll("[data-formation-surface],.panel")].slice(0,8).map(box)};
+  }
   function snapshot(root) {
     const copy = root.cloneNode(true);
     // Snapshot is a decorative, inert tree: no duplicate identifiers or focus stops.
@@ -51,6 +57,12 @@
     });
     const originals=[root,...root.querySelectorAll("*")];
     [copy,...copy.querySelectorAll("*")].forEach((node,index)=> {
+      // Freeze the measured outgoing boxes, not a second set of responsive CSS rules.
+      if(typeof getComputedStyle==="function" && originals[index]?.getClientRects().length){
+        const style=getComputedStyle(originals[index]);
+        for(const key of ["display","width","height","minWidth","minHeight","maxWidth","maxHeight","boxSizing","padding","margin","gap","gridTemplateColumns","gridTemplateRows","flexDirection","flexWrap","flexBasis","flexGrow","flexShrink"]){node.style[key]=style[key];}
+        node.style.animation="none";node.style.transition="none";
+      }
       // Scroll offsets are not copied by cloneNode.
       node.scrollTop=originals[index]?.scrollTop||0;
       node.scrollLeft=originals[index]?.scrollLeft||0;
@@ -75,10 +87,11 @@
     if(reusable)active.sheet=null;
     cancel();
     if (!root || reduced() || document.hidden || !root.getClientRects().length) { reusable?.dispose(); update?.(); complete?.({cancelled:false}); return; }
+    const before=measure(root,null);
     const rect=root.getBoundingClientRect();
     const drawer=document.querySelector(".sidebar-open .sidebar")?.getBoundingClientRect();
     const left=Math.max(0,rect.left,drawer?.right||0);
-    const bounds={left,top:Math.max(0,rect.top),width:Math.max(0,Math.min(rect.right??rect.left+rect.width,innerWidth)-left),height:Math.min(rect.height,innerHeight-Math.max(0,rect.top))};
+    const bounds={left,top:Math.max(0,rect.top),width:Math.max(0,Math.min(rect.right??rect.left+rect.width,innerWidth)-left),height:Math.max(0,Math.min(rect.bottom??rect.top+rect.height,innerHeight)-Math.max(0,rect.top))};
     if(!bounds.width || !bounds.height){reusable?.dispose();update?.();complete?.({cancelled:false});return;}
     const record=activation && activation.source===source ? activation : captureActivation(source,event);
     const mapped=mapActivation(record,bounds),point=mapped.emergence;
@@ -126,7 +139,9 @@
       update?.();
       if(sheet && sheetOptions.formation){
         if(!window.DuckFormation || !sheet.setDestination)throw Error("Formation capture unavailable");
-        sheet.setDestination(window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector));
+        const surface=window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector);
+        sheet.setDestination(surface);metrics.targets=surface.formation?.targets||[];metrics.contentRegions=surface.formation?.contents||[];
+        metrics.registration={before,destination:measure(root,layer),frames:[]};
       }
     } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0;if(sheetOptions.formation){metrics.sheetFailure=String(error.message);complete?.({cancelled:false,fallback:true});return;}throw error; }
     if((effect === "sheet" || effect==="ribbon") && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
@@ -145,7 +160,7 @@
       if(!debug || effect!=="sheet")return;
       const paths=renderer.boundaries(model);
       const circle=(x,y,color,label,dy=-8)=>`<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white"/><text x="${x+8}" y="${Math.max(14,y+dy)}" fill="${color}" stroke="white" stroke-width=".4" font-size="12">${label}</text>`;
-      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/><path d="${paths.flatten||""}" fill="none" stroke="#ea580c" stroke-dasharray="6 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18);
+      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/><path d="${paths.flatten||""}" fill="none" stroke="#ea580c" stroke-dasharray="6 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18)+(sheetOptions.formation?(metrics.targets||[]).slice(1).map(t=>`<rect x="${t.x}" y="${t.y}" width="${t.width}" height="${t.height}" rx="${t.radius}" fill="none" stroke="#0891b2" stroke-width="1"/>`).join(""):"")+`<rect x="1" y="1" width="${bounds.width-2}" height="${bounds.height-2}" fill="none" stroke="#a16207" stroke-dasharray="2 4"/>`+[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#a16207"/>`).join("");
     }
     function frame(time) {
       if(active!==job) return;
@@ -160,7 +175,14 @@
           if(!model){cancel("sheet-unavailable");return;}
           metrics.sheetPeak=sheet.getStats();
           wrapper.style.clipPath=sheetOptions.growthOnly?"none":renderer.revealPolygon(model);
-          diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
+          // After full coverage, native destination lies beneath the forming material.
+          // Semantic content resolves through physically shrinking strand footprints.
+          wrapper.style.visibility=sheetOptions.formation && !sheetOptions.colorOnly && progress>=.5?"hidden":"visible";
+          if(sheetOptions.formation && (held!==null || sheetOptions.registration) && metrics.registration){
+            const frame={progress,settlement:model.settleProgress,layout:measure(root,layer),anchors:renderer.project?[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>({x,y,projected:renderer.project(model,{x,y,z:20.48*(1-model.settleProgress)})})):[]};
+            metrics.registration.frames=metrics.registration.frames.filter(item=>Math.abs(item.progress-progress)>.001).slice(-15);metrics.registration.frames.push(frame);
+          }
+          diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.tint=model.tintProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
           if(held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}
       }else if(!sheet){
@@ -246,5 +268,5 @@
   document.addEventListener("visibilitychange",()=>{if(document.hidden)interrupt();});
   document.addEventListener("toggle",event=>{if(event.target.matches("dialog"))interrupt();},true);
   motion.addEventListener("change",interrupt);
-  window.DuckTransitions={captureActivation,mapActivation,getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
+  window.DuckTransitions={measure,isActive:()=>metrics.layers>0,captureActivation,mapActivation,getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
 })();

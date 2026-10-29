@@ -1,6 +1,56 @@
 # DuckPlan interactive fur material
 
-## Whole-sheet flatten-to-UI formation — current local revision
+## Motion smoothing — latest local refinement
+
+Default workspace duration is now 1000ms (previously 620ms); the sheet lab slider spans 600–1800ms. Formation growth, dye and compression use quintic easing with zero velocity and acceleration at their endpoints. Growth ends/dye begins at 50%; dye finishes/compression begins at 70%; complete flattening remains at 98%. The short held gaps between phases are removed while retaining color-before-compression and the single growth wave.
+
+Shrinking mesh strand footprints now use screen-derivative antialiasing at their edges, reducing binary pixel popping during native-content resolution. This is localized coverage-edge smoothing, not a global sheet-opacity fade. Existing semantic mapping, body registration, approved button renderer and cleanup remain intact.
+
+All 56 tests pass, including phase-boundary velocity/acceleration and existing ordering, layout, lifecycle and fallback checks. Syntax and whitespace checks pass. Browser held 90% compiled/rendered correctly; normal one-second playback was exercised. Proof: `/private/tmp/duckplan-smooth-transition-90.png`. Cold shader setup in this browser run measured 474ms; responsiveness remains dependent on cold setup/device load. Local only, no push or deployment.
+
+## Color first, then UI — latest local sequence
+
+The user requested a distinct color transformation before the finished UI. The shared timeline now has three clear phases: growth through 50%, dye the complete fur surface during 52–70% (hold it furry through 74%), then whole-sheet flattening/formation during 74–98%. No native coverage resolution or physical compression starts until the dye is complete. The 70% hold is the fully recolored, full-height fur reference; 90/95% show its subsequent compression, and 100% is native UI.
+
+Both baked pile and attached strands inherit destination colors while preserving luminance variation, root-to-tip shading, strand height, width and alpha. Exact destination appearance is reached only as the colored fur compresses. Transient dye capture now includes single-line text using measured DOM line boxes/font ascent and snapshots of existing fur-button canvases, so dark lettering and yellow control colors appear in the colored fur itself. Multi-line text is still resolved from native DOM during the final phase; this is not a general HTML rasterizer. The approved button renderer is unchanged. Capture remains temporary and bounded, with final sharp/accessibility semantics supplied by native HTML.
+
+All 55 tests pass, including dye completion before flattening and measured type-color placement. Browser inspection verified 70% with dye 100% / flatten 0%, intact strands and destination panel/text/button colors. Reference: `/private/tmp/duckplan-fur-dyed-70.png`. This supersedes earlier phase timings below. Local only; no push or deployment.
+
+## Registered layout formation — current local prototype
+
+This revision addresses Chat Check `a274285`. The first raised growth/rolling wave is preserved. After full coverage, every root still shares one settlement value; there is no second traveling front or global opacity fade. The approved button renderer is unchanged. This is a local prototype pending visual approval.
+
+### Measured movement causes and corrections
+
+The baseline phone run kept its actual viewport at 390 × 844, while the destination demo changed height from approximately 417 to 603 CSS pixels. The old overlay retained the outgoing height. A separate bug kept the full root height when its top was clipped above the viewport, producing material below the actual root bottom. The broad raised shoulder also projected ~1.2% larger with a ~13px vertical offset. Lab metrics could change height as their text wrapped. These are layout/projection effects, not evidence that JavaScript resized the browser window.
+
+The planner now has a stable viewport-height workspace with internal scrolling and a stable scrollbar gutter. The lab uses a fixed 420px desktop / 640px phone inspection viewport. Overlay bounds use the actual rectangle/viewport intersection. Outgoing snapshots freeze computed box, grid and flex dimensions rather than relying on a separate hardcoded home layout. Automatic window scrolling is suppressed during a material transition; ordinary navigation uses immediate scrolling. Metric readouts have fixed heights and lab scroll anchoring is disabled.
+
+The broad sheet and forming layout are registered to native pixel coordinates: low-elevation body geometry does not receive the previous perspective magnification or vertical shift. The raised crest retains perspective. Pure anchor tests check zero body drift through settlement. This intentionally uses a stable product-UI projection rather than a physically accurate camera for the whole surface.
+
+### Geometry and native-content resolution
+
+`formation-surface.js` now retains structured targets: relative bounds, corner radius, depth/parent, background, border sides and scrollport clips. Actual text line boxes and controls become separately clipped content regions. Offscreen/clipped lines are excluded; target and content counts are bounded. The color capture remains a shading input, not the only formation representation.
+
+One extra temporary RGB target field drives panel relief, boundary normals and edge-aligned strand orientation on the existing sheet. During settlement, panels rise from the pile as shallow relief, then compress to their final plane. Content areas use the same settlement timeline: mesh coverage contracts into tiny opaque strand-sized footprints while actual fibers shorten/narrow. Sharp native content becomes visible through the shrinking footprints before the final cleanup. The remaining surrounding surface resolves late by the same coverage contraction. No additional page wave or global alpha fade is used. The old snapshot stops contributing once fur coverage is complete, so resolving text comes from the destination, not the outgoing page.
+
+This remains a stylized material-to-layout effect. It does not simulate each fiber becoming a glyph, and its late microscopic coverage contraction can read as a stippled resolve when paused. Final functional content remains native accessible HTML. Complex gradients/shadows/images remain supplied by native rendering; the structural capture is approximate.
+
+### Lab controls and verification
+
+Use `fur-lab.html#sheet-lab`, **Growth only unchecked**. The **Previous color-only formation** toggle reproduces the rejected color-only/perspective handoff within the current stabilized lab; it is a behavioral comparison, not a complete frozen copy of the historical CSS. Origin/boundary diagnostics also show target outlines and fixed workspace anchors. Expand **Layout registration measurements** for viewport/scroll/root/overlay/backing dimensions, target counts and projected body-anchor drift. Measurements are captured before state change, after destination layout and at held frames; at most sixteen held samples are retained.
+
+All **54 tests pass**, including target hierarchy and scrollport content clipping, clipped overlay height, fixed projected body anchors, uniform settlement, growth coverage, native destination availability before final cleanup, and existing interruption/reduced-motion/failure regressions. JS syntax and whitespace checks pass.
+
+Real browser measurements at 0/20/50/70/80/90/95/100% kept viewport, document width, scroll, root rectangle and overlay rectangle unchanged within each run. Desktop sample: viewport 855 × 768, root 761 × 420, scrollY 3083. Phone sample: viewport 390 × 844, root 312 × 640, scrollY 3774.5. Overlay sizes correctly matched the visible intersection. Evidence: `/private/tmp/duckplan-revised-layout.json` and `/private/tmp/duckplan-revised-phone.json`. A separate planner Day navigation at window scroll zero kept root/viewport 1280 × 720 before/during/after; open-sidebar Classes navigation kept the sidebar at 0,0,250,720. Native task dialog opening/closing worked.
+
+Browser inspection covered early/late held formation, keyboard-centered activation, reduced-motion immediate updates, rapid repeated turns and actual WebGL context loss. Context loss released all three textures, programs, buffers, context and overlay. Normal stress completion also released all temporary resources, with three renderer reuses. The stress sample measured 48 FPS, max 83.4ms and five long frames; adaptive quality engaged. Initial shader/bake setup measured 298–619ms in cold/changed-program runs, 33–45ms warm desktop and 20–26ms warm phone. Uniform early-out branches avoid target-map fetches outside formation. Bounded CPU pile caching and compatible interrupted renderer reuse remain; no permanent warm GPU context was added. After the uniform sampling early-outs, a final normal-playback sample measured 62 FPS, maximum frame 33.3ms / one long frame and 40.5ms warm initialization, with all resources zero at completion. Cold-start responsiveness and stress-run frame consistency remain limitations; held-frame timing is not an FPS benchmark.
+
+Actual-size images: `/private/tmp/duckplan-layout-formation-80.png` and `-90.png`. Final-flat before/after cleanup crops are `/private/tmp/duckplan-layout-final-live.png` and `-clean.png`; they retain the same 1082 × 420 content layout. The captures are not pixel-identical (mean RGB difference about 2.5/255, 6.2% of pixels differ by >8), so they do not establish a zero-pixel handoff. They show no large geometry/size jump; final visual acceptance remains with the user. No deployment, shared-repository change or test-branch push was performed for this revision.
+
+## Superseded whole-sheet color-only prototype
+
+## Whole-sheet flatten-to-UI formation — earlier rejected revision
 
 One raised growth/rolling wave lays out the complete fur body during 0–50% of the shared timeline. Only after full coverage, at 52%, does the **entire sheet settle together**. Settlement reaches its flat resting state at 95%. There is no second traveling front, radial reveal, raised crest or pressing ring. Growth only remains unchecked by default. The obsolete flattening-width control has been removed.
 

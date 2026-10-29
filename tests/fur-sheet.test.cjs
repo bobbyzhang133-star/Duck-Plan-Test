@@ -51,13 +51,13 @@ test("every growth-speed tuning still covers and settles the whole workspace",()
 const {flattenAmount,settlement}=window.DuckFurSheet;
 const forming=p=>geometry(900,600,{x:410,y:250},{formation:true,flattenWidth:90},p);
 test("settlement is uniform across the full sheet with no radial reveal front",()=>{
-  const m=forming(.735);
+  const m=forming(.84);
   for(const r of [0,40,200,600,m.reach])assert.ok(Math.abs(flattenAmount(m,r)-.5)<1e-8);
   assert.equal(revealRadius(m),0);
   const state=settlement(m,200);assert.ok(Math.abs(state.thicknessScale-.5)<1e-8);
 });
 test("a fixed material region physically lowers, loses thickness and becomes native without global fade",()=>{
-  const m=forming(.735),r=200,q=2*r/m.reach-1;
+  const m=forming(.84),r=200,q=2*r/m.reach-1;
   const top=sample(m,0,q),bottom=sample(m,0,q,1);
   assert.ok(top.z>0);assert.ok(Math.abs(Math.hypot(top.x-bottom.x,top.y-bottom.y,top.z-bottom.z)-2.5)<1e-5);
   const end=forming(1),settled=sample(end,0,q),under=sample(end,0,q,1);
@@ -90,7 +90,7 @@ test("one raised wave clears the workspace before the whole sheet starts settlin
   const m=forming(.5);assert.equal(m.radius,m.reach);assert.equal(m.settleProgress,0);
   for(const [x,y]of [[0,0],[900,0],[0,600],[900,600]])assert.ok(Math.hypot(x-m.origin.x,y-m.origin.y)<m.radius-m.band);
   for(const p of [.1,.3,.5,.52])assert.equal(flattenAmount(forming(p),0),0);
-  assert.ok(forming(.6).settleProgress>0);
+  assert.ok(forming(.8).settleProgress>0);
 });
 test("whole-sheet settlement has no second ridge, curl or spatial slope",()=>{
   const m=forming(.75);let previous=-1;
@@ -102,4 +102,32 @@ test("whole-sheet settlement has no second ridge, curl or spatial slope",()=>{
     if(previous>=0)assert.ok(Math.abs(point.z-previous)<1e-6);
     previous=point.z;
   }
+});
+test("raised whole-sheet body stays registered to native pixel anchors while settling",()=>{
+  for(const progress of [.5,.7,.8,.9,.95,1]){
+    const m=forming(progress),height=20.48*(1-m.settleProgress);
+    for(const [x,y] of [[0,0],[900,0],[0,600],[900,600],[410,250]])assert.deepEqual(project(m,{x,y,z:height}),{x,y});
+  }
+  const old=geometry(900,600,{x:410,y:250},{formation:true,colorOnly:true},.5);
+  assert.notDeepEqual(project(old,{x:0,y:0,z:20.48}),{x:0,y:0});
+});
+
+test("fur completes its color transformation before any whole-sheet flattening or native resolve",()=>{
+  const state=window.DuckFurSheet.formationState;
+  assert.equal(state(.5).tint,0);assert.equal(state(.5).flatten,0);
+  assert.ok(state(.6).tint>0 && state(.6).tint<1);
+  for(const p of [.6,.65,.7])assert.equal(state(p).flatten,0);
+  assert.equal(state(.7).tint,1);assert.equal(state(.74).tint,1);
+  assert.equal(state(.98).flatten,1);
+  const dyed=forming(.7);assert.equal(dyed.settleProgress,0);assert.equal(dyed.tintProgress,1);assert.equal(revealRadius(dyed),0);
+});
+
+test("color and compression meet with zero velocity and acceleration instead of a held pause",()=>{
+  const f=window.DuckFurSheet.formationState,h=1e-5;
+  for(const [key,edge]of [["tint",.5],["tint",.7],["flatten",.7],["flatten",.98]]){
+    const a=f(edge-h)[key],b=f(edge)[key],c=f(edge+h)[key];
+    assert.ok(Math.abs((c-a)/(2*h))<.001);
+    assert.ok(Math.abs((c-2*b+a)/(h*h))<.1);
+  }
+  assert.ok(f(.701).flatten>0,"compression begins gently as soon as the dye completes");
 });

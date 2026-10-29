@@ -1,13 +1,13 @@
 (() => {
   "use strict";
-  // Capture surface structure only. Text and controls stay in the native DOM.
+  // Temporary dye image and target geometry; final text and controls stay native.
   function capture(root,bounds,selector="[data-formation-surface]") {
     const canvas=document.createElement("canvas");
     const scale=Math.min(devicePixelRatio||1,1.25,1536/Math.max(bounds.width,bounds.height));
     canvas.width=Math.max(1,Math.round(bounds.width*scale));canvas.height=Math.max(1,Math.round(bounds.height*scale));
     const ctx=canvas.getContext("2d");if(!ctx)throw Error("Formation surface canvas unavailable");
     ctx.scale(scale,scale);ctx.fillStyle="#fff";ctx.fillRect(0,0,bounds.width,bounds.height);
-    const surfaces=[root,...root.querySelectorAll(selector)];
+    const surfaces=[root,...root.querySelectorAll(selector)].slice(0,768),targets=[],contents=[];
     const styles=new WeakMap(),rects=new WeakMap();
     const styleOf=node=>{if(!styles.has(node))styles.set(node,getComputedStyle(node));return styles.get(node);};
     const rectOf=node=>{if(!rects.has(node))rects.set(node,node.getBoundingClientRect());return rects.get(node);};
@@ -16,11 +16,15 @@
       if(!rect.width || !rect.height || style.visibility==="hidden" || style.display==="none" || rect.right<bounds.left || rect.left>bounds.left+bounds.width || rect.bottom<bounds.top || rect.top>bounds.top+bounds.height)continue;
       const x=rect.left-bounds.left,y=rect.top-bounds.top;
       const radius=Math.min(parseFloat(style.borderTopLeftRadius)||0,rect.width/2,rect.height/2);
+      let clip={left:bounds.left,top:bounds.top,right:bounds.left+bounds.width,bottom:bounds.top+bounds.height};
+      let depth=0;for(let parent=node.parentElement;parent && parent!==root;parent=parent.parentElement)depth++;
+      const target={x,y,width:rect.width,height:rect.height,radius,depth,parent:targets.findLastIndex(t=>t.node===node.parentElement),background:style.backgroundColor,borders:{},clip,node};
       ctx.save();
       // Respect scrollports: offscreen calendar rows must not paint over headers.
       for(let parent=node.parentElement;parent && parent!==root.parentElement;parent=parent.parentElement){
         const ps=styleOf(parent),pr=rectOf(parent);
         if(/auto|scroll|hidden|clip/.test(`${ps.overflowX} ${ps.overflowY}`)){
+          clip={left:Math.max(clip.left,pr.left),top:Math.max(clip.top,pr.top),right:Math.min(clip.right,pr.right??pr.left+pr.width),bottom:Math.min(clip.bottom,pr.bottom??pr.top+pr.height)};
           ctx.beginPath();ctx.rect(pr.left-bounds.left,pr.top-bounds.top,pr.width,pr.height);ctx.clip();
         }
         if(parent===root)break;
@@ -31,13 +35,65 @@
         ["Bottom",x,y+rect.height-(parseFloat(style.borderBottomWidth)||0),rect.width,parseFloat(style.borderBottomWidth)||0],
         ["Left",x,y,parseFloat(style.borderLeftWidth)||0,rect.height],
         ["Right",x+rect.width-(parseFloat(style.borderRightWidth)||0),y,parseFloat(style.borderRightWidth)||0,rect.height]]){
-        ctx.fillStyle=style[`border${side}Color`];if(bw && bh)ctx.fillRect(bx,by,bw,bh);
+        ctx.fillStyle=style[`border${side}Color`];target.borders[side]={color:ctx.fillStyle,width:side==="Top"||side==="Bottom"?bh:bw};if(bw && bh)ctx.fillRect(bx,by,bw,bh);
       }
       if(node.classList?.contains("calendar-slot")){
         ctx.fillStyle=style.getPropertyValue("--line").trim()||"#ead9ad";ctx.fillRect(x,y+rect.height-1,rect.width,1);
       }
-      ctx.restore();
+      ctx.restore();targets.push(target);
     }
+    // Semantic content regions use actual line boxes, never guessed glyph positions.
+    if(document.createTreeWalker){
+      const addContent=(item,node)=>{
+        if(contents.length>=512)return;
+        let left=Math.max(bounds.left,item.x+bounds.left),top=Math.max(bounds.top,item.y+bounds.top),right=Math.min(bounds.left+bounds.width,item.x+bounds.left+item.width),bottom=Math.min(bounds.top+bounds.height,item.y+bounds.top+item.height);
+        for(let parent=node.parentElement;parent;parent=parent.parentElement){
+          const style=styleOf(parent),rect=rectOf(parent);
+          if(/auto|scroll|hidden|clip/.test(`${style.overflowX} ${style.overflowY}`)){left=Math.max(left,rect.left);top=Math.max(top,rect.top);right=Math.min(right,rect.right??rect.left+rect.width);bottom=Math.min(bottom,rect.bottom??rect.top+rect.height);}
+          if(parent===root)break;
+        }
+        if(right>left&&bottom>top)contents.push({...item,x:left-bounds.left,y:top-bounds.top,width:right-left,height:bottom-top});
+      };
+      const walker=document.createTreeWalker(root,4);let text;
+      while((text=walker.nextNode())){
+        if(!text.textContent.trim() || text.parentElement.closest("canvas,script,style,[aria-hidden='true'],.sr-only"))continue;
+        const style=styleOf(text.parentElement);if(style.visibility==="hidden"||style.display==="none")continue;
+        const range=document.createRange();range.selectNodeContents(text);
+        const lines=[...range.getClientRects()];
+        // Temporary dye colors include single-line type. Native DOM remains final.
+        if(lines.length===1 && style.color && ctx.fillText && ctx.measureText){
+          const r=lines[0];ctx.save();
+          for(let parent=text.parentElement;parent;parent=parent.parentElement){
+            const ps=styleOf(parent),pr=rectOf(parent);
+            if(/auto|scroll|hidden|clip/.test(`${ps.overflowX} ${ps.overflowY}`)){ctx.beginPath();ctx.rect(pr.left-bounds.left,pr.top-bounds.top,pr.width,pr.height);ctx.clip();}
+            if(parent===root)break;
+          }
+          ctx.font=`${style.fontStyle||"normal"} ${style.fontWeight||400} ${style.fontSize||"16px"} ${style.fontFamily||"sans-serif"}`;
+          ctx.letterSpacing=style.letterSpacing||"0px";ctx.fillStyle=style.color;ctx.textBaseline="alphabetic";
+          const value=text.textContent.replace(/\s+/g," "),metrics=ctx.measureText(value);
+          ctx.fillText(value,r.left-bounds.left,r.top-bounds.top+(metrics.fontBoundingBoxAscent||parseFloat(style.fontSize)*.85));ctx.restore();
+        }
+        for(const r of lines)if(r.width&&r.height)addContent({x:r.left-bounds.left-2,y:r.top-bounds.top-1,width:r.width+4,height:r.height+2,radius:2,kind:"text"},text.parentElement);
+      }
+      for(const node of root.querySelectorAll("button,input,select,textarea,img,svg")){
+        const r=rectOf(node);
+        const pile=node.querySelector?.("canvas.fur-canvas");
+        if(pile && ctx.drawImage){
+          window.DuckFur?.get(node)?.draw();const pr=rectOf(pile);
+          ctx.drawImage(pile,pr.left-bounds.left,pr.top-bounds.top,pr.width,pr.height);
+        }
+        if(r.width&&r.height)addContent({x:r.left-bounds.left-3,y:r.top-bounds.top-3,width:r.width+6,height:r.height+6,radius:parseFloat(styleOf(node).borderTopLeftRadius)||4,kind:"control"},node);
+      }
+    }
+    const field=document.createElement("canvas");field.width=canvas.width;field.height=canvas.height;
+    const f=field.getContext("2d");f.scale(scale,scale);f.fillStyle="rgb(0,0,0)";f.fillRect(0,0,bounds.width,bounds.height);
+    for(const t of targets.slice(1)){
+      f.save();f.beginPath();f.rect?.(t.clip.left-bounds.left,t.clip.top-bounds.top,Math.max(0,t.clip.right-t.clip.left),Math.max(0,t.clip.bottom-t.clip.top));f.clip();
+      f.fillStyle=`rgb(${Math.min(180,65+t.depth*12)},0,0)`;f.beginPath();f.roundRect(t.x,t.y,t.width,t.height,t.radius);f.fill?.();
+      f.strokeStyle="rgb(90,255,0)";f.lineWidth=3;f.stroke?.();f.restore();
+    }
+    for(const c of contents){f.fillStyle="rgb(40,0,255)";f.beginPath();f.roundRect(c.x,c.y,c.width,c.height,Math.min(c.radius,c.height/2,c.width/2));f.fill?.();}
+    canvas.formation={field,targets:targets.map(({node,...target})=>target),contents,bounds:{...bounds}};
     return canvas;
   }
   window.DuckFormation={capture};
