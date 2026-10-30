@@ -202,13 +202,14 @@ test("measured sheet presents zero radius progress first despite cold setup and 
  for(let t=632;t<1750;t+=16){clock=t;env.tick(t);}assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });
 test("UI flattening waits for the clicked button's recovery hold without adding another wave",()=>{
- const env=animatedSetup();let shared,waves=0;const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:44})};
+ const env=animatedSetup();let shared,waves=0,draws=0;const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:44})};
  env.context.window.DuckFur={get:()=>({waves:[],captureDispersalState:()=>({capturedAt:0,material:{recoveryDelay:2000,waveSpeed:540},samples:[]}),emitWave(p,args){shared=args;waves++;}})};
- env.context.window.DuckFurSheet={formationState:p=>({flatten:Math.max(0,(p-.7)/.28)}),FurSheet:class{constructor(layer,args){this.options=args.options;}getStats(){return {};}draw(p){return {radius:p*100};}dispose(){}},revealPolygon:()=>"none"};
+ env.context.window.DuckFurSheet={formationState:p=>({flatten:Math.max(0,(p-.7)/.28)}),FurSheet:class{constructor(layer,args){this.options=args.options;}getStats(){return {};}draw(p){draws++;return {radius:p*100};}dispose(){}},revealPolygon:()=>"none"};
  env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});
  for(let t=0;t<=1600;t+=16)env.tick(t);
  assert.equal(env.transitions.metrics.waveRecoveryDelayMs,2000);assert.ok(env.transitions.metrics.waveRecoveryPauseMs>=1800);
  assert.equal(shared.timeline.progressAt(1600),.7);assert.equal(shared.timeline.deformationAt(1600),1);assert.equal(waves,1);
+ assert.ok(draws>80,'physical recovery keeps rendering during the held formation phase');
  for(let t=1616;t<5000;t+=16)env.tick(t);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);assert.equal(waves,1);
 });
 test("cancelled contacts never seed a later native activation and keyboard capture stays centered",()=>{

@@ -237,11 +237,11 @@
       if(contactGrowth && held===null)presentedMs+=Math.min(32,Math.max(0,interval));
       const progress=record.timeline.progressAt(time);
       if(contactGrowth && held===null && sheet?.options)sheet.options.impulseAge=Math.max(0,(time-impulse.capturedAt)/1000-progress*record.timeline.duration/1000);
-      if(impulse && surface?.gl && releaseSource && progress!==lastProgress){
+      if(impulse && surface?.gl && releaseSource && (progress!==lastProgress || contactGrowth && held===null)){
         const sourceStart=performance.now();surface.advanceWaves(Math.min(.04,(interval||16)/1000));surface.draw();metrics.sourceAdvanceMs=Math.max(metrics.sourceAdvanceMs,performance.now()-sourceStart);
       }
 
-      if(sheet && progress!==lastProgress){
+      if(sheet && (progress!==lastProgress || contactGrowth && held===null)){
         try {
           const drawStart=performance.now(),model=sheet.draw(progress);metrics.sheetDrawMs=Math.max(metrics.sheetDrawMs,performance.now()-drawStart);lastProgress=progress;
           if(metrics.dispersal && metrics.dispersal.firstFrameAt===undefined){metrics.dispersal.firstFrameAt=time;metrics.dispersal.pressToFirstFrameMs=time-record.contactAt;metrics.dispersal.clickToFirstFrameMs=time-record.timeline.startedAt;metrics.dispersal.firstRadius=model.radius;}
