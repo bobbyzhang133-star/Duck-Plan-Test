@@ -307,7 +307,14 @@ function openModal(prefill = {}) {
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
   els.modal.showModal(); setupFurMaterial(); els.form.elements.title.focus();
 }
-function closeModal() { els.modal.close(); editingTaskId = null; setupFurMaterial(); }
+function closeModal() { els.modal.close(); }
+// Native Escape dismissal also fires close; restore the workspace material for
+// every dismissal path, after the dialog has released its modal state.
+els.modal.addEventListener("close", () => {
+  if (els.modal.open) return;
+  editingTaskId = null;
+  setupFurMaterial();
+});
 
 // Actions opt in declaratively; data edits, typing and scrolling remain immediate.
 document.querySelectorAll('.nav-item,[data-go],[data-calendar-view]').forEach(control => { control.dataset.transition="workspace"; });

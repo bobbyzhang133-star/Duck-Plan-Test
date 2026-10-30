@@ -10,21 +10,21 @@
   // The domain is fixed in material space: angle v in [-1,1], radius q in [-1,1].
   // Growth activates roots; it never stretches or redistributes existing roots.
   function formationState(progress){return {tint:soft((progress-.5)/.2),flatten:soft((progress-.7)/.28)};}
+  function radialCurve(reach,settings){
+    const impulse=settings.impulse,end=settings.formation?.5:.88;
+    if(!impulse)return p=>reach*Math.pow((settings.formation?soft:smooth)(Math.min(1,p/end)),1/settings.growthSpeed);
+    const mean=key=>impulse.samples.reduce((sum,s)=>sum+s[key],0)/impulse.samples.length;
+    const seed=settings.previousIntegration?mean("radius"):0,duration=(settings.duration||1000)/1000*end;
+    const speed=Math.min((reach-seed)*2/duration,Math.max(60,(impulse.material.waveSpeed||540)+mean("velocity")));
+    return p=>{const t=Math.min(1,p/end);
+      return settings.previousIntegration?(2*t*t*t-3*t*t+1)*seed+(-2*t*t*t+3*t*t)*reach+(t*t*t-2*t*t+t)*duration*speed:seed+(reach-seed)*soft(t)+(t-6*t**3+8*t**4-3*t**5)*duration*speed;
+    };
+  }
   function geometry(width,height,origin,options={},progress=0) {
     const settings={...defaults,...options},p=clamp(progress,0,1);
     const reach=Math.max(...[[0,0],[width,0],[0,height],[width,height]].map(([x,y])=>Math.hypot(x-origin.x,y-origin.y)))+settings.sheetWidth+8;
-    // One raised growth/rolling wave finishes crossing before the whole sheet settles together.
-    let radius=reach*Math.pow((settings.formation?soft:smooth)(Math.min(1,p/(settings.formation?.5:.88))),1/settings.growthSpeed);
-    const impulse=settings.impulse;
-    const mean=key=>impulse?impulse.samples.reduce((sum,s)=>sum+s[key],0)/impulse.samples.length:0;
-    // The sampled annulus describes displaced fibers, not the growth's seed size.
-    const seedRadius=impulse && settings.previousIntegration?mean("radius"):0;
-    if(impulse){
-      const t=Math.min(1,p/(settings.formation?.5:.88)),duration=(settings.duration||1000)/1000*(settings.formation?.5:.88);
-      const initialSpeed=Math.min((reach-seedRadius)*2/duration,Math.max(60,(impulse.material.waveSpeed||540)+mean("velocity")));
-      // Monotone Hermite radius with measured nonzero outgoing speed; no new ease-in.
-      radius=settings.previousIntegration?(2*t*t*t-3*t*t+1)*seedRadius+(-2*t*t*t+3*t*t)*reach+(t*t*t-2*t*t+t)*duration*initialSpeed:seedRadius+(reach-seedRadius)*soft(t)+(t-6*t**3+8*t**4-3*t**5)*duration*initialSpeed;
-    }
+    // One radius curve owns both presented growth and local arrival inversion.
+    const impulse=settings.impulse,radius=radialCurve(reach,settings)(p),mean=key=>impulse?impulse.samples.reduce((sum,s)=>sum+s[key],0)/impulse.samples.length:0;
     const state=formationState(p),settleProgress=settings.formation?state.flatten:0,tintProgress=settings.formation?state.tint:0;
     const band=Math.min(settings.sheetWidth,radius*.55);
     const amplitude=(impulse?(.15+clamp((mean("compression")+Math.abs(mean("velocity"))/100),0,.7))*(1-smooth(p/.2))+smooth(p/.2):smooth(p/.18))*(settings.formation?1:(1-smooth((p-.88)/.12)));
@@ -32,10 +32,10 @@
       opacity:settings.formation?1:1-smooth((p-.92)/.08),coverageArea:Math.PI*radius*radius};
   }
   function arrivalMap(width,height,origin,options,count=256){
-    const end=options.formation?.5:.88,model=geometry(width,height,origin,options,end),data=new Float32Array(count*4);
+    const end=options.formation?.5:.88,model=geometry(width,height,origin,options,end),curve=radialCurve(model.reach,model.settings),data=new Float32Array(count*4);
     for(let i=1;i<count;i++){
       const r=i/(count-1)*model.reach;let lo=0,hi=end;
-      for(let n=0;n<24;n++){const p=(lo+hi)/2;if(geometry(width,height,origin,options,p).radius<r)lo=p;else hi=p;}
+      for(let n=0;n<24;n++){const p=(lo+hi)/2;if(curve(p)<r)lo=p;else hi=p;}
       data[i*4]=hi*(options.duration||1000)/1000;
     }
     return {data,count,reach:model.reach};

@@ -1,5 +1,16 @@
 # DuckPlan interactive fur material
 
+## Resumed verification completed — 2026-10-30
+
+Resumed from `597db8c` and completed the outstanding planner calendar/dialog smoke checks. Calendar Month and keyboard Day selection both update the native planner. The prior selector timeout was an automation mismatch: the controls are buttons, not checkboxes. A real accessibility/material lifecycle issue was found afterward: native Escape dismissed the dialog without remounting the workspace fur. Restoration now runs on the dialog's `close` event for both native and pointer dismissal. Browser checks measured 13 workspace fur canvases before/after Escape and Cancel, with zero hidden dialog canvases. No task data was changed during these checks.
+
+Extracted one shared radial curve for rendered geometry and inverse arrival lookup. Inversion no longer constructs complete geometry 6,144 times per map. A 20-sample warm Node microbenchmark against `597db8c` measured median 37.38 ms before versus 2.86 ms after, with **zero change in all 256 Float32 arrival samples**. See `../references/browser/arrival-lookup-benchmark.json`; this is a local lookup-cost measurement, not an overall browser speedup claim.
+
+Refreshed `shared-spring-5000ms.webm` with the final renderer and lifecycle fixes, played it in the browser and verified the final sharp native UI at its 5.693-second end. The run reported 58 FPS, 74.7 ms worst frame, 77.9 ms renderer initialization, 35.7 ms worst source submission and 0.7 ms sheet submission. A 4,673 ms formation hold preserves the farthest region's full 5-second local delay. Adaptive quality reduced load once; completion reported zero temporary contexts, buffers, programs, textures, FBOs and overlays. This supersedes the checkpoint's older 5-second recording caveat. Browser shader/startup and raster capture costs remain variable; no universal 60 FPS or cold-start improvement is claimed.
+
+The 97-test suite, changed JavaScript syntax and diff checks pass. The final browser pass also inspected held coloring/flattening and native layout registration. The Blender project, reference frames and measurements remain separate from the interactive browser implementation. Visual approval is pending: short-down realism and the compact 32-sector approximation still need the user's assessment. No public deployment or shared-repository edits. TEST feature backup only.
+
+
 ## Safe stopping checkpoint — 2026-10-30
 
 Stopped at the user's request on `codex/physical-fur-sheet`. The shared response implementation, Blender project/reference frames/measurements, lab controls, recordings and tests are saved together. No deployment or shared-repository edits. Local preview is served at `http://127.0.0.1:4206/fur-lab.html#sheet-lab` while its Python server remains running. The reference export was checked through Blender's library reader; the user's original Blender scene was restored.
