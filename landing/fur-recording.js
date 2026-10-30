@@ -21,7 +21,7 @@
         ctx.strokeStyle="#2563eb";ctx.beginPath();ctx.arc(origin.x,origin.y,11,0,Math.PI*2);ctx.stroke();
         ctx.fillStyle="rgba(255,255,255,.95)";ctx.fillRect(8,canvas.height-48,Math.min(canvas.width-16,580),40);ctx.fillStyle="#201b10";ctx.font="13px monospace";
         ctx.fillText(`Red +: press (${contact.x.toFixed(1)}, ${contact.y.toFixed(1)}) / blue O: renderer origin`,14,canvas.height-32);
-        ctx.fillText(`Origin (${origin.x.toFixed(1)}, ${origin.y.toFixed(1)}) | distance ${Math.hypot(origin.x-contact.x,origin.y-contact.y).toFixed(2)} px`,14,canvas.height-16);ctx.restore();
+        ctx.fillText(`Origin (${origin.x.toFixed(1)}, ${origin.y.toFixed(1)}) | distance ${Math.hypot(origin.x-contact.x,origin.y-contact.y).toFixed(2)} px${Number.isFinite(diagnostic.radius)?` | radius ${diagnostic.radius.toFixed(1)} px`:""}`,14,canvas.height-16);ctx.restore();
       }
     }
     finish(){if(this.done)return;this.done=true;clearTimeout(this.timeout);if(this.recorder.state!=="inactive")this.recorder.stop();else this.stream.getTracks().forEach(t=>t.stop());}

@@ -180,7 +180,7 @@ test("measured handoff is captured before destination unmount, retains the sourc
  env.context.window.DuckFur={get:()=>surface};env.context.window.DuckFurSheet={FurSheet:class{constructor(layer,args){options=args.options;this.options=options;}getStats(){return {};}draw(){return {radius:40};}dispose(){disposed++;}},revealPolygon:()=>"none"};
  env.transitions.workspace({root:env.root,source,effect:"sheet",update(){unmounted=true;}});
  assert.equal(captured,1);assert.equal(options.impulse.activationId,shared.activationId);assert.equal(shared.impulse,options.impulse);assert.equal(surface.waves.length,1);assert.equal(options.fiberLength,5.2);
- env.tick(1100);assert.equal(release,1);assert.equal(disposed,1);assert.equal(env.layers.size,0);
+ for(let t=0;t<=1100;t+=16)env.tick(t);assert.equal(release,1);assert.equal(disposed,1);assert.equal(env.layers.size,0);
 });
 test("physical clock includes delayed renderer preparation instead of restarting on readiness",()=>{
  const env=animatedSetup();let clock=0,progress;
@@ -188,6 +188,18 @@ test("physical clock includes delayed renderer preparation instead of restarting
  env.context.window.DuckFurSheet={FurSheet:class{constructor(){clock=300;}getStats(){return {};}draw(p){progress=p;return {radius:50};}dispose(){}},revealPolygon:()=>"none"};
  env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(10);
  assert.equal(progress,.3);env.transitions.cancel();assert.equal(env.layers.size,0);
+});
+test("measured sheet presents zero radius progress first despite cold setup and limits skipped growth",()=>{
+ const env=animatedSetup();let clock=0,shared,options;const progress=[];
+ env.context.performance.now=()=>clock;
+ const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:44})};
+ env.context.window.DuckFur={get:()=>({waves:[],captureDispersalState:()=>({capturedAt:0,material:{},samples:[]}),emitWave(p,args){shared=args;}})};
+ env.context.window.DuckFurSheet={FurSheet:class{constructor(layer,args){clock=300;options=this.options=args.options;}getStats(){return {};}draw(p){progress.push(p);return {radius:p*100};}dispose(){}},revealPolygon:()=>"none"};
+ env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});env.tick(10);
+ assert.equal(progress[0],0);assert.equal(shared.timeline.startedAt,0);assert.equal(shared.timeline.impulseSecondsAt(300),.3);assert.equal(options.impulseAge,.3);
+ clock=316;env.tick(316);assert.equal(progress[1],.016);
+ clock=616;env.tick(616);assert.equal(progress[2],.048);assert.equal(shared.timeline.impulseSecondsAt(616),.616);
+ for(let t=632;t<1750;t+=16){clock=t;env.tick(t);}assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });
 test("cancelled contacts never seed a later native activation and keyboard capture stays centered",()=>{
  const env=animatedSetup();env.context.queueMicrotask=()=>{};
@@ -213,7 +225,7 @@ test("source release and old snapshot visibility use measured ownership rather t
  env.transitions.workspace({root:env.root,source,effect:"sheet",sheetOptions:{formation:true},update(){}});env.tick(700);
  const wrapper=[...env.layers][0].children[0];assert.equal(wrapper.style.visibility,"visible");assert.equal(released,0);
  own={sourceMerge:1,sourceCovered:true,workspaceCovered:false};env.tick(710);assert.equal(released,1);assert.equal(wrapper.style.visibility,"visible");
- own.workspaceCovered=true;env.tick(720);assert.equal(wrapper.style.visibility,"hidden");env.tick(1100);assert.equal(released,1);assert.equal(env.layers.size,0);
+ own.workspaceCovered=true;env.tick(720);assert.equal(wrapper.style.visibility,"hidden");for(let t=736;t<1900;t+=16)env.tick(t);assert.equal(released,1);assert.equal(env.layers.size,0);
 });
 test("one bounded prepared renderer is reused or expires without permanent GPU ownership",()=>{
  const env=animatedSetup(),timers=new Map();let next=0,allocations=0,disposed=0,reused=0;
@@ -223,7 +235,7 @@ test("one bounded prepared renderer is reused or expires without permanent GPU o
  env.context.window.DuckFur={get:()=>({captureDispersalState:()=>({capturedAt:0,material:{length:5.2,density:1},samples:[],pressRadius:38}),waves:[],emitWave(){}})};
  env.context.window.DuckFurSheet={revealPolygon:()=>"none",FurSheet:class{constructor(){allocations++;this.options={};}getStats(){return {};}canRetarget(){return true;}retarget(){reused++;}draw(){return {radius:800};}dispose(){disposed++;}}};
  assert.equal(env.transitions.prepareWorkspace({root:env.root,source}),true);assert.equal(env.transitions.prepareWorkspace({root:env.root,source}),false);
- env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});env.tick(1100);assert.equal(allocations,1);assert.equal(reused,1);assert.equal(disposed,1);assert.equal(timers.size,0);
+ env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});for(let t=0;t<1100;t+=16)env.tick(t);assert.equal(allocations,1);assert.equal(reused,1);assert.equal(disposed,1);assert.equal(timers.size,0);
  env.transitions.prepareWorkspace({root:env.root,source});for(const fn of [...timers.values()])fn();assert.equal(disposed,2);
 });
 test("a late native proxy cannot upload into a cancelled sheet",async()=>{

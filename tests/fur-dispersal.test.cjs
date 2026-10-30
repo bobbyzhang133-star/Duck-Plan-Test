@@ -38,7 +38,7 @@ test('pill seam measures real long/short axes and offset contacts',()=>{
 });
 test('early sheet has nonzero continuing speed, rooted angular variation, and later accepted formation ordering',()=>{
  const impulse=D.capture(surface(),record,30),opts={formation:true,impulse,duration:1000},g=p=>window.DuckFurSheet.geometry(800,420,{x:100,y:90},opts,p);
- const a=g(0),b=g(.00001);assert.ok(a.radius>0);assert.ok((b.radius-a.radius)/.00001/1>500);
+ const a=g(0),b=g(.00001);assert.equal(a.radius,0);assert.equal(a.coverageArea,0);assert.ok((b.radius-a.radius)/.00001/1>500);assert.ok(b.radius<.01);
  for(const p of [.05,.1,.2,.5,.7,.9,1]){const m=g(p);assert.ok(m.radius>=a.radius);assert.equal(m.opacity,1);if(p===.7){assert.equal(m.tintProgress,1);assert.equal(m.settleProgress,0);}}
  assert.equal(g(.5).radius,g(.5).reach);assert.equal(g(1).settleProgress,1);
 });

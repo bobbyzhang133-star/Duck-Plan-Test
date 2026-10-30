@@ -191,11 +191,14 @@
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
     const job={layer,frame:0,complete,sheet,effect,releaseSource}; active=job;
     if(outgoingRecording)try{job.recording=new window.DuckFurRecording.Recorder(bounds,outgoingRecording,(blob,sequence)=>window.DuckFurRecording.show(blob,{baseline:Boolean(sheetOptions.previousIntegration),sequence}));job.destinationRecording=formationSurface;}catch(error){metrics.recordingFailure=String(error.message);}
-    // Physical time belongs to the confirmed activation, not renderer readiness.
+    // Keep physical age, but present measured growth from its contact-sized seed.
+    // Setup or a stalled frame must not skip the opening expansion on screen.
     record.timeline.startedAt=record.activatedAt??started;record.timeline.duration=settings.duration;
+    const contactGrowth=effect==="sheet" && impulse && !sheetOptions.previousIntegration;
+    let presentedMs=0;
     if(impulse && sheet?.options)sheet.options.impulseAge=Math.max(0,(record.timeline.startedAt-impulse.capturedAt)/1000);
-    record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;return held===null?clamp((time-record.timeline.startedAt)/record.timeline.duration,0,1):clamp(held,0,1);};
-    record.timeline.impulseSecondsAt=time=>(sheet?.options?.impulseAge||0)+record.timeline.progressAt(time)*record.timeline.duration/1000;
+    record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;return held===null?clamp((contactGrowth?presentedMs:time-record.timeline.startedAt)/record.timeline.duration,0,1):clamp(held,0,1);};
+    record.timeline.impulseSecondsAt=time=>Math.max(0,(time-(impulse?.capturedAt??record.timeline.startedAt))/1000);
     record.timeline.radiusAt=time=>window.DuckFurSheet?.geometry(bounds.width,bounds.height,point,sheetOptions,record.timeline.progressAt(time)).radius||0;
     if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).origin,{timeline:record.timeline,activationId:record.id,impulse});
     let previous=null,lastProgress=null;
@@ -224,7 +227,9 @@
       const interval=previous===null?0:time-previous; previous=time;
       metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;
       const held=typeof holdProgress === "function" ? holdProgress() : holdProgress;
+      if(contactGrowth && held===null)presentedMs+=Math.min(32,Math.max(0,interval));
       const progress=record.timeline.progressAt(time);
+      if(contactGrowth && held===null && sheet?.options)sheet.options.impulseAge=Math.max(0,(time-impulse.capturedAt)/1000-progress*record.timeline.duration/1000);
       if(impulse && surface?.gl && releaseSource && progress!==lastProgress){
         const sourceStart=performance.now();surface.advanceWaves(Math.min(.04,(interval||16)/1000));surface.draw();metrics.sourceAdvanceMs=Math.max(metrics.sourceAdvanceMs,performance.now()-sourceStart);
       }
@@ -242,7 +247,7 @@
           metrics.ownership=own||null;
           const sourceOwned=sheetOptions.previousIntegration?progress>=.5:(own?own.sourceCovered && own.sourceMerge>=1:progress>=.5);
           if(sourceOwned && releaseSource){releaseSource();releaseSource=null;job.releaseSource=null;metrics.sourceReleasedAt=progress;}
-          if(!job.nativeStarted && formationSurface && window.DuckFormation?.captureNative && !sheetOptions.previousIntegration){
+          if(!job.nativeStarted && formationSurface && window.DuckFormation?.captureNative && !sheetOptions.previousIntegration && (!contactGrowth || progress>=.12 || held!==null)){
             job.nativeStarted=true;metrics.nativeProxyState="scheduled";
             // Let the first physical frame paint before assembling its final native proxy.
             job.nativeTimer=setTimeout(()=>{
@@ -259,7 +264,7 @@
             const frame={progress,settlement:model.settleProgress,layout:measure(root,layer),anchors:renderer.project?[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>({x,y,projected:renderer.project(model,{x,y,z:20.48*(1-model.settleProgress)})})):[]};
             metrics.registration.frames=metrics.registration.frames.filter(item=>Math.abs(item.progress-progress)>.001).slice(-15);metrics.registration.frames.push(frame);
           }
-          job.recording?.frame(sheet.canvas,own?.workspaceCovered?job.destinationRecording:null,sheetOptions.debug?{contact:{x:record.contact.x-bounds.left,y:record.contact.y-bounds.top},origin:sheet.origin||point}:null);
+          job.recording?.frame(sheet.canvas,own?.workspaceCovered?job.destinationRecording:null,sheetOptions.debug?{contact:{x:record.contact.x-bounds.left,y:record.contact.y-bounds.top},origin:sheet.origin||point,radius:model.radius}:null);
           diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.tint=model.tintProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
           if(sheetOptions.previousIntegration && held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}

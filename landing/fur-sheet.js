@@ -17,7 +17,8 @@
     let radius=reach*Math.pow((settings.formation?soft:smooth)(Math.min(1,p/(settings.formation?.5:.88))),1/settings.growthSpeed);
     const impulse=settings.impulse;
     const mean=key=>impulse?impulse.samples.reduce((sum,s)=>sum+s[key],0)/impulse.samples.length:0;
-    const seedRadius=impulse?mean("radius"):0;
+    // The sampled annulus describes displaced fibers, not the growth's seed size.
+    const seedRadius=impulse && settings.previousIntegration?mean("radius"):0;
     if(impulse){
       const t=Math.min(1,p/(settings.formation?.5:.88)),duration=(settings.duration||1000)/1000*(settings.formation?.5:.88);
       const initialSpeed=Math.min((reach-seedRadius)*2/duration,Math.max(60,(impulse.material.waveSpeed||540)+mean("velocity")));
