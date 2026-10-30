@@ -1,5 +1,12 @@
 # DuckPlan interactive fur material
 
+## Blender realism Chat Check — pending, 2026-10-30
+
+The user reports no visible improvement in realism and requests an external Chat Check. TEST commit `9945193bc7f1e572bafa1ee892210c5f82cf5627` was synchronized before attempting the established Duck Plan ChatGPT conversation. The request asks for exact-source comparison with pre-Blender `2d8b46c`, a trace of Blender findings into browser changes, assessment of the unchanged normal-button solver and billboard geometry, and an evidence-based improvement plan. It explicitly separates consistency/performance gains from realism and does not assume that importing Blender geometry alone fixes dynamics. See `../references/chat-checks/2026-10-30-blender-realism-request.txt`.
+
+ChatGPT returned “Unknown error” on submission and retry; the conversation then remained on its loading screen after reconnecting. No review response was obtained. This is a pending external review, not a completed Chat Check or a new realism validation. No implementation changes or deployment were made as part of this attempt.
+
+
 ## Resumed verification completed — 2026-10-30
 
 Resumed from `597db8c` and completed the outstanding planner calendar/dialog smoke checks. Calendar Month and keyboard Day selection both update the native planner. The prior selector timeout was an automation mismatch: the controls are buttons, not checkboxes. A real accessibility/material lifecycle issue was found afterward: native Escape dismissed the dialog without remounting the workspace fur. Restoration now runs on the dialog's `close` event for both native and pointer dismissal. Browser checks measured 13 workspace fur canvases before/after Escape and Cancel, with zero hidden dialog canvases. No task data was changed during these checks.
