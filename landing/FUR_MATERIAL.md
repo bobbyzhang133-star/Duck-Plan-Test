@@ -1,6 +1,45 @@
 # DuckPlan interactive fur material
 
-## Matching button and propagated recovery holds — 2026-10-30
+## Safe stopping checkpoint — 2026-10-30
+
+Stopped at the user's request on `codex/physical-fur-sheet`. The shared response implementation, Blender project/reference frames/measurements, lab controls, recordings and tests are saved together. No deployment or shared-repository edits. Local preview is served at `http://127.0.0.1:4206/fur-lab.html#sheet-lab` while its Python server remains running. The reference export was checked through Blender's library reader; the user's original Blender scene was restored.
+
+Verified: 97 Node tests, JavaScript syntax and diff checks; real browser shader compilation, zero-radius onset, held geometry/color/flattening, 0/280/2,000/5,000 ms inspection/playback cases, keyboard activation, reduced-motion destination update, rapid interruption/reuse, actual sheet context loss and temporary-resource cleanup. The final zero-delay run was slower (24 FPS, max 76.5 ms, cold init 169.1 ms) after opening another application preview. Performance varies materially and still needs investigation.
+
+Resume with targeted visual/performance review rather than treating this as approved. Specifically: inspect the final matched 280 ms recordings and re-record the 5-second case after the last projection/cleanup corrections if needed; verify the main planner calendar/dialog flow (the final calendar selector smoke test timed out and was not resolved before stopping); inspect offsets/slow frames and final native text at normal playback; assess source seam and short-down realism. The main-app verification tab was closed, the lab reset, and no transition renderer remains active. The older 5-second recording predates the final calibration and lifecycle fixes. Its native MediaRecorder output is valid evidence of long-hold behavior, not a final-build regression certification. Visual approval is pending.
+
+## Blender-assisted shared spring response — local review, 2026-10-30
+
+Current TEST implementation replaces the analytic recovery baseline below. `fur-response.js` integrates the approved button's held-target spring update at 240 Hz into a bounded 120 Hz response atlas: 32 directional sectors for the source's remaining holds and 32 for newly reached regions' complete holds. It carries displacement, velocity, compression/depression, target, stiffness, damping and seeded recovery rates. Float32 hold arithmetic matches the real button's timing at 0, 280, 2,000 and 5,000 ms. Effective normalized starting coordinates retain the measured CSS displacement and derivative despite correlations between strand lengths and bend. This remains a compact directional approximation to a varied pile, not a copied per-root simulation or coupled inter-fiber solver.
+
+CPU diagnostics and GLSL fetch/interpolate the same state atlas. An inverse lookup of the actual presented growth geometry supplies local arrival times; no response is applied ahead of the visible front. Source regions retain their remaining hold, while newly covered regions start a complete hold at arrival. The retained source advances its real simulator in bounded substeps; its targets and momentum are no longer overwritten by the analytic continuation. Fixed seeded GPU roots and cached response samples keep per-root rendering bounded. The approved button shader, lettering/icons and ordinary hover/press solver are unchanged.
+
+The one click-centered, zero-radius crest and filled sheet remain. Coloring occurs while furry, then whole-sheet compression resolves into sharp HTML. There is no second settlement wave or opacity-driven removal. Presentation time advances at most 32 ms per rendered frame, keeping source and sheet clocks aligned under stalls; this deliberately stretches wall-clock playback under load. The global formation hold now uses the same visible-arrival lookup: in the matched 280 ms desktop sample the previous 1,587 ms extra pause became 0 ms. Long holds still extend the formation phase so distant regions receive their local delay.
+
+Blender MCP was actively used to build, simulate, bake, inspect and render a separate reference project. The rooted contact probe showed central compression and surrounding splay, with delayed, non-bouncy recovery. Shorter tapered sheet tips and compression/depression-dependent pile height/width translate those findings without increasing global density. The browser uses the button's spring parameters, not Blender's scene-scale constants. See `../references/blender/README.md` for capabilities, method, measured curves and limitations; the reference is stylized and is not biological validation.
+
+### Lab and evidence
+
+Preview: `http://127.0.0.1:4206/fur-lab.html#sheet-lab`. Keep **Growth only unchecked**. Choose Recovery hold (0/280/2,000/5,000 ms); Previous analytic recovery compares the older recovery model with the current common renderer. Use a held percentage to inspect geometry. Set optional recovery age before choosing a held pose. Scrolling cancels temporary sheets to keep the viewport registered. Near/middle/far traces show arrival, remaining hold, displacement/velocity, compression/depression, orientation, surface height and flattening. Held inspection frames are excluded from playback FPS counts.
+
+The recorder is bounded to 12 seconds / 24 MB, allowing the 5-second hold to complete. It records the actual WebGL workspace composite, not the operating-system cursor or full browser chrome. Local clips and held screenshot are in `../references/browser/`; the baseline and improved controls compare recovery behavior rather than reproducing every historical shader byte.
+
+On the earlier matched desktop runs at 1280 × 720: baseline 53 FPS, max frame 48.7 ms, initialization 40.8 ms; shared spring 48 FPS, max 57.5 ms, initialization 74.4 ms, source submission max 22.9 ms, sheet submission max 0.6 ms, warm response build 5.4 ms. A 5-second run measured 51 FPS / max 56.0 ms. CPU atlas storage is 1.16 MiB at 280 ms and 2.82 MiB at 5 seconds; estimated sheet GPU memory was 14.09–14.65 MiB. These are app diagnostic samples, not a controlled benchmark or evidence of a speedup. Initial cold response build reached 66 ms and held/rebuilt renderers reached roughly 193 ms. Cold startup and raster capture remain visible limitations.
+
+A later final desktop capture with adaptive quality enabled measured 30 FPS / max 34.3 ms for the baseline and reduced its estimated GPU allocation to 11.67 MiB. The corresponding final shared-spring capture measured 29 FPS / max 35.7 ms, initialization 65.1 ms, with adaptive reduction and an estimated 12.06 MiB GPU allocation. Frame pacing varied between runs; the clips are visual evidence, not controlled speed comparisons.
+
+At an actual 390 × 844 browser override, pointer and keyboard runs completed with stable dimensions and cleanup. Playback was approximately 29–31 FPS, so the newer path now invokes the existing one-time quality reduction after sustained >28 ms frames. This is viewport testing on the desktop browser, not a physical-phone performance certification.
+
+### Verification and resource ownership
+
+97 Node tests pass: native solver/atlas parity at all four holds; projected handoff displacement/momentum with varied fibers; angular/time CPU versus GPU interpolation math; actual-radius inverse lookup; no pre-arrival response; capped slow-frame/source time; interruption, geometry/formation registration, keyboard/reduced motion and existing planner regressions. CPU parity checks use the actual `DuckFurSurface.simulate`, not an independent reimplementation as the oracle. Browser WebGL programs compiled without console errors; normal and long-hold playback completed with zero temporary contexts, buffers, programs, textures, FBOs and overlays.
+
+Response textures are released on disposal/retarget/context loss. Cancellation and completion also clear the CPU atlas and finish the old shared timeline, preventing retained source waves from keeping unfinished clocks alive. Quality reduction stays bounded; no permanent WebGL context is added per button. Native text remains resolved and the sidebar/layout contract is preserved by the existing registration and accessibility paths.
+
+Visual review is pending. TEST branch backup only; no shared group repository modification or public deployment. Browser evidence supports the inspected cases, not a claim that all material acceptance criteria are visually approved. FFmpeg/ffprobe inspection was unavailable because the installed binary references a missing x265 dylib; native browser MediaRecorder files remain the recording deliverable.
+
+
+## Historical analytic recovery baseline — superseded, 2026-10-30
 
 The source capture already included recoveryDelay, but propagation ignored it. CPU sampled fields, cached live-button continuation and GLSL now consume that captured delay in milliseconds. After local travel time, compression and depression remain held; measured splay velocity continues briefly with bounded exponential travel, then its retained bend recovers through the existing critically damped response after the delay. Zero-delay behavior preserves the previous response. Position and velocity are continuous at hold release. No new independent wave is emitted.
 

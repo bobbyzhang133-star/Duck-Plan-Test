@@ -3,8 +3,10 @@
   let destination=false,timers=[],inspection=null,boundaryFrame=0;
   const cancelBoundary=()=>{if(boundaryFrame)cancelAnimationFrame(boundaryFrame);boundaryFrame=0;};
   document.querySelectorAll("#sheet-lab button:not([data-progress]):not(#sheet-press-hold):not(#sheet-press-release):not(#sheet-crossing)").forEach(host=>DuckFur.mount(host,{silhouette:true,quality:"medium",length:5.2,label:host.textContent.trim()}));
-  function values(){const result={};for(const input of form.querySelectorAll("input")){result[input.name]=input.type==="checkbox"?input.checked:Number(input.value);const out=input.parentElement.querySelector("output");if(out)out.value=input.value;}return result;}
+  function values(){const result={};for(const input of form.querySelectorAll("input,select")){result[input.name]=input.type==="checkbox"?input.checked:Number(input.value);const out=input.parentElement.querySelector("output");if(out)out.value=input.value;}return result;}
   function report(){const s=DuckTransitions.getStats(),peak=s.sheetPeak||{},live=s.sheetResources||{};
+    const traces=document.querySelector("#sheet-response-traces");
+    if(traces){const rows=s.responseTraces||[];traces.dataset.traces=JSON.stringify(rows);traces.textContent=rows.length?`Shared button spring · material age ${Math.round((s.materialSeconds||0)*1000)} ms · atlas ${(s.responseBuildMs||0).toFixed(1)} ms · CPU ${((peak.cpuResponseBytes||0)/1048576).toFixed(2)} MiB\n${rows.map(r=>`${r.region}: ${r.arrived?"arrived":"pending"} · arrival ${Math.round(r.arrivalMs)} ms · hold ${Math.round(r.remainingMs)} ms · bend ${r.displacement.toFixed(2)} px · velocity ${r.velocity.toFixed(2)} px/s · compression ${r.compression.toFixed(3)} · depression ${r.depression.toFixed(3)} · orientation ${(r.orientation*180/Math.PI).toFixed(1)}° · height ${r.height.toFixed(2)} px · flat ${Math.round(r.flatten*100)}%`).join("\n")}`:s.sharedResponse?"Awaiting response samples":"Previous analytic recovery / no measured source";}
     const diagnostic=document.querySelector("#sheet-registration");
     if(diagnostic){const r=s.registration,last=r?.frames?.at(-1),a=r?.before,b=last?.layout||r?.destination;
       if(r)diagnostic.dataset.registration=JSON.stringify(r);
@@ -21,7 +23,7 @@
     cancelBoundary();
     const live=DuckFur.get(document.querySelector("#sheet-inside"));if(live)live.options.inspectionFreeze=false;
     inspection=null;
-    const settings=values();if(effect==="sheet" && settings.ribbon)effect="ribbon";settings.registration=true;settings.formation=effect==="sheet" && !settings.growthOnly && !settings.legacyFade;DuckTransitions.configure({duration:settings.duration});
+    const settings=values();if(effect==="sheet" && settings.ribbon)effect="ribbon";settings.recoveryAgeAt=()=>{const v=values();return v.inspectRecovery?v.recoveryAge:null;};settings.registration=true;settings.formation=effect==="sheet" && !settings.growthOnly && !settings.legacyFade;DuckTransitions.configure({duration:settings.duration});
     DuckTransitions.workspace({root,source,event,effect,sheetOptions:settings,holdProgress:()=>{const v=values();return v.hold?v.inspectProgress:null;},update:()=>{
       if(settings.growthOnly)return;
       destination=!destination;root.classList.toggle("destination",destination);
@@ -68,7 +70,8 @@
   document.querySelectorAll("#sheet-frames button").forEach(button=>button.addEventListener("click",()=>inspectAt(Number(button.dataset.progress))));
   document.querySelector("#sheet-old").addEventListener("click",e=>turn(e.currentTarget,e,"radial"));
   document.querySelector("#sheet-stress").addEventListener("click",e=>{timers.forEach(clearTimeout);timers=[];const source=e.currentTarget;for(let i=0;i<4;i++)timers.push(setTimeout(()=>turn(source,null),i*130));});
-  document.querySelector("#sheet-reset").addEventListener("click",()=>{timers.forEach(clearTimeout);timers=[];cancelBoundary();DuckTransitions.cancel();inspection=null;const surface=DuckFur.get(inside);surface.options.inspectionFreeze=false;surface.finishPress();form.reset();values();report();});
-  form.addEventListener("input",event=>{values();if(event.target.name==="contextLoss" && event.target.checked)DuckTransitions.testSheetContextLoss();});values();setInterval(report,300);
+  document.querySelector("#sheet-reset").addEventListener("click",()=>{timers.forEach(clearTimeout);timers=[];cancelBoundary();DuckTransitions.cancel();inspection=null;const surface=DuckFur.get(inside);surface.options.inspectionFreeze=false;surface.finishPress();form.reset();values();applyDelay();report();});
+  function applyDelay(){const delay=Number(form.elements.responseDelay.value);for(const button of document.querySelectorAll("#sheet-lab button")){const surface=DuckFur.get(button);if(surface)surface.setParameters({recoveryDelay:delay});}}
+  form.addEventListener("input",event=>{values();if(event.target.name==="responseDelay"){DuckTransitions.cancel();applyDelay();}if(event.target.name==="contextLoss" && event.target.checked)DuckTransitions.testSheetContextLoss();});values();applyDelay();setInterval(report,100);
   addEventListener("pagehide",()=>{cancelBoundary();preparationObserver?.disconnect();timers.forEach(clearTimeout);DuckTransitions.cancel();});
 })();

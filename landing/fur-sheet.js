@@ -28,8 +28,26 @@
     const state=formationState(p),settleProgress=settings.formation?state.flatten:0,tintProgress=settings.formation?state.tint:0;
     const band=Math.min(settings.sheetWidth,radius*.55);
     const amplitude=(impulse?(.15+clamp((mean("compression")+Math.abs(mean("velocity"))/100),0,.7))*(1-smooth(p/.2))+smooth(p/.2):smooth(p/.18))*(settings.formation?1:(1-smooth((p-.88)/.12)));
-    return {width,height,origin,settings,impulseSeconds:(settings.impulseAge||0)+p*(settings.duration||1000)/1000,progress:p,reach,radius,settleProgress,tintProgress,band,amplitude,phase:settings.formation?(p<.5?"Grow / roll":p<.7?"Fur takes UI colors":"Colored fur settles into UI"):"Growth / baseline",
+    return {width,height,origin,settings,materialSeconds:settings.materialSeconds??p*(settings.duration||1000)/1000,sourceSeconds:settings.sourceSeconds??p*(settings.duration||1000)/1000,impulseSeconds:(settings.impulseAge||0)+p*(settings.duration||1000)/1000,progress:p,reach,radius,settleProgress,tintProgress,band,amplitude,phase:settings.formation?(p<.5?"Grow / roll":p<.7?"Fur takes UI colors":"Colored fur settles into UI"):"Growth / baseline",
       opacity:settings.formation?1:1-smooth((p-.92)/.08),coverageArea:Math.PI*radius*radius};
+  }
+  function arrivalMap(width,height,origin,options,count=256){
+    const end=options.formation?.5:.88,model=geometry(width,height,origin,options,end),data=new Float32Array(count*4);
+    for(let i=1;i<count;i++){
+      const r=i/(count-1)*model.reach;let lo=0,hi=end;
+      for(let n=0;n<24;n++){const p=(lo+hi)/2;if(geometry(width,height,origin,options,p).radius<r)lo=p;else hi=p;}
+      data[i*4]=hi*(options.duration||1000)/1000;
+    }
+    return {data,count,reach:model.reach};
+  }
+  function arrivalAt(map,r){const x=clamp(r/map.reach,0,1)*(map.count-1),i=Math.floor(x),j=Math.min(i+1,map.count-1),t=x-i;return map.data[i*4]*(1-t)+map.data[j*4]*t;}
+  function disturbance(model,angle,r){
+    const s=model.settings;
+    if(s.response && s.arrival){
+      const edge=window.DuckDispersal.angular(s.impulse,angle).edge;
+      return window.DuckFurResponse.field(s.response,angle,r,{arrival:arrivalAt(s.arrival,r),elapsed:r>model.radius?-1:model.materialSeconds,sourceAge:model.sourceSeconds,sourceWeight:1-smooth((r-edge+4)/10)});
+    }
+    return s.impulse?window.DuckDispersal.field(s.impulse,angle,r,model.impulseSeconds):null;
   }
   function ownership(model){
     const {origin,settings:s}=model;
@@ -65,7 +83,7 @@
   }
   function sample(model,v,q,layer=0) {
     const angle=v*Math.PI,r=(q+1)*.5*model.reach;
-    const impulse=model.settings.impulse,field=impulse?window.DuckDispersal.field(impulse,angle,r,model.impulseSeconds):null;
+    const impulse=model.settings.impulse,field=disturbance(model,angle,r);
     const seamProfile=radius=>{const p=profile(model,radius);if(!impulse)return p;const edge=window.DuckDispersal.angular(impulse,angle).edge,w=smooth((radius-edge)/Math.max(12,impulse.pressRadius*.8))+(1-smooth((radius-edge)/Math.max(12,impulse.pressRadius*.8)))*(model.settings.previousIntegration?0:ownership(model).sourceMerge);return {u:radius+(p.u-radius)*w,z:p.z*w};};
     const center=seamProfile(r),delta=.05;
     const lo=seamProfile(Math.max(0,r-delta)),hi=seamProfile(r+delta);
@@ -99,6 +117,18 @@
     uniform float u_width,u_elevation,u_curvature,u_thickness,u_lighting,u_length,u_hasField,u_colorOnly;
     uniform sampler2D u_targets;
     uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed,u_sourceMerge,u_previousIntegration,u_recoveryDelay;
+    uniform sampler2D u_response,u_arrival;
+    uniform float u_hasResponse,u_responseWidth,u_responseStep,u_materialSeconds,u_sourceSeconds,u_arrivalCount;
+    uniform float u_responseLengths[32];
+    vec4 responseAt(float sector,float seconds,float row){
+      int a=int(floor(sector)),b=(a+1)%32;float f=fract(sector),time=clamp(seconds/u_responseStep,0.0,u_responseWidth-1.0);
+      int lo=int(floor(time)),hi=min(lo+1,int(u_responseWidth)-1);float t=fract(time);
+      return mix(mix(texelFetch(u_response,ivec2(lo,a+int(row)),0),texelFetch(u_response,ivec2(hi,a+int(row)),0),t),mix(texelFetch(u_response,ivec2(lo,b+int(row)),0),texelFetch(u_response,ivec2(hi,b+int(row)),0),t),f);
+    }
+    float arrivalAt(float r){
+      float x=clamp(r/u_reach,0.0,1.0)*(u_arrivalCount-1.0);int a=int(floor(x)),b=min(a+1,int(u_arrivalCount)-1);
+      return mix(texelFetch(u_arrival,ivec2(a,0),0).r,texelFetch(u_arrival,ivec2(b,0),0).r,fract(x));
+    }
     vec2 heldMotion(vec2 position,vec2 velocity,float age){
       float elapsed=min(age,u_recoveryDelay),push=0.06;
       vec2 held=position+velocity*push*(1.0-exp(-elapsed/push));
@@ -110,6 +140,14 @@
     vec4 impulseAt(float angle,float r){
       float sector=mod(angle/6.2831853+1.0,1.0)*32.0;int i=int(floor(sector));int j=(i+1)%32;float f=fract(sector);
       vec4 s=mix(u_impulse[i],u_impulse[j],f),m=mix(u_motion[i],u_motion[j],f);
+      if(u_hasResponse>0.5){
+        float arrival=arrivalAt(r);if(r>u_radius || u_materialSeconds+0.0000001<arrival)return vec4(0.0);
+        float source=1.0-smoothstep(m.w-4.0,m.w+6.0,r);vec4 state;
+        if(source>0.999)state=responseAt(sector,u_sourceSeconds,0.0);
+        else{state=responseAt(sector,max(0.0,u_materialSeconds-arrival),32.0);if(source>0.001)state=mix(state,responseAt(sector,u_sourceSeconds,0.0),source);}
+        float length=mix(u_responseLengths[i],u_responseLengths[j],f),attenuation=exp(-max(0.0,r-m.z)/max(1.0,u_pressRadius*8.0));
+        return vec4(state.xy*length*1.62*(0.68+0.77*state.z),state.zw)*attenuation;
+      }
       float outside=max(0.0,r-m.z),age=max(0.0,u_impulseSeconds-outside/max(60.0,u_waveSpeed));
       float attenuation=exp(-outside/max(1.0,u_pressRadius*8.0)),decay=exp(-3.0*max(0.0,age-u_recoveryDelay));
       return vec4(heldMotion(s.xy,m.xy,age)*attenuation,s.zw*decay*attenuation)*u_hasImpulse;
@@ -269,10 +307,10 @@
       vec4 impulse=impulseAt(v*3.14159265,r);float weight=impulseWeight();
       vec3 radial=vec3(cos(v*3.14159265),sin(v*3.14159265),0);
       lean=normalize(lean+radial*impulse.x*weight/max(1.0,u_length)+across*impulse.y*weight/max(1.0,u_length));
-      length*=1.0-clamp(impulse.z*weight,0.0,1.0)*0.78;
+      length*=1.0-clamp(impulse.z*weight,0.0,1.0)*0.78-clamp(impulse.w*weight,0.0,1.0)*0.16;
       p+=(normal*0.5*pow(1.0-settled,2.0)+lean*(mix(0.28,0.38,a_seed.z)+settled*0.5))*length*corner.y;
-      float rootWidth=mix(1.05,1.5,a_seed.z)*(1.0-resolve);
-      p+=side*corner.x*mix(rootWidth,rootWidth*0.82,corner.y);
+      float rootWidth=mix(1.05,1.5,a_seed.z)*(1.0-resolve)*(1.0+clamp(impulse.z*weight,0.0,1.0)*0.3+clamp(impulse.w*weight,0.0,1.0)*0.18);
+      p+=side*corner.x*mix(rootWidth,rootWidth*0.36,corner.y);
       gl_Position=project(p);
       v_height=corner.y;v_side=corner.x;v_seed=a_seed.z;
       v_light=(0.78+0.22*max(0.0,dot(normalize(vec3(cos(angle),sin(angle),0.7)),normalize(vec3(-0.35,-0.45,0.82)))))*(0.82+0.18*max(0.0,dot(normal,normalize(vec3(-0.3,-0.5,1.0)))));
@@ -365,14 +403,14 @@
         this.sortedRadii=Array.from({length:this.fibers},(_,i)=>(seeds[i*4+1]+1)*.5).sort((a,b)=>a-b);
         this.furBuffer=this.buffer(seeds);
         this.bufferBytes=mesh.byteLength+seeds.byteLength;
-        this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;
+        this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+(this.responseBytes||0)+this.canvas.width*this.canvas.height*8;
         this.uniforms=new Map();
-        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","recoveryDelay","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
+        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","recoveryDelay","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource","response","arrival","hasResponse","responseWidth","responseStep","materialSeconds","sourceSeconds","arrivalCount","responseLengths[0]"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
         this.bakeButtonPile();
         gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
         // Compile/validate the first draw before starting the visible frame clock.
         // Initialization latency is reported separately, not hidden in FPS.
-        this.draw(0);
+        this.setResponse(this.options.response);this.draw(0);
         this.initializationMs=performance.now()-start;
       }catch(error){this.dispose();throw error;}
     }
@@ -465,7 +503,7 @@
         for(const name of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,name,gl.CLAMP_TO_EDGE);
         this.targetBytes=field.width*field.height*4;this.formationTargets=canvas.formation.targets;
       }
-      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+this.destinationBytes+(this.targetBytes||0)+(this.sourceBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;
+      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+this.destinationBytes+(this.targetBytes||0)+(this.sourceBytes||0)+(this.responseBytes||0)+this.canvas.width*this.canvas.height*8;
     }
     buffer(data){const gl=this.gl,buffer=gl.createBuffer();this.buffers.push(buffer);resources.buffers++;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return buffer;}
     uniformsFor(target,model){const gl=this.gl,u=this.uniforms.get(target),s=this.options;gl.useProgram(target);gl.uniform1i(u.destination,1);gl.uniform1i(u.targets,2);
@@ -473,7 +511,12 @@
       gl.uniform1f(u.sourceMerge,own.sourceMerge);gl.uniform1f(u.previousIntegration,s.previousIntegration?1:0);
       gl.uniform1i(u.source,3);gl.uniform1f(u.hasSource,this.sourceTexture?1:0);
       const sr=this.sourceImageRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceImageRect,sr.x,sr.y,sr.width,sr.height);
-      const impulse=s.impulse;
+      const impulse=s.impulse,response=s.response,map=s.arrival;
+      gl.uniform1i(u.response,4);gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,this.responseTexture||this.materialTexture);
+      gl.uniform1i(u.arrival,5);gl.activeTexture(gl.TEXTURE5);gl.bindTexture(gl.TEXTURE_2D,this.arrivalTexture||this.materialTexture);
+      gl.uniform1f(u.hasResponse,response?1:0);gl.uniform1f(u.responseWidth,response?.width||1);gl.uniform1f(u.responseStep,response?.step||1);
+      gl.uniform1f(u.arrivalCount,map?.count||2);gl.uniform1f(u.materialSeconds,model.materialSeconds||0);gl.uniform1f(u.sourceSeconds,model.sourceSeconds||0);
+      if(response)gl.uniform1fv(u["responseLengths[0]"],this.responseLengths);
       gl.uniform1f(u.recoveryDelay,s.previousIntegration?0:Math.max(0,Number(impulse?.material.recoveryDelay)||0)/1000);gl.uniform1f(u.hasImpulse,impulse?1:0);gl.uniform1f(u.impulseSeconds,model.impulseSeconds||0);gl.uniform1f(u.pressRadius,impulse?.pressRadius||1);gl.uniform1f(u.waveSpeed,impulse?.material.waveSpeed||540);
       const rect=s.sourceRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceRect,rect.x,rect.y,rect.width,rect.height);
       if(impulse){gl.uniform4fv(u["impulse[0]"],(this.impulseData ||= new Float32Array(impulse.samples.flatMap(v=>[v.radial,v.tangential,v.compression,v.depression]))));gl.uniform4fv(u["motion[0]"],(this.motionData ||= new Float32Array(impulse.samples.flatMap(v=>[v.velocity,v.tangentialVelocity,v.radius,v.edge]))));}
@@ -498,15 +541,27 @@
       gl.drawArraysInstanced(gl.TRIANGLES,0,6,this.fibers);gl.vertexAttribDivisor(0,0);
       return model;
     }
-    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;}
+    setResponse(response){
+      const gl=this.gl;
+      for(const key of ["responseTexture","arrivalTexture"])if(this[key]){gl.deleteTexture(this[key]);resources.textures--;this[key]=null;}
+      this.responseBytes=0;this.options.response=response;this.options.arrival=null;
+      if(!response)return;
+      const map=arrivalMap(this.width,this.height,this.origin,this.options);this.options.arrival=map;
+      const upload=(key,unit,width,height,data)=>{this[key]=gl.createTexture();resources.textures++;gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,this[key]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,width,height,0,gl.RGBA,gl.FLOAT,data);for(const parameter of [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,parameter,gl.NEAREST);for(const parameter of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,parameter,gl.CLAMP_TO_EDGE);};
+      upload("responseTexture",4,response.width,response.rows,response.state);upload("arrivalTexture",5,map.count,1,map.data);
+      this.responseLengths=new Float32Array(this.options.impulse.samples.map(s=>s.response?.length||this.options.fiberLength));
+      this.responseBytes=response.state.byteLength+map.data.byteLength;
+      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+this.responseBytes+this.canvas.width*this.canvas.height*8;
+    }
+    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+(this.responseBytes||0)+this.canvas.width*this.canvas.height*8;}
     canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && Boolean(this.options.previousIntegration)===Boolean(options.previousIntegration) && Boolean(this.options.impulse)===Boolean(options.impulse) && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
-    retarget(container,origin,options){if(this.sourceTexture){this.gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}this.sourceImageRect=null;this.sourceBytes=0;this.impulseData=null;this.motionData=null;this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
-    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",textureBytes:(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0),...resources};}
+    retarget(container,origin,options){if(this.sourceTexture){this.gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}this.sourceImageRect=null;this.sourceBytes=0;this.impulseData=null;this.motionData=null;this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.setResponse(this.options.response);this.draw(0);}
+    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",cpuResponseBytes:this.options.response?.bytes||0,textureBytes:(this.responseBytes||0)+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0),...resources};}
     dispose(){if(this.disposed)return;this.disposed=true;const gl=this.gl;
-      if(gl){if(this.sourceTexture){gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
+      if(gl){for(const key of ["responseTexture","arrivalTexture"])if(this[key]){gl.deleteTexture(this[key]);resources.textures--;this[key]=null;}this.options.response=null;this.options.arrival=null;if(this.sourceTexture){gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
         this.canvas.removeEventListener("webglcontextlost",this.onLost);gl.getExtension("WEBGL_lose_context")?.loseContext();resources.contexts--;}
       this.gl=null;this.canvas.remove();
     }
   }
-  window.DuckFurSheet={FurSheet,defaults,formationState,ownership,geometry,sample,project,profile,flattenAmount,settlement,revealRadius,revealPolygon,boundaries,resources};
+  window.DuckFurSheet={FurSheet,defaults,formationState,ownership,geometry,arrivalMap,arrivalAt,disturbance,sample,project,profile,flattenAmount,settlement,revealRadius,revealPolygon,boundaries,resources};
 })();

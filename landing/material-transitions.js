@@ -85,12 +85,14 @@
     return copy;
   }
 
+  function finishTimeline(timeline,radius,seconds){if(!timeline)return;timeline.progressAt=()=>1;timeline.radiusAt=()=>radius;timeline.impulseSecondsAt=()=>seconds;timeline.deformationAt=()=>0;}
+
   function cancel(reason="interrupted") {
     if (!active) return;
     const current=active; active=null;
     cancelAnimationFrame(current.frame);if(current.nativeTimer!==undefined)clearTimeout(current.nativeTimer);
     if(current.sheet){metrics.sheetPeak=current.sheet.getStats();current.sheet.dispose();}
-    current.recording?.finish();current.releaseSource?.();current.layer.remove(); metrics.layers=0;
+    current.releaseResponse?.();current.recording?.finish();current.releaseSource?.();current.layer.remove(); metrics.layers=0;
     metrics.cancelled++;metrics.lastCancellation=reason;
     current.complete?.({cancelled:true,reason});
   }
@@ -112,9 +114,10 @@
     record.consumed=true;
     record.impulse ||= source && window.DuckFur?.get(source)?.captureDispersalState?.(record);
     const mapped=mapActivation(record,bounds),point=mapped.origin;
-    const impulse=sheetOptions.independentGrowth?null:record.impulse;
+    let impulse=sheetOptions.independentGrowth?null:sheetOptions.legacyRecovery && record.impulse?{...record.impulse,responseVersion:1}:record.impulse;
     if(impulse){
       sheetOptions={...sheetOptions,impulse,sourceRect:{x:record.bounds.left-bounds.left,y:record.bounds.top-bounds.top,width:record.bounds.width,height:record.bounds.height},duration:settings.duration};
+      try{const start=performance.now();sheetOptions.response=window.DuckFurResponse?.build(impulse);if(impulse.responseVersion===2 && !sheetOptions.response)throw Error("Shared spring response unavailable");metrics.responseBuildMs=performance.now()-start;metrics.responseFailure=null;}catch(error){metrics.responseFailure=String(error.message);impulse={...impulse,responseVersion:1};sheetOptions.impulse=impulse;sheetOptions.response=null;}
       if(Number.isFinite(impulse.material.length))sheetOptions.fiberLength=impulse.material.length;
       if(Number.isFinite(impulse.material.density))sheetOptions.furDensity=impulse.material.density;
     }
@@ -189,8 +192,8 @@
     } catch(error) { releaseSource?.();sheet?.dispose();layer.remove(); metrics.layers=0;if(sheetOptions.formation){metrics.sheetFailure=String(error.message);complete?.({cancelled:false,fallback:true});return;}throw error; }
     if((effect === "sheet" || effect==="ribbon") && !sheet){releaseSource?.();layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
-    const job={layer,frame:0,complete,sheet,effect,releaseSource}; active=job;
-    if(outgoingRecording)try{job.recording=new window.DuckFurRecording.Recorder(bounds,outgoingRecording,(blob,sequence)=>window.DuckFurRecording.show(blob,{baseline:Boolean(sheetOptions.previousIntegration),sequence}));job.destinationRecording=formationSurface;}catch(error){metrics.recordingFailure=String(error.message);}
+    const job={layer,frame:0,complete,sheet,effect,releaseSource,releaseResponse:()=>{sheetOptions.response=null;sheetOptions.arrival=null;finishTimeline(record.timeline,reach,(metrics.materialSeconds||0));}}; active=job;
+    if(outgoingRecording)try{job.recording=new window.DuckFurRecording.Recorder(bounds,outgoingRecording,(blob,sequence)=>window.DuckFurRecording.show(blob,{baseline:Boolean(sheetOptions.previousIntegration||sheetOptions.legacyRecovery),sequence}));job.destinationRecording=formationSurface;}catch(error){metrics.recordingFailure=String(error.message);}
     // Keep physical age, but present measured growth from its contact-sized seed.
     // Setup or a stalled frame must not skip the opening expansion on screen.
     record.timeline.startedAt=record.activatedAt??started;record.timeline.duration=settings.duration;
@@ -198,17 +201,19 @@
     const recoveryDelay=contactGrowth?Math.max(0,Number(impulse.material.recoveryDelay)||0):0;
     // Let even the most distant region finish the same post-arrival hold before
     // whole-sheet formation flattens it. Coloring can proceed during this hold.
-    const lastArrival=(reach-45)/Math.max(60,impulse?.material.waveSpeed||540)*1000;
-    const recoveryPause=recoveryDelay?Math.max(0,Math.max(settings.duration*.5,lastArrival)+recoveryDelay-settings.duration*.7):0;
+    const sharedResponse=Boolean(sheet?.options?.response),arrival=sheet?.options?.arrival;
+    const lastArrival=sharedResponse?renderer.arrivalAt(arrival,reach-45)*1000:(reach-45)/Math.max(60,impulse?.material.waveSpeed||540)*1000;
+    const recoveryPause=recoveryDelay?Math.max(0,(sharedResponse?lastArrival:Math.max(settings.duration*.5,lastArrival))+recoveryDelay-settings.duration*.7):0;
     metrics.waveRecoveryDelayMs=recoveryDelay;metrics.waveRecoveryPauseMs=recoveryPause;
+    metrics.sharedResponse=sharedResponse;metrics.latestArrivalMs=lastArrival;
     let presentedMs=0;
     if(impulse && sheet?.options)sheet.options.impulseAge=Math.max(0,(record.timeline.startedAt-impulse.capturedAt)/1000);
     record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;const elapsed=contactGrowth?presentedMs:time-record.timeline.startedAt,settleAt=record.timeline.duration*.7;return held===null?clamp((elapsed-Math.min(recoveryPause,Math.max(0,elapsed-settleAt)))/record.timeline.duration,0,1):clamp(held,0,1);};
-    record.timeline.impulseSecondsAt=time=>Math.max(0,(time-(impulse?.capturedAt??record.timeline.startedAt))/1000);
+    record.timeline.impulseSecondsAt=time=>sharedResponse?presentedMs/1000:Math.max(0,(time-(impulse?.capturedAt??record.timeline.startedAt))/1000);
     record.timeline.deformationAt=time=>1-(window.DuckFurSheet?.formationState?.(record.timeline.progressAt(time)).flatten||0);
     record.timeline.radiusAt=time=>window.DuckFurSheet?.geometry(bounds.width,bounds.height,point,sheetOptions,record.timeline.progressAt(time)).radius||0;
     if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).origin,{timeline:record.timeline,activationId:record.id,impulse});
-    let previous=null,lastProgress=null;
+    let previous=null,lastProgress=null,lastMaterialSeconds=null;
     const debug=sheetOptions.debug && document.createElementNS ? document.createElementNS("http://www.w3.org/2000/svg","svg"):null;
     if(debug){debug.setAttribute("viewBox",`0 0 ${bounds.width} ${bounds.height}`);debug.style.cssText="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none";layer.append(debug);}
     function diagnostics(model){
@@ -232,18 +237,23 @@
       time=Math.max(time,performance.now());
       const elapsed=time-record.timeline.startedAt;
       const interval=previous===null?0:time-previous; previous=time;
-      metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;
       const held=typeof holdProgress === "function" ? holdProgress() : holdProgress;
+      if(held===null){metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;}
       if(contactGrowth && held===null)presentedMs+=Math.min(32,Math.max(0,interval));
       const progress=record.timeline.progressAt(time);
+      if(sharedResponse){
+        const inspectedAge=sheetOptions.recoveryAgeAt?.()??(sheetOptions.inspectRecovery?sheetOptions.recoveryAge:null);
+        const seconds=held===null?presentedMs/1000:inspectedAge!==null?inspectedAge/1000:progress*record.timeline.duration/1000+(progress>.7?recoveryPause/1000:0);
+        sheet.options.materialSeconds=seconds;sheet.options.sourceSeconds=seconds;metrics.materialSeconds=seconds;
+      }
       if(contactGrowth && held===null && sheet?.options)sheet.options.impulseAge=Math.max(0,(time-impulse.capturedAt)/1000-progress*record.timeline.duration/1000);
       if(impulse && surface?.gl && releaseSource && (progress!==lastProgress || contactGrowth && held===null)){
-        const sourceStart=performance.now();surface.advanceWaves(Math.min(.04,(interval||16)/1000));surface.draw();metrics.sourceAdvanceMs=Math.max(metrics.sourceAdvanceMs,performance.now()-sourceStart);
+        const sourceStart=performance.now();if(sharedResponse){let remaining=Math.min(.032,interval/1000);while(remaining>1e-7){const step=Math.min(1/240,remaining);surface.simulate(step);remaining-=step;}}else surface.advanceWaves(Math.min(.04,(interval||16)/1000));surface.draw();metrics.sourceAdvanceMs=Math.max(metrics.sourceAdvanceMs,performance.now()-sourceStart);
       }
 
-      if(sheet && (progress!==lastProgress || contactGrowth && held===null)){
+      if(sheet && (progress!==lastProgress || contactGrowth && held===null || sharedResponse && sheet.options.materialSeconds!==lastMaterialSeconds)){
         try {
-          const drawStart=performance.now(),model=sheet.draw(progress);metrics.sheetDrawMs=Math.max(metrics.sheetDrawMs,performance.now()-drawStart);lastProgress=progress;
+          const drawStart=performance.now(),model=sheet.draw(progress);metrics.sheetDrawMs=Math.max(metrics.sheetDrawMs,performance.now()-drawStart);lastProgress=progress;lastMaterialSeconds=sheet.options?.materialSeconds;
           if(metrics.dispersal && metrics.dispersal.firstFrameAt===undefined){metrics.dispersal.firstFrameAt=time;metrics.dispersal.pressToFirstFrameMs=time-record.contactAt;metrics.dispersal.clickToFirstFrameMs=time-record.timeline.startedAt;metrics.dispersal.firstRadius=model.radius;}
           if(!model){cancel("sheet-unavailable");return;}
           metrics.sheetPeak=sheet.getStats();
@@ -252,6 +262,10 @@
           const covered=sheetOptions.previousIntegration?progress>=.5:(own?.workspaceCovered??progress>=.5);
           wrapper.style.visibility=sheetOptions.formation && !sheetOptions.colorOnly && covered?"hidden":"visible";
           metrics.ownership=own||null;
+          if(sharedResponse){
+            const corners=[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]],far=corners.reduce((a,b)=>Math.hypot(b[0]-point.x,b[1]-point.y)>Math.hypot(a[0]-point.x,a[1]-point.y)?b:a),angle=Math.atan2(far[1]-point.y,far[0]-point.x),distance=Math.hypot(far[0]-point.x,far[1]-point.y);
+            metrics.responseTraces=[.15,.5,.9].map((fraction,i)=>{const r=distance*fraction,f=renderer.disturbance(model,angle,r),p=renderer.sample(model,angle/Math.PI,2*r/model.reach-1);return {region:["Near","Middle","Far"][i],radius:r,arrivalMs:f.arrival*1000,remainingMs:f.remaining*1000,displacement:f.radial,velocity:f.velocity,compression:f.compression,depression:f.depression,orientation:Math.atan2(f.tangential||0,f.radial||.0001),height:p.z,flatten:model.settleProgress,arrived:f.arrived};});
+          }else metrics.responseTraces=null;
           const sourceOwned=sheetOptions.previousIntegration?progress>=.5:(own?own.sourceCovered && own.sourceMerge>=1:progress>=.5);
           if(sourceOwned && releaseSource){releaseSource();releaseSource=null;job.releaseSource=null;metrics.sourceReleasedAt=progress;}
           if(!job.nativeStarted && formationSurface && window.DuckFormation?.captureNative && !sheetOptions.previousIntegration && (!contactGrowth || progress>=.12 || held!==null)){
@@ -273,7 +287,7 @@
           }
           job.recording?.frame(sheet.canvas,own?.workspaceCovered?job.destinationRecording:null,sheetOptions.debug?{contact:{x:record.contact.x-bounds.left,y:record.contact.y-bounds.top},origin:sheet.origin||point,radius:model.radius}:null);
           diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.tint=model.tintProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
-          if(sheetOptions.previousIntegration && held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
+          if(held===null && (sheetOptions.previousIntegration?interval>35 && metrics.longFrames>=2:interval>28 && metrics.longFrames>=6) && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}
       }else if(!sheet){
       const radius=ease(progress)*reach;
@@ -292,7 +306,7 @@
       if(progress<1 || held!==null) job.frame=requestAnimationFrame(frame);
       else {
         if(sheet){metrics.sheetPeak=sheet.getStats();sheet.dispose();}
-        if(job.nativeTimer!==undefined)clearTimeout(job.nativeTimer);job.recording?.frame(null,job.destinationRecording);job.recording?.finish();job.releaseSource?.();metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
+        if(job.nativeTimer!==undefined)clearTimeout(job.nativeTimer);job.recording?.frame(null,job.destinationRecording);job.recording?.finish();job.releaseSource?.();job.releaseResponse?.();metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
         if(focus && !focus.isConnected && !document.querySelector("dialog[open]")) {
           const heading=root.querySelector(".view.active h2,.view.active h1");
           if(heading) { heading.tabIndex=-1; heading.focus({preventScroll:true}); }

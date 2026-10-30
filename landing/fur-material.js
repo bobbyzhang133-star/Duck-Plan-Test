@@ -986,7 +986,7 @@
       this.waves ||= [];
       if(shared.activationId && this.waves.some(w=>w.activationId===shared.activationId))return;
       let rootField=null;
-      if(shared.impulse){
+      if(shared.impulse && shared.impulse.responseVersion!==2){
         rootField=new Float64Array(this.count*13);
         for(let i=0;i<this.count;i++){
           const dx=this.roots[i*2]*this.width-point.x,dy=this.roots[i*2+1]*this.height-point.y,r=Math.hypot(dx,dy),sample=window.DuckDispersal.angular(shared.impulse,Math.atan2(dy,dx));
@@ -1009,6 +1009,9 @@
       for (const wave of this.waves) {
         const previous = wave.radius;
         wave.radius = wave.timeline?.radiusAt ? Math.max(previous,wave.timeline.radiusAt(performance.now())) : previous+speed*step;
+        // The new contract uses this live spring as the reference. Do not replace
+        // its per-root targets/velocity/remaining holds with a second solver.
+        if(wave.impulse?.responseVersion===2)continue;
         const seconds=wave.impulse?(wave.timeline?.impulseSecondsAt?.(performance.now())??Math.max(0,(performance.now()-wave.impulse.capturedAt)/1000)):0;
         const fade=wave.timeline?.deformationAt?.(performance.now())??1;
         for (let index = 0; index < this.count; index += 1) {

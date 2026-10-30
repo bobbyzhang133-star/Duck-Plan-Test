@@ -257,3 +257,14 @@ test("a late native proxy cannot upload into a cancelled sheet",async()=>{
  env.transitions.workspace({root:env.root,effect:"sheet",sheetOptions:{formation:true},update(){}});env.tick(0);timers.shift()();env.transitions.cancel();resolve({nativeProxy:true});await Promise.resolve();await Promise.resolve();
  assert.equal(uploads,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });
+
+test('shared spring uses visible arrival and a capped presentation clock, including long-frame source substeps',()=>{
+ const env=animatedSetup();let shared,options,advanced=0;
+ const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:44})};
+ const impulse={responseVersion:2,capturedAt:0,pressRadius:54,material:{recoveryDelay:280,length:5.2},samples:[]};
+ const surface={gl:{},waves:[],captureDispersalState:()=>impulse,retainDispersal:()=>()=>{},emitWave(p,args){shared=args;},simulate(dt){assert.ok(dt<=1/240);advanced+=dt;},draw(){}};
+ env.context.window.DuckFur={get:()=>surface};env.context.window.DuckFurResponse={build:()=>({})};
+ env.context.window.DuckFurSheet={arrivalAt:()=>.38,disturbance:()=>({arrival:.1,remaining:.2,radial:1,velocity:2,compression:.1,depression:.1}),sample:()=>({z:0}),revealPolygon:()=> 'none',FurSheet:class{constructor(layer,args){options=this.options={...args.options,arrival:{}};}draw(p){return {radius:p*100,settleProgress:0};}getStats(){return {};}dispose(){}}};
+ env.transitions.workspace({root:env.root,source,effect:'sheet',update(){}});env.tick(300);assert.equal(options.materialSeconds,0);assert.equal(env.transitions.metrics.waveRecoveryPauseMs,0);
+ env.tick(316);assert.equal(options.materialSeconds,.016);env.tick(616);assert.equal(options.materialSeconds,.048);assert.ok(Math.abs(advanced-.048)<1e-6);assert.equal(shared.timeline.impulseSecondsAt(616),.048);env.transitions.cancel();assert.equal(env.layers.size,0);assert.equal(shared.timeline.progressAt(2000),1);
+});

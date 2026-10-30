@@ -12,7 +12,7 @@
       catch(error){this.stream.getTracks().forEach(t=>t.stop());this.canvas.width=this.canvas.height=0;this.outgoing=null;throw error;}
       this.recorder.ondataavailable=event=>{if(event.data.size){this.chunks.push(event.data);this.bytes+=event.data.size;if(this.bytes>24000000)this.finish();}};
       this.recorder.onstop=()=>{const blob=new Blob(this.chunks,{type:this.recorder.mimeType});this.chunks=[];this.stream.getTracks().forEach(t=>t.stop());this.onResult?.(blob,this.sequence);this.canvas.width=this.canvas.height=0;this.outgoing=null;};
-      this.recorder.start(100);this.timeout=setTimeout(()=>this.finish(),4000);
+      this.recorder.start(100);this.timeout=setTimeout(()=>this.finish(),12000);
     }
     frame(sheet,underlay,diagnostic){if(this.done)return;const {ctx,canvas}=this;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(underlay||this.outgoing,0,0,canvas.width,canvas.height);if(sheet)ctx.drawImage(sheet,0,0,canvas.width,canvas.height);
       if(diagnostic){

@@ -117,6 +117,10 @@
           <label>Growth only (no page reveal)<input name="growthOnly" type="checkbox"></label>
           <label class="wave-checkbox"><input name="colorOnly" type="checkbox"> Previous color-only formation (a274285 behavior)</label>
           <label>Previous integration (50de4ab)<input name="previousIntegration" type="checkbox"></label>
+          <label>Recovery hold<select name="responseDelay"><option value="0">0 ms</option><option value="280" selected>280 ms</option><option value="2000">2,000 ms</option><option value="5000">5,000 ms</option></select></label>
+          <label>Previous analytic recovery (a169d87)<input name="legacyRecovery" type="checkbox"></label>
+          <label>Inspect recovery age<input name="inspectRecovery" type="checkbox"></label>
+          <label>Held material age (ms)<input name="recoveryAge" type="range" min="0" max="8000" step="10" value="800"><output></output></label>
           <label>Independent growth baseline<input name="independentGrowth" type="checkbox"></label>
           <label>Previous fade handoff (comparison)<input name="legacyFade" type="checkbox"></label>
           <label>Hold geometry pose<input name="hold" type="checkbox"></label>
@@ -136,7 +140,9 @@
           <div class="sheet-example-cards"><article data-formation-surface><strong>Calculus</strong><p>Practice set · 3:30 PM</p></article><article data-formation-surface><strong>English</strong><p>Reading response · 6 PM</p></article><article data-formation-surface><strong>Physics</strong><p>Lab notes · tomorrow</p></article></div>
         </div>
         <div class="wave-demo-actions"><button type="button" class="secondary-button" id="sheet-press-hold">Hold press</button><button type="button" class="secondary-button" id="sheet-press-release">Just released</button><button type="button" class="secondary-button" id="sheet-crossing">First boundary crossing</button></div>
+        <pre id="sheet-response-traces" class="sheet-registration">Local response traces appear after a measured transition.</pre>
         <pre id="sheet-continuity" class="sheet-registration" aria-live="polite">Press continuity measurements appear here.</pre>
+        <p>Set the recovery preset and optional material age before selecting a held frame. Scrolling cancels the temporary sheet to preserve the workspace viewport.</p>
         <div id="sheet-frames" class="wave-demo-actions" aria-label="Hold animation frame"><button type="button" data-progress="0.0" class="secondary-button">0%</button><button type="button" data-progress="0.05" class="secondary-button">5%</button><button type="button" data-progress="0.1" class="secondary-button">10%</button><button type="button" data-progress="0.2" class="secondary-button">20%</button><button type="button" data-progress="0.35" class="secondary-button">35%</button><button type="button" data-progress="0.49" class="secondary-button">49%</button><button type="button" data-progress="0.51" class="secondary-button">51%</button><button type="button" data-progress="0.69" class="secondary-button">69%</button><button type="button" data-progress="0.71" class="secondary-button">71%</button><button type="button" data-progress="0.85" class="secondary-button">85%</button><button type="button" data-progress="0.97" class="secondary-button">97%</button><button type="button" data-progress="0.98" class="secondary-button">98%</button><button type="button" data-progress="0.99" class="secondary-button">99%</button><button type="button" data-progress="0.4" class="secondary-button">40%</button><button type="button" data-progress="0.5" class="secondary-button">50%</button><button type="button" data-progress="0.6" class="secondary-button">60%</button><button type="button" data-progress="0.7" class="secondary-button">70%</button><button type="button" data-progress="0.8" class="secondary-button">80%</button><button type="button" data-progress="0.9" class="secondary-button">90%</button><button type="button" data-progress="0.95" class="secondary-button">95%</button><button type="button" data-progress="1.0" class="secondary-button">100%</button></div>
         <video id="sheet-video-baseline" aria-label="Baseline transition recording" controls hidden style="width:100%;max-height:420px"></video><a id="sheet-baseline-download" hidden>Save baseline recording</a>
         <video id="sheet-video" aria-label="Refined transition recording" controls hidden style="width:100%;max-height:420px"></video><a id="sheet-video-download" hidden>Save workspace recording</a>
@@ -144,11 +150,11 @@
       <details><summary>Layout registration measurements</summary><pre id="sheet-registration" class="sheet-registration"></pre></details>
       </section>
     </main>
-    <script src="./fur-dispersal.js?v=recovery-hold-2"></script><script src="./fur-material.js?v=recovery-hold-2"></script>
+    <script src="./fur-response.js?v=shared-response-1"></script><script src="./fur-dispersal.js?v=shared-response-1"></script><script src="./fur-material.js?v=shared-response-1"></script>
     <script src="./button-interactions.js"></script>
-    <script src="./fur-ribbon.js"></script><script src="./fur-sheet.js?v=recovery-hold-2"></script><script src="./formation-surface.js?v=recovery-hold-2"></script><script src="./material-transitions.js?v=recovery-hold-2"></script>
+    <script src="./fur-ribbon.js"></script><script src="./fur-sheet.js?v=shared-response-1"></script><script src="./formation-surface.js?v=shared-response-1"></script><script src="./material-transitions.js?v=shared-response-1"></script>
     <script src="./fur-lab.js"></script>
     <script src="./wave-lab.js"></script>
-    <script src="./fur-recording.js?v=recovery-hold-2"></script><script src="./sheet-lab.js?v=recovery-hold-2"></script>
+    <script src="./fur-recording.js?v=shared-response-1"></script><script src="./sheet-lab.js?v=shared-response-1"></script>
   </body>
 </html>

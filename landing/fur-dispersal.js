@@ -36,7 +36,7 @@
     if(!surface.state || !surface.roots)return null;
     const bounds=record.bounds||surface.host.getBoundingClientRect(),contact=record.contact||{x:bounds.left+surface.pointer.x,y:bounds.top+surface.pointer.y};
     const point={x:contact.x-bounds.left,y:contact.y-bounds.top},pressRadius=surface.interactionRadius(true),o=surface.options;
-    const samples=Array.from({length:COUNT},(_,i)=>({angle:i*TAU/COUNT,radial:0,tangential:0,velocity:0,tangentialVelocity:0,compression:0,depression:0,radius:0,edge:edgeDistance(point,bounds,i*TAU/COUNT),weight:0}));
+    const samples=Array.from({length:COUNT},(_,i)=>({angle:i*TAU/COUNT,radial:0,tangential:0,velocity:0,tangentialVelocity:0,compression:0,depression:0,radius:0,edge:edgeDistance(point,bounds,i*TAU/COUNT),weight:0,response:{state:[0,0,0,0],velocity:[0,0,0,0],target:[0,0,0,0],hold:0,variation:0,length:0}}));
     for(let i=0;i<surface.count;i++){
       const dx=surface.roots[i*2]*surface.width-point.x,dy=surface.roots[i*2+1]*surface.height-point.y,r=Math.hypot(dx,dy);
       if(r<pressRadius*.12 || r>pressRadius*.68)continue;
@@ -48,13 +48,26 @@
       const w=Math.max(.001,surface.constructor.pressProfileForHandoff?.(r/pressRadius,o)?.influence??1);
       s.radial+=radial*scale*w;s.tangential+=tangent*scale*w;
       s.velocity+=((surface.velocity[k]*dx+surface.velocity[k+1]*dy)/r*scale+radial*length*1.62*.77*surface.velocity[k+2])*w;
-      s.tangentialVelocity+=(-surface.velocity[k]*dy+surface.velocity[k+1]*dx)/r*scale*w;
+      s.tangentialVelocity+=((-surface.velocity[k]*dy+surface.velocity[k+1]*dx)/r*scale+tangent*length*1.62*.77*surface.velocity[k+2])*w;
       s.compression+=c*w;s.depression+=surface.state[k+3]*w;s.radius+=r*w;s.weight+=w;
+      if(surface.pressTargets && surface.recoveryHold){
+        const q=s.response,project=data=>[(data[k]*dx+data[k+1]*dy)/r,(-data[k]*dy+data[k+1]*dx)/r,data[k+2],data[k+3]];
+        for(const [name,data] of [["state",surface.state],["velocity",surface.velocity],["target",surface.pressTargets]]){const value=project(data);for(let j=0;j<4;j++)q[name][j]+=value[j]*w;}
+        q.hold+=surface.recoveryHold[i]*w;q.variation+=(surface.rootSeeds?.[seed+5]??.5)*w;q.length+=length*w;
+      }
     }
     for(const s of samples)if(s.weight)for(const key of ["radial","tangential","velocity","tangentialVelocity","compression","depression","radius"])s[key]/=s.weight;
+    const responseVersion=surface.pressTargets && surface.recoveryHold && window.DuckFurResponse?2:1;
+    for(const s of samples){const q=s.response;if(s.weight){for(const name of ["state","velocity","target"])for(let j=0;j<4;j++)q[name][j]/=s.weight;for(const name of ["hold","variation","length"])q[name]/=s.weight;}
+      // Effective normalized coordinates preserve the measured CSS projection
+      // and its derivative despite correlations between strand length and bend.
+      const scale=q.length*1.62*(.68+.77*q.state[2]),scaleVelocity=q.length*1.62*.77*q.velocity[2];
+      if(responseVersion===2 && scale>1e-8){q.state[0]=s.radial/scale;q.state[1]=s.tangential/scale;q.velocity[0]=(s.velocity-q.state[0]*scaleVelocity)/scale;q.velocity[1]=(s.tangentialVelocity-q.state[1]*scaleVelocity)/scale;}
+      for(const name of ["state","velocity","target"])Object.freeze(q[name]);Object.freeze(q);
+    }
     // Empty sectors retain zero energy; never manufacture a perimeter kick.
-    const material=Object.freeze(Object.fromEntries(["length","density","splay","compression","pressDepth","transitionWidth","waveSpeed","recoveryDelay","labelLengthScale","labelWidthScale"].map(key=>[key,o[key]])));
-    return Object.freeze({activationId:record.id??null,modality:record.modality||"pointer",contact:Object.freeze({...contact}),bounds:Object.freeze({...bounds}),contactAt:record.contactAt??surface.pressStartedAt??now,responseMs:surface.pressResponseMs??null,capturedAt:now,pressRadius,material,samples:Object.freeze(samples.map(s=>Object.freeze(s)))});
+    const material=Object.freeze(Object.fromEntries(["stiffness","damping","length","density","splay","compression","pressDepth","transitionWidth","waveSpeed","recoveryDelay","labelLengthScale","labelWidthScale"].map(key=>[key,o[key]])));
+    return Object.freeze({responseVersion,activationId:record.id??null,modality:record.modality||"pointer",contact:Object.freeze({...contact}),bounds:Object.freeze({...bounds}),contactAt:record.contactAt??surface.pressStartedAt??now,responseMs:surface.pressResponseMs??null,capturedAt:now,pressRadius,material,samples:Object.freeze(samples.map(s=>Object.freeze(s)))});
   }
   window.DuckDispersal={COUNT,edgeDistance,angular,evolve,field,capture};
 })();
