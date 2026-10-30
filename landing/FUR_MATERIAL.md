@@ -1,5 +1,11 @@
 # DuckPlan interactive fur material
 
+## Exact click-centered radial origin — 2026-10-30
+
+The sheet now uses the original pointerdown contact as its radial center in workspace coordinates, including negative/outside coordinates. The former nearest-boundary emergence point remains diagnostic metadata only; it no longer replaces the actual wave origin. Workspace clipping and the stationary sidebar are preserved. Keyboard activation still uses the control center. Annular measured splay is smoothly pinned to zero horizontal displacement at radius zero in both CPU geometry and GLSL, so different angular samples cannot pull the shared center away from the press. Normal button interaction settings and later dye/flattening are unchanged. This supersedes earlier references to boundary-centered external emergence.
+
+All 82 tests pass, including off-center/external/viewport-clipped origins and 32-sector center projection through early growth. Real browser checks used a pointer at (458,443) above the workspace: overlay origin (411,-116.265625) plus overlay offset (47,559.265625) exactly recovered the pointer. An off-center internal press at (658,625) similarly recovered (611,65.734375) plus that offset. Red contact and violet radial-center diagnostics coincide; proof: `/private/tmp/duckplan-click-origin.png`. The held-frame preview compiled without shader errors. Local TEST only, no public deployment or shared-repository changes.
+
 ## Final wave smoothing and source integration — current local review, 2026-10-29
 
 This section supersedes the earlier source-hole and stippled-resolution descriptions below. Implements the supplied final-smoothing prompt against reviewed TEST baseline `50de4ab6644f2b85a798fccf5f536cd714e09a2e`; approved resting button shaders, root-owned labels/icons, normal brushing/press/recovery and semantic hit targets remain unchanged.

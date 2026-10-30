@@ -36,13 +36,14 @@
       contactAt:previous?.contactAt??performance.now(),timeline:{startedAt:performance.now(),duration:settings.duration}};
   }
   function mapActivation(record,rect) {
-    // Physical contact remains in viewport coordinates. Only emergence is clipped.
-    return {contact:{...record.contact},emergence:{x:clamp(record.contact.x-rect.left,0,rect.width),y:clamp(record.contact.y-rect.top,0,rect.height)},
+    // The radial center stays at the physical press, even outside this clip rect.
+    // Boundary emergence is diagnostic only; never substitute it for the origin.
+    return {contact:{...record.contact},origin:{x:record.contact.x-rect.left,y:record.contact.y-rect.top},emergence:{x:clamp(record.contact.x-rect.left,0,rect.width),y:clamp(record.contact.y-rect.top,0,rect.height)},
       external:record.contact.x<rect.left || record.contact.x>rect.left+rect.width || record.contact.y<rect.top || record.contact.y>rect.top+rect.height};
   }
   function origin(source,event,rect) {
     const record=activation && activation.source===source ? activation : captureActivation(source,event);
-    return mapActivation(record,rect).emergence;
+    return mapActivation(record,rect).origin;
   }
 
   function measure(root,layer){
@@ -110,7 +111,7 @@
     const record=activation && activation.source===source ? activation : captureActivation(source,event);
     record.consumed=true;
     record.impulse ||= source && window.DuckFur?.get(source)?.captureDispersalState?.(record);
-    const mapped=mapActivation(record,bounds),point=mapped.emergence;
+    const mapped=mapActivation(record,bounds),point=mapped.origin;
     const impulse=sheetOptions.independentGrowth?null:record.impulse;
     if(impulse){
       sheetOptions={...sheetOptions,impulse,sourceRect:{x:record.bounds.left-bounds.left,y:record.bounds.top-bounds.top,width:record.bounds.width,height:record.bounds.height},duration:settings.duration};
@@ -119,7 +120,7 @@
     }
     metrics.sourceAdvanceMs=0;metrics.sheetDrawMs=0;metrics.nativeProxyState=window.DuckFormation?.captureNative?"waiting":"unavailable";metrics.nativeProxyReady=false;metrics.nativeProxyLate=false;metrics.nativeProxyFailure=null;metrics.nativeProxyMs=0;metrics.sourceReleasedAt=null;
     metrics.dispersal=impulse?{activationId:record.id,contactAt:record.contactAt,capturedAt:impulse.capturedAt,clickAt:record.activatedAt??performance.now(),samples:impulse.samples,pressRadius:impulse.pressRadius,responseMs:impulse.responseMs,releaseToPreparationMs:Math.max(0,performance.now()-impulse.capturedAt),sourceRect:sheetOptions.sourceRect}:null;
-    metrics.activation={id:record.id,modality:record.modality,contact:record.contact,emergence:point,external:mapped.external};
+    metrics.activation={id:record.id,modality:record.modality,contact:record.contact,origin:point,emergence:mapped.emergence,external:mapped.external};
     metrics.snapshotBytes=0;
     const started=performance.now();
     const outgoingRecording=sheetOptions.record && window.DuckFurRecording?window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector):null;
@@ -196,7 +197,7 @@
     record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;return held===null?clamp((time-record.timeline.startedAt)/record.timeline.duration,0,1):clamp(held,0,1);};
     record.timeline.impulseSecondsAt=time=>(sheet?.options?.impulseAge||0)+record.timeline.progressAt(time)*record.timeline.duration/1000;
     record.timeline.radiusAt=time=>window.DuckFurSheet?.geometry(bounds.width,bounds.height,point,sheetOptions,record.timeline.progressAt(time)).radius||0;
-    if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).emergence,{timeline:record.timeline,activationId:record.id,impulse});
+    if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).origin,{timeline:record.timeline,activationId:record.id,impulse});
     let previous=null,lastProgress=null;
     const debug=sheetOptions.debug && document.createElementNS ? document.createElementNS("http://www.w3.org/2000/svg","svg"):null;
     if(debug){debug.setAttribute("viewBox",`0 0 ${bounds.width} ${bounds.height}`);debug.style.cssText="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none";layer.append(debug);}
@@ -204,7 +205,7 @@
       if(!debug || effect!=="sheet")return;
       const paths=renderer.boundaries(model);
       const circle=(x,y,color,label,dy=-8)=>`<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white"/><text x="${x+8}" y="${Math.max(14,y+dy)}" fill="${color}" stroke="white" stroke-width=".4" font-size="12">${label}</text>`;
-      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/><path d="${paths.flatten||""}" fill="none" stroke="#ea580c" stroke-dasharray="6 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18)+(sheetOptions.formation?(metrics.targets||[]).slice(1).map(t=>`<rect x="${t.x}" y="${t.y}" width="${t.width}" height="${t.height}" rx="${t.radius}" fill="none" stroke="#0891b2" stroke-width="1"/>`).join(""):"")+`<rect x="1" y="1" width="${bounds.width-2}" height="${bounds.height-2}" fill="none" stroke="#a16207" stroke-dasharray="2 4"/>`+[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#a16207"/>`).join("");
+      debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/><path d="${paths.flatten||""}" fill="none" stroke="#ea580c" stroke-dasharray="6 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed","Radial center",18)+(sheetOptions.formation?(metrics.targets||[]).slice(1).map(t=>`<rect x="${t.x}" y="${t.y}" width="${t.width}" height="${t.height}" rx="${t.radius}" fill="none" stroke="#0891b2" stroke-width="1"/>`).join(""):"")+`<rect x="1" y="1" width="${bounds.width-2}" height="${bounds.height-2}" fill="none" stroke="#a16207" stroke-dasharray="2 4"/>`+[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#a16207"/>`).join("");
       if(impulse){
         const sr=sheetOptions.sourceRect;
         const contact={x:record.contact.x-bounds.left,y:record.contact.y-bounds.top};

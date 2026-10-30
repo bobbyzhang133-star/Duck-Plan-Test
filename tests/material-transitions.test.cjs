@@ -99,6 +99,7 @@ test("pointer contact survives delayed click displacement and maps exactly insid
   assert.equal(click.id,down.id);assert.equal(click.contact.x,317);assert.equal(click.contact.y,211);
   const mapped=t.mapActivation(click,{left:100,top:150,width:800,height:500});
   assert.equal(mapped.emergence.x,217);assert.equal(mapped.emergence.y,61);assert.equal(mapped.external,false);
+  assert.equal(mapped.origin.x,217);assert.equal(mapped.origin.y,61);
 });
 test("keyboard activation is deliberately centered; external contact remains separate",()=>{
   const {transitions:t}=animatedSetup();const source={getBoundingClientRect:()=>({left:20,top:100,width:100,height:40})};
@@ -106,6 +107,18 @@ test("keyboard activation is deliberately centered; external contact remains sep
   assert.equal(key.contact.x,70);assert.equal(key.contact.y,120);
   const mapped=t.mapActivation(key,{left:250,top:50,width:550,height:600});
   assert.equal(mapped.contact.x,70);assert.equal(mapped.emergence.x,0);assert.equal(mapped.emergence.y,70);assert.equal(mapped.external,true);
+  assert.equal(mapped.origin.x,-180);assert.equal(mapped.origin.y,70);
+});
+test("sheet radial origin uses the exact press even outside the workspace or under viewport clipping",()=>{
+ for(const contact of [{x:31,y:44},{x:587,y:23},{x:318,y:206}]){
+  const env=animatedSetup();let origin;
+  env.root.getBoundingClientRect=()=>({left:100,top:-60,width:800,height:600,right:900,bottom:540});
+  const source={getBoundingClientRect:()=>({left:contact.x-7,top:contact.y-9,width:160,height:44})};
+  env.context.window.DuckFurSheet={FurSheet:class{constructor(layer,args){origin=args.origin;}getStats(){return {};}dispose(){}}};
+  env.transitions.workspace({root:env.root,source,event:{type:'click',detail:1,clientX:contact.x,clientY:contact.y},effect:'sheet',update(){}});
+  assert.equal(origin.x+100,contact.x);assert.equal(origin.y,contact.y);
+  assert.equal(env.transitions.metrics.activation.origin.x,origin.x);env.transitions.cancel();
+ }
 });
 test("button wave and sheet receive one shared timeline and activation ID",()=>{
   const env=animatedSetup();let shared,drawProgress;

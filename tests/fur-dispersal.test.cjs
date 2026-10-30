@@ -84,6 +84,18 @@ test('measured growth reaches its hold with continuous velocity and acceleration
  assert.ok(Math.abs(velocity)<.01);assert.ok(Math.abs(acceleration)<10);
  let previous=g(0);for(let i=1;i<=500;i++){const next=g(i/1000);assert.ok(next>=previous-1e-7);assert.ok(next<=g(.5)+1e-7);previous=next;}
 });
+test('measured annular splay never shifts the center away from the exact click',()=>{
+ const impulse=D.capture(surface(),record,30),origin={x:317,y:211};
+ for(const progress of [0,.05,.1,.2,.35]){
+  const model=window.DuckFurSheet.geometry(900,420,origin,{formation:true,impulse,duration:1000},progress);
+  for(let sector=0;sector<32;sector++){
+   const center=window.DuckFurSheet.sample(model,sector/16-1,-1);
+   const projected=window.DuckFurSheet.project(model,center);
+   assert.equal(center.x,origin.x);assert.equal(center.y,origin.y);
+   assert.equal(projected.x,origin.x);assert.equal(projected.y,origin.y);
+  }
+ }
+});
 test('resting-plane capture preserves the live pressed fiber state',()=>{
  const s=surface(),before=Float32Array.from(s.state),velocity=Float32Array.from(s.velocity);let draws=0;
  s.gl={};s.draw=()=>draws++;s.canvas={toDataURL(){assert.ok(s.state.every(v=>v===0));return 'data:image/png;test';}};

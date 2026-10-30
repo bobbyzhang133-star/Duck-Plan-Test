@@ -71,8 +71,8 @@
     const du=hi.u-lo.u,dz=hi.z-lo.z,len=Math.hypot(du,dz)||1;
     const thicknessScale=1-flattenAmount(model,r);
     const nx=Math.cos(angle),ny=Math.sin(angle),normal={x:-nx*dz/len,y:-ny*dz/len,z:du/len};
-    const fade=(1-smooth(model.progress/.5))*(1-model.settleProgress);
-    const dx=field?(nx*field.radial-ny*field.tangential)*fade:0,dy=field?(ny*field.radial+nx*field.tangential)*fade:0;
+    const fade=(1-smooth(model.progress/.5))*(1-model.settleProgress),pin=smooth(r/Math.max(1,(impulse?.pressRadius||0)*.12));
+    const dx=field?(nx*field.radial-ny*field.tangential)*fade*pin:0,dy=field?(ny*field.radial+nx*field.tangential)*fade*pin:0;
     return {x:model.origin.x+nx*center.u+dx-normal.x*layer*model.settings.thickness*thicknessScale* Math.min(1,model.radius/20),
       y:model.origin.y+ny*center.u+dy-normal.y*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),
       z:Math.max(0,center.z-(field?.depression||0)*model.settings.fiberLength*fade)-normal.z*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),normal,r,visible:r<=model.radius && model.radius>0 && flattenAmount(model,r)<1};
@@ -152,7 +152,8 @@
       vec2 gradient=vec2(reliefAt(pixel+vec2(1,0))-reliefAt(pixel-vec2(1,0)),reliefAt(pixel+vec2(0,1))-reliefAt(pixel-vec2(0,1)))*0.5;
       normal=normalize(normal+vec3(-gradient,0));
       vec4 impulse=impulseAt(v*3.14159265,r);float weight=impulseWeight();
-      pixel+=(direction*impulse.x+vec2(-direction.y,direction.x)*impulse.y)*weight;
+      // Annular measured splay must not displace the common radial center.
+      pixel+=(direction*impulse.x+vec2(-direction.y,direction.x)*impulse.y)*weight*smoothstep(0.0,max(1.0,u_pressRadius*0.12),r);
       return vec3(pixel,max(0.0,center.y-impulse.w*u_length*weight)+relief);
     }
     vec4 project(vec3 p) {
