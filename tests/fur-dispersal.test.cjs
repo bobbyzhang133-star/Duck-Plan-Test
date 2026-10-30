@@ -25,6 +25,16 @@ test('angular interpolation preserves outward direction and measured asymmetry w
  s.count=0;assert.equal(D.capture(s,record,30).samples[0].radial,0);
  assert.ok(Math.abs(D.angular(v,-.001).radial-D.angular(v,2*Math.PI-.001).radial)<1e-9);
 });
+test('wave holds inherit the captured button delay and start after local propagation',()=>{
+ const s=surface();s.options.recoveryDelay=2000;const impulse=D.capture(s,record,30);s.options.recoveryDelay=0;
+ assert.equal(impulse.material.recoveryDelay,2000);
+ const sample=D.angular(impulse,0),distance=sample.radius+impulse.material.waveSpeed*.4;
+ const arrival=D.field(impulse,0,distance,.4),held=D.field(impulse,0,distance,2.3),recovering=D.field(impulse,0,distance,2.8);
+ assert.equal(held.compression,arrival.compression);assert.equal(held.depression,arrival.depression);
+ assert.ok(held.radial>=arrival.radial);assert.ok(recovering.compression<held.compression);assert.ok(recovering.radial<held.radial);
+ const h=1e-6,left=D.field(impulse,0,distance,2.4-h),right=D.field(impulse,0,distance,2.4+h);
+ assert.ok(Math.abs(right.radial-left.radial)<.0001);assert.ok(Math.abs(right.velocity-left.velocity)<.001);
+});
 test('field preserves displacement/compression and initial velocity at measured seam within explicit tolerances',()=>{
  const v=D.capture(surface(),record,30),a=.4,s=D.angular(v,a),start=D.field(v,a,s.radius,0),dt=1e-6,next=D.field(v,a,s.radius,dt);
  assert.ok(Math.abs(start.radial-s.radial)<1e-10);assert.ok(Math.abs(start.compression-s.compression)<1e-10);
@@ -49,6 +59,14 @@ test('source continuation and sheet seam use identical impulse at matching physi
  const old=global.performance;global.performance={now:()=>80};try{s.advanceWaves(.016);}finally{global.performance=old;}
  const scale=5.2*1.62*(.68+.77*f.compression);
  assert.ok(Math.abs(s.state[0]*scale-f.radial)<1e-5);assert.ok(Math.abs(s.state[2]-f.compression)<1e-6);
+});
+test('source ownership returns recovered targets without stale press momentum',()=>{
+ const s=surface();s.options.recoveryDelay=280;const impulse=D.capture(s,record,30);
+ s.pressed=false;s.activePress=new Uint8Array(32);s.roots[0]=100/160;s.roots[1]=22/44;s.gl={};s.reducedMotion={matches:false};s.wake=()=>{};
+ s.pressTargets=new Float32Array(128).fill(.8);s.recoveryHold=new Float32Array(32);
+ s.emitWave({x:80,y:22},{impulse,timeline:{radiusAt:()=>40,progressAt:()=>.99,deformationAt:()=>0,impulseSecondsAt:()=>2}});
+ s.advanceWaves(.016);
+ assert.equal(s.state[0],0);assert.equal(s.pressTargets[0],0);assert.equal(s.velocity[0],0);assert.equal(s.recoveryHold[0],0);
 });
 test('cancelled press cannot be reused as a handoff',()=>{
  const s=surface();s.pressed=false;s.onPointerCancel({});assert.equal(s.captureDispersalState(record),null);

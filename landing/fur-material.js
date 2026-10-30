@@ -1005,12 +1005,12 @@
       if(this.dispersalOwned)this.dispersalOwned.fill(0);
       const width = Math.max(4, Number(this.options.waveWidth) || 22);
       const speed = Math.max(60, Number(this.options.waveSpeed) || 540);
-      this.waves = (this.waves || []).filter((wave) => wave.impulse ? (wave.timeline?.progressAt?.(performance.now())??0)<.5 : wave.radius < wave.reach + width);
+      this.waves = (this.waves || []).filter((wave) => wave.impulse ? (wave.timeline?.progressAt?.(performance.now())??0)<1 : wave.radius < wave.reach + width);
       for (const wave of this.waves) {
         const previous = wave.radius;
         wave.radius = wave.timeline?.radiusAt ? Math.max(previous,wave.timeline.radiusAt(performance.now())) : previous+speed*step;
         const seconds=wave.impulse?(wave.timeline?.impulseSecondsAt?.(performance.now())??Math.max(0,(performance.now()-wave.impulse.capturedAt)/1000)):0;
-        const fade=1-smoothstep(0,.5,wave.timeline?.progressAt?.(performance.now())||0);
+        const fade=wave.timeline?.deformationAt?.(performance.now())??1;
         for (let index = 0; index < this.count; index += 1) {
           if (this.pressed && this.activePress[index]) continue;
           const dx = this.roots[index*2] * this.width - wave.x;
@@ -1019,13 +1019,20 @@
           if(wave.impulse){
             const data=wave.rootField,k=index*13;
             if(distance>wave.radius || distance<data[k+12])continue;
-            const age=Math.max(0,seconds-data[k+9]),decay=Math.exp(-3*age)*data[k+10]*fade;
-            const radial=(data[k+3]+(data[k+5]+3*data[k+3])*age)*decay;
-            const tangent=(data[k+4]+(data[k+6]+3*data[k+4])*age)*decay;
+            const age=Math.max(0,seconds-data[k+9]),hold=Math.max(0,Number(wave.impulse.material.recoveryDelay)||0)/1000,attenuation=data[k+10]*fade,decay=Math.exp(-3*Math.max(0,age-hold))*attenuation;
+            const radial=window.DuckDispersal.evolve(data[k+3],data[k+5],age,hold)*attenuation;
+            const tangent=window.DuckDispersal.evolve(data[k+4],data[k+6],age,hold)*attenuation;
             const c=data[k+7]*decay,scale=Math.max(.001,data[k+11]*1.62*(.68+.77*c)),nx=data[k+1],ny=data[k+2],offset=index*STATE_STRIDE;
             this.state[offset]=(nx*radial-ny*tangent)/scale;
             this.state[offset+1]=(ny*radial+nx*tangent)/scale;
             this.state[offset+2]=c;this.state[offset+3]=data[k+8]*decay;
+            // Hand back the current held/recovered state, not stale press targets
+            // or pre-handoff velocity when this temporary owner finishes.
+            for(let component=0;component<STATE_STRIDE;component++){
+              if(this.pressTargets)this.pressTargets[offset+component]=this.state[offset+component];
+              if(this.velocity)this.velocity[offset+component]=0;
+            }
+            if(this.recoveryHold)this.recoveryHold[index]=Math.max(0,hold-age);
             this.dispersalOwned ||= new Uint8Array(this.count);this.dispersalOwned[index]=1;
             continue;
           }

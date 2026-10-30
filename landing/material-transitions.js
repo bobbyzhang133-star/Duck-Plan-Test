@@ -195,10 +195,17 @@
     // Setup or a stalled frame must not skip the opening expansion on screen.
     record.timeline.startedAt=record.activatedAt??started;record.timeline.duration=settings.duration;
     const contactGrowth=effect==="sheet" && impulse && !sheetOptions.previousIntegration;
+    const recoveryDelay=contactGrowth?Math.max(0,Number(impulse.material.recoveryDelay)||0):0;
+    // Let even the most distant region finish the same post-arrival hold before
+    // whole-sheet formation flattens it. Coloring can proceed during this hold.
+    const lastArrival=(reach-45)/Math.max(60,impulse?.material.waveSpeed||540)*1000;
+    const recoveryPause=recoveryDelay?Math.max(0,Math.max(settings.duration*.5,lastArrival)+recoveryDelay-settings.duration*.7):0;
+    metrics.waveRecoveryDelayMs=recoveryDelay;metrics.waveRecoveryPauseMs=recoveryPause;
     let presentedMs=0;
     if(impulse && sheet?.options)sheet.options.impulseAge=Math.max(0,(record.timeline.startedAt-impulse.capturedAt)/1000);
-    record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;return held===null?clamp((contactGrowth?presentedMs:time-record.timeline.startedAt)/record.timeline.duration,0,1):clamp(held,0,1);};
+    record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;const elapsed=contactGrowth?presentedMs:time-record.timeline.startedAt,settleAt=record.timeline.duration*.7;return held===null?clamp((elapsed-Math.min(recoveryPause,Math.max(0,elapsed-settleAt)))/record.timeline.duration,0,1):clamp(held,0,1);};
     record.timeline.impulseSecondsAt=time=>Math.max(0,(time-(impulse?.capturedAt??record.timeline.startedAt))/1000);
+    record.timeline.deformationAt=time=>1-(window.DuckFurSheet?.formationState?.(record.timeline.progressAt(time)).flatten||0);
     record.timeline.radiusAt=time=>window.DuckFurSheet?.geometry(bounds.width,bounds.height,point,sheetOptions,record.timeline.progressAt(time)).radius||0;
     if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).origin,{timeline:record.timeline,activationId:record.id,impulse});
     let previous=null,lastProgress=null;

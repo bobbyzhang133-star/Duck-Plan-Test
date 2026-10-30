@@ -15,14 +15,22 @@
     for(const key of ["radial","tangential","velocity","tangentialVelocity","compression","depression","radius","edge"])result[key]=a[key]*(1-t)+b[key]*t;
     return result;
   }
+  function evolve(position,velocity,age,hold=0){
+    // Continue the initial splay, then retain it until recovery is allowed.
+    const delay=Math.max(0,hold),push=.06,elapsed=Math.min(age,delay);
+    const held=position+velocity*push*(1-Math.exp(-elapsed/push));
+    if(age<delay)return held;
+    const recovery=age-delay,v=velocity*Math.exp(-delay/push);
+    return (held+(v+3*held)*recovery)*Math.exp(-3*recovery);
+  }
   function field(impulse,angle,distance,seconds=0){
     const s=angular(impulse,angle),outside=Math.max(0,distance-s.radius),speed=Math.max(60,impulse?.material?.waveSpeed||540);
     const age=Math.max(0,seconds-outside/speed),attenuation=Math.exp(-outside/Math.max(1,(impulse?.pressRadius||1)*8));
-    const damping=3,decay=Math.exp(-damping*age);
+    const hold=Math.max(0,Number(impulse?.material?.recoveryDelay)||0)/1000,recovery=Math.max(0,age-hold),damping=3,decay=Math.exp(-damping*recovery);
     // Critically damped continuation: f(0)=measured displacement, f'(0)=measured velocity.
-    const evolve=(position,velocity)=>(position+(velocity+damping*position)*age)*decay*attenuation;
-    return {...s,radial:evolve(s.radial,s.velocity),tangential:evolve(s.tangential,s.tangentialVelocity),compression:s.compression*decay*attenuation,depression:s.depression*decay*attenuation,
-      velocity:(s.velocity-damping*(s.velocity+damping*s.radial)*age)*decay*attenuation};
+    const held=s.radial+s.velocity*.06*(1-Math.exp(-hold/.06)),v=s.velocity*Math.exp(-hold/.06);
+    return {...s,radial:evolve(s.radial,s.velocity,age,hold)*attenuation,tangential:evolve(s.tangential,s.tangentialVelocity,age,hold)*attenuation,compression:s.compression*decay*attenuation,depression:s.depression*decay*attenuation,
+      velocity:(age<hold?s.velocity*Math.exp(-age/.06):(v-damping*(v+damping*held)*recovery)*decay)*attenuation};
   }
   function capture(surface,record={},now=performance.now()){
     if(!surface.state || !surface.roots)return null;
@@ -48,5 +56,5 @@
     const material=Object.freeze(Object.fromEntries(["length","density","splay","compression","pressDepth","transitionWidth","waveSpeed","recoveryDelay","labelLengthScale","labelWidthScale"].map(key=>[key,o[key]])));
     return Object.freeze({activationId:record.id??null,modality:record.modality||"pointer",contact:Object.freeze({...contact}),bounds:Object.freeze({...bounds}),contactAt:record.contactAt??surface.pressStartedAt??now,responseMs:surface.pressResponseMs??null,capturedAt:now,pressRadius,material,samples:Object.freeze(samples.map(s=>Object.freeze(s)))});
   }
-  window.DuckDispersal={COUNT,edgeDistance,angular,field,capture};
+  window.DuckDispersal={COUNT,edgeDistance,angular,evolve,field,capture};
 })();

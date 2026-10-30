@@ -72,7 +72,7 @@
     const du=hi.u-lo.u,dz=hi.z-lo.z,len=Math.hypot(du,dz)||1;
     const thicknessScale=1-flattenAmount(model,r);
     const nx=Math.cos(angle),ny=Math.sin(angle),normal={x:-nx*dz/len,y:-ny*dz/len,z:du/len};
-    const fade=(1-smooth(model.progress/.5))*(1-model.settleProgress),pin=smooth(r/Math.max(1,(impulse?.pressRadius||0)*.12));
+    const fade=(model.settings.previousIntegration?1-smooth(model.progress/.5):1)*(1-model.settleProgress),pin=smooth(r/Math.max(1,(impulse?.pressRadius||0)*.12));
     const dx=field?(nx*field.radial-ny*field.tangential)*fade*pin:0,dy=field?(ny*field.radial+nx*field.tangential)*fade*pin:0;
     return {x:model.origin.x+nx*center.u+dx-normal.x*layer*model.settings.thickness*thicknessScale* Math.min(1,model.radius/20),
       y:model.origin.y+ny*center.u+dy-normal.y*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),
@@ -98,16 +98,23 @@
     uniform float u_progress,u_reach,u_radius,u_settleProgress,u_tintProgress,u_band,u_opacity,u_bodyFloor,u_amplitude,u_formation;
     uniform float u_width,u_elevation,u_curvature,u_thickness,u_lighting,u_length,u_hasField,u_colorOnly;
     uniform sampler2D u_targets;
-    uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed,u_sourceMerge,u_previousIntegration;
+    uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed,u_sourceMerge,u_previousIntegration,u_recoveryDelay;
+    vec2 heldMotion(vec2 position,vec2 velocity,float age){
+      float elapsed=min(age,u_recoveryDelay),push=0.06;
+      vec2 held=position+velocity*push*(1.0-exp(-elapsed/push));
+      if(age<u_recoveryDelay)return held;
+      float recovery=age-u_recoveryDelay;vec2 v=velocity*exp(-u_recoveryDelay/push);
+      return (held+(v+3.0*held)*recovery)*exp(-3.0*recovery);
+    }
     uniform vec4 u_impulse[32],u_motion[32],u_sourceRect;
     vec4 impulseAt(float angle,float r){
       float sector=mod(angle/6.2831853+1.0,1.0)*32.0;int i=int(floor(sector));int j=(i+1)%32;float f=fract(sector);
       vec4 s=mix(u_impulse[i],u_impulse[j],f),m=mix(u_motion[i],u_motion[j],f);
       float outside=max(0.0,r-m.z),age=max(0.0,u_impulseSeconds-outside/max(60.0,u_waveSpeed));
-      float decay=exp(-3.0*age-outside/max(1.0,u_pressRadius*8.0));
-      return vec4((s.xy+(m.xy+3.0*s.xy)*age)*decay,s.zw*decay)*u_hasImpulse;
+      float attenuation=exp(-outside/max(1.0,u_pressRadius*8.0)),decay=exp(-3.0*max(0.0,age-u_recoveryDelay));
+      return vec4(heldMotion(s.xy,m.xy,age)*attenuation,s.zw*decay*attenuation)*u_hasImpulse;
     }
-    float impulseWeight(){return u_hasImpulse*(1.0-smoothstep(0.0,0.5,u_progress))*(1.0-u_settleProgress);}
+    float impulseWeight(){return u_hasImpulse*(u_previousIntegration>0.5?1.0-smoothstep(0.0,0.5,u_progress):1.0)*(1.0-u_settleProgress);}
     bool sourceInterior(vec2 pixel){
       vec2 halfSize=u_sourceRect.zw*0.5;float radius=min(halfSize.x,halfSize.y);
       vec2 q=abs(pixel-u_sourceRect.xy-halfSize)-(halfSize-vec2(radius));
@@ -360,7 +367,7 @@
         this.bufferBytes=mesh.byteLength+seeds.byteLength;
         this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;
         this.uniforms=new Map();
-        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
+        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","recoveryDelay","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
         this.bakeButtonPile();
         gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
         // Compile/validate the first draw before starting the visible frame clock.
@@ -467,7 +474,7 @@
       gl.uniform1i(u.source,3);gl.uniform1f(u.hasSource,this.sourceTexture?1:0);
       const sr=this.sourceImageRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceImageRect,sr.x,sr.y,sr.width,sr.height);
       const impulse=s.impulse;
-      gl.uniform1f(u.hasImpulse,impulse?1:0);gl.uniform1f(u.impulseSeconds,model.impulseSeconds||0);gl.uniform1f(u.pressRadius,impulse?.pressRadius||1);gl.uniform1f(u.waveSpeed,impulse?.material.waveSpeed||540);
+      gl.uniform1f(u.recoveryDelay,s.previousIntegration?0:Math.max(0,Number(impulse?.material.recoveryDelay)||0)/1000);gl.uniform1f(u.hasImpulse,impulse?1:0);gl.uniform1f(u.impulseSeconds,model.impulseSeconds||0);gl.uniform1f(u.pressRadius,impulse?.pressRadius||1);gl.uniform1f(u.waveSpeed,impulse?.material.waveSpeed||540);
       const rect=s.sourceRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceRect,rect.x,rect.y,rect.width,rect.height);
       if(impulse){gl.uniform4fv(u["impulse[0]"],(this.impulseData ||= new Float32Array(impulse.samples.flatMap(v=>[v.radial,v.tangential,v.compression,v.depression]))));gl.uniform4fv(u["motion[0]"],(this.motionData ||= new Float32Array(impulse.samples.flatMap(v=>[v.velocity,v.tangentialVelocity,v.radius,v.edge]))));}
       gl.uniform2f(u.size,this.width,this.height);gl.uniform2f(u.origin,this.origin.x,this.origin.y);
