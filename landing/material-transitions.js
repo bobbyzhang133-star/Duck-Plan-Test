@@ -259,7 +259,7 @@
             const frame={progress,settlement:model.settleProgress,layout:measure(root,layer),anchors:renderer.project?[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>({x,y,projected:renderer.project(model,{x,y,z:20.48*(1-model.settleProgress)})})):[]};
             metrics.registration.frames=metrics.registration.frames.filter(item=>Math.abs(item.progress-progress)>.001).slice(-15);metrics.registration.frames.push(frame);
           }
-          job.recording?.frame(sheet.canvas,own?.workspaceCovered?job.destinationRecording:null);
+          job.recording?.frame(sheet.canvas,own?.workspaceCovered?job.destinationRecording:null,sheetOptions.debug?{contact:{x:record.contact.x-bounds.left,y:record.contact.y-bounds.top},origin:sheet.origin||point}:null);
           diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.tint=model.tintProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
           if(sheetOptions.previousIntegration && held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}

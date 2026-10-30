@@ -14,7 +14,16 @@
       this.recorder.onstop=()=>{const blob=new Blob(this.chunks,{type:this.recorder.mimeType});this.chunks=[];this.stream.getTracks().forEach(t=>t.stop());this.onResult?.(blob,this.sequence);this.canvas.width=this.canvas.height=0;this.outgoing=null;};
       this.recorder.start(100);this.timeout=setTimeout(()=>this.finish(),4000);
     }
-    frame(sheet,underlay){if(this.done)return;const {ctx,canvas}=this;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(underlay||this.outgoing,0,0,canvas.width,canvas.height);if(sheet)ctx.drawImage(sheet,0,0,canvas.width,canvas.height);}
+    frame(sheet,underlay,diagnostic){if(this.done)return;const {ctx,canvas}=this;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(underlay||this.outgoing,0,0,canvas.width,canvas.height);if(sheet)ctx.drawImage(sheet,0,0,canvas.width,canvas.height);
+      if(diagnostic){
+        const {contact,origin}=diagnostic;ctx.save();ctx.lineWidth=2;
+        ctx.strokeStyle="#dc2626";ctx.beginPath();ctx.moveTo(contact.x-7,contact.y);ctx.lineTo(contact.x+7,contact.y);ctx.moveTo(contact.x,contact.y-7);ctx.lineTo(contact.x,contact.y+7);ctx.stroke();
+        ctx.strokeStyle="#2563eb";ctx.beginPath();ctx.arc(origin.x,origin.y,11,0,Math.PI*2);ctx.stroke();
+        ctx.fillStyle="rgba(255,255,255,.95)";ctx.fillRect(8,canvas.height-48,Math.min(canvas.width-16,580),40);ctx.fillStyle="#201b10";ctx.font="13px monospace";
+        ctx.fillText(`Red +: press (${contact.x.toFixed(1)}, ${contact.y.toFixed(1)}) / blue O: renderer origin`,14,canvas.height-32);
+        ctx.fillText(`Origin (${origin.x.toFixed(1)}, ${origin.y.toFixed(1)}) | distance ${Math.hypot(origin.x-contact.x,origin.y-contact.y).toFixed(2)} px`,14,canvas.height-16);ctx.restore();
+      }
+    }
     finish(){if(this.done)return;this.done=true;clearTimeout(this.timeout);if(this.recorder.state!=="inactive")this.recorder.stop();else this.stream.getTracks().forEach(t=>t.stop());}
   }
   function show(blob,{baseline=false,sequence=0}={}){
