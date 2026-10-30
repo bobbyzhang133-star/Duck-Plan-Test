@@ -59,7 +59,7 @@ test('retained source defers unmount cleanup and releases exactly once',()=>{
 });
 test('grounded seam matches projected sample displacement with no independent roll offset',()=>{
  const impulse=D.capture(surface(),record,30),a=0,r=D.angular(impulse,a).edge;
- const m=window.DuckFurSheet.geometry(800,420,{x:100,y:90},{formation:true,impulse,duration:1000},.1),p=window.DuckFurSheet.sample(m,0,2*r/m.reach-1),f=D.field(impulse,a,r,.1),fade=1-(.2*.2*(3-2*.2));
+ const m=window.DuckFurSheet.geometry(800,420,{x:100,y:90},{formation:true,impulse,duration:1000,previousIntegration:true},.1),p=window.DuckFurSheet.sample(m,0,2*r/m.reach-1),f=D.field(impulse,a,r,.1),fade=1-(.2*.2*(3-2*.2));
  assert.ok(Math.abs(p.x-(100+r+f.radial*fade))<1e-8);assert.ok(Math.abs(p.y-90)<1e-8);assert.equal(p.z,0);
 });
 test('confirmed native click does not add another impulse when the workspace consumes it',()=>{
@@ -67,4 +67,29 @@ test('confirmed native click does not add another impulse when the workspace con
  const record={contact:{x:180,y:222},id:9,impulse:{},consumed:true};let waves=0;
  s.host.dataset={};s.emitWave=()=>waves++;window.DuckTransitions={getActivation:()=>record};global.queueMicrotask=fn=>pending.push(fn);
  try{s.onActivate({detail:0});pending.shift()();assert.equal(waves,0);record.consumed=false;s.onActivate({detail:0});pending.shift()();assert.equal(waves,1);}finally{global.queueMicrotask=oldMicrotask;window.DuckTransitions=oldTransitions;}
+});
+test('source ownership follows grounded coverage and removes the isolated pill before 35 percent',()=>{
+ const impulse=D.capture(surface(),record,30),opts={formation:true,impulse,duration:1000,sourceRect:{x:320,y:40,width:160,height:44}},g=p=>window.DuckFurSheet.geometry(900,420,{x:400,y:62},opts,p),own=p=>window.DuckFurSheet.ownership(g(p));
+ assert.equal(own(0).sourceCovered,false);assert.equal(own(0).sourceMerge,0);
+ let previous=0;for(let i=0;i<=100;i++){const o=own(i/100);assert.ok(o.sourceMerge>=previous);previous=o.sourceMerge;if(o.sourceMerge===1)assert.ok(o.grounded>=o.sourceFar);}
+ assert.equal(own(.35).sourceMerge,1);assert.equal(own(.35).sourceCovered,true);
+ for(const p of [.49,.5,.51]){assert.equal(own(p).sourceMerge,1);assert.equal(own(p).sourceCovered,true);}
+ assert.equal(own(.5).workspaceCovered,true);
+ // Same progress, different actual material coverage must not imply ownership.
+ const small=g(.5);small.radius=10;assert.equal(window.DuckFurSheet.ownership(small).sourceCovered,false);assert.equal(window.DuckFurSheet.ownership(small).workspaceCovered,false);
+});
+test('measured growth reaches its hold with continuous velocity and acceleration',()=>{
+ const impulse=D.capture(surface(),record,30),opts={formation:true,impulse,duration:1000},g=p=>window.DuckFurSheet.geometry(900,420,{x:400,y:62},opts,p).radius;
+ const h=.00001,velocity=(g(.5)-g(.5-h))/h,acceleration=(g(.5)-2*g(.5-h)+g(.5-2*h))/(h*h);
+ assert.ok(Math.abs(velocity)<.01);assert.ok(Math.abs(acceleration)<10);
+ let previous=g(0);for(let i=1;i<=500;i++){const next=g(i/1000);assert.ok(next>=previous-1e-7);assert.ok(next<=g(.5)+1e-7);previous=next;}
+});
+test('resting-plane capture preserves the live pressed fiber state',()=>{
+ const s=surface(),before=Float32Array.from(s.state),velocity=Float32Array.from(s.velocity);let draws=0;
+ s.gl={};s.draw=()=>draws++;s.canvas={toDataURL(){assert.ok(s.state.every(v=>v===0));return 'data:image/png;test';}};
+ assert.equal(s.captureRestFrame(),'data:image/png;test');assert.deepEqual(s.state,before);assert.deepEqual(s.velocity,velocity);assert.equal(draws,2);
+});
+test('failed native image capture still restores the live fur simulation',()=>{
+ const s=surface(),before=Float32Array.from(s.state);let draws=0;s.gl={};s.draw=()=>draws++;s.canvas={toDataURL(){throw Error('capture unavailable');}};
+ assert.throws(()=>s.captureRestFrame(),/capture unavailable/);assert.deepEqual(s.state,before);assert.equal(draws,2);
 });

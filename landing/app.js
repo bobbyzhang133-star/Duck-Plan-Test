@@ -380,3 +380,6 @@ setInterval(refreshDateBoundary, 60000);
 const requestedView = location.hash.replace("#", "");
 renderAll();
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
+
+// One short-lived preparation lease; no extra permanent context per button.
+if("requestIdleCallback" in window)requestIdleCallback(()=>{const source=document.querySelector('.workspace [data-transition="workspace"].fur-material');if(source)window.DuckTransitions?.prepareWorkspace({root:workspace,source});},{timeout:1000});

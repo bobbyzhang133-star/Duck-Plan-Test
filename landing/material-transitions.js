@@ -3,7 +3,19 @@
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const settings = { duration: 1000, fold: 0.55, reducedMotion: false, effect: "sheet" };
   const metrics = { frames: 0, longFrames: 0, maxFrameMs: 0, durationMs: 0, layers: 0, snapshotMs: 0, snapshotBytes: 0, cancelled: 0 };
-  let active = null;
+  let active = null,prepared=null,preparedTimer;
+  function clearPrepared(){if(preparedTimer!==undefined)clearTimeout(preparedTimer);prepared?.sheet.dispose();prepared=null;}
+  function prepareWorkspace({root=document.querySelector(".workspace"),source,options={}}={}){
+    if(active || prepared || reduced() || document.hidden || !root || !source || !window.DuckFurSheet)return false;
+    const r=root.getBoundingClientRect(),width=Math.max(0,Math.min(innerWidth,r.right)-Math.max(0,r.left)),height=Math.max(0,Math.min(innerHeight,r.bottom)-Math.max(0,r.top));
+    const surface=window.DuckFur?.get(source),impulse=surface?.captureDispersalState?.();if(!width||!height||!impulse)return false;
+    try{
+      const container=document.createElement("div"),start=performance.now();
+      const sheet=new window.DuckFurSheet.FurSheet(container,{width,height,origin:{x:width/2,y:height/2},options:{...settings,...options,renderer:"sheet",formation:true,impulse,fiberLength:impulse.material.length??5.5,furDensity:impulse.material.density??1},onFailure:()=>{clearPrepared();cancel("prepared-context-lost");}});
+      prepared={sheet};metrics.preparationMs=performance.now()-start;preparedTimer=setTimeout(clearPrepared,2000);return true;
+    }catch(error){clearPrepared();metrics.preparationFailure=String(error.message);return false;}
+  }
+
   const morphs = new Map();
   let activation = null;
   const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
@@ -75,9 +87,9 @@
   function cancel(reason="interrupted") {
     if (!active) return;
     const current=active; active=null;
-    cancelAnimationFrame(current.frame);
+    cancelAnimationFrame(current.frame);if(current.nativeTimer!==undefined)clearTimeout(current.nativeTimer);
     if(current.sheet){metrics.sheetPeak=current.sheet.getStats();current.sheet.dispose();}
-    current.releaseSource?.();current.layer.remove(); metrics.layers=0;
+    current.recording?.finish();current.releaseSource?.();current.layer.remove(); metrics.layers=0;
     metrics.cancelled++;metrics.lastCancellation=reason;
     current.complete?.({cancelled:true,reason});
   }
@@ -86,6 +98,8 @@
     let reusable=(effect==="sheet" || effect==="ribbon") && active?.sheet?.canRetarget && active.effect===effect ? active.sheet : null;
     if(reusable)active.sheet=null;
     cancel();
+    if(effect!=="sheet")clearPrepared();
+    if(!reusable && effect==="sheet" && prepared){reusable=prepared.sheet;prepared=null;if(preparedTimer!==undefined)clearTimeout(preparedTimer);}
     if (!root || reduced() || document.hidden || !root.getClientRects().length) { reusable?.dispose(); update?.(); complete?.({cancelled:false}); return; }
     const before=measure(root,null);
     const rect=root.getBoundingClientRect();
@@ -103,11 +117,12 @@
       if(Number.isFinite(impulse.material.length))sheetOptions.fiberLength=impulse.material.length;
       if(Number.isFinite(impulse.material.density))sheetOptions.furDensity=impulse.material.density;
     }
-    metrics.sourceAdvanceMs=0;metrics.sheetDrawMs=0;
+    metrics.sourceAdvanceMs=0;metrics.sheetDrawMs=0;metrics.nativeProxyState=window.DuckFormation?.captureNative?"waiting":"unavailable";metrics.nativeProxyReady=false;metrics.nativeProxyLate=false;metrics.nativeProxyFailure=null;metrics.nativeProxyMs=0;metrics.sourceReleasedAt=null;
     metrics.dispersal=impulse?{activationId:record.id,contactAt:record.contactAt,capturedAt:impulse.capturedAt,clickAt:record.activatedAt??performance.now(),samples:impulse.samples,pressRadius:impulse.pressRadius,responseMs:impulse.responseMs,releaseToPreparationMs:Math.max(0,performance.now()-impulse.capturedAt),sourceRect:sheetOptions.sourceRect}:null;
     metrics.activation={id:record.id,modality:record.modality,contact:record.contact,emergence:point,external:mapped.external};
     metrics.snapshotBytes=0;
     const started=performance.now();
+    const outgoingRecording=sheetOptions.record && window.DuckFurRecording?window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector):null;
     let copy;
     try{copy=snapshot(root);}catch(error){reusable?.dispose();update?.();complete?.({cancelled:false,fallback:true});return;}
     const layer=document.createElement("div");
@@ -147,8 +162,12 @@
     const focus=document.activeElement;
     const surface=source && window.DuckFur?.get(source);
     let releaseSource=impulse?surface?.retainDispersal?.():null;
+    const sourceCanvasBounds=surface?.canvas?.getBoundingClientRect?.();
     const originalCanvases=[...root.querySelectorAll("canvas")],sourceIndex=originalCanvases.indexOf(surface?.canvas);
     const sourceCopy=sourceIndex>=0?copy.querySelectorAll("canvas")[sourceIndex]:null;
+    if(impulse && sheet?.setSource && !sheetOptions.previousIntegration && sourceCanvasBounds){
+      sheet.setSource(sourceCopy||surface.canvas,{x:sourceCanvasBounds.left-bounds.left,y:sourceCanvasBounds.top-bounds.top,width:sourceCanvasBounds.width,height:sourceCanvasBounds.height});
+    }
     if(sourceCopy && surface.canvas.parentElement){
       // Move the live decorative canvas into the inert outgoing button. Leave its
       // captured canvas in the real control for destination capture; no GPU readback per frame.
@@ -157,11 +176,12 @@
       releaseSource=()=>{if(!surface.pendingDestroy && sourceParent.isConnected)sourceParent.append(surface.canvas);sourceCopy.remove();release?.();};
     }
 
+    let formationSurface=null;
     try {
       update?.();
       if(sheet && sheetOptions.formation){
         if(!window.DuckFormation || !sheet.setDestination)throw Error("Formation capture unavailable");
-        const surface=window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector);
+        const surface=window.DuckFormation.capture(root,bounds,sheetOptions.surfaceSelector);formationSurface=surface;
         sheet.setDestination(surface);metrics.targets=surface.formation?.targets||[];metrics.contentRegions=surface.formation?.contents||[];
         metrics.registration={before,destination:measure(root,layer),frames:[]};
       }
@@ -169,6 +189,7 @@
     if((effect === "sheet" || effect==="ribbon") && !sheet){releaseSource?.();layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
     const job={layer,frame:0,complete,sheet,effect,releaseSource}; active=job;
+    if(outgoingRecording)try{job.recording=new window.DuckFurRecording.Recorder(bounds,outgoingRecording,(blob,sequence)=>window.DuckFurRecording.show(blob,{baseline:Boolean(sheetOptions.previousIntegration),sequence}));job.destinationRecording=formationSurface;}catch(error){metrics.recordingFailure=String(error.message);}
     // Physical time belongs to the confirmed activation, not renderer readiness.
     record.timeline.startedAt=record.activatedAt??started;record.timeline.duration=settings.duration;
     if(impulse && sheet?.options)sheet.options.impulseAge=Math.max(0,(record.timeline.startedAt-impulse.capturedAt)/1000);
@@ -203,9 +224,9 @@
       metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;
       const held=typeof holdProgress === "function" ? holdProgress() : holdProgress;
       const progress=record.timeline.progressAt(time);
-      if(impulse && surface?.gl && progress<.5 && progress!==lastProgress){
+      if(impulse && surface?.gl && releaseSource && progress!==lastProgress){
         const sourceStart=performance.now();surface.advanceWaves(Math.min(.04,(interval||16)/1000));surface.draw();metrics.sourceAdvanceMs=Math.max(metrics.sourceAdvanceMs,performance.now()-sourceStart);
-      }else if(progress>=.5 && releaseSource){releaseSource();releaseSource=null;job.releaseSource=null;}
+      }
 
       if(sheet && progress!==lastProgress){
         try {
@@ -214,15 +235,32 @@
           if(!model){cancel("sheet-unavailable");return;}
           metrics.sheetPeak=sheet.getStats();
           wrapper.style.clipPath=sheetOptions.growthOnly?"none":renderer.revealPolygon(model);
-          // After full coverage, native destination lies beneath the forming material.
-          // Semantic content resolves through physically shrinking strand footprints.
-          wrapper.style.visibility=sheetOptions.formation && !sheetOptions.colorOnly && progress>=.5?"hidden":"visible";
+          const own=renderer.ownership?.(model);
+          const covered=sheetOptions.previousIntegration?progress>=.5:(own?.workspaceCovered??progress>=.5);
+          wrapper.style.visibility=sheetOptions.formation && !sheetOptions.colorOnly && covered?"hidden":"visible";
+          metrics.ownership=own||null;
+          const sourceOwned=sheetOptions.previousIntegration?progress>=.5:(own?own.sourceCovered && own.sourceMerge>=1:progress>=.5);
+          if(sourceOwned && releaseSource){releaseSource();releaseSource=null;job.releaseSource=null;metrics.sourceReleasedAt=progress;}
+          if(!job.nativeStarted && formationSurface && window.DuckFormation?.captureNative && !sheetOptions.previousIntegration){
+            job.nativeStarted=true;metrics.nativeProxyState="scheduled";
+            // Let the first physical frame paint before assembling its final native proxy.
+            job.nativeTimer=setTimeout(()=>{
+              if(active!==job)return;
+              metrics.nativeProxyState="capturing";
+              window.DuckFormation.captureNative(root,bounds,formationSurface.formation).then(canvas=>{
+                if(active!==job)return;
+                if(held===null && record.timeline.progressAt(performance.now())>=.5){metrics.nativeProxyLate=true;return;}
+                sheet.setDestination(canvas);job.destinationRecording=canvas;metrics.nativeProxyMs=canvas.captureMs;metrics.nativeProxyCacheHit=canvas.cacheHit;metrics.nativeProxyReady=true;lastProgress=null;
+              }).catch(error=>{if(active===job)metrics.nativeProxyFailure=String(error.message);});
+            },0);
+          }
           if(sheetOptions.formation && (held!==null || sheetOptions.registration) && metrics.registration){
             const frame={progress,settlement:model.settleProgress,layout:measure(root,layer),anchors:renderer.project?[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>({x,y,projected:renderer.project(model,{x,y,z:20.48*(1-model.settleProgress)})})):[]};
             metrics.registration.frames=metrics.registration.frames.filter(item=>Math.abs(item.progress-progress)>.001).slice(-15);metrics.registration.frames.push(frame);
           }
+          job.recording?.frame(sheet.canvas,own?.workspaceCovered?job.destinationRecording:null);
           diagnostics(model);metrics.phase=model.phase;metrics.materialArea=model.coverageArea||0;metrics.progress=progress;metrics.formation=Boolean(sheetOptions.formation);metrics.settlement=model.settleProgress||0;metrics.tint=model.tintProgress||0;metrics.formedRadius=sheetOptions.formation?renderer.revealRadius(model):0;
-          if(held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
+          if(sheetOptions.previousIntegration && held===null && interval>35 && metrics.longFrames>=2 && !job.reducedQuality){sheet.reduceQuality();sheet.draw(progress);job.reducedQuality=true;metrics.qualityReduced=true;}
         }catch(error){metrics.sheetFailure=String(error.message);cancel("sheet-render-error");return;}
       }else if(!sheet){
       const radius=ease(progress)*reach;
@@ -241,7 +279,7 @@
       if(progress<1 || held!==null) job.frame=requestAnimationFrame(frame);
       else {
         if(sheet){metrics.sheetPeak=sheet.getStats();sheet.dispose();}
-        job.releaseSource?.();metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
+        if(job.nativeTimer!==undefined)clearTimeout(job.nativeTimer);job.recording?.frame(null,job.destinationRecording);job.recording?.finish();job.releaseSource?.();metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
         if(focus && !focus.isConnected && !document.querySelector("dialog[open]")) {
           const heading=root.querySelector(".view.active h2,.view.active h1");
           if(heading) { heading.tabIndex=-1; heading.focus({preventScroll:true}); }
@@ -303,11 +341,11 @@
     activation.impulse=window.DuckFur?.get(source)?.captureDispersalState?.(activation);
     const record=activation;queueMicrotask(()=>{if(activation===record)activation=null;});
   },true);
-  const interrupt=()=>{cancel();for(const cleanup of [...morphs.values()])cleanup();};
+  const interrupt=()=>{clearPrepared();cancel();for(const cleanup of [...morphs.values()])cleanup();};
   addEventListener("resize",interrupt);
   document.addEventListener("scroll",()=>cancel("scroll"),true);
   document.addEventListener("visibilitychange",()=>{if(document.hidden)interrupt();});
   document.addEventListener("toggle",event=>{if(event.target.matches("dialog"))interrupt();},true);
   motion.addEventListener("change",interrupt);
-  window.DuckTransitions={measure,isActive:()=>metrics.layers>0,captureActivation,mapActivation,getContact:source=>contacts.get(source),getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
+  window.DuckTransitions={prepareWorkspace,measure,isActive:()=>metrics.layers>0,captureActivation,mapActivation,getContact:source=>contacts.get(source),getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
 })();

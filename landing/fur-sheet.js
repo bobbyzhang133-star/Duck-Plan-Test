@@ -20,15 +20,29 @@
     const seedRadius=impulse?mean("radius"):0;
     if(impulse){
       const t=Math.min(1,p/(settings.formation?.5:.88)),duration=(settings.duration||1000)/1000*(settings.formation?.5:.88);
-      const initialSpeed=Math.min((reach-seedRadius)*3/duration,Math.max(60,(impulse.material.waveSpeed||540)+mean("velocity")));
+      const initialSpeed=Math.min((reach-seedRadius)*2/duration,Math.max(60,(impulse.material.waveSpeed||540)+mean("velocity")));
       // Monotone Hermite radius with measured nonzero outgoing speed; no new ease-in.
-      radius=(2*t*t*t-3*t*t+1)*seedRadius+(-2*t*t*t+3*t*t)*reach+(t*t*t-2*t*t+t)*duration*initialSpeed;
+      radius=settings.previousIntegration?(2*t*t*t-3*t*t+1)*seedRadius+(-2*t*t*t+3*t*t)*reach+(t*t*t-2*t*t+t)*duration*initialSpeed:seedRadius+(reach-seedRadius)*soft(t)+(t-6*t**3+8*t**4-3*t**5)*duration*initialSpeed;
     }
     const state=formationState(p),settleProgress=settings.formation?state.flatten:0,tintProgress=settings.formation?state.tint:0;
     const band=Math.min(settings.sheetWidth,radius*.55);
     const amplitude=(impulse?(.15+clamp((mean("compression")+Math.abs(mean("velocity"))/100),0,.7))*(1-smooth(p/.2))+smooth(p/.2):smooth(p/.18))*(settings.formation?1:(1-smooth((p-.88)/.12)));
     return {width,height,origin,settings,impulseSeconds:(settings.impulseAge||0)+p*(settings.duration||1000)/1000,progress:p,reach,radius,settleProgress,tintProgress,band,amplitude,phase:settings.formation?(p<.5?"Grow / roll":p<.7?"Fur takes UI colors":"Colored fur settles into UI"):"Growth / baseline",
       opacity:settings.formation?1:1-smooth((p-.92)/.08),coverageArea:Math.PI*radius*radius};
+  }
+  function ownership(model){
+    const {origin,settings:s}=model;
+    const grounded=Math.max(0,model.radius-model.band-2);
+    const far=Math.max(...[[0,0],[model.width,0],[0,model.height],[model.width,model.height]].map(([x,y])=>Math.hypot(x-origin.x,y-origin.y)));
+    const box=s.sourceRect;
+    let sourceFar=0;
+    if(box && box.x<model.width && box.y<model.height && box.x+box.width>0 && box.y+box.height>0){
+      const x0=clamp(box.x-18,0,model.width),y0=clamp(box.y-18,0,model.height),x1=clamp(box.x+box.width+18,0,model.width),y1=clamp(box.y+box.height+18,0,model.height);
+      sourceFar=Math.max(...[[x0,y0],[x1,y0],[x0,y1],[x1,y1]].map(([x,y])=>Math.hypot(x-origin.x,y-origin.y)));
+    }
+    const near=s.impulse?Math.min(...s.impulse.samples.map(v=>v.edge))*.4:0;
+    const sourceMerge=s.impulse?soft((grounded-near)/Math.max(1,sourceFar+(s.impulse.pressRadius||0)*.5-near)):1;
+    return {grounded,sourceFar,sourceMerge,sourceCovered:!sourceFar || grounded>=sourceFar+2,workspaceCovered:grounded>=far,fullyFormed:model.settleProgress>=1};
   }
   function flattenAmount(model,r) {
     return model.settings.formation?model.settleProgress:0;
@@ -51,7 +65,7 @@
   function sample(model,v,q,layer=0) {
     const angle=v*Math.PI,r=(q+1)*.5*model.reach;
     const impulse=model.settings.impulse,field=impulse?window.DuckDispersal.field(impulse,angle,r,model.impulseSeconds):null;
-    const seamProfile=radius=>{const p=profile(model,radius);if(!impulse)return p;const edge=window.DuckDispersal.angular(impulse,angle).edge,w=smooth((radius-edge)/Math.max(12,impulse.pressRadius*.8));return {u:radius+(p.u-radius)*w,z:p.z*w};};
+    const seamProfile=radius=>{const p=profile(model,radius);if(!impulse)return p;const edge=window.DuckDispersal.angular(impulse,angle).edge,w=smooth((radius-edge)/Math.max(12,impulse.pressRadius*.8))+(1-smooth((radius-edge)/Math.max(12,impulse.pressRadius*.8)))*(model.settings.previousIntegration?0:ownership(model).sourceMerge);return {u:radius+(p.u-radius)*w,z:p.z*w};};
     const center=seamProfile(r),delta=.05;
     const lo=seamProfile(Math.max(0,r-delta)),hi=seamProfile(r+delta);
     const du=hi.u-lo.u,dz=hi.z-lo.z,len=Math.hypot(du,dz)||1;
@@ -83,7 +97,7 @@
     uniform float u_progress,u_reach,u_radius,u_settleProgress,u_tintProgress,u_band,u_opacity,u_bodyFloor,u_amplitude,u_formation;
     uniform float u_width,u_elevation,u_curvature,u_thickness,u_lighting,u_length,u_hasField,u_colorOnly;
     uniform sampler2D u_targets;
-    uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed;
+    uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed,u_sourceMerge,u_previousIntegration;
     uniform vec4 u_impulse[32],u_motion[32],u_sourceRect;
     vec4 impulseAt(float angle,float r){
       float sector=mod(angle/6.2831853+1.0,1.0)*32.0;int i=int(floor(sector));int j=(i+1)%32;float f=fract(sector);
@@ -96,12 +110,17 @@
     bool sourceInterior(vec2 pixel){
       vec2 halfSize=u_sourceRect.zw*0.5;float radius=min(halfSize.x,halfSize.y);
       vec2 q=abs(pixel-u_sourceRect.xy-halfSize)-(halfSize-vec2(radius));
-      return u_hasImpulse>0.5 && u_progress<0.5 && length(max(q,0.0))+min(max(q.x,q.y),0.0)<radius-1.0;
+      return u_previousIntegration>0.5 && u_hasImpulse>0.5 && u_progress<0.5 && length(max(q,0.0))+min(max(q.x,q.y),0.0)<radius-1.0;
     }
 
     vec3 targetAt(vec2 pixel){if(u_hasField<0.5)return vec3(0.0);return texture(u_targets,clamp(pixel/u_size,vec2(0.0),vec2(1.0))).rgb*u_hasField;}
-    float reliefAt(vec2 pixel){if(u_settleProgress<=0.12 || u_settleProgress>=1.0)return 0.0;vec3 f=targetAt(pixel);return (f.r*7.0+f.g*3.0)*smoothstep(0.12,0.55,u_settleProgress)*(1.0-smoothstep(0.72,1.0,u_settleProgress));}
-    float resolveAt(vec2 pixel,float amount){return max(targetAt(pixel).b*smoothstep(0.60,0.92,amount),smoothstep(0.86,1.0,amount));}
+    float qstep(float a,float b,float x);
+    float reliefAt(vec2 pixel){if(u_settleProgress<=0.12 || u_settleProgress>=1.0)return 0.0;vec3 f=targetAt(pixel);return (f.r*7.0+f.g*3.0)*qstep(0.12,0.55,u_settleProgress)*(1.0-qstep(0.72,1.0,u_settleProgress));}
+    float qstep(float a,float b,float x){float t=clamp((x-a)/(b-a),0.0,1.0);return t*t*t*(t*(t*6.0-15.0)+10.0);}
+    float resolveAt(vec2 pixel,float amount){
+      if(u_previousIntegration>0.5)return max(targetAt(pixel).b*smoothstep(0.60,0.92,amount),smoothstep(0.86,1.0,amount));
+      return qstep(0.50,1.0,amount);
+    }
 
 
     float flattenAmount(float r){return u_formation*u_settleProgress;}
@@ -119,7 +138,7 @@
     }
     vec2 seamProfile(float r,float edge){
       vec2 p=profile(r);if(u_hasImpulse<0.5)return p;
-      float weight=smoothstep(edge,edge+max(12.0,u_pressRadius*0.8),r);
+      float weight=mix(smoothstep(edge,edge+max(12.0,u_pressRadius*0.8),r),1.0,u_sourceMerge*(1.0-u_previousIntegration));
       return vec2(mix(r,p.x,weight),p.y*weight);
     }
     vec3 positionAt(float v,float q,out vec3 normal,out vec3 tangent) {
@@ -172,14 +191,15 @@
   const meshFragment=`#version 300 es
     ${common}
     uniform float u_shadow;
-    uniform sampler2D u_pile,u_destination;
+    uniform sampler2D u_pile,u_destination,u_source;
+    uniform vec4 u_sourceImageRect;uniform float u_hasSource;
     uniform float u_hasDestination;
     in vec3 v_normal;in vec2 v_uv;in float v_layer,v_height,v_radius;out vec4 color;
     void main(){
       float settled=flattenAmount(v_radius);
       vec2 pixel=v_uv+u_origin;
       float coverage=1.0;
-      if(u_formation>0.5 && u_hasField>0.5){
+      if(u_previousIntegration>0.5 && u_formation>0.5 && u_hasField>0.5){
         float resolve=resolveAt(pixel,settled);
         float distanceToFiber=length(fract(pixel/2.0)-0.5),radius=0.708*(1.0-resolve);
         float feather=max(0.02,fwidth(distanceToFiber));
@@ -199,13 +219,21 @@
       vec4 texel=texture(u_pile,v_uv/64.0);
       // Match the button canvas' premultiplied-alpha composition over ivory.
       vec3 pile=min(vec3(1.0),texel.rgb+vec3(1.0,0.99,0.96)*(1.0-texel.a));
+      vec2 sourceUV=(pixel-u_sourceImageRect.xy)/max(vec2(1.0),u_sourceImageRect.zw);
+      if(u_hasSource>0.5 && u_sourceMerge<1.0 && all(greaterThanEqual(sourceUV,vec2(0))) && all(lessThanEqual(sourceUV,vec2(1)))){
+        vec4 source=texture(u_source,sourceUV);
+        // Pigment and local pile relief homogenize into the spread material; the
+        // filled mesh stays opaque. No pill mask shrinks and no source alpha fades.
+        vec3 imprint=mix(pile,source.rgb,source.a);
+        pile=mix(imprint,pile,u_sourceMerge);
+      }
       vec3 base=pile*mix(1.0,0.87,smoothstep(0.25,0.75,v_layer));
       vec3 destination=texture(u_destination,(v_uv+u_origin)/u_size).rgb;
       // Dye the existing pile first: retain strand luminance, lighting and depth.
       float pileDetail=clamp(dot(base,vec3(0.2126,0.7152,0.0722))/0.91,0.72,1.12);
       vec3 dyed=destination*pileDetail*mix(1.0,light,u_lighting);
       vec3 coloredPile=mix(base*mix(1.0,light,u_lighting),dyed,u_tintProgress*u_hasDestination);
-      vec3 surface=mix(coloredPile,destination,smoothstep(0.30,0.9,settled)*u_hasDestination);
+      vec3 surface=mix(coloredPile,destination,qstep(0.30,0.9,settled)*u_hasDestination);
       color=vec4(surface,edge*coverage);
     }
   `;
@@ -228,7 +256,7 @@
       vec2 gradient=vec2(targetAt(pixel+vec2(2,0)).g-targetAt(pixel-vec2(2,0)).g,targetAt(pixel+vec2(0,2)).g-targetAt(pixel-vec2(0,2)).g);
       if(length(gradient)>0.01){lean=normalize(mix(lean,vec3(-gradient.y,gradient.x,0.05),smoothstep(0.15,0.65,settled)*0.85));side=normalize(cross(normal,lean));}
       float resolve=resolveAt(pixel,settled);
-      float length=u_length*(0.78+a_seed.z*0.44)*(1.0-smoothstep(0.50,1.0,settled));
+      float length=u_length*(0.78+a_seed.z*0.44)*(1.0-qstep(0.50,1.0,settled));
       vec4 impulse=impulseAt(v*3.14159265,r);float weight=impulseWeight();
       vec3 radial=vec3(cos(v*3.14159265),sin(v*3.14159265),0);
       lean=normalize(lean+radial*impulse.x*weight/max(1.0,u_length)+across*impulse.y*weight/max(1.0,u_length));
@@ -307,7 +335,7 @@
         const gl=this.canvas.getContext("webgl2",{alpha:true,antialias:true,premultipliedAlpha:false,depth:true});
         if(!gl)throw Error("WebGL2 unavailable");this.gl=gl;resources.contexts++;
         const small=width<600 || (navigator.hardwareConcurrency||8)<=4;
-        this.dpr=Math.min(devicePixelRatio||1,small?1.15:1.5);
+        this.dpr=Math.min(devicePixelRatio||1,this.options.previousIntegration?(small?1.15:1.5):(small?1:1.25));
         this.canvas.width=Math.round(width*this.dpr);this.canvas.height=Math.round(height*this.dpr);
         this.meshProgram=program(gl,meshVertex,meshFragment);this.programs.push(this.meshProgram);
         this.furProgram=program(gl,furVertex,furFragment);this.programs.push(this.furProgram);
@@ -328,9 +356,9 @@
         this.sortedRadii=Array.from({length:this.fibers},(_,i)=>(seeds[i*4+1]+1)*.5).sort((a,b)=>a-b);
         this.furBuffer=this.buffer(seeds);
         this.bufferBytes=mesh.byteLength+seeds.byteLength;
-        this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;
+        this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;
         this.uniforms=new Map();
-        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","sourceRect","impulse[0]","motion[0]"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
+        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
         this.bakeButtonPile();
         gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
         // Compile/validate the first draw before starting the visible frame clock.
@@ -401,6 +429,16 @@
         if(target){gl.deleteProgram(target);resources.programs--;}
       }
     }
+    setSource(canvas,rect){
+      if(!this.gl || this.disposed)return;
+      const gl=this.gl;
+      if(!this.sourceTexture){this.sourceTexture=gl.createTexture();resources.textures++;}
+      gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,this.sourceTexture);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,canvas);
+      for(const key of [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,key,gl.LINEAR);
+      for(const key of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,key,gl.CLAMP_TO_EDGE);
+      this.sourceImageRect={...rect};this.sourceBytes=canvas.width*canvas.height*4;
+    }
     setDestination(canvas){
       const gl=this.gl;if(!gl || this.disposed)return;
       if(!this.destinationTexture){this.destinationTexture=gl.createTexture();resources.textures++;}
@@ -418,10 +456,14 @@
         for(const name of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,name,gl.CLAMP_TO_EDGE);
         this.targetBytes=field.width*field.height*4;this.formationTargets=canvas.formation.targets;
       }
-      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+this.destinationBytes+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;
+      this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+this.destinationBytes+(this.targetBytes||0)+(this.sourceBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;
     }
     buffer(data){const gl=this.gl,buffer=gl.createBuffer();this.buffers.push(buffer);resources.buffers++;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return buffer;}
     uniformsFor(target,model){const gl=this.gl,u=this.uniforms.get(target),s=this.options;gl.useProgram(target);gl.uniform1i(u.destination,1);gl.uniform1i(u.targets,2);
+      const own=ownership(model);
+      gl.uniform1f(u.sourceMerge,own.sourceMerge);gl.uniform1f(u.previousIntegration,s.previousIntegration?1:0);
+      gl.uniform1i(u.source,3);gl.uniform1f(u.hasSource,this.sourceTexture?1:0);
+      const sr=this.sourceImageRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceImageRect,sr.x,sr.y,sr.width,sr.height);
       const impulse=s.impulse;
       gl.uniform1f(u.hasImpulse,impulse?1:0);gl.uniform1f(u.impulseSeconds,model.impulseSeconds||0);gl.uniform1f(u.pressRadius,impulse?.pressRadius||1);gl.uniform1f(u.waveSpeed,impulse?.material.waveSpeed||540);
       const rect=s.sourceRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceRect,rect.x,rect.y,rect.width,rect.height);
@@ -431,6 +473,7 @@
     }
     draw(progress){if(this.disposed)return null;const gl=this.gl;
       const model=geometry(this.width,this.height,this.origin,this.options,progress);
+      gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,this.sourceTexture||this.materialTexture);
       gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.targetTexture||this.materialTexture);
       gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.destinationTexture||this.materialTexture);
       gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
@@ -446,15 +489,15 @@
       gl.drawArraysInstanced(gl.TRIANGLES,0,6,this.fibers);gl.vertexAttribDivisor(0,0);
       return model;
     }
-    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;}
-    canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && Boolean(this.options.impulse)===Boolean(options.impulse) && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
-    retarget(container,origin,options){this.impulseData=null;this.motionData=null;this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
-    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",textureBytes:(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0),...resources};}
+    reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+this.canvas.width*this.canvas.height*8;}
+    canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && Boolean(this.options.previousIntegration)===Boolean(options.previousIntegration) && Boolean(this.options.impulse)===Boolean(options.impulse) && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
+    retarget(container,origin,options){if(this.sourceTexture){this.gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}this.sourceImageRect=null;this.sourceBytes=0;this.impulseData=null;this.motionData=null;this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
+    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",textureBytes:(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0),...resources};}
     dispose(){if(this.disposed)return;this.disposed=true;const gl=this.gl;
-      if(gl){if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
+      if(gl){if(this.sourceTexture){gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
         this.canvas.removeEventListener("webglcontextlost",this.onLost);gl.getExtension("WEBGL_lose_context")?.loseContext();resources.contexts--;}
       this.gl=null;this.canvas.remove();
     }
   }
-  window.DuckFurSheet={FurSheet,defaults,formationState,geometry,sample,project,profile,flattenAmount,settlement,revealRadius,revealPolygon,boundaries,resources};
+  window.DuckFurSheet={FurSheet,defaults,formationState,ownership,geometry,sample,project,profile,flattenAmount,settlement,revealRadius,revealPolygon,boundaries,resources};
 })();

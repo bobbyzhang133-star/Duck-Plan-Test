@@ -111,14 +111,16 @@
           <label>Wavefront width (px)<input name="sheetWidth" type="range" min="60" max="180" step="5" value="110"><output></output></label>
           <label>Duration (ms)<input name="duration" type="range" min="600" max="1800" step="10" value="1000"><output></output></label>
           <label>Lighting / shadow<input name="lighting" type="range" min=".2" max="1" step=".05" value=".8"><output></output></label>
-          <label>Inspect progress<input name="inspectProgress" type="range" min="0" max="1" step=".01" value=".42"><output></output></label>
+          <label>Inspect progress<input name="inspectProgress" type="range" min="0" max="1" step=".001" value=".42"><output></output></label>
           <label>Origin / boundary diagnostics<input name="debug" type="checkbox"></label>
           <label>Use rejected ribbon for in-workspace comparison<input name="ribbon" type="checkbox"></label>
           <label>Growth only (no page reveal)<input name="growthOnly" type="checkbox"></label>
           <label class="wave-checkbox"><input name="colorOnly" type="checkbox"> Previous color-only formation (a274285 behavior)</label>
+          <label>Previous integration (50de4ab)<input name="previousIntegration" type="checkbox"></label>
           <label>Independent growth baseline<input name="independentGrowth" type="checkbox"></label>
           <label>Previous fade handoff (comparison)<input name="legacyFade" type="checkbox"></label>
           <label>Hold geometry pose<input name="hold" type="checkbox"></label>
+          <label>Record next playback (workspace composite)<input name="record" type="checkbox"></label>
           <label>Simulate sheet context loss<input name="contextLoss" type="checkbox"></label>
         </form></details>
 
@@ -135,16 +137,18 @@
         </div>
         <div class="wave-demo-actions"><button type="button" class="secondary-button" id="sheet-press-hold">Hold press</button><button type="button" class="secondary-button" id="sheet-press-release">Just released</button><button type="button" class="secondary-button" id="sheet-crossing">First boundary crossing</button></div>
         <pre id="sheet-continuity" class="sheet-registration" aria-live="polite">Press continuity measurements appear here.</pre>
-        <div id="sheet-frames" class="wave-demo-actions" aria-label="Hold animation frame"><button type="button" data-progress="0.0" class="secondary-button">0%</button><button type="button" data-progress="0.05" class="secondary-button">5%</button><button type="button" data-progress="0.1" class="secondary-button">10%</button><button type="button" data-progress="0.2" class="secondary-button">20%</button><button type="button" data-progress="0.4" class="secondary-button">40%</button><button type="button" data-progress="0.5" class="secondary-button">50%</button><button type="button" data-progress="0.6" class="secondary-button">60%</button><button type="button" data-progress="0.7" class="secondary-button">70%</button><button type="button" data-progress="0.8" class="secondary-button">80%</button><button type="button" data-progress="0.9" class="secondary-button">90%</button><button type="button" data-progress="0.95" class="secondary-button">95%</button><button type="button" data-progress="1.0" class="secondary-button">100%</button></div>
+        <div id="sheet-frames" class="wave-demo-actions" aria-label="Hold animation frame"><button type="button" data-progress="0.0" class="secondary-button">0%</button><button type="button" data-progress="0.05" class="secondary-button">5%</button><button type="button" data-progress="0.1" class="secondary-button">10%</button><button type="button" data-progress="0.2" class="secondary-button">20%</button><button type="button" data-progress="0.35" class="secondary-button">35%</button><button type="button" data-progress="0.49" class="secondary-button">49%</button><button type="button" data-progress="0.51" class="secondary-button">51%</button><button type="button" data-progress="0.69" class="secondary-button">69%</button><button type="button" data-progress="0.71" class="secondary-button">71%</button><button type="button" data-progress="0.85" class="secondary-button">85%</button><button type="button" data-progress="0.97" class="secondary-button">97%</button><button type="button" data-progress="0.98" class="secondary-button">98%</button><button type="button" data-progress="0.99" class="secondary-button">99%</button><button type="button" data-progress="0.4" class="secondary-button">40%</button><button type="button" data-progress="0.5" class="secondary-button">50%</button><button type="button" data-progress="0.6" class="secondary-button">60%</button><button type="button" data-progress="0.7" class="secondary-button">70%</button><button type="button" data-progress="0.8" class="secondary-button">80%</button><button type="button" data-progress="0.9" class="secondary-button">90%</button><button type="button" data-progress="0.95" class="secondary-button">95%</button><button type="button" data-progress="1.0" class="secondary-button">100%</button></div>
+        <video id="sheet-video-baseline" aria-label="Baseline transition recording" controls hidden style="width:100%;max-height:420px"></video><a id="sheet-baseline-download" hidden>Save baseline recording</a>
+        <video id="sheet-video" aria-label="Refined transition recording" controls hidden style="width:100%;max-height:420px"></video><a id="sheet-video-download" hidden>Save workspace recording</a>
         <output class="wave-metrics" id="sheet-metrics">Ready to inspect geometry.</output>
       <details><summary>Layout registration measurements</summary><pre id="sheet-registration" class="sheet-registration"></pre></details>
       </section>
     </main>
-    <script src="./fur-dispersal.js"></script><script src="./fur-material.js"></script>
+    <script src="./fur-dispersal.js"></script><script src="./fur-material.js?v=smooth-13"></script>
     <script src="./button-interactions.js"></script>
-    <script src="./fur-ribbon.js"></script><script src="./fur-sheet.js"></script><script src="./formation-surface.js"></script><script src="./material-transitions.js"></script>
+    <script src="./fur-ribbon.js"></script><script src="./fur-sheet.js?v=smooth-13"></script><script src="./formation-surface.js?v=smooth-13"></script><script src="./material-transitions.js?v=smooth-13"></script>
     <script src="./fur-lab.js"></script>
     <script src="./wave-lab.js"></script>
-    <script src="./sheet-lab.js"></script>
+    <script src="./fur-recording.js?v=smooth-13"></script><script src="./sheet-lab.js?v=smooth-13"></script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  const nativeCache=new Map();
   // Temporary dye image and target geometry; final text and controls stay native.
   function capture(root,bounds,selector="[data-formation-surface]") {
     const canvas=document.createElement("canvas");
@@ -61,8 +62,8 @@
         const range=document.createRange();range.selectNodeContents(text);
         const lines=[...range.getClientRects()];
         // Temporary dye colors include single-line type. Native DOM remains final.
-        if(lines.length===1 && style.color && ctx.fillText && ctx.measureText){
-          const r=lines[0];ctx.save();
+        if(lines.length && style.color && ctx.fillText && ctx.measureText){
+          ctx.save();
           for(let parent=text.parentElement;parent;parent=parent.parentElement){
             const ps=styleOf(parent),pr=rectOf(parent);
             if(/auto|scroll|hidden|clip/.test(`${ps.overflowX} ${ps.overflowY}`)){ctx.beginPath();ctx.rect(pr.left-bounds.left,pr.top-bounds.top,pr.width,pr.height);ctx.clip();}
@@ -70,8 +71,12 @@
           }
           ctx.font=`${style.fontStyle||"normal"} ${style.fontWeight||400} ${style.fontSize||"16px"} ${style.fontFamily||"sans-serif"}`;
           ctx.letterSpacing=style.letterSpacing||"0px";ctx.fillStyle=style.color;ctx.textBaseline="alphabetic";
-          const value=text.textContent.replace(/\s+/g," "),metrics=ctx.measureText(value);
-          ctx.fillText(value,r.left-bounds.left,r.top-bounds.top+(metrics.fontBoundingBoxAscent||parseFloat(style.fontSize)*.85));ctx.restore();
+          const value=text.textContent.replace(/\s+/g," "),words=value.trim().split(" ");let word=0;
+          for(const r of lines){
+            let line=lines.length===1?value:"";
+            if(lines.length>1){while(word<words.length){const candidate=line?line+" "+words[word]:words[word];if(line && ctx.measureText(candidate).width>r.width+1)break;line=candidate;word++;}}
+            const metrics=ctx.measureText(line);ctx.fillText(line,r.left-bounds.left,r.top-bounds.top+(metrics.fontBoundingBoxAscent||parseFloat(style.fontSize)*.85));
+          }ctx.restore();
         }
         for(const r of lines)if(r.width&&r.height)addContent({x:r.left-bounds.left-2,y:r.top-bounds.top-1,width:r.width+4,height:r.height+2,radius:2,kind:"text"},text.parentElement);
       }
@@ -96,5 +101,50 @@
     canvas.formation={field,targets:targets.map(({node,...target})=>target),contents,bounds:{...bounds}};
     return canvas;
   }
-  window.DuckFormation={capture};
+  // Bounded transient native-paint proxy for the final resting plane. This is not
+  // persisted application content; live HTML owns semantics and the final frame.
+  async function captureNative(root,bounds,formation){
+    const started=performance.now();
+    const key=[bounds.left,bounds.top,bounds.width,bounds.height,devicePixelRatio,scrollX,scrollY,getComputedStyle(document.body).backgroundImage,root.innerHTML.replace(/fur-(hovered|pressed)/g,"")].join("|");
+    if(nativeCache.has(key)){const canvas=nativeCache.get(key);nativeCache.delete(key);nativeCache.set(key,canvas);canvas.formation=formation;canvas.captureMs=performance.now()-started;canvas.cacheHit=true;return canvas;}
+    const copy=root.cloneNode(true),originals=[root,...root.querySelectorAll("*")],copies=[copy,...copy.querySelectorAll("*")];
+    if(originals.length>4096)throw Error("Native proxy exceeds node budget");
+    const properties="display position isolation contain filter backdrop-filter box-sizing width height min-width min-height max-width max-height margin padding top right bottom left overflow overflow-x overflow-y border border-radius border-top border-bottom border-left border-right background-color background-image background-size background-position background-repeat box-shadow color font font-family font-size font-weight font-style line-height letter-spacing word-spacing text-align text-decoration text-transform text-indent white-space word-break overflow-wrap vertical-align opacity visibility z-index flex flex-direction flex-wrap align-items align-content align-self justify-content gap row-gap column-gap grid-template-columns grid-template-rows grid-column grid-row grid-auto-flow grid-auto-rows float clear object-fit transform transform-origin clip-path".split(" ");
+    for(let i=0;i<originals.length;i++){
+      const original=originals[i],node=copies[i],r=original.getBoundingClientRect();
+      if(!r.width || !r.height || r.bottom<bounds.top || r.top>bounds.top+bounds.height || r.right<bounds.left || r.left>bounds.left+bounds.width){node.remove();continue;}
+      const style=getComputedStyle(original);
+      node.removeAttribute("id");node.removeAttribute("autofocus");
+      if(original.matches("script,style,dialog,.material-transition-layer")){node.remove();continue;}
+      for(const key of properties){const value=style.getPropertyValue(key);if(value && !/url\(/i.test(value))node.style.setProperty(key,value);}
+      if(/url\(/i.test(style.backgroundImage))node.style.backgroundImage="none";
+      node.removeAttribute("srcset");
+      node.style.setProperty("animation","none");node.style.setProperty("transition","none");node.style.setProperty("caret-color","transparent");
+      if(original.tagName==="CANVAS"){
+        const image=document.createElement("img"),surface=window.DuckFur?.get(original.parentElement);image.src=surface?.captureRestFrame?.()||original.toDataURL();image.style.cssText=node.style.cssText;node.replaceWith(image);
+      }else if(original.tagName==="IMG" && original.src && !original.src.startsWith("data:")){node.removeAttribute("src");}
+      if(original.scrollTop || original.scrollLeft){
+        // Scrollport children retain their native offset, without scrolling the page.
+        const content=document.createElement("div");while(node.firstChild)content.append(node.firstChild);content.style.cssText=`transform:translate(${-original.scrollLeft}px,${-original.scrollTop}px)`;node.append(content);
+      }
+    }
+    const rect=root.getBoundingClientRect(),sx=scrollX,sy=scrollY;
+    Object.assign(copy.style,{position:"absolute",left:`${rect.left+sx}px`,top:`${rect.top+sy}px`,width:`${rect.width}px`,height:`${rect.height}px`,margin:"0",transform:"none"});
+    const outer=document.createElement("div"),body=getComputedStyle(document.body);
+    outer.setAttribute("xmlns","http://www.w3.org/1999/xhtml");
+    outer.style.cssText=`position:relative;width:${document.documentElement.clientWidth}px;height:${Math.max(innerHeight,document.body.scrollHeight)}px;background-color:${body.backgroundColor};background-image:${body.backgroundImage};font:${body.font};color:${body.color};`;
+    outer.append(copy);
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${bounds.width}" height="${bounds.height}"><foreignObject x="${-bounds.left-sx}" y="${-bounds.top-sy}" width="${document.documentElement.clientWidth}" height="${Math.max(innerHeight,document.body.scrollHeight)}">${new XMLSerializer().serializeToString(outer)}</foreignObject></svg>`;
+    const url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+    try{
+      const image=new Image();await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error("Native proxy decode timeout")),1500);image.onload=()=>{clearTimeout(timeout);resolve();};image.onerror=()=>{clearTimeout(timeout);reject(Error("Native proxy unavailable"));};image.src=url;});
+      const canvas=document.createElement("canvas"),scale=Math.min(devicePixelRatio||1,1.5,2048/Math.max(bounds.width,bounds.height));
+      canvas.width=Math.round(bounds.width*scale);canvas.height=Math.round(bounds.height*scale);
+      const ctx=canvas.getContext("2d");ctx.drawImage(image,0,0,canvas.width,canvas.height);ctx.getImageData(0,0,1,1); // Detect taint before upload.
+      canvas.formation=formation;canvas.nativeProxy=true;canvas.captureMs=performance.now()-started;canvas.cacheHit=false;
+      nativeCache.set(key,canvas);if(nativeCache.size>2)nativeCache.delete(nativeCache.keys().next().value);
+      return canvas;
+    }finally{/* Inline SVG holds no object URL or persistent resource. */}
+  }
+  window.DuckFormation={capture,captureNative};
 })();

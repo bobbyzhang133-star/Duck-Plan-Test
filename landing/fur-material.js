@@ -823,6 +823,13 @@
       }
     }
 
+    captureRestFrame() {
+      if(!this.gl || !this.state)return this.canvas.toDataURL();
+      const saved=this.state.slice();
+      try{this.state.fill(0);this.draw();return this.canvas.toDataURL();}
+      finally{this.state.set(saved);this.draw();}
+    }
+
     captureDispersalState(record = {}) {
       if(this.cancelledDispersal)return null;
       const saved = this.releasedDispersal;

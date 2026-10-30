@@ -191,3 +191,33 @@ test("GPU startup fallback releases a retained initiating button",()=>{
  env.context.window.DuckFurSheet={FurSheet:class{constructor(){throw Error("cold GPU failure");}}};
  env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});assert.equal(releases,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
 });
+test("source release and old snapshot visibility use measured ownership rather than the halfway timestamp",()=>{
+ const env=animatedSetup();let released=0,own={sourceMerge:0,sourceCovered:false,workspaceCovered:false};
+ const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:44})};
+ env.context.window.DuckFur={get:()=>({captureDispersalState:()=>({capturedAt:0,material:{length:5.2},samples:[],pressRadius:38}),retainDispersal:()=>()=>released++,waves:[],emitWave(){}})};
+ env.context.window.DuckFormation={capture:()=>({formation:{},width:800,height:600})};
+ env.context.window.DuckFurSheet={ownership:()=>own,revealPolygon:()=>"none",revealRadius:()=>0,FurSheet:class{constructor(){this.options={};}getStats(){return {};}setDestination(){}draw(){return {radius:800};}dispose(){}}};
+ env.transitions.workspace({root:env.root,source,effect:"sheet",sheetOptions:{formation:true},update(){}});env.tick(700);
+ const wrapper=[...env.layers][0].children[0];assert.equal(wrapper.style.visibility,"visible");assert.equal(released,0);
+ own={sourceMerge:1,sourceCovered:true,workspaceCovered:false};env.tick(710);assert.equal(released,1);assert.equal(wrapper.style.visibility,"visible");
+ own.workspaceCovered=true;env.tick(720);assert.equal(wrapper.style.visibility,"hidden");env.tick(1100);assert.equal(released,1);assert.equal(env.layers.size,0);
+});
+test("one bounded prepared renderer is reused or expires without permanent GPU ownership",()=>{
+ const env=animatedSetup(),timers=new Map();let next=0,allocations=0,disposed=0,reused=0;
+ env.context.setTimeout=fn=>{timers.set(++next,fn);return next;};env.context.clearTimeout=id=>timers.delete(id);
+ env.root.getBoundingClientRect=()=>({left:0,top:0,right:800,bottom:600,width:800,height:600});
+ const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:44})};
+ env.context.window.DuckFur={get:()=>({captureDispersalState:()=>({capturedAt:0,material:{length:5.2,density:1},samples:[],pressRadius:38}),waves:[],emitWave(){}})};
+ env.context.window.DuckFurSheet={revealPolygon:()=>"none",FurSheet:class{constructor(){allocations++;this.options={};}getStats(){return {};}canRetarget(){return true;}retarget(){reused++;}draw(){return {radius:800};}dispose(){disposed++;}}};
+ assert.equal(env.transitions.prepareWorkspace({root:env.root,source}),true);assert.equal(env.transitions.prepareWorkspace({root:env.root,source}),false);
+ env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});env.tick(1100);assert.equal(allocations,1);assert.equal(reused,1);assert.equal(disposed,1);assert.equal(timers.size,0);
+ env.transitions.prepareWorkspace({root:env.root,source});for(const fn of [...timers.values()])fn();assert.equal(disposed,2);
+});
+test("a late native proxy cannot upload into a cancelled sheet",async()=>{
+ const env=animatedSetup();let resolve,uploads=0;const timers=[];
+ env.context.setTimeout=fn=>{timers.push(fn);return 1;};env.context.clearTimeout=()=>{};
+ env.context.window.DuckFormation={capture:()=>({formation:{}}),captureNative:()=>new Promise(r=>resolve=r)};
+ env.context.window.DuckFurSheet={revealPolygon:()=>"none",revealRadius:()=>0,FurSheet:class{getStats(){return {};}draw(){return {radius:10};}setDestination(){uploads++;}dispose(){}}};
+ env.transitions.workspace({root:env.root,effect:"sheet",sheetOptions:{formation:true},update(){}});env.tick(0);timers.shift()();env.transitions.cancel();resolve({nativeProxy:true});await Promise.resolve();await Promise.resolve();
+ assert.equal(uploads,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});
