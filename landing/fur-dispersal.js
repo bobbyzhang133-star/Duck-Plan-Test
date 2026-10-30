@@ -1,0 +1,52 @@
+(() => {
+  "use strict";
+  const TAU=Math.PI*2,COUNT=32,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  // Screen-space CSS pixels and seconds. No DOM/GPU ownership in this immutable handoff.
+  function edgeDistance(point,bounds,angle){
+    const radius=Math.min(bounds.radius??bounds.height/2,bounds.width/2,bounds.height/2);
+    const inside=(x,y)=>{const dx=Math.max(Math.abs(x-bounds.width/2)-(bounds.width/2-radius),0),dy=Math.max(Math.abs(y-bounds.height/2)-(bounds.height/2-radius),0);return dx*dx+dy*dy<=radius*radius;};
+    let lo=0,hi=Math.hypot(bounds.width,bounds.height);
+    for(let i=0;i<24;i++){const mid=(lo+hi)/2;if(inside(point.x+Math.cos(angle)*mid,point.y+Math.sin(angle)*mid))lo=mid;else hi=mid;}
+    return lo;
+  }
+  function angular(impulse,angle){
+    if(!impulse?.samples?.length)return {radial:0,tangential:0,velocity:0,tangentialVelocity:0,compression:0,depression:0,radius:0,edge:0};
+    const n=impulse.samples.length,x=((angle/TAU)%1+1)%1*n,i=Math.floor(x),t=x-i,a=impulse.samples[i],b=impulse.samples[(i+1)%n],result={};
+    for(const key of ["radial","tangential","velocity","tangentialVelocity","compression","depression","radius","edge"])result[key]=a[key]*(1-t)+b[key]*t;
+    return result;
+  }
+  function field(impulse,angle,distance,seconds=0){
+    const s=angular(impulse,angle),outside=Math.max(0,distance-s.radius),speed=Math.max(60,impulse?.material?.waveSpeed||540);
+    const age=Math.max(0,seconds-outside/speed),attenuation=Math.exp(-outside/Math.max(1,(impulse?.pressRadius||1)*8));
+    const damping=3,decay=Math.exp(-damping*age);
+    // Critically damped continuation: f(0)=measured displacement, f'(0)=measured velocity.
+    const evolve=(position,velocity)=>(position+(velocity+damping*position)*age)*decay*attenuation;
+    return {...s,radial:evolve(s.radial,s.velocity),tangential:evolve(s.tangential,s.tangentialVelocity),compression:s.compression*decay*attenuation,depression:s.depression*decay*attenuation,
+      velocity:(s.velocity-damping*(s.velocity+damping*s.radial)*age)*decay*attenuation};
+  }
+  function capture(surface,record={},now=performance.now()){
+    if(!surface.state || !surface.roots)return null;
+    const bounds=record.bounds||surface.host.getBoundingClientRect(),contact=record.contact||{x:bounds.left+surface.pointer.x,y:bounds.top+surface.pointer.y};
+    const point={x:contact.x-bounds.left,y:contact.y-bounds.top},pressRadius=surface.interactionRadius(true),o=surface.options;
+    const samples=Array.from({length:COUNT},(_,i)=>({angle:i*TAU/COUNT,radial:0,tangential:0,velocity:0,tangentialVelocity:0,compression:0,depression:0,radius:0,edge:edgeDistance(point,bounds,i*TAU/COUNT),weight:0}));
+    for(let i=0;i<surface.count;i++){
+      const dx=surface.roots[i*2]*surface.width-point.x,dy=surface.roots[i*2+1]*surface.height-point.y,r=Math.hypot(dx,dy);
+      if(r<pressRadius*.12 || r>pressRadius*.68)continue;
+      const angle=(Math.atan2(dy,dx)+TAU)%TAU,sector=Math.round(angle/TAU*COUNT)%COUNT,s=samples[sector],k=i*4,seed=i*6;
+      const c=clamp(surface.state[k+2],0,1),edge=surface.materialMask?.[i*3+1]||0,label=surface.materialMask?.[i*3]||0;
+      const variation=(surface.rootSeeds?.[seed]??1)*(1-edge*.78)+edge*.78;
+      const length=o.length*variation*(1+label*((o.labelLengthScale??1)-1))*(1+edge*.4),scale=length*1.62*(.68+.77*c);
+      const radial=(surface.state[k]*dx+surface.state[k+1]*dy)/r,tangent=(-surface.state[k]*dy+surface.state[k+1]*dx)/r;
+      const w=Math.max(.001,surface.constructor.pressProfileForHandoff?.(r/pressRadius,o)?.influence??1);
+      s.radial+=radial*scale*w;s.tangential+=tangent*scale*w;
+      s.velocity+=((surface.velocity[k]*dx+surface.velocity[k+1]*dy)/r*scale+radial*length*1.62*.77*surface.velocity[k+2])*w;
+      s.tangentialVelocity+=(-surface.velocity[k]*dy+surface.velocity[k+1]*dx)/r*scale*w;
+      s.compression+=c*w;s.depression+=surface.state[k+3]*w;s.radius+=r*w;s.weight+=w;
+    }
+    for(const s of samples)if(s.weight)for(const key of ["radial","tangential","velocity","tangentialVelocity","compression","depression","radius"])s[key]/=s.weight;
+    // Empty sectors retain zero energy; never manufacture a perimeter kick.
+    const material=Object.freeze(Object.fromEntries(["length","density","splay","compression","pressDepth","transitionWidth","waveSpeed","recoveryDelay","labelLengthScale","labelWidthScale"].map(key=>[key,o[key]])));
+    return Object.freeze({activationId:record.id??null,modality:record.modality||"pointer",contact:Object.freeze({...contact}),bounds:Object.freeze({...bounds}),contactAt:record.contactAt??surface.pressStartedAt??now,responseMs:surface.pressResponseMs??null,capturedAt:now,pressRadius,material,samples:Object.freeze(samples.map(s=>Object.freeze(s)))});
+  }
+  window.DuckDispersal={COUNT,edgeDistance,angular,field,capture};
+})();

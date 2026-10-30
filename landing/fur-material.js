@@ -823,8 +823,17 @@
       }
     }
 
+    captureDispersalState(record = {}) {
+      if(this.cancelledDispersal)return null;
+      const saved = this.releasedDispersal;
+      if (saved && performance.now()-saved.capturedAt < 1000) return Object.freeze({...saved, activationId:record.id??saved.activationId, modality:record.modality||saved.modality, contactAt:record.contactAt??saved.contactAt});
+      return window.DuckDispersal?.capture(this,record);
+    }
+
     onPointerDown(event) {
       if (this.host.disabled) return;
+      this.pressStartedAt=performance.now();this.pressRecord=window.DuckTransitions?.getContact?.(this.host);
+      this.cancelledDispersal=false;this.releasedDispersal = null;
       const point = this.localPointer(event);
       this.pointer = { ...point, previousX: point.x, previousY: point.y, time: event.timeStamp };
       this.pressed = true;
@@ -842,6 +851,7 @@
     }
 
     onPointerCancel(event) {
+      this.cancelledDispersal=true;this.releasedDispersal = null;
       this.finishPress(event, false);
     }
 
@@ -851,6 +861,7 @@
 
     finishPress(event = {}, releaseCapture = false) {
       if (!this.pressed) return;
+      if (releaseCapture || event.type === "keyup") this.releasedDispersal = window.DuckDispersal?.capture(this, {...this.pressRecord,modality:event.type === "keyup"?"keyboard":"pointer"});
       this.pressed = false;
       this.releaseActivePressFibers();
       this.host.classList.remove("fur-pressed");
@@ -871,6 +882,8 @@
 
     onKeyDown(event) {
       if (event.repeat || (event.key !== "Enter" && event.key !== " ") || this.host.disabled) return;
+      this.pressStartedAt=performance.now();this.pressRecord=window.DuckTransitions?.getContact?.(this.host);
+      this.cancelledDispersal=false;this.releasedDispersal = null;
       this.pointer.x = this.width / 2;
       this.pointer.y = this.height / 2;
       this.pressed = true;
@@ -884,7 +897,7 @@
 
     onKeyUp(event) {
       if (event.key !== "Enter" && event.key !== " ") return;
-      this.finishPress({}, false);
+      this.finishPress({...event,type:"keyup"}, false);
     }
 
     setReducedPress(pressed) {
@@ -945,6 +958,7 @@
         this.recoveryHold[index] = recoveryDelay;
       }
       this.draw();
+      this.pressResponseMs=Math.max(0,performance.now()-(this.pressStartedAt??performance.now()));
     }
 
     onActivate(event) {
@@ -952,6 +966,10 @@
       const record=window.DuckTransitions?.getActivation(this.host);
       const rect=this.host.getBoundingClientRect();
       const point = record ? {x:record.contact.x-rect.left,y:record.contact.y-rect.top} : event.detail ? this.localPointer(event) : { x: this.width / 2, y: this.height / 2 };
+      if(record?.impulse){
+        // Workspace handlers consume this physical event later in the same native click.
+        queueMicrotask(()=>{if(!record.consumed)this.emitWave(point,{activationId:record.id});});return;
+      }
       this.emitWave(point,record?{timeline:record.timeline,activationId:record.id}:{});
     }
 
@@ -960,23 +978,50 @@
       const reach = Math.max(...[[0, 0], [this.width, 0], [0, this.height], [this.width, this.height]].map(([x,y]) => Math.hypot(x-point.x,y-point.y)));
       this.waves ||= [];
       if(shared.activationId && this.waves.some(w=>w.activationId===shared.activationId))return;
-      this.waves.push({ x: point.x, y: point.y, radius: 0, reach, ...shared });
+      let rootField=null;
+      if(shared.impulse){
+        rootField=new Float64Array(this.count*13);
+        for(let i=0;i<this.count;i++){
+          const dx=this.roots[i*2]*this.width-point.x,dy=this.roots[i*2+1]*this.height-point.y,r=Math.hypot(dx,dy),sample=window.DuckDispersal.angular(shared.impulse,Math.atan2(dy,dx));
+          const outside=Math.max(0,r-sample.radius),edge=this.materialMask?.[i*3+1]||0,label=this.materialMask?.[i*3]||0;
+          const variation=this.rootSeeds[i*ROOT_STRIDE]*(1-edge*.78)+edge*.78;
+          const length=this.options.length*variation*(1+label*((this.options.labelLengthScale??1)-1))*(1+edge*.4);
+          rootField.set([r,dx/Math.max(.001,r),dy/Math.max(.001,r),sample.radial,sample.tangential,sample.velocity,sample.tangentialVelocity,sample.compression,sample.depression,outside/Math.max(60,shared.impulse.material.waveSpeed||540),Math.exp(-outside/Math.max(1,shared.impulse.pressRadius*8)),length,sample.radius],i*13);
+        }
+      }
+      this.waves.push({ rootField,x: point.x, y: point.y, radius: shared.impulse?shared.impulse.samples.reduce((n,s)=>n+s.radius,0)/shared.impulse.samples.length:0, reach, ...shared });
       this.waves = this.waves.slice(-3);
       this.wake();
     }
 
     advanceWaves(step) {
+      if(this.dispersalOwned)this.dispersalOwned.fill(0);
       const width = Math.max(4, Number(this.options.waveWidth) || 22);
       const speed = Math.max(60, Number(this.options.waveSpeed) || 540);
-      this.waves = (this.waves || []).filter((wave) => wave.radius < wave.reach + width);
+      this.waves = (this.waves || []).filter((wave) => wave.impulse ? (wave.timeline?.progressAt?.(performance.now())??0)<.5 : wave.radius < wave.reach + width);
       for (const wave of this.waves) {
         const previous = wave.radius;
         wave.radius = wave.timeline?.radiusAt ? Math.max(previous,wave.timeline.radiusAt(performance.now())) : previous+speed*step;
+        const seconds=wave.impulse?(wave.timeline?.impulseSecondsAt?.(performance.now())??Math.max(0,(performance.now()-wave.impulse.capturedAt)/1000)):0;
+        const fade=1-smoothstep(0,.5,wave.timeline?.progressAt?.(performance.now())||0);
         for (let index = 0; index < this.count; index += 1) {
           if (this.pressed && this.activePress[index]) continue;
           const dx = this.roots[index*2] * this.width - wave.x;
           const dy = this.roots[index*2+1] * this.height - wave.y;
           const distance = Math.hypot(dx,dy);
+          if(wave.impulse){
+            const data=wave.rootField,k=index*13;
+            if(distance>wave.radius || distance<data[k+12])continue;
+            const age=Math.max(0,seconds-data[k+9]),decay=Math.exp(-3*age)*data[k+10]*fade;
+            const radial=(data[k+3]+(data[k+5]+3*data[k+3])*age)*decay;
+            const tangent=(data[k+4]+(data[k+6]+3*data[k+4])*age)*decay;
+            const c=data[k+7]*decay,scale=Math.max(.001,data[k+11]*1.62*(.68+.77*c)),nx=data[k+1],ny=data[k+2],offset=index*STATE_STRIDE;
+            this.state[offset]=(nx*radial-ny*tangent)/scale;
+            this.state[offset+1]=(ny*radial+nx*tangent)/scale;
+            this.state[offset+2]=c;this.state[offset+3]=data[k+8]*decay;
+            this.dispersalOwned ||= new Uint8Array(this.count);this.dispersalOwned[index]=1;
+            continue;
+          }
           // Swept wavefront sampling prevents gaps at low frame rates.
           const nearest = clamp(distance, previous, wave.radius);
           const envelope = 1 - smoothstep(0, width, Math.abs(distance-nearest));
@@ -992,6 +1037,7 @@
     }
 
     simulate(step) {
+      if(this.options.inspectionFreeze)return;
       this.advanceWaves(step);
       const stiffness = this.options.stiffness;
       const damping = this.options.damping;
@@ -999,6 +1045,7 @@
       let recoveringFibers = 0;
       for (let index = 0; index < this.count; index += 1) {
         const state = index * STATE_STRIDE;
+        if(this.dispersalOwned?.[index]){maximumEnergy=Math.max(maximumEnergy,.01);continue;}
         const activelyPressed = this.pressed && this.activePress[index] === 1;
         let fiberIsMoving = activelyPressed || this.recoveryHold[index] > 0;
         if (activelyPressed) {
@@ -1122,7 +1169,7 @@
     }
 
     wake() {
-      if (this.destroyed || this.running || !this.gl || !this.visible || document.hidden) return;
+      if (this.destroyed || this.transitionRetains || this.running || !this.gl || !this.visible || document.hidden) return;
       this.running = true;
       this.lastFrame = 0;
       this.frames = 0;
@@ -1131,6 +1178,7 @@
     }
 
     setParameters(parameters) {
+      if(this.transitionRetains){this.pendingParameters={...this.pendingParameters,...parameters};return;}
       const previousDensity = this.options.density;
       const previousQuality = this.options.quality;
       const previousSilhouette = this.options.silhouette;
@@ -1308,7 +1356,16 @@
       this.resize();
     }
 
+    retainDispersal() {
+      this.transitionRetains=(this.transitionRetains||0)+1;
+      this.resizeObserver?.disconnect();this.intersectionObserver?.disconnect();this.labelObserver?.disconnect();
+      if(this.frameId)cancelAnimationFrame(this.frameId);this.frameId=0;this.running=false;
+      let released=false;
+      return ()=>{if(released)return;released=true;this.transitionRetains--;if(!this.transitionRetains){if(this.pendingDestroy)this.destroy();else{this.resizeObserver?.observe(this.host);this.intersectionObserver?.observe(this.host);this.labelObserver?.observe(this.host,{childList:true,characterData:true,subtree:true});if(this.pendingParameters){const pending=this.pendingParameters;this.pendingParameters=null;this.setParameters(pending);}this.wake();}}};
+    }
+
     destroy() {
+      if(this.transitionRetains){this.pendingDestroy=true;if(this.frameId)cancelAnimationFrame(this.frameId);this.frameId=0;this.running=false;return;}
       if (this.destroyed) return;
       if(this.frameId) cancelAnimationFrame(this.frameId);
       this.frameId = 0;
@@ -1385,6 +1442,7 @@
     }).observe(document.documentElement,{childList:true,subtree:true});
   }
 
+  DuckFurSurface.pressProfileForHandoff = pressProfile;
   window.DuckFur = {
     mount,
     mountAll,

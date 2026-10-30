@@ -159,3 +159,35 @@ test("native destination is available under resolving fur once complete growth h
   env.tick(600);assert.equal(wrapper.style.visibility,"hidden");
   env.tick(1100);assert.equal(env.layers.size,0);
 });
+
+test("measured handoff is captured before destination unmount, retains the source, and emits only one continuation",()=>{
+ const env=animatedSetup();let captured=0,release=0,disposed=0,unmounted=false,options,shared;
+ const source={getBoundingClientRect:()=>({left:300,top:200,width:100,height:40})},impulse={capturedAt:0,material:{length:5.2},samples:[],pressRadius:38.4};
+ const surface={waves:[],captureDispersalState(record){assert.equal(unmounted,false);captured++;return {...impulse,activationId:record.id};},retainDispersal(){return ()=>release++;},emitWave(p,s){shared=s;this.waves.push(s);}};
+ env.context.window.DuckFur={get:()=>surface};env.context.window.DuckFurSheet={FurSheet:class{constructor(layer,args){options=args.options;this.options=options;}getStats(){return {};}draw(){return {radius:40};}dispose(){disposed++;}},revealPolygon:()=>"none"};
+ env.transitions.workspace({root:env.root,source,effect:"sheet",update(){unmounted=true;}});
+ assert.equal(captured,1);assert.equal(options.impulse.activationId,shared.activationId);assert.equal(shared.impulse,options.impulse);assert.equal(surface.waves.length,1);assert.equal(options.fiberLength,5.2);
+ env.tick(1100);assert.equal(release,1);assert.equal(disposed,1);assert.equal(env.layers.size,0);
+});
+test("physical clock includes delayed renderer preparation instead of restarting on readiness",()=>{
+ const env=animatedSetup();let clock=0,progress;
+ env.context.performance.now=()=>clock;
+ env.context.window.DuckFurSheet={FurSheet:class{constructor(){clock=300;}getStats(){return {};}draw(p){progress=p;return {radius:50};}dispose(){}},revealPolygon:()=>"none"};
+ env.transitions.workspace({root:env.root,effect:"sheet",update(){}});env.tick(10);
+ assert.equal(progress,.3);env.transitions.cancel();assert.equal(env.layers.size,0);
+});
+test("cancelled contacts never seed a later native activation and keyboard capture stays centered",()=>{
+ const env=animatedSetup();env.context.queueMicrotask=()=>{};
+ const source={disabled:false,getBoundingClientRect:()=>({left:300,top:200,width:100,height:40})},event={target:{closest:()=>source},type:"pointerdown",pointerType:"mouse",clientX:310,clientY:210};
+ env.events.pointerdown(event);env.events.pointercancel(event);env.events.click({...event,type:"click",detail:0});
+ assert.equal(env.transitions.getActivation(source).modality,"mouse"); // click's explicit pointer metadata is independent of cancelled contact
+ env.events.keydown({target:event.target,key:"Enter"});env.events.click({target:event.target,type:"click",detail:0});
+ assert.equal(env.transitions.getActivation(source).modality,"keyboard");assert.equal(env.transitions.getActivation(source).contact.x,350);
+});
+test("GPU startup fallback releases a retained initiating button",()=>{
+ const env=animatedSetup();let releases=0;
+ const source={getBoundingClientRect:()=>({left:30,top:40,width:100,height:44})};
+ env.context.window.DuckFur={get:()=>({captureDispersalState:()=>({capturedAt:0,material:{length:5.2},samples:[],pressRadius:38}),retainDispersal:()=>()=>releases++})};
+ env.context.window.DuckFurSheet={FurSheet:class{constructor(){throw Error("cold GPU failure");}}};
+ env.transitions.workspace({root:env.root,source,effect:"sheet",update(){}});assert.equal(releases,1);assert.equal(env.layers.size,0);assert.equal(env.frames.size,0);
+});

@@ -14,11 +14,20 @@
     const settings={...defaults,...options},p=clamp(progress,0,1);
     const reach=Math.max(...[[0,0],[width,0],[0,height],[width,height]].map(([x,y])=>Math.hypot(x-origin.x,y-origin.y)))+settings.sheetWidth+8;
     // One raised growth/rolling wave finishes crossing before the whole sheet settles together.
-    const radius=reach*Math.pow((settings.formation?soft:smooth)(Math.min(1,p/(settings.formation?.5:.88))),1/settings.growthSpeed);
+    let radius=reach*Math.pow((settings.formation?soft:smooth)(Math.min(1,p/(settings.formation?.5:.88))),1/settings.growthSpeed);
+    const impulse=settings.impulse;
+    const mean=key=>impulse?impulse.samples.reduce((sum,s)=>sum+s[key],0)/impulse.samples.length:0;
+    const seedRadius=impulse?mean("radius"):0;
+    if(impulse){
+      const t=Math.min(1,p/(settings.formation?.5:.88)),duration=(settings.duration||1000)/1000*(settings.formation?.5:.88);
+      const initialSpeed=Math.min((reach-seedRadius)*3/duration,Math.max(60,(impulse.material.waveSpeed||540)+mean("velocity")));
+      // Monotone Hermite radius with measured nonzero outgoing speed; no new ease-in.
+      radius=(2*t*t*t-3*t*t+1)*seedRadius+(-2*t*t*t+3*t*t)*reach+(t*t*t-2*t*t+t)*duration*initialSpeed;
+    }
     const state=formationState(p),settleProgress=settings.formation?state.flatten:0,tintProgress=settings.formation?state.tint:0;
     const band=Math.min(settings.sheetWidth,radius*.55);
-    const amplitude=smooth(p/.18)*(settings.formation?1:(1-smooth((p-.88)/.12)));
-    return {width,height,origin,settings,progress:p,reach,radius,settleProgress,tintProgress,band,amplitude,phase:settings.formation?(p<.5?"Grow / roll":p<.7?"Fur takes UI colors":"Colored fur settles into UI"):"Growth / baseline",
+    const amplitude=(impulse?(.15+clamp((mean("compression")+Math.abs(mean("velocity"))/100),0,.7))*(1-smooth(p/.2))+smooth(p/.2):smooth(p/.18))*(settings.formation?1:(1-smooth((p-.88)/.12)));
+    return {width,height,origin,settings,impulseSeconds:(settings.impulseAge||0)+p*(settings.duration||1000)/1000,progress:p,reach,radius,settleProgress,tintProgress,band,amplitude,phase:settings.formation?(p<.5?"Grow / roll":p<.7?"Fur takes UI colors":"Colored fur settles into UI"):"Growth / baseline",
       opacity:settings.formation?1:1-smooth((p-.92)/.08),coverageArea:Math.PI*radius*radius};
   }
   function flattenAmount(model,r) {
@@ -31,7 +40,7 @@
     const crestHeight=Math.min(s.elevation,radius*.38)*amplitude;
     const curl=crestHeight*.6*s.curvature;
     const inCrest=r>=radius-band && r<=radius;
-    const tuft=radius*.18*(1-smooth(model.progress/.18));
+    const tuft=(s.impulse?0:1)*radius*.18*(1-smooth(model.progress/.18));
     const tuftShape=Math.max(0,1-r*r/Math.max(.001,radius*radius));
     const flat=flattenAmount(model,r);
     const lift=s.formation?Math.min(s.elevation*.32,radius*.15)*amplitude:0;
@@ -41,14 +50,18 @@
   }
   function sample(model,v,q,layer=0) {
     const angle=v*Math.PI,r=(q+1)*.5*model.reach;
-    const center=profile(model,r),delta=.05;
-    const lo=profile(model,Math.max(0,r-delta)),hi=profile(model,r+delta);
+    const impulse=model.settings.impulse,field=impulse?window.DuckDispersal.field(impulse,angle,r,model.impulseSeconds):null;
+    const seamProfile=radius=>{const p=profile(model,radius);if(!impulse)return p;const edge=window.DuckDispersal.angular(impulse,angle).edge,w=smooth((radius-edge)/Math.max(12,impulse.pressRadius*.8));return {u:radius+(p.u-radius)*w,z:p.z*w};};
+    const center=seamProfile(r),delta=.05;
+    const lo=seamProfile(Math.max(0,r-delta)),hi=seamProfile(r+delta);
     const du=hi.u-lo.u,dz=hi.z-lo.z,len=Math.hypot(du,dz)||1;
     const thicknessScale=1-flattenAmount(model,r);
     const nx=Math.cos(angle),ny=Math.sin(angle),normal={x:-nx*dz/len,y:-ny*dz/len,z:du/len};
-    return {x:model.origin.x+nx*center.u-normal.x*layer*model.settings.thickness*thicknessScale* Math.min(1,model.radius/20),
-      y:model.origin.y+ny*center.u-normal.y*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),
-      z:center.z-normal.z*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),normal,r,visible:r<=model.radius && model.radius>0 && flattenAmount(model,r)<1};
+    const fade=(1-smooth(model.progress/.5))*(1-model.settleProgress);
+    const dx=field?(nx*field.radial-ny*field.tangential)*fade:0,dy=field?(ny*field.radial+nx*field.tangential)*fade:0;
+    return {x:model.origin.x+nx*center.u+dx-normal.x*layer*model.settings.thickness*thicknessScale* Math.min(1,model.radius/20),
+      y:model.origin.y+ny*center.u+dy-normal.y*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),
+      z:Math.max(0,center.z-(field?.depression||0)*model.settings.fiberLength*fade)-normal.z*layer*model.settings.thickness*thicknessScale*Math.min(1,model.radius/20),normal,r,visible:r<=model.radius && model.radius>0 && flattenAmount(model,r)<1};
   }
   function project(model,p){const lift=model.settings.formation && !model.settings.colorOnly?p.z*smooth((p.z-model.settings.elevation*.34)/Math.max(1,model.settings.elevation*.4)):p.z;const scale=1800/(1800-lift);return {x:model.origin.x+(p.x-model.origin.x)*scale,y:model.origin.y+(p.y-model.origin.y)*scale-lift*.65};}
   function contour(model,r,projected=false){return Array.from({length:129},(_,i)=>{
@@ -70,6 +83,22 @@
     uniform float u_progress,u_reach,u_radius,u_settleProgress,u_tintProgress,u_band,u_opacity,u_bodyFloor,u_amplitude,u_formation;
     uniform float u_width,u_elevation,u_curvature,u_thickness,u_lighting,u_length,u_hasField,u_colorOnly;
     uniform sampler2D u_targets;
+    uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed;
+    uniform vec4 u_impulse[32],u_motion[32],u_sourceRect;
+    vec4 impulseAt(float angle,float r){
+      float sector=mod(angle/6.2831853+1.0,1.0)*32.0;int i=int(floor(sector));int j=(i+1)%32;float f=fract(sector);
+      vec4 s=mix(u_impulse[i],u_impulse[j],f),m=mix(u_motion[i],u_motion[j],f);
+      float outside=max(0.0,r-m.z),age=max(0.0,u_impulseSeconds-outside/max(60.0,u_waveSpeed));
+      float decay=exp(-3.0*age-outside/max(1.0,u_pressRadius*8.0));
+      return vec4((s.xy+(m.xy+3.0*s.xy)*age)*decay,s.zw*decay)*u_hasImpulse;
+    }
+    float impulseWeight(){return u_hasImpulse*(1.0-smoothstep(0.0,0.5,u_progress))*(1.0-u_settleProgress);}
+    bool sourceInterior(vec2 pixel){
+      vec2 halfSize=u_sourceRect.zw*0.5;float radius=min(halfSize.x,halfSize.y);
+      vec2 q=abs(pixel-u_sourceRect.xy-halfSize)-(halfSize-vec2(radius));
+      return u_hasImpulse>0.5 && u_progress<0.5 && length(max(q,0.0))+min(max(q.x,q.y),0.0)<radius-1.0;
+    }
+
     vec3 targetAt(vec2 pixel){if(u_hasField<0.5)return vec3(0.0);return texture(u_targets,clamp(pixel/u_size,vec2(0.0),vec2(1.0))).rgb*u_hasField;}
     float reliefAt(vec2 pixel){if(u_settleProgress<=0.12 || u_settleProgress>=1.0)return 0.0;vec3 f=targetAt(pixel);return (f.r*7.0+f.g*3.0)*smoothstep(0.12,0.55,u_settleProgress)*(1.0-smoothstep(0.72,1.0,u_settleProgress));}
     float resolveAt(vec2 pixel,float amount){return max(targetAt(pixel).b*smoothstep(0.60,0.92,amount),smoothstep(0.86,1.0,amount));}
@@ -81,23 +110,31 @@
       float height=min(u_elevation,u_radius*0.38)*u_amplitude;
       float curl=height*0.6*u_curvature;
       float inside=step(u_radius-u_band,r)*step(r,u_radius);
-      float tuft=u_radius*0.18*(1.0-smoothstep(0.0,0.18,u_progress));
+      float tuft=(1.0-u_hasImpulse)*u_radius*0.18*(1.0-smoothstep(0.0,0.18,u_progress));
       float shape=max(0.0,1.0-r*r/max(0.001,u_radius*u_radius));
       float settled=flattenAmount(r);
       float lift=u_formation*min(u_elevation*0.32,u_radius*0.15)*u_amplitude;
       float shoulder=lift*(1.0-settled)*(r<u_radius-u_band?1.0:1.0-smoothstep(0.0,1.0,t));
       return vec2(r+inside*curl*sin(6.2831853*t)*(1.0-settled),inside*height*pow(sin(3.14159265*t),2.0)*(1.0-settled)+shoulder+tuft*shape*shape*(1.0-settled));
     }
+    vec2 seamProfile(float r,float edge){
+      vec2 p=profile(r);if(u_hasImpulse<0.5)return p;
+      float weight=smoothstep(edge,edge+max(12.0,u_pressRadius*0.8),r);
+      return vec2(mix(r,p.x,weight),p.y*weight);
+    }
     vec3 positionAt(float v,float q,out vec3 normal,out vec3 tangent) {
       float r=(q+1.0)*0.5*u_reach;vec2 direction=vec2(cos(v*3.14159265),sin(v*3.14159265));
-      vec2 center=profile(r),delta=profile(r+0.05)-profile(max(0.0,r-0.05));
+      float sector=mod(v*0.5+1.0,1.0)*32.0;int i=int(floor(sector));float edge=mix(u_motion[i].w,u_motion[(i+1)%32].w,fract(sector));
+      vec2 center=seamProfile(r,edge),delta=seamProfile(r+0.05,edge)-seamProfile(max(0.0,r-0.05),edge);
       tangent=normalize(vec3(direction*delta.x,delta.y));
       normal=normalize(vec3(-direction*delta.y,delta.x));
       vec2 pixel=u_origin+direction*center.x;
       float relief=reliefAt(pixel);
       vec2 gradient=vec2(reliefAt(pixel+vec2(1,0))-reliefAt(pixel-vec2(1,0)),reliefAt(pixel+vec2(0,1))-reliefAt(pixel-vec2(0,1)))*0.5;
       normal=normalize(normal+vec3(-gradient,0));
-      return vec3(pixel,center.y+relief);
+      vec4 impulse=impulseAt(v*3.14159265,r);float weight=impulseWeight();
+      pixel+=(direction*impulse.x+vec2(-direction.y,direction.x)*impulse.y)*weight;
+      return vec3(pixel,max(0.0,center.y-impulse.w*u_length*weight)+relief);
     }
     vec4 project(vec3 p) {
       float lift=mix(p.z,p.z*smoothstep(u_elevation*0.34,u_elevation*0.74,p.z),u_formation*(1.0-u_colorOnly));
@@ -149,6 +186,7 @@
         coverage=resolve<=0.0?1.0:resolve>=0.999?0.0:1.0-smoothstep(radius-feather,radius+feather,distanceToFiber);
         if(coverage<0.001)discard;
       }
+      if(sourceInterior(v_uv+u_origin))discard;
       if(v_radius>u_radius || u_radius<0.01 || u_opacity<0.001)discard;
       // Fully settled regions have already become the native UI. No alpha ghost.
       if(u_formation>0.5 && settled>=1.0)discard;
@@ -191,6 +229,10 @@
       if(length(gradient)>0.01){lean=normalize(mix(lean,vec3(-gradient.y,gradient.x,0.05),smoothstep(0.15,0.65,settled)*0.85));side=normalize(cross(normal,lean));}
       float resolve=resolveAt(pixel,settled);
       float length=u_length*(0.78+a_seed.z*0.44)*(1.0-smoothstep(0.50,1.0,settled));
+      vec4 impulse=impulseAt(v*3.14159265,r);float weight=impulseWeight();
+      vec3 radial=vec3(cos(v*3.14159265),sin(v*3.14159265),0);
+      lean=normalize(lean+radial*impulse.x*weight/max(1.0,u_length)+across*impulse.y*weight/max(1.0,u_length));
+      length*=1.0-clamp(impulse.z*weight,0.0,1.0)*0.78;
       p+=(normal*0.5*pow(1.0-settled,2.0)+lean*(mix(0.28,0.38,a_seed.z)+settled*0.5))*length*corner.y;
       float rootWidth=mix(1.05,1.5,a_seed.z)*(1.0-resolve);
       p+=side*corner.x*mix(rootWidth,rootWidth*0.82,corner.y);
@@ -198,7 +240,7 @@
       v_height=corner.y;v_side=corner.x;v_seed=a_seed.z;
       v_light=(0.78+0.22*max(0.0,dot(normalize(vec3(cos(angle),sin(angle),0.7)),normalize(vec3(-0.35,-0.45,0.82)))))*(0.82+0.18*max(0.0,dot(normal,normalize(vec3(-0.3,-0.5,1.0)))));
       v_edge=step(r,u_radius)*step(0.01,u_radius)*u_opacity*bodyVisibility(r);
-      if(v_edge<0.001 || settled>=1.0 || resolve>=0.999)gl_Position=vec4(2.0,2.0,2.0,1.0);
+      if(sourceInterior(pixel) || v_edge<0.001 || settled>=1.0 || resolve>=0.999)gl_Position=vec4(2.0,2.0,2.0,1.0);
     }
   `;
   const furFragment=`#version 300 es
@@ -269,7 +311,7 @@
         this.canvas.width=Math.round(width*this.dpr);this.canvas.height=Math.round(height*this.dpr);
         this.meshProgram=program(gl,meshVertex,meshFragment);this.programs.push(this.meshProgram);
         this.furProgram=program(gl,furVertex,furFragment);this.programs.push(this.furProgram);
-        const mesh=meshData(small?80:120,small?48:72);this.meshVertices=mesh.length/3;
+        const mesh=meshData(small||this.options.impulse?80:120,small||this.options.impulse?48:72);this.meshVertices=mesh.length/3;
         this.meshBuffer=this.buffer(mesh);
         this.fibers=Math.round((small?9000:26000)*clamp(this.options.furDensity,.35,1.8));
         const seeds=new Float32Array(this.fibers*4);
@@ -288,7 +330,7 @@
         this.bufferBytes=mesh.byteLength+seeds.byteLength;
         this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;
         this.uniforms=new Map();
-        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
+        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","sourceRect","impulse[0]","motion[0]"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
         this.bakeButtonPile();
         gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
         // Compile/validate the first draw before starting the visible frame clock.
@@ -380,6 +422,10 @@
     }
     buffer(data){const gl=this.gl,buffer=gl.createBuffer();this.buffers.push(buffer);resources.buffers++;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return buffer;}
     uniformsFor(target,model){const gl=this.gl,u=this.uniforms.get(target),s=this.options;gl.useProgram(target);gl.uniform1i(u.destination,1);gl.uniform1i(u.targets,2);
+      const impulse=s.impulse;
+      gl.uniform1f(u.hasImpulse,impulse?1:0);gl.uniform1f(u.impulseSeconds,model.impulseSeconds||0);gl.uniform1f(u.pressRadius,impulse?.pressRadius||1);gl.uniform1f(u.waveSpeed,impulse?.material.waveSpeed||540);
+      const rect=s.sourceRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceRect,rect.x,rect.y,rect.width,rect.height);
+      if(impulse){gl.uniform4fv(u["impulse[0]"],(this.impulseData ||= new Float32Array(impulse.samples.flatMap(v=>[v.radial,v.tangential,v.compression,v.depression]))));gl.uniform4fv(u["motion[0]"],(this.motionData ||= new Float32Array(impulse.samples.flatMap(v=>[v.velocity,v.tangentialVelocity,v.radius,v.edge]))));}
       gl.uniform2f(u.size,this.width,this.height);gl.uniform2f(u.origin,this.origin.x,this.origin.y);
       for(const [name,value]of Object.entries({progress:model.progress,reach:model.reach,radius:model.radius,settleProgress:model.settleProgress,tintProgress:model.tintProgress,band:model.band,opacity:model.opacity,formation:s.formation?1:0,hasDestination:this.destinationTexture?1:0,hasField:this.targetTexture && !s.colorOnly?1:0,colorOnly:s.colorOnly?1:0,bodyFloor:s.growthOnly?1:.42,amplitude:model.amplitude,width:s.sheetWidth,elevation:s.elevation,curvature:s.curvature,thickness:s.thickness*Math.min(1,model.radius/20),lighting:s.lighting,length:s.fiberLength}))gl.uniform1f(u[name],value);
     }
@@ -401,8 +447,8 @@
       return model;
     }
     reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+this.canvas.width*this.canvas.height*8;}
-    canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
-    retarget(container,origin,options){this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
+    canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && Boolean(this.options.impulse)===Boolean(options.impulse) && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
+    retarget(container,origin,options){this.impulseData=null;this.motionData=null;this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.draw(0);}
     getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",textureBytes:(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0),...resources};}
     dispose(){if(this.disposed)return;this.disposed=true;const gl=this.gl;
       if(gl){if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}

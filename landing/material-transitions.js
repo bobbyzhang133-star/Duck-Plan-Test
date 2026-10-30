@@ -77,7 +77,7 @@
     const current=active; active=null;
     cancelAnimationFrame(current.frame);
     if(current.sheet){metrics.sheetPeak=current.sheet.getStats();current.sheet.dispose();}
-    current.layer.remove(); metrics.layers=0;
+    current.releaseSource?.();current.layer.remove(); metrics.layers=0;
     metrics.cancelled++;metrics.lastCancellation=reason;
     current.complete?.({cancelled:true,reason});
   }
@@ -94,7 +94,17 @@
     const bounds={left,top:Math.max(0,rect.top),width:Math.max(0,Math.min(rect.right??rect.left+rect.width,innerWidth)-left),height:Math.max(0,Math.min(rect.bottom??rect.top+rect.height,innerHeight)-Math.max(0,rect.top))};
     if(!bounds.width || !bounds.height){reusable?.dispose();update?.();complete?.({cancelled:false});return;}
     const record=activation && activation.source===source ? activation : captureActivation(source,event);
+    record.consumed=true;
+    record.impulse ||= source && window.DuckFur?.get(source)?.captureDispersalState?.(record);
     const mapped=mapActivation(record,bounds),point=mapped.emergence;
+    const impulse=sheetOptions.independentGrowth?null:record.impulse;
+    if(impulse){
+      sheetOptions={...sheetOptions,impulse,sourceRect:{x:record.bounds.left-bounds.left,y:record.bounds.top-bounds.top,width:record.bounds.width,height:record.bounds.height},duration:settings.duration};
+      if(Number.isFinite(impulse.material.length))sheetOptions.fiberLength=impulse.material.length;
+      if(Number.isFinite(impulse.material.density))sheetOptions.furDensity=impulse.material.density;
+    }
+    metrics.sourceAdvanceMs=0;metrics.sheetDrawMs=0;
+    metrics.dispersal=impulse?{activationId:record.id,contactAt:record.contactAt,capturedAt:impulse.capturedAt,clickAt:record.activatedAt??performance.now(),samples:impulse.samples,pressRadius:impulse.pressRadius,responseMs:impulse.responseMs,releaseToPreparationMs:Math.max(0,performance.now()-impulse.capturedAt),sourceRect:sheetOptions.sourceRect}:null;
     metrics.activation={id:record.id,modality:record.modality,contact:record.contact,emergence:point,external:mapped.external};
     metrics.snapshotBytes=0;
     const started=performance.now();
@@ -135,6 +145,18 @@
     metrics.layers=1; metrics.frames=0; metrics.longFrames=0; metrics.maxFrameMs=0; metrics.durationMs=0;
     metrics.qualityReduced=Boolean(sheet?.qualityReduced);
     const focus=document.activeElement;
+    const surface=source && window.DuckFur?.get(source);
+    let releaseSource=impulse?surface?.retainDispersal?.():null;
+    const originalCanvases=[...root.querySelectorAll("canvas")],sourceIndex=originalCanvases.indexOf(surface?.canvas);
+    const sourceCopy=sourceIndex>=0?copy.querySelectorAll("canvas")[sourceIndex]:null;
+    if(sourceCopy && surface.canvas.parentElement){
+      // Move the live decorative canvas into the inert outgoing button. Leave its
+      // captured canvas in the real control for destination capture; no GPU readback per frame.
+      const sourceParent=surface.canvas.parentElement,copyParent=sourceCopy.parentElement,release=releaseSource;
+      sourceCopy.remove();sourceParent.append(sourceCopy);copyParent.append(surface.canvas);
+      releaseSource=()=>{if(!surface.pendingDestroy && sourceParent.isConnected)sourceParent.append(surface.canvas);sourceCopy.remove();release?.();};
+    }
+
     try {
       update?.();
       if(sheet && sheetOptions.formation){
@@ -143,16 +165,17 @@
         sheet.setDestination(surface);metrics.targets=surface.formation?.targets||[];metrics.contentRegions=surface.formation?.contents||[];
         metrics.registration={before,destination:measure(root,layer),frames:[]};
       }
-    } catch(error) { sheet?.dispose();layer.remove(); metrics.layers=0;if(sheetOptions.formation){metrics.sheetFailure=String(error.message);complete?.({cancelled:false,fallback:true});return;}throw error; }
-    if((effect === "sheet" || effect==="ribbon") && !sheet){layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
+    } catch(error) { releaseSource?.();sheet?.dispose();layer.remove(); metrics.layers=0;if(sheetOptions.formation){metrics.sheetFailure=String(error.message);complete?.({cancelled:false,fallback:true});return;}throw error; }
+    if((effect === "sheet" || effect==="ribbon") && !sheet){releaseSource?.();layer.remove();metrics.layers=0;complete?.({cancelled:false,fallback:true});return;}
     const reach=Math.max(...[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>Math.hypot(x-point.x,y-point.y)))+45;
-    const job={layer,frame:0,complete,sheet,effect}; active=job;
-    // Compilation/snapshot latency must not consume the physical animation.
-    record.timeline.startedAt=performance.now();record.timeline.duration=settings.duration;
+    const job={layer,frame:0,complete,sheet,effect,releaseSource}; active=job;
+    // Physical time belongs to the confirmed activation, not renderer readiness.
+    record.timeline.startedAt=record.activatedAt??started;record.timeline.duration=settings.duration;
+    if(impulse && sheet?.options)sheet.options.impulseAge=Math.max(0,(record.timeline.startedAt-impulse.capturedAt)/1000);
     record.timeline.progressAt=time=>{const held=typeof holdProgress === "function"?holdProgress():holdProgress;return held===null?clamp((time-record.timeline.startedAt)/record.timeline.duration,0,1):clamp(held,0,1);};
+    record.timeline.impulseSecondsAt=time=>(sheet?.options?.impulseAge||0)+record.timeline.progressAt(time)*record.timeline.duration/1000;
     record.timeline.radiusAt=time=>window.DuckFurSheet?.geometry(bounds.width,bounds.height,point,sheetOptions,record.timeline.progressAt(time)).radius||0;
-    const surface=source && window.DuckFur?.get(source);
-    if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).emergence,{timeline:record.timeline,activationId:record.id});
+    if(surface && !surface.waves?.some(w=>w.activationId===record.id))surface.emitWave(mapActivation(record,source.getBoundingClientRect()).emergence,{timeline:record.timeline,activationId:record.id,impulse});
     let previous=null,lastProgress=null;
     const debug=sheetOptions.debug && document.createElementNS ? document.createElementNS("http://www.w3.org/2000/svg","svg"):null;
     if(debug){debug.setAttribute("viewBox",`0 0 ${bounds.width} ${bounds.height}`);debug.style.cssText="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none";layer.append(debug);}
@@ -161,17 +184,33 @@
       const paths=renderer.boundaries(model);
       const circle=(x,y,color,label,dy=-8)=>`<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white"/><text x="${x+8}" y="${Math.max(14,y+dy)}" fill="${color}" stroke="white" stroke-width=".4" font-size="12">${label}</text>`;
       debug.innerHTML=`<path d="${paths.growth}" fill="none" stroke="#2563eb" stroke-dasharray="5 3"/><path d="${paths.crest}" fill="none" stroke="#be185d"/><path d="${paths.reveal}" fill="none" stroke="#059669" stroke-dasharray="3 3"/><path d="${paths.flatten||""}" fill="none" stroke="#ea580c" stroke-dasharray="6 3"/>`+circle(record.contact.x-bounds.left,record.contact.y-bounds.top,"#dc2626","Contact")+circle(point.x,point.y,"#7c3aed",mapped.external?"Boundary emergence":"Seed",18)+(sheetOptions.formation?(metrics.targets||[]).slice(1).map(t=>`<rect x="${t.x}" y="${t.y}" width="${t.width}" height="${t.height}" rx="${t.radius}" fill="none" stroke="#0891b2" stroke-width="1"/>`).join(""):"")+`<rect x="1" y="1" width="${bounds.width-2}" height="${bounds.height-2}" fill="none" stroke="#a16207" stroke-dasharray="2 4"/>`+[[0,0],[bounds.width,0],[0,bounds.height],[bounds.width,bounds.height]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#a16207"/>`).join("");
+      if(impulse){
+        const sr=sheetOptions.sourceRect;
+        const contact={x:record.contact.x-bounds.left,y:record.contact.y-bounds.top};
+        debug.innerHTML+=`<rect x="${sr.x}" y="${sr.y}" width="${sr.width}" height="${sr.height}" rx="${sr.height/2}" fill="none" stroke="#dc2626"/>`;
+        for(const sample of impulse.samples){const a=sample.angle,c=Math.cos(a),s=Math.sin(a),x=contact.x+c*sample.radius,y=contact.y+s*sample.radius;
+          const first=window.DuckDispersal.field(impulse,a,sample.edge,model.progress*settings.duration/1000);
+          debug.innerHTML+=`<path d="M${x},${y}l${c*sample.radial-s*sample.tangential},${s*sample.radial+c*sample.tangential}" stroke="#dc2626"/><path d="M${x},${y}l${c*sample.velocity*.06},${s*sample.velocity*.06}" stroke="#2563eb"/><path d="M${point.x+c*sample.edge},${point.y+s*sample.edge}l${c*first.radial-s*first.tangential},${s*first.radial+c*first.tangential}" stroke="#059669"/>`;
+        }
+      }
+
     }
     function frame(time) {
       if(active!==job) return;
+      time=Math.max(time,performance.now());
       const elapsed=time-record.timeline.startedAt;
       const interval=previous===null?0:time-previous; previous=time;
       metrics.frames++; metrics.maxFrameMs=Math.max(metrics.maxFrameMs,interval); if(interval>25) metrics.longFrames++;
       const held=typeof holdProgress === "function" ? holdProgress() : holdProgress;
       const progress=record.timeline.progressAt(time);
+      if(impulse && surface?.gl && progress<.5 && progress!==lastProgress){
+        const sourceStart=performance.now();surface.advanceWaves(Math.min(.04,(interval||16)/1000));surface.draw();metrics.sourceAdvanceMs=Math.max(metrics.sourceAdvanceMs,performance.now()-sourceStart);
+      }else if(progress>=.5 && releaseSource){releaseSource();releaseSource=null;job.releaseSource=null;}
+
       if(sheet && progress!==lastProgress){
         try {
-          const model=sheet.draw(progress);lastProgress=progress;
+          const drawStart=performance.now(),model=sheet.draw(progress);metrics.sheetDrawMs=Math.max(metrics.sheetDrawMs,performance.now()-drawStart);lastProgress=progress;
+          if(metrics.dispersal && metrics.dispersal.firstFrameAt===undefined){metrics.dispersal.firstFrameAt=time;metrics.dispersal.pressToFirstFrameMs=time-record.contactAt;metrics.dispersal.clickToFirstFrameMs=time-record.timeline.startedAt;metrics.dispersal.firstRadius=model.radius;}
           if(!model){cancel("sheet-unavailable");return;}
           metrics.sheetPeak=sheet.getStats();
           wrapper.style.clipPath=sheetOptions.growthOnly?"none":renderer.revealPolygon(model);
@@ -202,7 +241,7 @@
       if(progress<1 || held!==null) job.frame=requestAnimationFrame(frame);
       else {
         if(sheet){metrics.sheetPeak=sheet.getStats();sheet.dispose();}
-        metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
+        job.releaseSource?.();metrics.durationMs=elapsed; layer.remove(); active=null; metrics.layers=0;
         if(focus && !focus.isConnected && !document.querySelector("dialog[open]")) {
           const heading=root.querySelector(".view.active h2,.view.active h1");
           if(heading) { heading.tabIndex=-1; heading.focus({preventScroll:true}); }
@@ -260,6 +299,8 @@
     if(!source || source.disabled) return;
     const previous=contacts.get(source);contacts.delete(source);
     activation=captureActivation(source,event,previous);
+    activation.activatedAt=performance.now();
+    activation.impulse=window.DuckFur?.get(source)?.captureDispersalState?.(activation);
     const record=activation;queueMicrotask(()=>{if(activation===record)activation=null;});
   },true);
   const interrupt=()=>{cancel();for(const cleanup of [...morphs.values()])cleanup();};
@@ -268,5 +309,5 @@
   document.addEventListener("visibilitychange",()=>{if(document.hidden)interrupt();});
   document.addEventListener("toggle",event=>{if(event.target.matches("dialog"))interrupt();},true);
   motion.addEventListener("change",interrupt);
-  window.DuckTransitions={measure,isActive:()=>metrics.layers>0,captureActivation,mapActivation,getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
+  window.DuckTransitions={measure,isActive:()=>metrics.layers>0,captureActivation,mapActivation,getContact:source=>contacts.get(source),getActivation:source=>activation?.source===source?activation:null,workspace,morph,cancel:interrupt,settings,metrics,reduced,testSheetContextLoss(){active?.sheet?.gl?.getExtension("WEBGL_lose_context")?.loseContext();},configure(values){Object.assign(settings,values);if(reduced())interrupt();},getStats(){return {...metrics,morphs:morphs.size,fps:metrics.durationMs?Math.round(Math.max(0,metrics.frames-1)*1000/metrics.durationMs):0,contexts:window.DuckFur?.getRendererStats().contexts||0,sheetResources:Object.fromEntries(["contexts","buffers","programs","textures","framebuffers"].map(key=>[key,(window.DuckFurSheet?.resources?.[key]||0)+(window.DuckFurRibbon?.resources?.[key]||0)]))};}};
 })();
