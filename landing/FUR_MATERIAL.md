@@ -1,10 +1,16 @@
 # DuckPlan interactive fur material
 
-## Blender realism Chat Check — pending, 2026-10-30
+## Blender realism Chat Check — completed source review, 2026-10-30
 
 The user reports no visible improvement in realism and requests an external Chat Check. TEST commit `9945193bc7f1e572bafa1ee892210c5f82cf5627` was synchronized before attempting the established Duck Plan ChatGPT conversation. The request asks for exact-source comparison with pre-Blender `2d8b46c`, a trace of Blender findings into browser changes, assessment of the unchanged normal-button solver and billboard geometry, and an evidence-based improvement plan. It explicitly separates consistency/performance gains from realism and does not assume that importing Blender geometry alone fixes dynamics. See `../references/chat-checks/2026-10-30-blender-realism-request.txt`.
 
-ChatGPT returned “Unknown error” on submission and retry; the conversation then remained on its loading screen after reconnecting. No review response was obtained. This is a pending external review, not a completed Chat Check or a new realism validation. No implementation changes or deployment were made as part of this attempt.
+Initial attempts returned “Unknown error” and stalled on reconnect. After the user reopened the conversation, the preserved request succeeded. The reviewer reports exact-source access to `9945193` and comparison with `2d8b46c763e7c44675717b8f92d22b8c383e4e70`. Its verdict is **visible realism improvement unproven**: timing consistency and small sheet appearance changes improved, but the old straight root-to-tip quad deformation remains and the Blender probe's multi-segment contact behavior was not translated. No dense-pile mechanical neighbor solver was introduced; the large Blender spring study partly reproduces the existing browser model, so it is not independent physical validation.
+
+The reviewer recommends a controlled experimental Fur Lab mode: anchored segmented strand curvature first, followed by separately tunable directional pile memory and bounded neighborhood compression if they help. Compare identical saved input traces against the approved renderer before promoting anything. A static Blender geometry import alone would not supply the missing interactive dynamics. Preserve approved resting design/lettering and existing transition/accessibility/resource guarantees. The proposed prompt is saved for later consideration, not applied automatically.
+
+Evidence limits: the reviewer could read source/scripts/measurements but could not independently open the binary Blender project, view the rendered images through its connector, play the WebM clips (binary-decoding failure), access the loopback site or rerun the reported 97 tests. Its perceptual conclusions remain source-based hypotheses rather than independent playback validation. One review statement overcredits changes to the button's compression-width/shading shader: the actual `2d8b46c..9945193` diff leaves that shader unchanged; those button features predate the upgrade. The new taper and height/width adjustments were in the sheet shader. Treat its P0 labels as priorities for the proposed realism experiment, not production-breakage findings.
+
+Full rendered-text review: `../references/chat-checks/2026-10-30-blender-realism-response.txt`. Proposed implementation prompt: `../references/chat-checks/2026-10-30-blender-realism-proposed-prompt.txt`. Review only; no renderer changes, deployment or visual approval.
 
 
 ## Resumed verification completed — 2026-10-30
