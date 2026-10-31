@@ -27,3 +27,7 @@ These observations support compression, splay and a gradual target recovery. The
 `press-reference.png`, `growth-reference.png`, `contact-probe.png`, `dyed-reference.png` and `flat-reference.png` are rendered study frames. The final two share the destination color field; the first retains raised fibers, the second has flattened them into the panel plane.
 
 Inside Blender, run `build_reference.py` with its real `__file__` path, then `refine_formation.py`. The generator replaces only its own marked reference scene and exports that scene with `bpy.data.libraries.write`; it never calls save-as on the user's open file. The second script maps panel colors, corrects the final held shape key, exports the isolated project and renders the colored/flat frames. Measurements are exported as plain CSV/JSON. The website has no Blender runtime, image, mesh or animation dependency.
+
+## Contact-shape browser experiment
+
+`strand-shape-reference.json` is the five-node centerline extracted from fiber35 of the contact probe at its `Contact frame 18` shape key. A cubic lateral-profile fit (k=3.78113472) now drives pressure-dependent browser ribbon curvature. It is a shape approximation driven by the existing spring, not an imported Blender simulation or independent biological validation. See [matched recordings and failed promotion gate](../curved-fur/README.md). The reduced spring, appearance references and unimplemented full collision physics remain distinct from this contribution.

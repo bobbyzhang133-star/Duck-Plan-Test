@@ -118,6 +118,8 @@
     uniform sampler2D u_targets;
     uniform float u_hasImpulse,u_impulseSeconds,u_pressRadius,u_waveSpeed,u_sourceMerge,u_previousIntegration,u_recoveryDelay;
     uniform sampler2D u_response,u_arrival;
+    uniform float u_curve;
+    ${window.DuckFur?.materialShaders?.curve||""}
     uniform float u_hasResponse,u_responseWidth,u_responseStep,u_materialSeconds,u_sourceSeconds,u_arrivalCount;
     uniform float u_responseLengths[32];
     vec4 responseAt(float sector,float seconds,float row){
@@ -290,7 +292,7 @@
     out float v_height,v_side,v_light,v_seed,v_edge,v_flat;out vec2 v_materialUv;
     void main(){
       vec2 corners[6]=vec2[6](vec2(-1,0),vec2(1,0),vec2(-1,1),vec2(-1,1),vec2(1,0),vec2(1,1));
-      vec2 corner=corners[gl_VertexID];
+      vec2 corner=corners[gl_VertexID%6];if(u_curve>0.5)corner.y=(float(gl_VertexID/6)+corner.y)/3.0;
       float v=a_seed.x,q=a_seed.y;
       vec3 normal,tangent;vec3 p=positionAt(v,q,normal,tangent);
       vec3 across=vec3(-sin(v*3.14159265),cos(v*3.14159265),0);
@@ -308,7 +310,12 @@
       vec3 radial=vec3(cos(v*3.14159265),sin(v*3.14159265),0);
       lean=normalize(lean+radial*impulse.x*weight/max(1.0,u_length)+across*impulse.y*weight/max(1.0,u_length));
       length*=1.0-clamp(impulse.z*weight,0.0,1.0)*0.78-clamp(impulse.w*weight,0.0,1.0)*0.16;
-      p+=(normal*0.5*pow(1.0-settled,2.0)+lean*(mix(0.28,0.38,a_seed.z)+settled*0.5))*length*corner.y;
+      if(u_curve>0.5){
+        vec3 rest=normal*0.5*pow(1.0-settled,2.0)*length+normalize(tangent*cos(angle)+across*sin(angle))*mix(0.28,0.38,a_seed.z)*length;
+        vec3 bend=(radial*impulse.x+across*impulse.y)*weight;
+        vec2 xy=furPath(corner.y,rest.xy,bend.xy,vec2(0.0),1.0,clamp(impulse.z,0.0,1.0));
+        p+=vec3(xy,rest.z*corner.y);
+      }else p+=(normal*0.5*pow(1.0-settled,2.0)+lean*(mix(0.28,0.38,a_seed.z)+settled*0.5))*length*corner.y;
       float rootWidth=mix(1.05,1.5,a_seed.z)*(1.0-resolve)*(1.0+clamp(impulse.z*weight,0.0,1.0)*0.3+clamp(impulse.w*weight,0.0,1.0)*0.18);
       p+=side*corner.x*mix(rootWidth,rootWidth*0.36,corner.y);
       gl_Position=project(p);
@@ -405,7 +412,7 @@
         this.bufferBytes=mesh.byteLength+seeds.byteLength;
         this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+(this.responseBytes||0)+this.canvas.width*this.canvas.height*8;
         this.uniforms=new Map();
-        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","recoveryDelay","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource","response","arrival","hasResponse","responseWidth","responseStep","materialSeconds","sourceSeconds","arrivalCount","responseLengths[0]"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
+        for(const target of this.programs){const uniforms={};for(const name of ["size","origin","progress","reach","radius","settleProgress","tintProgress","band","opacity","bodyFloor","amplitude","width","elevation","curvature","thickness","lighting","length","shadow","pile","destination","hasDestination","targets","hasField","colorOnly","formation","hasImpulse","impulseSeconds","pressRadius","waveSpeed","recoveryDelay","sourceRect","impulse[0]","motion[0]","sourceMerge","previousIntegration","source","sourceImageRect","hasSource","curve","response","arrival","hasResponse","responseWidth","responseStep","materialSeconds","sourceSeconds","arrivalCount","responseLengths[0]"])uniforms[name]=gl.getUniformLocation(target,`u_${name}`);this.uniforms.set(target,uniforms);}
         this.bakeButtonPile();
         gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
         // Compile/validate the first draw before starting the visible frame clock.
@@ -508,7 +515,7 @@
     buffer(data){const gl=this.gl,buffer=gl.createBuffer();this.buffers.push(buffer);resources.buffers++;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return buffer;}
     uniformsFor(target,model){const gl=this.gl,u=this.uniforms.get(target),s=this.options;gl.useProgram(target);gl.uniform1i(u.destination,1);gl.uniform1i(u.targets,2);
       const own=ownership(model);
-      gl.uniform1f(u.sourceMerge,own.sourceMerge);gl.uniform1f(u.previousIntegration,s.previousIntegration?1:0);
+      gl.uniform1f(u.curve,s.experimentalStrands?1:0);gl.uniform1f(u.sourceMerge,own.sourceMerge);gl.uniform1f(u.previousIntegration,s.previousIntegration?1:0);
       gl.uniform1i(u.source,3);gl.uniform1f(u.hasSource,this.sourceTexture?1:0);
       const sr=this.sourceImageRect||{x:0,y:0,width:0,height:0};gl.uniform4f(u.sourceImageRect,sr.x,sr.y,sr.width,sr.height);
       const impulse=s.impulse,response=s.response,map=s.arrival;
@@ -538,7 +545,7 @@
         while(low<high){const mid=(low+high)>>1;if(this.sortedRadii[mid]<=limit)low=mid+1;else high=mid;}return low;};
       const grown=countAt(model.radius/model.reach),formed=model.settings.formation?countAt(revealRadius(model)/model.reach):0;
       this.visibleFibers=Math.round((grown-formed)*this.fibers/this.sortedRadii.length);
-      gl.drawArraysInstanced(gl.TRIANGLES,0,6,this.fibers);gl.vertexAttribDivisor(0,0);
+      gl.drawArraysInstanced(gl.TRIANGLES,0,this.options.experimentalStrands?18:6,this.fibers);gl.vertexAttribDivisor(0,0);
       return model;
     }
     setResponse(response){
@@ -556,7 +563,7 @@
     reduceQuality(){if(this.disposed)return;this.qualityReduced=true;this.fibers=Math.max(4000,Math.round(this.fibers*.7));this.canvas.width=Math.round(this.width);this.canvas.height=Math.round(this.height);this.gpuBytes=this.bufferBytes+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0)+(this.responseBytes||0)+this.canvas.width*this.canvas.height*8;}
     canRetarget(width,height,options){return !this.disposed && this.width===width && this.height===height && this.options.renderer===options.renderer && Boolean(this.options.previousIntegration)===Boolean(options.previousIntegration) && Boolean(this.options.impulse)===Boolean(options.impulse) && this.options.furDensity===(options.furDensity??defaults.furDensity) && this.options.fiberLength===(options.fiberLength??defaults.fiberLength);}
     retarget(container,origin,options){if(this.sourceTexture){this.gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}this.sourceImageRect=null;this.sourceBytes=0;this.impulseData=null;this.motionData=null;this.origin=origin;this.options={...defaults,...options};container.append(this.canvas);this.initializationMs=0;this.setResponse(this.options.response);this.draw(0);}
-    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",cpuResponseBytes:this.options.response?.bytes||0,textureBytes:(this.responseBytes||0)+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0),...resources};}
+    getStats(){return {meshVertices:this.meshVertices||0,fiberInstances:this.visibleFibers||0,strandVertices:this.options.experimentalStrands?18:6,fiberCapacity:this.fibers||0,gpuBytes:this.gpuBytes||0,initializationMs:this.initializationMs||0,temporaryCanvases:this.disposed?0:1,material:"shared-button-shaders",cpuResponseBytes:this.options.response?.bytes||0,textureBytes:(this.responseBytes||0)+(this.textureBytes||0)+(this.destinationBytes||0)+(this.targetBytes||0)+(this.sourceBytes||0),...resources};}
     dispose(){if(this.disposed)return;this.disposed=true;const gl=this.gl;
       if(gl){for(const key of ["responseTexture","arrivalTexture"])if(this[key]){gl.deleteTexture(this[key]);resources.textures--;this[key]=null;}this.options.response=null;this.options.arrival=null;if(this.sourceTexture){gl.deleteTexture(this.sourceTexture);resources.textures--;this.sourceTexture=null;}if(this.targetTexture){gl.deleteTexture(this.targetTexture);resources.textures--;this.targetTexture=null;}if(this.destinationTexture){gl.deleteTexture(this.destinationTexture);resources.textures--;this.destinationTexture=null;}if(this.materialTexture){gl.deleteTexture(this.materialTexture);resources.textures--;this.materialTexture=null;}for(const buffer of this.buffers){gl.deleteBuffer(buffer);resources.buffers--;}for(const item of this.programs){gl.deleteProgram(item);resources.programs--;}
         this.canvas.removeEventListener("webglcontextlost",this.onLost);gl.getExtension("WEBGL_lose_context")?.loseContext();resources.contexts--;}

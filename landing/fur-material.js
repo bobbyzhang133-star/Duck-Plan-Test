@@ -125,6 +125,16 @@
     return linked;
   }
 
+  const CURVE_GLSL = `
+    vec2 furPath(float t,vec2 rest,vec2 bend,vec2 memory,float amount,float pressure){
+      float k=mix(0.38,3.781135,clamp(pressure*1.4,0.0,1.0));
+      return rest*t+bend*mix(t,t*t*(k+(1.0-k)*t),amount)+memory*t*t*(3.0-2.0*t);
+    }
+    vec2 furTangent(float t,vec2 rest,vec2 bend,vec2 memory,float amount,float pressure){
+      float k=mix(0.38,3.781135,clamp(pressure*1.4,0.0,1.0));
+      return rest+bend*mix(1.0,2.0*k*t+3.0*(1.0-k)*t*t,amount)+memory*6.0*t*(1.0-t);
+    }
+  `;
   const VERTEX_SHADER = `#version 300 es
     precision highp float;
     layout(location = 0) in vec2 a_corner;
@@ -133,6 +143,13 @@
     layout(location = 3) in vec4 a_state;
     layout(location = 4) in vec3 a_material;
 
+    uniform float u_curve,u_hasPile;
+    uniform sampler2D u_pileField;
+    ${CURVE_GLSL}
+    vec4 pileAt(vec2 uv){
+      ivec2 size=textureSize(u_pileField,0);vec2 p=clamp(uv*vec2(size)-0.5,vec2(0),vec2(size-1)),f=fract(p);ivec2 a=ivec2(floor(p)),b=min(a+1,size-1);
+      return mix(mix(texelFetch(u_pileField,a,0),texelFetch(u_pileField,ivec2(b.x,a.y),0),f.x),mix(texelFetch(u_pileField,ivec2(a.x,b.y),0),texelFetch(u_pileField,b,0),f.x),f.y);
+    }
     uniform vec2 u_canvasResolution;
     uniform vec2 u_surfaceResolution;
     uniform vec2 u_surfaceOffset;
@@ -156,8 +173,12 @@
     out vec2 v_surfaceUv;
 
     void main() {
+      float strandT=a_corner.y;
+      if(u_curve>0.0){float activity=length(a_state.xy)+a_state.z+a_state.w; if(u_hasPile>0.5)activity+=length(pileAt(a_root));strandT=mix(min(strandT*3.0,1.0),strandT,smoothstep(0.0,0.04,activity));}
       float compression = clamp(a_state.z, 0.0, 1.0);
       float depression = clamp(a_state.w, 0.0, 1.0);
+      vec4 pile=vec4(0.0);if(u_hasPile>0.5)pile=pileAt(a_root);
+      compression=clamp(compression+pile.z*0.5,0.0,1.0);depression=clamp(depression+pile.w*0.3,0.0,1.0);
       float labelFiber = clamp(a_material.x, 0.0, 1.0);
       float edgeFiber = clamp(a_material.y, 0.0, 1.0);
       float glyphBoundary = labelFiber * clamp(a_material.z, 0.0, 1.0);
@@ -173,13 +194,18 @@
       vec2 normal = vec2(-tangent.y, tangent.x);
       float rootWidth = mix(1.05, 1.5, a_seed.z) * u_dpr * mix(1.0, u_labelWidthScale, labelFiber) * mix(1.0, u_boundaryLabelWidthScale, glyphBoundary) * (1.0 + edgeFiber * 0.1 + compression * 0.3 + depression * 0.18);
       float tipWidth = rootWidth * mix(0.82, 1.68, compression);
-      float width = mix(rootWidth, tipWidth, a_corner.y);
+      float width = mix(rootWidth, tipWidth, strandT);
       vec2 rootPx = a_root * u_surfaceResolution + u_surfaceOffset;
-      vec2 pixel = rootPx + direction * a_corner.y + normal * a_corner.x * width;
+      vec2 pixel = rootPx + direction * strandT + normal * a_corner.x * width;
+      if(u_curve>0.0 || u_hasPile>0.5){
+        vec2 rest=naturalLean*heightScale,deflect=bend*mix(0.68,1.45,compression),memory=pile.xy*lengthPx*.85;
+        vec2 localTangent=furTangent(strandT,rest,deflect,memory,u_curve,compression);tangent=localTangent/max(length(localTangent),1.15*u_dpr);normal=vec2(-tangent.y,tangent.x);
+        pixel=rootPx+furPath(strandT,rest,deflect,memory,u_curve,compression)+normal*a_corner.x*width;
+      }
       vec2 clip = pixel / u_canvasResolution * 2.0 - 1.0;
       gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
 
-      v_height = a_corner.y;
+      v_height = strandT;
       v_side = a_corner.x;
       v_color = a_seed.z;
       v_compression = compression;
@@ -368,6 +394,12 @@
         this.glyphGuardStrengthLocation = this.gl.getUniformLocation(this.program, "u_glyphGuardStrength");
         this.motionGuardStartLocation = this.gl.getUniformLocation(this.program, "u_motionGuardStart");
         this.motionGuardEndLocation = this.gl.getUniformLocation(this.program, "u_motionGuardEnd");
+        this.curveLocation=this.gl.getUniformLocation(this.program,"u_curve");this.hasPileLocation=this.gl.getUniformLocation(this.program,"u_hasPile");this.pileFieldLocation=this.gl.getUniformLocation(this.program,"u_pileField");
+        if(this.options.experimentalStrands && window.DuckPile){
+          const gl=this.gl;this.pileTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.pileTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,32,16,0,gl.RGBA,gl.FLOAT,null);
+          for(const p of [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,p,gl.NEAREST);
+          for(const p of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,p,gl.CLAMP_TO_EDGE);
+        }
         this.createBuffers();
         this.host.classList.remove("fur-static-fallback");
       } catch (error) {
@@ -382,10 +414,11 @@
       this.vertexArray = gl.createVertexArray();
       gl.bindVertexArray(this.vertexArray);
 
-      const corners = new Float32Array([
+      const corners = this.options.experimentalStrands && window.DuckPile ? window.DuckPile.corners(3) : new Float32Array([
         -1, 0, 1, 0, -1, 1,
         -1, 1, 1, 0, 1, 1,
       ]);
+      this.strandVertices=corners.length/2;
       this.cornerBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, this.cornerBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, corners, gl.STATIC_DRAW);
@@ -439,6 +472,7 @@
       this.canvas.height = layout.canvasHeight;
       this.width = width;
       this.height = height;
+      if (this.options.experimentalStrands && window.DuckPile && (!this.pileField || this.pileField.width!==this.width || this.pileField.height!==this.height))this.pileField=new window.DuckPile.PileField(this.width,this.height);
       if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
       this.rebuildFibers();
     }
@@ -767,6 +801,7 @@
       const impulse = clamp(speed / 560, 0.12, 1) * this.options.brushStrength;
       const radius = this.interactionRadius(this.pressed);
       const recoveryDelay = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
+      if(this.pileField && !this.reducedMotion.matches && !this.options.reducedMotion){this.pileField.brush(fromX,fromY,toX,toY,radius,recoveryDelay,Number(this.options.pileMemory)||0);if(this.pressed)this.pileField.press(toX,toY,radius,recoveryDelay,Number(this.options.pileNeighbors)||0);}
       if (this.pressed) this.releaseActivePressFibers();
       for (let index = 0; index < this.count; index += 1) {
         const root = index * 2;
@@ -928,6 +963,7 @@
     }
 
     imprintPress(strength = 0.82) {
+      if(this.pileField)this.pileField.press(this.pointer.x,this.pointer.y,this.interactionRadius(true),Math.max(0,this.options.recoveryDelay)/1000,Number(this.options.pileNeighbors)||0);
       const recoveryDelay = Math.max(0, Number(this.options.recoveryDelay) || 0) / 1000;
       const radius = this.interactionRadius(true);
       this.releaseActivePressFibers();
@@ -1059,6 +1095,7 @@
       const stiffness = this.options.stiffness;
       const damping = this.options.damping;
       let maximumEnergy = 0;
+      if(this.pileField){if(this.pressed)this.pileField.press(this.pointer.x,this.pointer.y,this.interactionRadius(true),Math.max(0,this.options.recoveryDelay)/1000,Number(this.options.pileNeighbors)||0);maximumEnergy=this.pileField.advance(step);}
       let recoveringFibers = 0;
       for (let index = 0; index < this.count; index += 1) {
         const state = index * STATE_STRIDE;
@@ -1166,6 +1203,10 @@
       gl.uniform1f(this.labelWidthScaleLocation, clamp(Number(this.options.labelWidthScale) || 0.9, 0.2, 1));
       gl.uniform1f(this.boundaryLabelWidthScaleLocation, clamp(Number(this.options.boundaryLabelWidthScale) || 0.72, 0.35, 1));
       gl.uniform1f(this.boundaryLabelLeanScaleLocation, clamp(Number(this.options.boundaryLabelLeanScale) || 0.62, 0.2, 1));
+      gl.uniform1f(this.curveLocation,this.options.experimentalStrands && this.options.strandCurvature!==false?1:0);
+      gl.uniform1f(this.hasPileLocation,this.pileTexture && this.pileField?1:0);gl.uniform1i(this.pileFieldLocation,1);
+      gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.pileTexture||this.glyphTexture);
+      if(this.pileTexture && this.pileField)gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,32,16,gl.RGBA,gl.FLOAT,this.pileField.data);
       gl.uniform1i(this.glyphFieldLocation, 0);
       gl.uniform1f(this.hasGlyphLocation, this.hasGlyphTexture ? 1 : 0);
       gl.uniform1f(this.fragmentGlyphMaskLocation, this.options.fragmentGlyphMask === false ? 0 : 1);
@@ -1181,7 +1222,7 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, this.stateBuffer);
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.state);
       gl.bindVertexArray(this.vertexArray);
-      gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, this.count);
+      gl.drawArraysInstanced(gl.TRIANGLES, 0, this.strandVertices||6, this.count);
       gl.bindVertexArray(null);
     }
 
@@ -1234,6 +1275,7 @@
       return {
         renderer: this.gl ? "WebGL2 instanced strands" : "static fallback",
         fibers: this.count,
+        strandVertices:this.strandVertices||6,pileBytes:this.pileField?this.pileField.data.byteLength*3+this.pileField.hold.byteLength:0,
         labelFibers: this.labelFiberCount || 0,
         requestedGlyphFibers: this.requestedGlyphFibers || 0,
         allocatedGlyphFibers: this.allocatedGlyphFibers || 0,
@@ -1247,7 +1289,7 @@
         fps: this.running ? this.fps : 0,
         drawCalls: this.gl ? 1 : 0,
         rebuildMs: this.lastRebuildMs,
-        gpuBytes: (this.rootSeeds?.byteLength || 0) + (this.state?.byteLength || 0) + (this.materialMask?.byteLength || 0) + this.glyphTextureBytes,
+        gpuBytes: (this.rootSeeds?.byteLength || 0) + (this.state?.byteLength || 0) + (this.materialMask?.byteLength || 0) + this.glyphTextureBytes + (this.pileTexture?8192:0),
         glyphTextureBytes: this.glyphTextureBytes,
         cachedGlyphFields: this.labelFieldCache?.size || 0,
         settled: diagnostic.recoveringFibers === 0,
@@ -1317,6 +1359,7 @@
     }
 
     resetFibers() {
+      this.pileField?.clear();
       if(this.frameId) cancelAnimationFrame(this.frameId);
       this.frameId = 0;
       this.waves = [];
@@ -1361,7 +1404,7 @@
     onContextLost(event) {
       event.preventDefault();
       this.running = false;
-      this.glyphTexture = null;
+      this.glyphTexture = null;this.pileTexture=null;
       this.gl = null;
       this.host.classList.add("fur-static-fallback");
       this.fallbackReason = "WebGL context lost";
@@ -1410,6 +1453,7 @@
 
       const gl = this.gl;
       if (gl) {
+        if (this.pileTexture) gl.deleteTexture(this.pileTexture);
         if (this.glyphTexture) gl.deleteTexture(this.glyphTexture);
         if (this.cornerBuffer) gl.deleteBuffer(this.cornerBuffer);
         if (this.rootBuffer) gl.deleteBuffer(this.rootBuffer);
@@ -1467,7 +1511,7 @@
     get: (host) => registry.get(host),
     getRendererStats: () => ({ contexts: [...liveSurfaces].filter(surface=>Boolean(surface.gl)).length, gpuBytes: [...liveSurfaces].reduce((sum,surface)=>sum+surface.getStats().gpuBytes,0) }),
     // Reuse the approved resting pile on temporary deforming surfaces.
-    materialShaders: Object.freeze({vertex:VERTEX_SHADER,fragment:FRAGMENT_SHADER,
+    materialShaders: Object.freeze({vertex:VERTEX_SHADER,fragment:FRAGMENT_SHADER,curve:CURVE_GLSL,
       fibersPerPixel:QUALITY.medium.fibersPerPixel*3.15}),
     defaults: { ...DEFAULTS },
     __testing: { DuckFurSurface, pressProfile, encodeSignedDistance, stableRandom, motionGuardProtection, overscanLayout, silhouetteRootIncluded, REST_TOLERANCE, ROOT_STRIDE, STATE_STRIDE, MATERIAL_STRIDE },
