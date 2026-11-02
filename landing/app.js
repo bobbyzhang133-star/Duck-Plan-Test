@@ -67,10 +67,14 @@ function setSidebar(open) {
   document.body.classList.toggle("sidebar-open", open);
   sidebar.inert = !open;
   sidebar.setAttribute("aria-hidden", String(!open));
-  workspace.inert = open;
-  sidebarScrim.hidden = !open;
-  sidebarToggles.forEach(toggle => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
-  sidebarScrim.tabIndex = open ? 0 : -1;
+  // Docked navigation shares the workspace plane; the main page stays usable.
+  workspace.inert = false;
+  sidebarScrim.hidden = true;
+  sidebarToggles.forEach(toggle => {
+    toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+  sidebarScrim.tabIndex = -1;
   if (open) document.querySelector(".sidebar .nav-item.active")?.focus({preventScroll:true});
   else if (wasOpen) sidebarToggles.find(toggle => toggle.getClientRects().length)?.focus({preventScroll:true});
   requestAnimationFrame(() => setupButtonMaterial());
@@ -347,7 +351,7 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
 }));
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(true); }));
-document.addEventListener("keydown", (event) => { if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) setSidebar(false); });
+document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !els.modal.open && document.body.classList.contains("sidebar-open")) setSidebar(false); });
 window.addEventListener("hashchange", () => { if (location.hash === "#planner-sidebar") setSidebar(true); });
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));
 document.querySelector("#calendar-next").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, 1)));

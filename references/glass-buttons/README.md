@@ -17,10 +17,19 @@ Verification: all102 Node regressions pass; changed JS syntax and whitespace che
 
 ## Button-origin transitions — 2026-11-01
 
-Only popout windows (task dialogs) grow from the triggering button's measured center and dimensions and close toward that saved launcher. The sidebar retains its original horizontal 220ms slide in/out. Page and calendar switching stays immediate, without button-origin scaling. Use Add task or an edit menu to review the popout effect locally.
+Only popout windows (task dialogs) grow from the triggering button's measured center and dimensions and close toward that saved launcher. The sidebar slides in/out over220ms while taking layout space and reframing the main panel at the same depth. Page and calendar switching stays immediate, without button-origin scaling. Use Add task or an edit menu to review the popout effect locally.
 
 The shared `popup-motion.js` uses native Web Animations with transform/opacity only:320ms opening,220ms closing, eased deceleration. Dialog backdrop fades alongside the surface. Native semantic dialog stays open until closing ends; Cancel, close button, backdrop, Escape, save and delete share the same path. Focus returns to the launcher (or a surviving control when the original was replaced). Animated reopening samples the interrupted transform and cancels stale close callbacks. Resize/hidden-page/motion-preference changes finish pending work and remove animation state. Reduced motion completes synchronously without scaling. No fur or extra canvas is loaded.
 
 Verification:107 Node tests pass, including launcher geometry, disconnected source fallback, deferred close, interrupted reopening, reduced motion and resize cleanup. Browser observed opening/closing transforms, no retained animation phase after close, dialog Escape and focus return, drawer return, Day selection, mobile-width resize settlement, zero canvases and no console errors. OS reduced-motion preference behavior is covered by mocked lifecycle tests, not an OS preference toggle. `popup-open.jpg` is a captured live frame, not a recording of the full motion. Full performance benchmarking and user visual approval remain pending. Local-only review; no public deployment.
 
 Scope correction: restored the original CSS sidebar slide at user request and removed button-origin motion from regular pages and calendar views. Browser confirmed sidebar has a220ms transform transition with no popup animation state, settings/classes switch without popup state, and dialog still enters opening/closing phases. Screenshot: `sidebar-slide.jpg`.107 tests remain passing.
+
+
+## Docked sidebar — 2026-11-01
+
+The sidebar now shares a grid row with the workspace instead of floating above it. Its opening track grows from0 to250px with the same220ms easing as its slide; the main column shrinks to the remaining width and its contents respond to that column's size. Closing reverses the reframe. Removed the dimming/blur scrim and workspace inert state: users can operate the main page while navigation is open. Escape closes navigation unless a native dialog is above it. The sidebar has no cast shadow over the workspace.
+
+Container queries reflow task/calendar and class/header content to the available main width. At1280px, the open sidebar ends at250px and the main panel occupies the remaining1030px with no horizontal overflow. At390px, navigation becomes a76px labeled rail and content occupies314px with no horizontal document/workspace overflow. Closing restored the measured main width to390px. Actual phone hardware is not benchmarked. Screenshots: `sidebar-docked-desktop.jpg`, `sidebar-docked-mobile.jpg`, `sidebar-docked-classes.jpg`.
+
+107 regressions pass; JS syntax and whitespace checks pass. Browser checked main-panel interaction while docked, popout Escape leaving navigation open, close-to-full-width behavior, desktop task/calendar layout, mobile rail/close control separation, and no console errors. Popup-origin animation remains limited to native task dialogs. No public deployment or shared repository edits.
