@@ -14,7 +14,7 @@ alwaysApply: true
   2. **Press:** immediate feedback while pointer, touch, Space, or Enter is held down.
   3. **Release:** a brief, visible response after the press is released; this must be more than simply removing the pressed style.
 - Match the effect to the material. Standard controls may lift, compress, tint, or rebound; fur controls must use localized brushing/compression and visible strand recovery rather than moving the whole control.
-- Popups and opened pages should expand from their launcher and close back toward the saved launcher position. Preserve focus, Escape, interruption cleanup and reduced motion.
+- Only popout windows/dialogs should expand from their launcher and close back toward the saved launcher position. Keep the sidebar sliding in/out; do not scale page or calendar navigation. Preserve focus, Escape, interruption cleanup and reduced motion.
 - Interaction effects must not shift surrounding layout or reduce label readability.
 - Keep a clear `:focus-visible` state for keyboard users; hover must never be the only interaction cue.
 - Disabled controls must show none of the three interaction effects and must look unavailable.

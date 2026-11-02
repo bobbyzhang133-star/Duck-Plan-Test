@@ -62,29 +62,18 @@ const sidebarScrim = document.querySelector(".sidebar-scrim");
 const sidebar = document.querySelector(".sidebar");
 const workspace = document.querySelector(".workspace");
 
-let sidebarAnchor = null;
-let sidebarClosing = false;
-function setSidebar(open, source = null) {
+function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
-  if (!open && (!wasOpen || sidebarClosing)) return;
-  if (open && wasOpen && !sidebarClosing) return;
-  if (open) sidebarAnchor = DuckPopupMotion.capture(source || sidebarToggles.find(toggle => toggle.getClientRects().length)) || sidebarAnchor;
-  const apply = () => {
-    document.body.classList.toggle("sidebar-open", open);
-    sidebar.inert = !open;
-    sidebar.setAttribute("aria-hidden", String(!open));
-    workspace.inert = open;
-    sidebarScrim.hidden = !open;
-    sidebarToggles.forEach(toggle => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
-    sidebarScrim.tabIndex = open ? 0 : -1;
-    sidebarClosing = false;
-    document.body.classList.remove("sidebar-closing");
-    if (open) document.querySelector(".sidebar .nav-item.active")?.focus({preventScroll:true});
-    else if (wasOpen) sidebarToggles.find(toggle => toggle.getClientRects().length)?.focus({preventScroll:true});
-    requestAnimationFrame(() => setupButtonMaterial());
-  };
-  if (open) { sidebarClosing=false; apply(); DuckPopupMotion.open(sidebar, sidebarAnchor); }
-  else { sidebarClosing=true; document.body.classList.add("sidebar-closing"); DuckPopupMotion.close(sidebar, sidebarAnchor, apply); }
+  document.body.classList.toggle("sidebar-open", open);
+  sidebar.inert = !open;
+  sidebar.setAttribute("aria-hidden", String(!open));
+  workspace.inert = open;
+  sidebarScrim.hidden = !open;
+  sidebarToggles.forEach(toggle => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
+  sidebarScrim.tabIndex = open ? 0 : -1;
+  if (open) document.querySelector(".sidebar .nav-item.active")?.focus({preventScroll:true});
+  else if (wasOpen) sidebarToggles.find(toggle => toggle.getClientRects().length)?.focus({preventScroll:true});
+  requestAnimationFrame(() => setupButtonMaterial());
 }
 
 function loadTasks() {
@@ -330,19 +319,10 @@ els.modal.addEventListener("close", () => {
   setupButtonMaterial();
 });
 
-const viewAnchors = new WeakMap();
-// Keep the source rectangle even when updating the view removes its button.
+// Button-origin motion belongs to popout dialogs, not page or calendar changes.
 function commitMaterialAction(source, update, event) {
-  const anchor = DuckPopupMotion.capture(source);
-  const calendarAction = source?.matches("[data-calendar-view]");
-  const outgoing = calendarAction ? els.calendar : document.querySelector(".view.active");
-  if (!outgoing) { update(); return; }
-  DuckPopupMotion.close(outgoing, viewAnchors.get(outgoing) || anchor, () => {
-    update();
-    const incoming = calendarAction ? els.calendar : document.querySelector(".view.active");
-    if(incoming) { viewAnchors.set(incoming, anchor); DuckPopupMotion.open(incoming, anchor); }
-    setupButtonMaterial();
-  });
+  update();
+  setupButtonMaterial();
 }
 
 document.addEventListener("click", (event) => {
@@ -366,7 +346,7 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
-sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(true, toggle); }));
+sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(true); }));
 document.addEventListener("keydown", (event) => { if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) setSidebar(false); });
 window.addEventListener("hashchange", () => { if (location.hash === "#planner-sidebar") setSidebar(true); });
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));
