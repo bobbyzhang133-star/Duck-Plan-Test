@@ -302,11 +302,11 @@ function openModal(prefill = {}) {
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
   DuckPopupMotion.mark(modalAnchor,"fields");
-  if (!els.modal.open) els.modal.showModal();
-  setupButtonMaterial(els.modal);
-  els.form.elements.title.focus({preventScroll:true});
-  DuckPopupMotion.mark(modalAnchor,"showAndFocus");
-  DuckPopupMotion.open(els.modal, modalAnchor);
+  DuckPopupMotion.open(els.modal, modalAnchor, () => {
+    if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
+      els.form.elements.title.focus({preventScroll:true});
+    }
+  });
 }
 function closeModal() {
   if (!els.modal.open || modalClosing) return;
@@ -324,9 +324,8 @@ els.modal.addEventListener("cancel", event => { event.preventDefault(); closeMod
 // Every dismissal path releases modal state only after its return animation.
 els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
-  DuckPopupMotion.cancel(els.modal);
+  DuckPopupMotion.reset(els.modal);
   editingTaskId = null;
-  setupButtonMaterial(els.modal);
 });
 
 // Button-origin motion belongs to popout dialogs, not page or calendar changes.
@@ -366,7 +365,11 @@ document.querySelector("#plan-selected-date").addEventListener("click", event =>
 document.querySelector("#open-task-modal").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);
-els.modal.addEventListener("click", (event) => { if (event.target === els.modal) closeModal(); });
+els.modal.addEventListener("click", event => {
+  if (event.target !== els.modal) return;
+  const box=els.modal.getBoundingClientRect();
+  if(event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom)closeModal();
+});
 els.search.addEventListener("input", () => { searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
 els.form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -397,3 +400,8 @@ setInterval(refreshDateBoundary, 60000);
 const requestedView = location.hash.replace("#", "");
 renderAll();
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
+
+// Warm the existing form while closed; no modal, focus or user data is changed.
+setupButtonMaterial(els.modal);
+DuckPopupMotion.schedulePrepare(els.modal);
+document.fonts?.ready.then(() => DuckPopupMotion.schedulePrepare(els.modal));

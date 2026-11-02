@@ -6,7 +6,7 @@
     <meta name="description" content="DuckPlan is a calm, task-first student planner that keeps deadlines and study time together." />
     <meta name="theme-color" content="#f8c943" />
     <link rel="icon" type="image/png" href="./assets/duckplan-mascot-v8.png" />
-    <link rel="stylesheet" href="./styles.css?v=morph-1" />
+    <link rel="stylesheet" href="./styles.css?v=staged-2" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
   <body class="planner-glass">
@@ -79,7 +79,7 @@
       </main>
     </div>
 
-    <dialog class="task-modal" id="task-modal" aria-labelledby="modal-title"><form method="dialog" id="task-form">
+    <dialog class="task-modal" id="task-modal" tabindex="-1" aria-labelledby="modal-title"><form method="dialog" id="task-form">
       <div class="modal-heading"><div><p class="section-kicker" id="modal-kicker">Plan your work</p><h2 id="modal-title">New task</h2></div><button class="close-button" type="button" id="close-task-modal" aria-label="Close">×</button></div>
       <label>Task name<input name="title" required maxlength="80" placeholder="What needs to get done?" /></label>
       <div class="form-grid"><label>Class<select name="className"><option>Calculus</option><option>English</option><option>Physics</option><option>Computer Science</option><option>Personal</option></select></label><label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label></div>
@@ -88,6 +88,6 @@
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./planner-model.js"></script><script src="./motion-tokens.js?v=motion-2"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=profile-3"></script><script src="./app.js?v=profile-2"></script>
+    <script src="./planner-model.js"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=staged-3"></script><script src="./app.js?v=staged-1"></script>
   </body>
 </html>

@@ -783,3 +783,21 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 }
 .planner-glass .task-modal form::before { background: none; }
 .popup-morph-surface { font-family: inherit; }
+
+/* Use the same bounds for native modal, warm layout and the reserved shell.
+   Override the UA modal limits, which otherwise silently clamp by an extra 6–10px. */
+.planner-glass .task-modal { max-width:calc(100% - 28px); max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); }
+/* Warm only a closed form: it remains invisible, non-modal and outside input. */
+.planner-glass .task-modal[data-popup-preparing] {
+  display:block; position:fixed; inset:0; margin:auto; height:fit-content;
+  visibility:hidden; pointer-events:none;
+}
+/* Reserve one final frame; the native form scrolls within it without resizing. */
+.planner-glass .task-modal[data-popup-staged] form { height:100%; max-height:100%; }
+.planner-glass .task-modal[data-popup-stage="shell"] form { display:none; }
+/* Static dimming while moving. Restore glass only once geometry has settled. */
+.planner-glass .task-modal[data-popup-staged]::backdrop { animation:none; }
+.planner-glass .task-modal[data-popup-stage="shell"]::backdrop {
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+.popup-morph-source, .popup-morph-label { font-family:inherit; }

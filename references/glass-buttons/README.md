@@ -72,3 +72,8 @@ See [Apple motion research, changes and measurements](apple-motion-review.md). R
 ## Diagnosis-only follow-up — 2026-11-02
 
 [Detailed diagnosis and confidence limits](diagnosis-only-review.md): unchanged planner, separate instrumented copy. Trusted input locates most measured delay after click handling (~141/158ms to next paint), with a forced-layout example and a static-page49.8ms callback gap. Component controls do not establish a single root cause. System load is a credible contributor; exact page/compositor/host attribution remains unproven. Raw recordings and a disposable-copy generator are retained in this reference folder; normal app code and appearance remain unchanged.
+
+
+## Shell first, fields after settling — 2026-11-02
+
+[Implementation and evidence](staged-popup-review.md): prepare the closed form during idle, reserve final bounds, animate lightweight source/window silhouettes and title using only transforms/opacity, then reveal native fields after shell travel.240ms geometry +120ms content; close60+240ms. No hidden-form measurement on an early cold click, no field layout during movement, native semantics/Escape/focus and stable responsive bounds retained.123 tests pass. Final eight-transition sample max21.3ms callback gap, but the prior version was also mostly smooth; universal lag elimination is not claimed. Full glass returns at stable geometry. Desktop/phone screenshots and raw timing files saved. Local4208 review; no public/shared deployment.

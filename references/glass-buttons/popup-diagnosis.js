@@ -58,9 +58,9 @@
   }
   const mutations=new MutationObserver(()=>{
     if(!current)return;
-    const phase=modal.dataset.popupMotion||'rest';if(phase==='closing'&&variant==='no-inert')modal.inert=false;current.phases.push({phase,at:round(performance.now()-current.start),focus:document.activeElement?.id,inert:modal.inert});
+    const phase=modal.dataset.popupMotion||'rest';if(phase==='closing'&&variant==='no-inert')modal.inert=false;current.phases.push({phase,stage:modal.dataset.popupStage,prepared:modal.dataset.popupPrepared,width:modal.style.width,height:modal.style.height,at:round(performance.now()-current.start),focus:document.activeElement?.id,inert:modal.inert});
     if(phase==='rest')finish();
-  });mutations.observe(modal,{attributes:true,attributeFilter:['data-popup-motion']});
+  });mutations.observe(modal,{attributes:true,attributeFilter:['data-popup-motion','data-popup-stage']});
   window.addEventListener('pagehide',()=>{observers.forEach(o=>o.disconnect());mutations.disconnect();cancelAnimationFrame(raf);clearTimeout(reportTimer);},{once:true});
   async function automatic(){
     const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));

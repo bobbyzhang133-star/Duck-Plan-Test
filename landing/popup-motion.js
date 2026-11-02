@@ -32,7 +32,7 @@
   }
   function cancel(element) {
     const current=running.get(element);
-    if(current){running.delete(element);current.animation.cancel();current.cleanup?.();delete element.dataset?.popupMotion;}
+    if(current){running.delete(element);current.animation?.cancel();current.cleanup?.();delete element.dataset?.popupMotion;}
   }
   // Opt-in local diagnostics; never sample or change rendering on the normal page.
   function auditMotion(opening, anchor) {
@@ -66,57 +66,163 @@
       output.textContent=(output.textContent+'\n'+line).trim().split('\n').slice(-24).join('\n');
     }};
   }
-  function morph(element, anchor, opening, done) {
-    const audit=auditMotion(opening,anchor);
-    const form=element.querySelector('form'), heading=element.querySelector('#modal-title');
-    const previous=running.get(element);
-    const interrupted=previous?.surface?.getBoundingClientRect();
-    const labelBox=previous?.label?.getBoundingClientRect();
-    const interruptedRadius=previous?.surface ? parseFloat(getComputedStyle(previous.surface).borderRadius)*interrupted.width/Math.max(1,parseFloat(previous.surface.style.width)) : null;
-    const labelOpacity=previous?.label ? getComputedStyle(previous.label).opacity : (opening?1:0);
-    const headingOpacity=previous ? getComputedStyle(heading).opacity : (opening?0:1);
-    const contentOpacity=previous ? getComputedStyle(form).opacity : (opening?'0':'1');
-    cancel(element);
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate){audit.finish('reduced');done();return;}
-    const source=anchorRect(anchor), destination=form.getBoundingClientRect(), title=heading.getBoundingClientRect();
-    const material=anchor.material, finalStyle=getComputedStyle(form),finalRadius=parseFloat(finalStyle.borderRadius)||24,titleFont=getComputedStyle(heading).fontSize;
-    const surface=document.createElement('div'), label=document.createElement('div');
-    surface.className='popup-morph-surface';surface.setAttribute('aria-hidden','true');
-    label.className='popup-morph-label';label.textContent=heading.textContent;
-    Object.assign(surface.style,{position:'fixed',margin:'0',pointerEvents:'none',zIndex:'0',boxSizing:'border-box',overflow:'hidden',backgroundColor:material.tint,backgroundImage:material.sheen,border:material.border,color:material.color,transformOrigin:'0 0',willChange:'transform'});
-    Object.assign(label.style,{position:'fixed',whiteSpace:'nowrap',margin:'0',pointerEvents:'none',zIndex:'2',fontWeight:material.fontWeight,fontSize:titleFont,color:material.color,left:`${title.left}px`,top:`${title.top}px`,transformOrigin:'0 0',willChange:'transform, opacity'});
-    label.setAttribute('aria-hidden','true');element.append(surface,label);
-    const originalOpacity=form.style.opacity, originalVisibility=anchor.element?.style.visibility;
-    form.style.opacity=contentOpacity;
-    if(anchor.element?.isConnected)anchor.element.style.visibility='hidden';
-    element.dataset.popupMotion=opening?'opening':'closing';
-    // Lay out each layer once. Movement uses transforms; native form text never scales.
-    Object.assign(surface.style,{left:`${destination.left}px`,top:`${destination.top}px`,width:`${destination.width}px`,height:`${destination.height}px`,boxShadow:material.shadow});
-    const frameFor=(r,radius)=>{
-      const sx=Math.max(.001,r.width/destination.width),sy=Math.max(.001,r.height/destination.height);
-      return {transform:`translate(${r.left-destination.left}px, ${r.top-destination.top}px) scale(${sx}, ${sy})`,borderRadius:`${radius/sx}px / ${radius/sy}px`};
+  const known = new Set(), prepared = new WeakMap(), used = new WeakMap(), nodes = new WeakMap(), jobs = new Map();
+  const viewportKey = () => `${window.innerWidth}:${window.innerHeight}:${window.devicePixelRatio || 1}`;
+  const boundsProperties = ['left','top','right','bottom','width','height','margin'];
+  function removeJob(element) {
+    const job=jobs.get(element);if(!job)return;
+    if(job.idle)window.cancelIdleCallback?.(job.id);else clearTimeout(job.id);
+    jobs.delete(element);
+  }
+  function layers(element) {
+    if(nodes.has(element))return nodes.get(element);
+    const surface=document.createElement('div'),source=document.createElement('div'),label=document.createElement('div');
+    surface.className='popup-morph-surface';source.className='popup-morph-source';label.className='popup-morph-label';
+    for(const layer of [surface,source,label]){
+      layer.setAttribute('aria-hidden','true');
+      Object.assign(layer.style,{position:'fixed',margin:'0',pointerEvents:'none',boxSizing:'border-box',transformOrigin:'0 0'});
+    }
+    const result={surface,source,label};nodes.set(element,result);return result;
+  }
+  // Warm the actual closed form without opening a dialog, stealing focus or painting it.
+  function prepare(element) {
+    known.add(element);removeJob(element);
+    if(element.open || running.size || document.hidden)return false;
+    const form=element.querySelector('form'),heading=element.querySelector('#modal-title');
+    if(!form||!heading)return false;
+    element.dataset.popupPreparing='true';
+    try {
+      form.scrollTop=0;
+      const box=form.getBoundingClientRect(),title=heading.getBoundingClientRect(),style=getComputedStyle(heading);
+      if(!box.width||!box.height)return false;
+      prepared.set(element,{key:viewportKey(),width:box.width,height:box.height,radius:parseFloat(getComputedStyle(form).borderRadius)||24,
+        titleX:title.left-box.left,titleY:title.top-box.top,titleFont:style.fontSize,titleWeight:style.fontWeight,titleLineHeight:style.lineHeight,titleFamily:style.fontFamily,titleSpacing:style.letterSpacing});
+      layers(element);return true;
+    } finally {delete element.dataset.popupPreparing;}
+  }
+  function schedulePrepare(element) {
+    known.add(element);removeJob(element);
+    if(element.open || document.hidden)return;
+    const work=deadline=>{
+      jobs.delete(element);
+      if(element.open || running.size || document.hidden)return;
+      if(deadline&&!deadline.didTimeout&&deadline.timeRemaining()<8){schedulePrepare(element);return;}
+      prepare(element);
     };
-    const small=frameFor(source,material.radius),full=frameFor(destination,finalRadius);
-    const start=interrupted ? frameFor(interrupted,interruptedRadius||24) : (opening?small:full);
-    const duration=opening?(window.DuckMotion?.duration.popupOpen||240):(window.DuckMotion?.duration.popupClose||300);
-    const timing={duration,easing:ease,fill:'both'};
-    const textBox=label.getBoundingClientRect(),fontScale=(parseFloat(material.fontSize)||14)/(parseFloat(titleFont)||21);
-    const smallLabel={transform:`translate(${source.left+source.width/2-title.left-textBox.width*fontScale/2}px, ${source.top+source.height/2-title.top-textBox.height*fontScale/2}px) scale(${fontScale})`};
-    const fullLabel={transform:'translate(0px, 0px) scale(1)'};
-    const currentLabel=labelBox ? {transform:`translate(${labelBox.left-title.left}px, ${labelBox.top-title.top}px) scale(${labelBox.height/Math.max(1,textBox.height)})`} : null;
-    // Finish measuring before starting any animation: no layout reads in motion setup below.
-    const animation=surface.animate([start,opening?full:small],timing);
-    const children=[label.animate([currentLabel||(opening?smallLabel:fullLabel),opening?fullLabel:smallLabel],timing),
-      label.animate(opening?[{opacity:labelOpacity,offset:0},{opacity:1,offset:.45},{opacity:0,offset:.75},{opacity:0,offset:1}]:[{opacity:labelOpacity,offset:0},{opacity:1,offset:.3},{opacity:1,offset:1}],{...timing,easing:'linear'}),
-      heading.animate(opening?[{opacity:headingOpacity,offset:0},{opacity:0,offset:.45},{opacity:1,offset:.75},{opacity:1,offset:1}]:[{opacity:headingOpacity,offset:0},{opacity:0,offset:.3},{opacity:0,offset:1}],{...timing,easing:'linear'}),
-      form.animate(opening?[{opacity:contentOpacity,offset:0},{opacity:0,offset:.28},{opacity:1,offset:1}]:[{opacity:contentOpacity,offset:0},{opacity:0,offset:.3},{opacity:0,offset:1}],{...timing,easing:'linear'})];
-    children.forEach(a=>a.finished.catch(()=>{}));
-    const entry={animation,surface,label,cleanup:()=>{audit.finish('cancelled');children.forEach(a=>a.cancel());surface.remove();label.remove();form.style.opacity=originalOpacity;if(anchor.element?.isConnected)anchor.element.style.visibility=originalVisibility||'';},finish:null};
-    entry.finish=()=>{if(running.get(element)!==entry)return;running.delete(element);audit.finish();animation.cancel();entry.cleanup();delete element.dataset.popupMotion;done();};
-    audit.ready();running.set(element,entry);animation.finished.then(entry.finish,()=>{});
+    if(typeof window.requestIdleCallback==='function')jobs.set(element,{idle:true,id:window.requestIdleCallback(work,{timeout:1500})});
+    else jobs.set(element,{idle:false,id:setTimeout(work,200)});
+  }
+  function geometry(element) {
+    const key=viewportKey(),cached=prepared.get(element);
+    // An early click never synchronously lays out the full form. Reserve a bounded
+    // fallback frame; its content scrolls inside it rather than resizing the shell.
+    const width=Math.max(1,Math.min(680,(window.innerWidth||1000)-28));
+    const height=Math.max(1,Math.min((window.innerWidth||1000)<=700?860:680,(window.innerHeight||800)-32));
+    const shape=cached?.key===key?cached:{key,width,height,radius:24,titleX:26,titleY:52,titleFont:'21.6px',titleWeight:'700'};
+    return {...shape,left:Math.max(0,((window.innerWidth||1000)-shape.width)/2),top:Math.max(0,((window.innerHeight||800)-shape.height)/2),prepared:cached?.key===key};
+  }
+  function reserve(element,box) {
+    if(!used.has(element))used.set(element,{original:Object.fromEntries(boundsProperties.map(name=>[name,element.style[name]||'']))});
+    used.get(element).box=box;
+    Object.assign(element.style,{left:`${box.left}px`,top:`${box.top}px`,right:'auto',bottom:'auto',width:`${box.width}px`,height:`${box.height}px`,margin:'0'});
+    element.dataset.popupStaged='true';element.dataset.popupPrepared=String(box.prepared);
+  }
+  function reset(element) {
+    cancel(element);removeJob(element);
+    const saved=used.get(element);if(saved)Object.assign(element.style,saved.original);used.delete(element);
+    delete element.dataset.popupStage;delete element.dataset.popupStaged;delete element.dataset.popupPrepared;
+    element.removeAttribute('aria-busy');schedulePrepare(element);
+  }
+  function morph(element, anchor, opening, done) {
+    removeJob(element);known.add(element);
+    const audit=auditMotion(opening,anchor),form=element.querySelector('form'),heading=element.querySelector('#modal-title');
+    const previous=running.get(element),oldLayers=previous?.layers;
+    // Only reversal reads live animation state; the normal opening uses idle geometry.
+    const interrupted=oldLayers?{
+      surface:getComputedStyle(oldLayers.surface).transform,source:getComputedStyle(oldLayers.source).transform,
+      surfaceOpacity:getComputedStyle(oldLayers.surface).opacity,sourceOpacity:getComputedStyle(oldLayers.source).opacity,
+      label:getComputedStyle(oldLayers.label).transform,labelOpacity:getComputedStyle(oldLayers.label).opacity,
+      content:previous.stage==='shell'?'0':getComputedStyle(form).opacity,box:previous.box
+    }:null;
+    cancel(element);
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate;
+    if(reduced){
+      form.inert=false;form.removeAttribute('aria-hidden');delete element.dataset.popupStage;element.removeAttribute('aria-busy');
+      if(opening&&!element.open)element.showModal();audit.finish('reduced');done();return;
+    }
+    const box=interrupted?.box || (opening?geometry(element):used.get(element)?.box) || geometry(element);
+    reserve(element,box);
+    const sourceBox=previous?.sourceBox||anchorRect(anchor)||{left:box.left+box.width/2-24,top:box.top+box.height/2-20,width:48,height:40};
+    const material=anchor?.material||{tint:'rgba(255,255,255,.7)',sheen:'none',border:'1px solid rgba(255,255,255,.9)',shadow:'none',color:'#2b210d',radius:20,fontSize:'14px',fontWeight:'700'};
+    const chrome=layers(element),{surface,source,label}=chrome;
+    const oldVisibility=anchor?.element?.style.visibility,oldOpacity=form.style.opacity;
+    const oldHidden=form.getAttribute('aria-hidden'),oldInert=form.inert;
+    element.dataset.popupMotion=opening?'opening':'closing';element.dataset.popupStage=opening?'shell':'content';
+    if(opening){form.inert=true;form.setAttribute('aria-hidden','true');element.setAttribute('aria-busy','true');}
+    Object.assign(surface.style,{zIndex:'0',left:`${box.left}px`,top:`${box.top}px`,width:`${box.width}px`,height:`${box.height}px`,borderRadius:`${box.radius}px`,backgroundColor:material.tint,backgroundImage:material.sheen,border:material.border,boxShadow:material.shadow,willChange:'transform, opacity'});
+    Object.assign(source.style,{zIndex:'1',left:`${sourceBox.left}px`,top:`${sourceBox.top}px`,width:`${sourceBox.width}px`,height:`${sourceBox.height}px`,borderRadius:`${material.radius}px`,backgroundColor:material.tint,backgroundImage:material.sheen,border:material.border,boxShadow:material.shadow,willChange:'transform, opacity'});
+    label.textContent=heading.textContent;
+    Object.assign(label.style,{zIndex:'2',left:'0px',top:'0px',whiteSpace:'nowrap',fontWeight:box.titleWeight||material.fontWeight,fontSize:box.titleFont,lineHeight:box.titleLineHeight||'normal',fontFamily:box.titleFamily||'inherit',letterSpacing:box.titleSpacing||'normal',color:material.color,willChange:'transform, opacity'});
+    element.append(surface,source,label);
+    if(anchor?.element?.isConnected)anchor.element.style.visibility='hidden';
+    if(opening&&!element.open)element.showModal();
+    if(opening)element.focus({preventScroll:true});
+    const small={transform:`translate(${sourceBox.left-box.left}px, ${sourceBox.top-box.top}px) scale(${sourceBox.width/box.width}, ${sourceBox.height/box.height})`};
+    const full={transform:'translate(0px, 0px) scale(1, 1)'};
+    const sourceFull={transform:`translate(${box.left-sourceBox.left}px, ${box.top-sourceBox.top}px) scale(${box.width/sourceBox.width}, ${box.height/sourceBox.height})`};
+    const fontScale=(parseFloat(material.fontSize)||14)/(parseFloat(box.titleFont)||21.6);
+    const labelSmall={transform:`translate(${sourceBox.left+sourceBox.width/2}px, ${sourceBox.top+sourceBox.height/2}px) scale(${fontScale}) translate(-50%, -50%)`};
+    const labelFull={transform:`translate(${box.left+box.titleX}px, ${box.top+box.titleY}px) scale(1) translate(0%, 0%)`};
+    const openTime=window.DuckMotion?.duration.popupOpen||240,closeTime=window.DuckMotion?.duration.popupClose||300;
+    const contentTime=window.DuckMotion?.duration.popupContent||120,outTime=window.DuckMotion?.duration.popupContentOut||60;
+    const active=[];
+    const play=(target,frames,duration,easing=ease)=>{const animation=target.animate(frames,{duration,easing,fill:'both'});animation.finished.catch(()=>{});active.push(animation);return animation;};
+    const entry={animation:null,layers:chrome,box,sourceBox,stage:'shell',cleanup:null,finish:null};
+    entry.cleanup=()=>{
+      audit.finish('cancelled');active.forEach(a=>a.cancel());[surface,source,label].forEach(layer=>layer.remove());
+      form.style.opacity=oldOpacity;form.inert=oldInert;
+      if(oldHidden==null)form.removeAttribute('aria-hidden');else form.setAttribute('aria-hidden',oldHidden);
+      if(anchor?.element?.isConnected)anchor.element.style.visibility=oldVisibility||'';
+      delete element.dataset.popupStage;element.removeAttribute('aria-busy');
+    };
+    entry.finish=()=>{
+      if(running.get(element)!==entry)return;running.delete(element);audit.finish();entry.cleanup();delete element.dataset.popupMotion;
+      form.inert=false;form.removeAttribute('aria-hidden');done();
+    };
+    running.set(element,entry);
+    const follow=(animation,next)=>{entry.animation=animation;animation.finished.then(()=>{if(running.get(element)===entry)next();},()=>{});};
+    const reveal=()=>{
+      entry.stage='content';form.scrollTop=0;
+      element.dataset.popupStage='content';form.inert=false;form.removeAttribute('aria-hidden');element.removeAttribute('aria-busy');
+      play(label,[{opacity:1},{opacity:0}],contentTime,'linear');
+      follow(play(form,[{opacity:0},{opacity:1}],contentTime,'linear'),entry.finish);
+    };
+    const move=duration=>{
+      entry.stage='shell';
+      if(!opening){element.dataset.popupStage='shell';form.inert=true;form.setAttribute('aria-hidden','true');}
+      const main=play(surface,[interrupted?{transform:interrupted.surface}:(opening?small:full),opening?full:small],duration);
+      play(source,[interrupted?{transform:interrupted.source}:(opening?full:sourceFull),opening?sourceFull:full],duration);
+      // Two fixed corner shapes cross over; no radius, shadow, blur or bounds animate.
+      play(surface,opening?[{opacity:interrupted?.surfaceOpacity||0},{opacity:1,offset:.3},{opacity:1}]:[{opacity:interrupted?.surfaceOpacity||1},{opacity:1,offset:.7},{opacity:0}],duration,'linear');
+      play(source,opening?[{opacity:interrupted?.sourceOpacity||1},{opacity:0,offset:.3},{opacity:0}]:[{opacity:interrupted?.sourceOpacity||0},{opacity:0,offset:.7},{opacity:1}],duration,'linear');
+      play(label,[interrupted?{transform:interrupted.label}:(opening?labelSmall:labelFull),opening?labelFull:labelSmall],duration);
+      play(label,[{opacity:opening?(interrupted?.labelOpacity||1):1},{opacity:1}],duration,'linear');
+      follow(main,opening?reveal:entry.finish);
+    };
+    if(opening)move(openTime);
+    else if(interrupted&&previous?.stage!=='content')move(closeTime);
+    else {
+      entry.stage='content';
+      // Resolve content at fixed bounds first, then return only the lightweight shell.
+      play(surface,[{...full,opacity:1},{...full,opacity:1}],outTime,'linear');
+      play(source,[{...sourceFull,opacity:0},{...sourceFull,opacity:0}],outTime,'linear');
+      play(label,[{...labelFull,opacity:interrupted?.labelOpacity||0},{...labelFull,opacity:1}],outTime,'linear');
+      follow(play(form,[{opacity:interrupted?.content||1},{opacity:0}],outTime,'linear'),()=>move(Math.max(1,closeTime-outTime)));
+    }
+    audit.ready();
   }
   function animate(element, anchor, opening, done=()=>{}) {
-    if(element.matches?.('.task-modal') && anchor?.material && element.querySelector('form'))return morph(element,anchor,opening,done);
+    if(element.matches?.('.task-modal') && element.querySelector('form'))return morph(element,anchor,opening,done);
     // Sample an interrupted transform before cancelling, so reversing doesn't jump.
     const previous=running.has(element) ? {transform:getComputedStyle(element).transform,opacity:getComputedStyle(element).opacity} : null;
     cancel(element);
@@ -135,11 +241,25 @@
   }
   // Complete pending operations on viewport changes; never leave a dialog inert.
   function finishAll(){for(const entry of [...running.values()])entry.finish();}
-  if(typeof window.addEventListener==='function'){
-    window.addEventListener('resize',finishAll);
-    window.addEventListener('pagehide',finishAll);
-    matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',finishAll);
-    document.addEventListener('visibilitychange',()=>{if(document.hidden)finishAll();});
+  function resized(){
+    finishAll();
+    for(const element of known){
+      prepared.delete(element);const saved=used.get(element);if(saved)Object.assign(element.style,saved.original);used.delete(element);
+      delete element.dataset.popupStaged;
+      if(element.open){
+        // Temporarily restore native responsive sizing before measuring. Leaving
+        // percentage form heights on an auto-height dialog can overflow it.
+        const form=element.querySelector('form'),heading=element.querySelector('#modal-title');
+        const box=form.getBoundingClientRect(),title=heading.getBoundingClientRect(),font=getComputedStyle(heading);
+        reserve(element,{left:box.left,top:box.top,width:box.width,height:box.height,radius:24,titleX:title.left-box.left,titleY:title.top-box.top,titleFont:font.fontSize,titleWeight:font.fontWeight,titleLineHeight:font.lineHeight,titleFamily:font.fontFamily,titleSpacing:font.letterSpacing,prepared:false});
+      }else schedulePrepare(element);
+    }
   }
-  window.DuckPopupMotion={capture,mark,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform}};
+  if(typeof window.addEventListener==='function'){
+    window.addEventListener('resize',resized);
+    window.addEventListener('pagehide',()=>{finishAll();for(const element of jobs.keys())removeJob(element);});
+    matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',finishAll);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden){finishAll();for(const element of jobs.keys())removeJob(element);}else for(const element of known)if(!element.open)schedulePrepare(element);});
+  }
+  window.DuckPopupMotion={capture,mark,prepare,schedulePrepare,reset,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform}};
 })();
