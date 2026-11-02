@@ -443,7 +443,7 @@ body.sidebar-open { overflow: hidden; }
 .task-section.is-empty:not(.overdue-section):not(.completed-section) { display: none; }
 .daily-task-list { display: grid; gap: 8px; padding-bottom: 12px; }
 .daily-task-card, .all-task-row { position: relative; display: grid; align-items: center; gap: 7px; border: 1px solid transparent; border-radius: 16px; background: #fffdf8; transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease; }
-.daily-task-card { grid-template-columns: auto 40px minmax(0, 1fr) 40px; min-height: 72px; padding: 8px 7px; box-shadow: inset 3px 0 0 var(--course-color); }
+.daily-task-card { grid-template-columns: auto 40px minmax(0, 1fr) 40px; min-height: 72px; padding: 8px 7px; }
 .daily-task-card:not(:has(.task-time)) { grid-template-columns: 40px minmax(0, 1fr) 40px; }
 .daily-task-card.selected, .all-task-row.selected { border-color: var(--course-color); background: var(--course-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--course-color) 18%, transparent); }
 .daily-task-card.completed { opacity: .72; }
