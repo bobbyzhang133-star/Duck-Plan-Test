@@ -67,3 +67,8 @@ See [Apple motion research, changes and measurements](apple-motion-review.md). R
 ## Intermittent lag follow-up — 2026-11-02
 
 [Investigation and raw sample interpretation](intermittent-lag-review.md): reproduced stalls after document/fonts loaded, with no overlapping resource completions. Blur comparisons did not isolate a single cause, so retained full glass. Scoped popup material setup174→4 controls and batched geometry reads before animation. Final six-transition sample max17.1ms callback gap, with4.4ms warm opening setup; earlier runs still had unattributed stalls, so no universal smoothness claim.116 tests pass. Opt-in audit is now hidden and has observer/cancellation cleanup. Local4208 only.
+
+
+## Diagnosis-only follow-up — 2026-11-02
+
+[Detailed diagnosis and confidence limits](diagnosis-only-review.md): unchanged planner, separate instrumented copy. Trusted input locates most measured delay after click handling (~141/158ms to next paint), with a forced-layout example and a static-page49.8ms callback gap. Component controls do not establish a single root cause. System load is a credible contributor; exact page/compositor/host attribution remains unproven. Raw recordings and a disposable-copy generator are retained in this reference folder; normal app code and appearance remain unchanged.
