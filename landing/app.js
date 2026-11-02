@@ -301,9 +301,11 @@ function openModal(prefill = {}) {
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
+  DuckPopupMotion.mark(modalAnchor,"fields");
   if (!els.modal.open) els.modal.showModal();
-  setupButtonMaterial();
+  setupButtonMaterial(els.modal);
   els.form.elements.title.focus({preventScroll:true});
+  DuckPopupMotion.mark(modalAnchor,"showAndFocus");
   DuckPopupMotion.open(els.modal, modalAnchor);
 }
 function closeModal() {
@@ -324,7 +326,7 @@ els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
   DuckPopupMotion.cancel(els.modal);
   editingTaskId = null;
-  setupButtonMaterial();
+  setupButtonMaterial(els.modal);
 });
 
 // Button-origin motion belongs to popout dialogs, not page or calendar changes.

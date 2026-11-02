@@ -62,3 +62,8 @@ Capture saves the source bounds, resolved background color/gradient, corner radi
 ## Apple motion refinement — 2026-11-02
 
 See [Apple motion research, changes and measurements](apple-motion-review.md). Replaced per-frame rectangle/font-size animation with fixed-layout transform layers, removed moving blur/shadow interpolation, and advanced content reveal from132ms to67ms while preserving the matching yellow glass.114 tests pass. Warm callback pacing is near16.7ms; the baseline was already similarly paced, and one revised first run still had34ms gaps. No measured frame-rate improvement or native-equivalence claim. Saved raw timing samples and `apple-fluid-popout.jpg`; local review only.
+
+
+## Intermittent lag follow-up — 2026-11-02
+
+[Investigation and raw sample interpretation](intermittent-lag-review.md): reproduced stalls after document/fonts loaded, with no overlapping resource completions. Blur comparisons did not isolate a single cause, so retained full glass. Scoped popup material setup174→4 controls and batched geometry reads before animation. Final six-transition sample max17.1ms callback gap, with4.4ms warm opening setup; earlier runs still had unattributed stalls, so no universal smoothness claim.116 tests pass. Opt-in audit is now hidden and has observer/cancellation cleanup. Local4208 only.
