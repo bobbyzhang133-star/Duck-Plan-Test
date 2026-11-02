@@ -73,6 +73,8 @@ function setSidebar(open) {
   sidebarToggles.forEach(toggle => {
     toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     toggle.setAttribute("aria-expanded", String(open));
+    const glyph = toggle.querySelector("[data-sidebar-glyph]");
+    if (glyph) glyph.textContent = open ? "‹" : "›";
   });
   sidebarScrim.tabIndex = -1;
   if (open) document.querySelector(".sidebar .nav-item.active")?.focus({preventScroll:true});
@@ -350,7 +352,7 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
-sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(true); }));
+sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(!document.body.classList.contains("sidebar-open")); }));
 document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !els.modal.open && document.body.classList.contains("sidebar-open")) setSidebar(false); });
 window.addEventListener("hashchange", () => { if (location.hash === "#planner-sidebar") setSidebar(true); });
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));

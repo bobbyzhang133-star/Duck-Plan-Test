@@ -724,3 +724,54 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   .planner-glass.sidebar-open .home-nav-open-button { display: none; }
 }
 .planner-glass.sidebar-open .nav-open-button { display: none; }
+
+/* One gently damped response for the planner; no oscillation or layout overshoot. */
+:root { --motion-ease: cubic-bezier(.2,.8,.2,1); --motion-layout:480ms; --motion-control:240ms; --motion-press:80ms; --motion-release:400ms; --motion-popupOpen:380ms; --motion-popupClose:300ms; }
+.planner-glass :is(button,a.secondary-button,.switch span,.text-button > span,.progress-track span,.toast,.daily-task-card,.all-task-row) {
+  transition-timing-function: var(--motion-ease);
+  transition-duration: var(--motion-control);
+}
+.planner-glass .unified-shell,
+.planner-glass .unified-shell .sidebar { transition-duration:var(--motion-layout); transition-timing-function:var(--motion-ease); }
+.planner-glass .sidebar-toggle-dock {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  pointer-events: none;
+  transition: left var(--motion-layout) var(--motion-ease);
+}
+.planner-glass.sidebar-open .sidebar-toggle-dock { left: calc(var(--sidebar-width) - 14px); }
+.planner-glass .sidebar-edge-toggle.glass-button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  min-height: 64px;
+  padding: 0;
+  border-radius: 0 14px 14px 0;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.planner-glass.sidebar-open .sidebar-edge-toggle.glass-button { border-radius: 14px; }
+.planner-glass .sidebar-edge-toggle::before { content:"";position:absolute;inset:0 -8px;pointer-events:auto; }
+.planner-glass .glass-button:not(:disabled):not([aria-disabled="true"]):is(:active,.interaction-pressed) { transition-duration:var(--motion-press); }
+.planner-glass .interaction-released:not(.fur-material):not(.glass-button) { animation: control-settle var(--motion-release) var(--motion-ease); }
+.planner-glass .glass-button.interaction-released:not(:disabled):not([aria-disabled="true"]) { animation:glass-settle var(--motion-release) var(--motion-ease); }
+.planner-glass .glass-button.interaction-released:not(:disabled):not([aria-disabled="true"])::after { animation:glass-light-release var(--motion-release) var(--motion-ease); }
+@keyframes control-settle { from { transform:scale(.96); filter:brightness(.93); } to { transform:none; filter:none; } }
+@keyframes glass-settle { from { transform:scale(.975); } to { transform:none; } }
+.planner-glass .task-modal[data-popup-motion="opening"]::backdrop { animation:popup-backdrop-in var(--motion-popupOpen) var(--motion-ease) both; }
+.planner-glass .task-modal[data-popup-motion="closing"]::backdrop { animation:popup-backdrop-out var(--motion-popupClose) var(--motion-ease) both; }
+/* Navigation has its own edge handle, so headings no longer reserve a toggle slot. */
+.planner-glass[data-view="home"] .daily-panel > .panel-heading { grid-template-columns:minmax(0,1fr) auto; }
+@media (prefers-reduced-motion:reduce) {
+  .planner-glass .interaction-released:not(.fur-material),
+  .planner-glass .glass-button:not(:disabled):is(:hover,:active,.interaction-pressed,.interaction-released) { animation:none!important; transform:none!important; }
+  .planner-glass .glass-button.interaction-released::after { animation:none!important; opacity:.32; }
+}
+/* Extend the handle's transparent hit area without widening its visible tab. */
+.planner-glass .sidebar-edge-toggle.glass-button { overflow: visible; }
+.planner-glass .sidebar-edge-toggle::before { inset:0 -16px; }
