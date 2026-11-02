@@ -287,7 +287,9 @@ function openModal(prefill = {}) {
   els.form.reset();
   const task = editingTaskId ? tasks.find((item) => item.id === editingTaskId) : null;
   const scheduled = task ? Model.scheduledParts(task) : null;
-  els.modalTitle.textContent = task ? "Edit task" : "New task";
+  els.modalTitle.textContent = task ? "Edit task" : "Add task";
+  els.modal.style.setProperty("--popup-tint",modalAnchor?.material.tint || "rgba(248,201,67,.72)");
+  els.modal.style.setProperty("--popup-sheen",modalAnchor?.material.sheen || "none");
   els.modalKicker.textContent = task ? "Task details" : "Plan your work";
   els.saveTask.textContent = task ? "Save changes" : "Add to DuckPlan";
   els.deleteTask.hidden = !task;

@@ -775,3 +775,11 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 /* Extend the handle's transparent hit area without widening its visible tab. */
 .planner-glass .sidebar-edge-toggle.glass-button { overflow: visible; }
 .planner-glass .sidebar-edge-toggle::before { inset:0 -16px; }
+/* The destination uses the launcher's glass recipe, rather than an unrelated tint. */
+.planner-glass .task-modal form {
+  z-index: 1;
+  background-color: var(--popup-tint,rgba(248,201,67,.72));
+  background-image: var(--popup-sheen,linear-gradient(160deg,rgba(255,255,255,.7),rgba(255,255,255,.12) 52%,rgba(255,255,255,.3)));
+}
+.planner-glass .task-modal form::before { background: none; }
+.popup-morph-surface { font-family: inherit; }

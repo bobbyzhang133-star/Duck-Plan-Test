@@ -15,6 +15,7 @@ alwaysApply: true
   3. **Release:** a brief, visible response after the press is released; this must be more than simply removing the pressed style.
 - Match the effect to the material. Standard controls may lift, compress, tint, or rebound; fur controls must use localized brushing/compression and visible strand recovery rather than moving the whole control.
 - Only popout windows/dialogs should expand from their launcher and close back toward the saved launcher position. Keep the sidebar sliding in/out in the same layout plane: it must take space and reframe the usable main panel, without overlay, dimming, blur or making content inert. Do not scale page or calendar navigation. Preserve focus, Escape, interruption cleanup and reduced motion.
+- Popout identity must continue its launcher: inherit the button's tint/material and action wording in the title; morph a matching glass surface at full layer opacity from its real bounds/corner shape into the window, revealing native content during expansion. Reverse the same surface/label path on close. Do not just fade/scale the finished form over a still-visible duplicate button.
 - Keep the sidebar toggle on the outer edge/seam, accessible when closed and open, rather than inside a page heading.
 - All animated planner movement must use the shared damped response/timing tokens in `landing/motion-tokens.js`; settle without repeated bounce or overshoot. Preserve fast press feedback and reduced-motion bypass.
 - Interaction effects must not shift surrounding layout or reduce label readability.
