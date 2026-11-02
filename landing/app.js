@@ -73,7 +73,7 @@ function setSidebar(open) {
   sidebarScrim.tabIndex = open ? 0 : -1;
   if (open) document.querySelector(".sidebar .nav-item.active")?.focus();
   else if (wasOpen) sidebarToggles.find((toggle) => toggle.getClientRects().length)?.focus();
-  requestAnimationFrame(() => setupFurMaterial());
+  requestAnimationFrame(() => setupButtonMaterial());
 }
 
 function loadTasks() {
@@ -170,7 +170,6 @@ function renderAllTasks() {
 }
 
 function renderClasses() {
-  if (window.DuckFur) els.classGrid.querySelectorAll("button").forEach((button) => window.DuckFur.unmount(button));
   els.classGrid.innerHTML = Object.entries(CLASS_INFO).map(([name, info]) => {
     const classTasks = tasks.filter((task) => task.className === name);
     const open = classTasks.filter((task) => !task.completed).length;
@@ -246,30 +245,14 @@ function renderCalendar() {
   document.querySelectorAll("[data-calendar-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.calendarView === calendarView)));
 }
 
-function furLabelForButton(button) {
-  if (button.matches(".profile-card")) return button.querySelector("strong")?.textContent.trim() || "Profile";
-  const clone = button.cloneNode(true);
-  clone.querySelectorAll(".notification-dot, .nav-count, small").forEach((element) => element.remove());
-  return clone.textContent.replace(/\s+/g, " ").trim() || button.getAttribute("aria-label") || "Button";
-}
-function shouldUseFurButton(button) {
-  if (button.matches("[data-fur-button]")) return true;
-  if (button.matches(".sidebar-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.task-select,.task-section-heading")) return false;
-  const text = button.textContent.replace(/\s+/g, " ").trim();
-  return Boolean(text || button.getAttribute("aria-label"));
-}
-function setupFurMaterial(root = document) {
-  if (!window.DuckFur) return;
-  const modalOpen = els.modal.open;
-  const drawerOpen = document.body.classList.contains("sidebar-open");
-  root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach((button) => {
-    const mount = shouldUseFurButton(button) && button.getClientRects().length && (!modalOpen || els.modal.contains(button));
-    const activeSurface = (!drawerOpen || sidebar.contains(button)) && (!modalOpen || els.modal.contains(button));
-    if (!mount || !activeSurface || button.closest('[aria-hidden="true"]')) { window.DuckFur.unmount(button); return; }
-    window.DuckFur.mount(button, { quality: "medium", density: 1, length: 5.2, stiffness: 62, damping: 22, radius: 12.8, pressRadius: 38.4, recoveryDelay: 280, pressDepth: 0.78, compression: 0.92, splay: 0.76, transitionWidth: 0.36, labelScale: 2, labelSharpness: 1.15, labelLengthScale: 0.8, labelWidthScale: 0.9, labelOrientationVariance: 0.06, labelDensity: 2.4, glyphTransition: 0.55, glyphGuardWidth: 1.4, glyphGuardStrength: 0.9, motionGuardStart: 0.12, motionGuardEnd: 0.58, boundaryLabelWidthScale: 0.72, boundaryLabelLeanScale: 0.62, fragmentGlyphMask: true, silhouette: true, label: furLabelForButton(button) });
+// Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
+function setupButtonMaterial(root = document) {
+  const contentControls = ".sidebar-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.task-select,.task-section-heading";
+  root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
+    button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); requestAnimationFrame(() => setupFurMaterial()); }
+function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
   const normalized = ["today", "calendar"].includes(name) ? "home" : name;
@@ -281,12 +264,12 @@ function setView(name, preserveDrawer = false) {
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${normalized}`);
   if(!preserveDrawer) setSidebar(false);
-  if(!window.DuckTransitions?.isActive()) window.scrollTo({ top: 0, behavior: "instant" });
-  requestAnimationFrame(() => setupFurMaterial());
+  window.scrollTo({ top: 0, behavior: "instant" });
+  requestAnimationFrame(() => setupButtonMaterial());
 }
 function showToast(message) { clearTimeout(toastTimer); els.toast.textContent = message; els.toast.classList.add("show"); toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2600); }
-function selectDate(date) { selectedDate = date; selectedTaskId = null; renderDailyPlan(); renderCalendar(); requestAnimationFrame(() => setupFurMaterial()); }
-function selectTask(id) { selectedTaskId = selectedTaskId === id ? null : id; renderDailyPlan(); renderCalendar(); }
+function selectDate(date) { selectedDate = date; selectedTaskId = null; renderDailyPlan(); renderCalendar(); requestAnimationFrame(() => setupButtonMaterial()); }
+function selectTask(id) { selectedTaskId = selectedTaskId === id ? null : id; renderDailyPlan(); renderCalendar(); setupButtonMaterial(); }
 
 function openModal(prefill = {}) {
   editingTaskId = prefill.id || null;
@@ -305,7 +288,7 @@ function openModal(prefill = {}) {
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
-  els.modal.showModal(); setupFurMaterial(); els.form.elements.title.focus();
+  els.modal.showModal(); setupButtonMaterial(); els.form.elements.title.focus();
 }
 function closeModal() { els.modal.close(); }
 // Native Escape dismissal also fires close; restore the workspace material for
@@ -313,17 +296,11 @@ function closeModal() { els.modal.close(); }
 els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
   editingTaskId = null;
-  setupFurMaterial();
+  setupButtonMaterial();
 });
 
-// Actions opt in declaratively; data edits, typing and scrolling remain immediate.
-document.querySelectorAll('.nav-item,[data-go],[data-calendar-view]').forEach(control => { control.dataset.transition="workspace"; });
-function commitMaterialAction(source, update, event) {
-  if(source?.dataset.transition === "workspace" && window.DuckTransitions) {
-    window.DuckTransitions.workspace({root:workspace,source,event,update,sheetOptions:{formation:true,
-      surfaceSelector:".panel,.daily-task-card,.class-card,.timeline-days,.timeline-column,.calendar-date-button,.deadline-cell,.calendar-slot,.calendar-event-block,.month-day"}});
-  } else update();
-}
+// Material feedback is local to controls; navigation stays immediate.
+function commitMaterialAction(source, update, event) { update(); }
 
 document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
@@ -333,7 +310,7 @@ document.addEventListener("click", (event) => {
   const slot = event.target.closest("[data-slot-date]"); if (slot) openModal({ scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate });
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
   const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ id: edit.dataset.editTask });
-  const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); }
+  const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
 });
 document.addEventListener("change", (event) => {
   const checkbox = event.target.closest("[data-task-id]");
@@ -343,7 +320,7 @@ document.addEventListener("change", (event) => {
 });
 document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListener("click", () => {
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
-  currentFilter = chip.dataset.filter; renderAllTasks(); setupFurMaterial();
+  currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", () => setSidebar(true)));
@@ -387,6 +364,3 @@ setInterval(refreshDateBoundary, 60000);
 const requestedView = location.hash.replace("#", "");
 renderAll();
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
-
-// One short-lived preparation lease; no extra permanent context per button.
-if("requestIdleCallback" in window)requestIdleCallback(()=>{const source=document.querySelector('.workspace [data-transition="workspace"].fur-material');if(source)window.DuckTransitions?.prepareWorkspace({root:workspace,source});},{timeout:1000});
