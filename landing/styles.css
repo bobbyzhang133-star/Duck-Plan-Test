@@ -651,3 +651,13 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   .planner-glass .glass-button { color:ButtonText; background:ButtonFace; border:1px solid ButtonText; box-shadow:none; text-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; }
   .planner-glass .glass-button::after { display:none; }
 }
+
+/* Native surfaces animate as one composited layer, anchored to their launcher. */
+.planner-glass :is(.task-modal,.sidebar,.view,#planner-calendar) { transform-origin: center; }
+.planner-glass .unified-shell .sidebar { transition: none; }
+.planner-glass .view { animation: none; }
+.planner-glass .task-modal[data-popup-motion="opening"]::backdrop { animation: popup-backdrop-in 320ms ease-out both; }
+.planner-glass .task-modal[data-popup-motion="closing"]::backdrop { animation: popup-backdrop-out 220ms ease-in both; }
+.planner-glass.sidebar-closing .sidebar-scrim { opacity: 0; pointer-events: none; }
+@keyframes popup-backdrop-in { from { opacity:0; } to { opacity:1; } }
+@keyframes popup-backdrop-out { from { opacity:1; } to { opacity:0; } }

@@ -1,0 +1,52 @@
+(() => {
+  'use strict';
+  const running = new Map();
+  const ease = 'cubic-bezier(.22,.8,.24,1)';
+  function capture(source) {
+    const element = source instanceof Element ? source : null;
+    const rect = element?.getBoundingClientRect();
+    return rect && rect.width && rect.height ? {element, rect: {left:rect.left,top:rect.top,width:rect.width,height:rect.height}} : null;
+  }
+  function anchorRect(anchor) {
+    const r = anchor?.element?.isConnected && anchor.element.getClientRects().length ? anchor.element.getBoundingClientRect() : null;
+    return r?.width && r?.height ? r : anchor?.rect;
+  }
+  function transform(box, source) {
+    if (!source || !box.width || !box.height) return 'translateY(8px) scale(.97)';
+    const x=source.left+source.width/2-box.left-box.width/2;
+    const y=source.top+source.height/2-box.top-box.height/2;
+    const sx=Math.max(.035,Math.min(.9,source.width/box.width));
+    const sy=Math.max(.035,Math.min(.9,source.height/box.height));
+    return `translate(${x}px, ${y}px) scale(${sx}, ${sy})`;
+  }
+  function cancel(element) {
+    const current=running.get(element);
+    if(current){running.delete(element);current.animation.cancel();delete element.dataset?.popupMotion;}
+  }
+  function animate(element, anchor, opening, done=()=>{}) {
+    // Sample an interrupted transform before cancelling, so reversing doesn't jump.
+    const previous=running.has(element) ? {transform:getComputedStyle(element).transform,opacity:getComputedStyle(element).opacity} : null;
+    cancel(element);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate) { done(); return; }
+    const end=transform(element.getBoundingClientRect(),anchorRect(anchor));
+    const full={transform:'translate(0px, 0px) scale(1, 1)',opacity:1};
+    const small={transform:end,opacity:0};
+    if(element.dataset)element.dataset.popupMotion=opening?'opening':'closing';
+    const animation=element.animate([previous || (opening?small:full),opening?full:small],{
+      duration:opening?320:220,easing:ease,fill:'both',composite:'replace'
+    });
+    const entry={animation,finish:null};
+    entry.finish=()=>{if(running.get(element)!==entry)return;running.delete(element);try{done();}finally{animation.cancel();delete element.dataset?.popupMotion;}};
+    running.set(element,entry);
+    animation.finished.then(entry.finish,()=>{});
+  }
+  // Complete pending operations on viewport changes; never leave a dialog inert.
+  function finishAll(){for(const entry of [...running.values()])entry.finish();}
+  if(typeof window.addEventListener==='function'){
+    window.addEventListener('resize',finishAll);
+    window.addEventListener('pagehide',finishAll);
+    matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',finishAll);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)finishAll();});
+  }
+  window.DuckPopupMotion={capture,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform}};
+})();

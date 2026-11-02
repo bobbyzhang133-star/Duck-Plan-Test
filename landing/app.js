@@ -62,18 +62,29 @@ const sidebarScrim = document.querySelector(".sidebar-scrim");
 const sidebar = document.querySelector(".sidebar");
 const workspace = document.querySelector(".workspace");
 
-function setSidebar(open) {
+let sidebarAnchor = null;
+let sidebarClosing = false;
+function setSidebar(open, source = null) {
   const wasOpen = document.body.classList.contains("sidebar-open");
-  document.body.classList.toggle("sidebar-open", open);
-  sidebar.inert = !open;
-  sidebar.setAttribute("aria-hidden", String(!open));
-  workspace.inert = open;
-  sidebarScrim.hidden = !open;
-  sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
-  sidebarScrim.tabIndex = open ? 0 : -1;
-  if (open) document.querySelector(".sidebar .nav-item.active")?.focus();
-  else if (wasOpen) sidebarToggles.find((toggle) => toggle.getClientRects().length)?.focus();
-  requestAnimationFrame(() => setupButtonMaterial());
+  if (!open && (!wasOpen || sidebarClosing)) return;
+  if (open && wasOpen && !sidebarClosing) return;
+  if (open) sidebarAnchor = DuckPopupMotion.capture(source || sidebarToggles.find(toggle => toggle.getClientRects().length)) || sidebarAnchor;
+  const apply = () => {
+    document.body.classList.toggle("sidebar-open", open);
+    sidebar.inert = !open;
+    sidebar.setAttribute("aria-hidden", String(!open));
+    workspace.inert = open;
+    sidebarScrim.hidden = !open;
+    sidebarToggles.forEach(toggle => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
+    sidebarScrim.tabIndex = open ? 0 : -1;
+    sidebarClosing = false;
+    document.body.classList.remove("sidebar-closing");
+    if (open) document.querySelector(".sidebar .nav-item.active")?.focus({preventScroll:true});
+    else if (wasOpen) sidebarToggles.find(toggle => toggle.getClientRects().length)?.focus({preventScroll:true});
+    requestAnimationFrame(() => setupButtonMaterial());
+  };
+  if (open) { sidebarClosing=false; apply(); DuckPopupMotion.open(sidebar, sidebarAnchor); }
+  else { sidebarClosing=true; document.body.classList.add("sidebar-closing"); DuckPopupMotion.close(sidebar, sidebarAnchor, apply); }
 }
 
 function loadTasks() {
@@ -271,7 +282,12 @@ function showToast(message) { clearTimeout(toastTimer); els.toast.textContent = 
 function selectDate(date) { selectedDate = date; selectedTaskId = null; renderDailyPlan(); renderCalendar(); requestAnimationFrame(() => setupButtonMaterial()); }
 function selectTask(id) { selectedTaskId = selectedTaskId === id ? null : id; renderDailyPlan(); renderCalendar(); setupButtonMaterial(); }
 
+let modalAnchor = null;
+let modalClosing = false;
 function openModal(prefill = {}) {
+  modalAnchor = DuckPopupMotion.capture(prefill.source || document.activeElement);
+  modalClosing = false;
+  els.modal.inert = false;
   editingTaskId = prefill.id || null;
   els.form.reset();
   const task = editingTaskId ? tasks.find((item) => item.id === editingTaskId) : null;
@@ -288,28 +304,55 @@ function openModal(prefill = {}) {
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
-  els.modal.showModal(); setupButtonMaterial(); els.form.elements.title.focus();
+  if (!els.modal.open) els.modal.showModal();
+  setupButtonMaterial();
+  els.form.elements.title.focus({preventScroll:true});
+  DuckPopupMotion.open(els.modal, modalAnchor);
 }
-function closeModal() { els.modal.close(); }
-// Native Escape dismissal also fires close; restore the workspace material for
-// every dismissal path, after the dialog has released its modal state.
+function closeModal() {
+  if (!els.modal.open || modalClosing) return;
+  modalClosing = true;
+  els.modal.inert = true;
+  DuckPopupMotion.close(els.modal, modalAnchor, () => {
+    els.modal.close();
+    els.modal.inert = false;
+    modalClosing = false;
+    const returnTarget = modalAnchor?.element?.isConnected ? modalAnchor.element : document.querySelector(".view.active button");
+    returnTarget?.focus({preventScroll:true});
+  });
+}
+els.modal.addEventListener("cancel", event => { event.preventDefault(); closeModal(); });
+// Every dismissal path releases modal state only after its return animation.
 els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
+  DuckPopupMotion.cancel(els.modal);
   editingTaskId = null;
   setupButtonMaterial();
 });
 
-// Material feedback is local to controls; navigation stays immediate.
-function commitMaterialAction(source, update, event) { update(); }
+const viewAnchors = new WeakMap();
+// Keep the source rectangle even when updating the view removes its button.
+function commitMaterialAction(source, update, event) {
+  const anchor = DuckPopupMotion.capture(source);
+  const calendarAction = source?.matches("[data-calendar-view]");
+  const outgoing = calendarAction ? els.calendar : document.querySelector(".view.active");
+  if (!outgoing) { update(); return; }
+  DuckPopupMotion.close(outgoing, viewAnchors.get(outgoing) || anchor, () => {
+    update();
+    const incoming = calendarAction ? els.calendar : document.querySelector(".view.active");
+    if(incoming) { viewAnchors.set(incoming, anchor); DuckPopupMotion.open(incoming, anchor); }
+    setupButtonMaterial();
+  });
+}
 
 document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
   const viewButton = event.target.closest("[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>setView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>setView(goButton.dataset.go,sidebar.contains(goButton)),event); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
-  const slot = event.target.closest("[data-slot-date]"); if (slot) openModal({ scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate });
+  const slot = event.target.closest("[data-slot-date]"); if (slot) openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate });
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
-  const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ id: edit.dataset.editTask });
+  const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ source: edit, id: edit.dataset.editTask });
   const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
 });
 document.addEventListener("change", (event) => {
@@ -323,14 +366,14 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
-sidebarToggles.forEach((toggle) => toggle.addEventListener("click", () => setSidebar(true)));
+sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(true, toggle); }));
 document.addEventListener("keydown", (event) => { if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) setSidebar(false); });
 window.addEventListener("hashchange", () => { if (location.hash === "#planner-sidebar") setSidebar(true); });
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));
 document.querySelector("#calendar-next").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, 1)));
 document.querySelector("#calendar-today").addEventListener("click", () => selectDate(nowKey()));
-document.querySelector("#plan-selected-date").addEventListener("click", () => openModal({ dueDate: selectedDate }));
-document.querySelector("#open-task-modal").addEventListener("click", () => openModal({ dueDate: selectedDate }));
+document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
+document.querySelector("#open-task-modal").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);
 els.modal.addEventListener("click", (event) => { if (event.target === els.modal) closeModal(); });
