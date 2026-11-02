@@ -33,7 +33,7 @@
     const small={transform:end,opacity:0};
     if(element.dataset)element.dataset.popupMotion=opening?'opening':'closing';
     const animation=element.animate([previous || (opening?small:full),opening?full:small],{
-      duration:opening?(window.DuckMotion?.duration.popupOpen || 320):(window.DuckMotion?.duration.popupClose || 220),easing:ease,fill:'both',composite:'replace'
+      duration:opening?(window.DuckMotion?.duration.popupOpen || 240):(window.DuckMotion?.duration.popupClose || 220),easing:ease,fill:'both',composite:'replace'
     });
     const entry={animation,finish:null};
     entry.finish=()=>{if(running.get(element)!==entry)return;running.delete(element);try{done();}finally{animation.cancel();delete element.dataset?.popupMotion;}};

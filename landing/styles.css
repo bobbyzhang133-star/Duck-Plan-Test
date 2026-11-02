@@ -726,7 +726,7 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 .planner-glass.sidebar-open .nav-open-button { display: none; }
 
 /* One gently damped response for the planner; no oscillation or layout overshoot. */
-:root { --motion-ease: cubic-bezier(.2,.8,.2,1); --motion-layout:480ms; --motion-control:240ms; --motion-press:80ms; --motion-release:400ms; --motion-popupOpen:380ms; --motion-popupClose:300ms; }
+:root { --motion-ease: cubic-bezier(.2,.8,.2,1); --motion-layout:480ms; --motion-control:240ms; --motion-press:80ms; --motion-release:400ms; --motion-popupOpen:240ms; --motion-popupClose:300ms; }
 .planner-glass :is(button,a.secondary-button,.switch span,.text-button > span,.progress-track span,.toast,.daily-task-card,.all-task-row) {
   transition-timing-function: var(--motion-ease);
   transition-duration: var(--motion-control);

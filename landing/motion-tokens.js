@@ -7,9 +7,9 @@
     t = Math.max(0, Math.min(1, t));
     return (1 - (1 + omega * t) * Math.exp(-omega * t)) / normalizer;
   }
-  const curve = `linear(${Array.from({length:31}, (_,i) => response(i/30).toFixed(6)).join(',')})`;
+  const curve = `linear(${Array.from({length:61}, (_,i) => response(i/60).toFixed(6)).join(',')})`;
   const easing = typeof CSS !== 'undefined' && CSS.supports('animation-timing-function',curve) ? curve : 'cubic-bezier(.2,.8,.2,1)';
-  const duration = Object.freeze({layout:480,control:240,press:80,release:400,popupOpen:380,popupClose:300});
+  const duration = Object.freeze({layout:480,control:240,press:80,release:400,popupOpen:240,popupClose:300});
   window.DuckMotion = Object.freeze({response,easing,duration});
   if (typeof document !== 'undefined') {
     const style = document.documentElement.style;
