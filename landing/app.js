@@ -22,6 +22,14 @@ const DEFAULT_TASKS = [
 ];
 
 let tasks = loadTasks();
+const REMINDER_KEY = "duckplan-deadline-reminders-v1";
+const reminderSettings = loadReminderSettings();
+const reminderToggle = document.querySelector("#reminders-enabled");
+const reminderLead = document.querySelector("#reminder-lead");
+const reminderList = document.querySelector("#reminder-list");
+const reminderEmpty = document.querySelector("#reminders-empty");
+reminderToggle.checked = reminderSettings.enabled;
+reminderLead.value = String(reminderSettings.lead);
 let selectedDate = nowKey();
 let calendarView = window.matchMedia("(max-width: 760px)").matches ? "day" : "week";
 let currentFilter = "all";
@@ -93,6 +101,61 @@ function loadTasks() {
     return Model.migrateTasks(structuredClone(DEFAULT_TASKS));
   }
 }
+function loadReminderSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(REMINDER_KEY));
+    return {
+      enabled: saved?.enabled === true,
+      lead: [15, 60, 1440].includes(saved?.lead) ? saved.lead : 60,
+      seen: Array.isArray(saved?.seen) ? saved.seen : [],
+    };
+  } catch {
+    return { enabled: false, lead: 60, seen: [] };
+  }
+}
+
+function saveReminderSettings() {
+  localStorage.setItem(REMINDER_KEY, JSON.stringify(reminderSettings));
+}
+
+function refreshReminders({ announce = false, now = Date.now() } = {}) {
+  const upcoming = tasks
+    .filter(task => !task.completed && task.dueDate)
+    .map(task => {
+      const deadline = new Date(`${task.dueDate}T${task.dueTime || "23:59"}`).getTime();
+      return { task, deadline, key: JSON.stringify([task.id, task.dueDate, task.dueTime]) };
+    })
+    .filter(({ deadline }) => deadline > now)
+    .sort((a, b) => a.deadline - b.deadline);
+  const activeKeys = new Set(upcoming.map(({ key }) => key));
+  const seen = new Set(reminderSettings.seen.filter(key => activeKeys.has(key)));
+  const dueSoon = reminderSettings.enabled
+    ? upcoming.filter(({ deadline }) => deadline - now <= reminderSettings.lead * 60000)
+    : [];
+  reminderLead.disabled = !reminderSettings.enabled;
+  reminderEmpty.textContent = !reminderSettings.enabled ? "Reminders are off."
+    : dueSoon.length ? "Due within your reminder window" : "No tasks due within your reminder window.";
+  reminderList.replaceChildren(...dueSoon.map(({ task, deadline }) => {
+    const item = document.createElement("li");
+    const due = new Date(deadline).toLocaleString(undefined, {
+      month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+    });
+    item.textContent = `${task.title} · Due ${due}`;
+    return item;
+  }));
+  if (announce && !document.hidden && !els.modal.open) {
+    const fresh = dueSoon.filter(({ key }) => !seen.has(key));
+    if (fresh.length) {
+      fresh.forEach(({ key }) => seen.add(key));
+      showToast(fresh.length === 1 ? `Due soon: ${fresh[0].task.title}` : `${fresh.length} tasks are due soon. Check Deadline reminders in Settings.`);
+    }
+  }
+  if (seen.size !== reminderSettings.seen.length || [...seen].some(key => !reminderSettings.seen.includes(key))) {
+    reminderSettings.seen = [...seen];
+    saveReminderSettings();
+  }
+}
+
 function saveTasks() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
 function safeText(value) { const span = document.createElement("span"); span.textContent = value ?? ""; return span.innerHTML; }
 function dateObject(value) { return Model.fromDateKey(value); }
@@ -121,7 +184,7 @@ function taskCardMarkup(task, mode = "daily") {
   const leading = mode === "scheduled" ? `<span class="task-time">${formatTime(scheduled.time)}</span>` : "";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
     ${leading}<input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)} · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${task.priority === "High" ? '<span class="priority-tag">High</span>' : ""}</span></button>
+    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)} · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${task.priority === "High" ? '<span class="priority-tag">High</span>' : ""}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
 }
@@ -258,7 +321,7 @@ function setupButtonMaterial(root = document) {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
   const normalized = ["today", "calendar"].includes(name) ? "home" : name;
@@ -301,6 +364,7 @@ function openModal(prefill = {}) {
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
+  els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
   DuckPopupMotion.mark(modalAnchor,"fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
     if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
@@ -377,12 +441,28 @@ els.form.addEventListener("submit", (event) => {
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
   const next = { title, className: form.get("className"), priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), schemaVersion: 2 };
+  const loggedMinutes = form.get("actualMinutes");
+  next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
   if (editingTaskId) Object.assign(tasks.find((task) => task.id === editingTaskId), next);
   else tasks.push({ id: `task-${Date.now()}`, completed: false, ...next });
   saveTasks(); renderAll(); closeModal(); showToast(wasEditing ? "Task updated." : "Task added to your plan.");
 });
 els.deleteTask.addEventListener("click", () => { if (!editingTaskId) return; tasks = tasks.filter((task) => task.id !== editingTaskId); saveTasks(); closeModal(); renderAll(); showToast("Task deleted."); });
-document.querySelector("#notification-button").addEventListener("click", () => showToast("You are all caught up."));
+document.querySelector("#notification-button").addEventListener("click", () => {
+  setView("settings");
+  refreshReminders();
+  document.querySelector("#reminders-heading").focus();
+});
+reminderToggle.addEventListener("change", () => {
+  reminderSettings.enabled = reminderToggle.checked;
+  saveReminderSettings();
+  refreshReminders({ announce: true });
+});
+reminderLead.addEventListener("change", () => {
+  reminderSettings.lead = Number(reminderLead.value);
+  saveReminderSettings();
+  refreshReminders({ announce: true });
+});
 document.querySelector("#sync-info").addEventListener("click", () => showToast("Axis sync remains a prototype until API or iCal access is confirmed."));
 document.querySelector("#connect-axis").addEventListener("click", () => showToast("Axis connection is intentionally disabled in this local prototype."));
 document.querySelector("#reset-demo").addEventListener("click", () => { tasks = Model.migrateTasks(structuredClone(DEFAULT_TASKS)); saveTasks(); selectedDate = nowKey(); renderAll(); showToast("Demo tasks reset."); });
@@ -393,13 +473,19 @@ function refreshDateBoundary() {
   if (selectedDate === observedToday) selectedDate = nextToday;
   observedToday = nextToday; renderAll();
 }
-document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshDateBoundary(); });
-window.addEventListener("focus", refreshDateBoundary);
-setInterval(refreshDateBoundary, 60000);
+function refreshPlannerClock() {
+  refreshDateBoundary();
+  refreshReminders({ announce: true });
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPlannerClock(); });
+window.addEventListener("focus", refreshPlannerClock);
+setInterval(refreshPlannerClock, 60000);
 
 const requestedView = location.hash.replace("#", "");
 renderAll();
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
+
+refreshReminders({ announce: true });
 
 // Warm the existing form while closed; no modal, focus or user data is changed.
 setupButtonMaterial(els.modal);

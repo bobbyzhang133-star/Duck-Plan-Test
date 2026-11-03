@@ -808,3 +808,7 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 .planner-glass .task-modal[data-popup-stage="shell"][data-popup-motion="closing"]::backdrop {
   animation:popup-backdrop-out calc(var(--motion-popupClose) - var(--motion-popupContentOut,60ms)) var(--motion-ease) both;
 }
+
+.reminder-options { display: grid; gap: 8px; padding-block: 12px; font-size: .84rem; }
+.reminder-options select { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: #fffdf7; color: inherit; font: inherit; }
+#reminder-list { padding-inline-start: 20px; color: var(--muted); font-size: .84rem; }
