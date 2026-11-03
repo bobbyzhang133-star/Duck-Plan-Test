@@ -795,9 +795,16 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 /* Reserve one final frame; the native form scrolls within it without resizing. */
 .planner-glass .task-modal[data-popup-staged] form { height:100%; max-height:100%; }
 .planner-glass .task-modal[data-popup-stage="shell"] form { display:none; }
-/* Static dimming while moving. Restore glass only once geometry has settled. */
+/* Fade only unblurred dimming during travel; glass returns at settled bounds. */
 .planner-glass .task-modal[data-popup-staged]::backdrop { animation:none; }
 .planner-glass .task-modal[data-popup-stage="shell"]::backdrop {
   -webkit-backdrop-filter:none; backdrop-filter:none;
 }
 .popup-morph-source, .popup-morph-label { font-family:inherit; }
+
+.planner-glass .task-modal[data-popup-stage="shell"][data-popup-motion="opening"]::backdrop {
+  animation:popup-backdrop-in var(--motion-popupOpen) var(--motion-ease) both;
+}
+.planner-glass .task-modal[data-popup-stage="shell"][data-popup-motion="closing"]::backdrop {
+  animation:popup-backdrop-out calc(var(--motion-popupClose) - var(--motion-popupContentOut,60ms)) var(--motion-ease) both;
+}

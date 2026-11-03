@@ -8,7 +8,7 @@
     const rect = element?.getBoundingClientRect();
     if (!rect || !rect.width || !rect.height) return null;
     const style=getComputedStyle(element);
-    return {element,capturedAt,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},material:{
+    return {element,capturedAt,label:element.textContent?.trim().replace(/\s+/g,' ')||'',rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},material:{
       tint:(!style.backgroundColor || style.backgroundColor==='transparent' || style.backgroundColor==='rgba(0, 0, 0, 0)') ? 'rgba(255,255,255,.7)' : style.backgroundColor,sheen:style.backgroundImage || 'none',
       radius:Math.min(rect.height/2,parseFloat(style.borderRadius)||rect.height/2),
       border:style.border || '1px solid rgba(255,255,255,.9)',shadow:style.boxShadow || 'none',
@@ -74,6 +74,31 @@
     if(job.idle)window.cancelIdleCallback?.(job.id);else clearTimeout(job.id);
     jobs.delete(element);
   }
+  // Slice the surface into corners, edge bands and a center. Corner transforms
+  // stay uniform, so a short pill cannot squash a tall panel's curves into squares.
+  function sliceGeometry(box, target, targetRadius) {
+    const r=Math.max(.001,Math.min(box.radius||24,box.width/2,box.height/2));
+    const endR=Math.max(0,Math.min(targetRadius,target.width/2,target.height/2));
+    const columns=[0,r,box.width-r],rows=[0,r,box.height-r];
+    const widths=[r,Math.max(.001,box.width-2*r),r],heights=[r,Math.max(.001,box.height-2*r),r];
+    const xs=[target.left-box.left,target.left-box.left+endR,target.left-box.left+target.width-endR];
+    const ys=[target.top-box.top,target.top-box.top+endR,target.top-box.top+target.height-endR];
+    const endWidths=[endR,Math.max(0,target.width-2*endR),endR],endHeights=[endR,Math.max(0,target.height-2*endR),endR];
+    return rows.flatMap((y,row)=>columns.map((x,column)=>{
+      const base={x,y,width:widths[column],height:heights[row]};
+      const end={x:xs[column],y:ys[row],width:endWidths[column],height:endHeights[row]};
+      return {base,end,radius:r,corner:row!==1&&column!==1,
+        small:{transform:`translate(${end.x-x}px, ${end.y-y}px) scale(${end.width/base.width}, ${end.height/base.height})`},
+        full:{transform:'translate(0px, 0px) scale(1, 1)'}};
+    }));
+  }
+  function returnGeometry(start,target,progress) {
+    const p=Math.max(0,Math.min(1,progress));
+    const width=start.width*Math.pow(target.width/start.width,p),height=start.height*Math.pow(target.height/start.height,p);
+    const cx=start.left+start.width/2+(target.left+target.width/2-start.left-start.width/2)*p;
+    const cy=start.top+start.height/2+(target.top+target.height/2-start.top-start.height/2)*p;
+    return {left:cx-width/2,top:cy-height/2,width,height,radius:Math.min((start.radius??24)+(target.radius-(start.radius??24))*p,width/2,height/2)};
+  }
   function layers(element) {
     if(nodes.has(element))return nodes.get(element);
     const surface=document.createElement('div'),source=document.createElement('div'),label=document.createElement('div');
@@ -82,7 +107,14 @@
       layer.setAttribute('aria-hidden','true');
       Object.assign(layer.style,{position:'fixed',margin:'0',pointerEvents:'none',boxSizing:'border-box',transformOrigin:'0 0'});
     }
-    const result={surface,source,label};nodes.set(element,result);return result;
+    const tiles=Array.from({length:9},()=>{
+      const tile=document.createElement('div'),paint=document.createElement('div');
+      tile.className='popup-morph-tile';paint.className='popup-morph-paint';
+      Object.assign(tile.style,{position:'absolute',overflow:'hidden',transformOrigin:'0 0',willChange:'transform'});
+      Object.assign(paint.style,{position:'absolute',boxSizing:'border-box',pointerEvents:'none'});
+      tile.append(paint);surface.append(tile);return {tile,paint};
+    });
+    const result={surface,source,label,tiles};nodes.set(element,result);return result;
   }
   // Warm the actual closed form without opening a dialog, stealing focus or painting it.
   function prepare(element) {
@@ -139,11 +171,17 @@
     const previous=running.get(element),oldLayers=previous?.layers;
     // Only reversal reads live animation state; the normal opening uses idle geometry.
     const interrupted=oldLayers?{
-      surface:getComputedStyle(oldLayers.surface).transform,source:getComputedStyle(oldLayers.source).transform,
+      slices:oldLayers.tiles.map(part=>getComputedStyle(part.tile).transform),source:getComputedStyle(oldLayers.source).transform,
       surfaceOpacity:getComputedStyle(oldLayers.surface).opacity,sourceOpacity:getComputedStyle(oldLayers.source).opacity,
       label:getComputedStyle(oldLayers.label).transform,labelOpacity:getComputedStyle(oldLayers.label).opacity,
       content:previous.stage==='shell'?'0':getComputedStyle(form).opacity,box:previous.box
     }:null;
+    if(interrupted){
+      const corners=[0,2,6,8].map(index=>oldLayers.tiles[index].tile.getBoundingClientRect());
+      const left=Math.min(...corners.map(r=>r.left)),top=Math.min(...corners.map(r=>r.top));
+      interrupted.frame={left,top,width:Math.max(...corners.map(r=>r.right??r.left+r.width))-left,height:Math.max(...corners.map(r=>r.bottom??r.top+r.height))-top,radius:corners[1].width};
+      interrupted.labelBox=oldLayers.label.getBoundingClientRect();
+    }
     cancel(element);
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate;
     if(reduced){
@@ -154,20 +192,28 @@
     reserve(element,box);
     const sourceBox=previous?.sourceBox||anchorRect(anchor)||{left:box.left+box.width/2-24,top:box.top+box.height/2-20,width:48,height:40};
     const material=anchor?.material||{tint:'rgba(255,255,255,.7)',sheen:'none',border:'1px solid rgba(255,255,255,.9)',shadow:'none',color:'#2b210d',radius:20,fontSize:'14px',fontWeight:'700'};
-    const chrome=layers(element),{surface,source,label}=chrome;
+    const chrome=layers(element),{surface,source,label,tiles}=chrome;
+    const slices=sliceGeometry(box,sourceBox,material.radius);
     const oldVisibility=anchor?.element?.style.visibility,oldOpacity=form.style.opacity;
     const oldHidden=form.getAttribute('aria-hidden'),oldInert=form.inert;
     element.dataset.popupMotion=opening?'opening':'closing';element.dataset.popupStage=opening?'shell':'content';
     if(opening){form.inert=true;form.setAttribute('aria-hidden','true');element.setAttribute('aria-busy','true');}
-    Object.assign(surface.style,{zIndex:'0',left:`${box.left}px`,top:`${box.top}px`,width:`${box.width}px`,height:`${box.height}px`,borderRadius:`${box.radius}px`,backgroundColor:material.tint,backgroundImage:material.sheen,border:material.border,boxShadow:material.shadow,willChange:'transform, opacity'});
+    Object.assign(surface.style,{zIndex:'0',left:`${box.left}px`,top:`${box.top}px`,width:`${box.width}px`,height:`${box.height}px`,background:'none',border:'0',boxShadow:'none',willChange:'opacity'});
+    tiles.forEach(({tile,paint},index)=>{
+      const {base,radius}=slices[index];
+      Object.assign(tile.style,{left:`${base.x}px`,top:`${base.y}px`,width:`${base.width+(index%3<2?.5:0)}px`,height:`${base.height+(index<6?.5:0)}px`});
+      // One shared full-size paint recipe, with tiny internal overlaps to avoid
+      // subpixel cracks. A quiet opaque backing prevents doubled translucency
+      // at those overlaps; source tint and highlights stay above it.
+      Object.assign(paint.style,{left:`${-base.x}px`,top:`${-base.y}px`,width:`${box.width}px`,height:`${box.height}px`,borderRadius:`${radius}px`,backgroundColor:'#fffdf7',backgroundImage:`${material.sheen&&material.sheen!=='none'?material.sheen+', ':''}linear-gradient(${material.tint}, ${material.tint})`,border:material.border,boxShadow:material.shadow});
+    });
     Object.assign(source.style,{zIndex:'1',left:`${sourceBox.left}px`,top:`${sourceBox.top}px`,width:`${sourceBox.width}px`,height:`${sourceBox.height}px`,borderRadius:`${material.radius}px`,backgroundColor:material.tint,backgroundImage:material.sheen,border:material.border,boxShadow:material.shadow,willChange:'transform, opacity'});
-    label.textContent=heading.textContent;
+    label.textContent=opening?heading.textContent:(anchor?.label||heading.textContent);
     Object.assign(label.style,{zIndex:'2',left:'0px',top:'0px',whiteSpace:'nowrap',fontWeight:box.titleWeight||material.fontWeight,fontSize:box.titleFont,lineHeight:box.titleLineHeight||'normal',fontFamily:box.titleFamily||'inherit',letterSpacing:box.titleSpacing||'normal',color:material.color,willChange:'transform, opacity'});
     element.append(surface,source,label);
     if(anchor?.element?.isConnected)anchor.element.style.visibility='hidden';
     if(opening&&!element.open)element.showModal();
     if(opening)element.focus({preventScroll:true});
-    const small={transform:`translate(${sourceBox.left-box.left}px, ${sourceBox.top-box.top}px) scale(${sourceBox.width/box.width}, ${sourceBox.height/box.height})`};
     const full={transform:'translate(0px, 0px) scale(1, 1)'};
     const sourceFull={transform:`translate(${box.left-sourceBox.left}px, ${box.top-sourceBox.top}px) scale(${box.width/sourceBox.width}, ${box.height/sourceBox.height})`};
     const fontScale=(parseFloat(material.fontSize)||14)/(parseFloat(box.titleFont)||21.6);
@@ -200,12 +246,27 @@
     const move=duration=>{
       entry.stage='shell';
       if(!opening){element.dataset.popupStage='shell';form.inert=true;form.setAttribute('aria-hidden','true');}
-      const main=play(surface,[interrupted?{transform:interrupted.surface}:(opening?small:full),opening?full:small],duration);
-      play(source,[interrupted?{transform:interrupted.source}:(opening?full:sourceFull),opening?sourceFull:full],duration);
-      // Two fixed corner shapes cross over; no radius, shadow, blur or bounds animate.
+      const main=play(surface,[{transform:'none'},{transform:'none'}],duration);
+      const startFrame=interrupted?.frame||box;
+      const path=opening?null:Array.from({length:33},(_,i)=>({offset:i/32,rect:returnGeometry(startFrame,{left:sourceBox.left,top:sourceBox.top,width:sourceBox.width,height:sourceBox.height,radius:Math.min(material.radius,sourceBox.width/2,sourceBox.height/2)},i/32)}));
+      const slicePath=path?.map(frame=>sliceGeometry(box,frame.rect,frame.rect.radius));
+      tiles.forEach(({tile},index)=>{
+        const frames=opening?[interrupted?{transform:interrupted.slices[index]}:slices[index].small,slices[index].full]:path.map((frame,i)=>({...slicePath[i][index].small,offset:frame.offset}));
+        if(!opening&&interrupted)frames[0]={transform:interrupted.slices[index],offset:0};
+        play(tile,frames,duration);
+      });
+      const sourceFrames=opening?[interrupted?{transform:interrupted.source}:full,sourceFull]:path.map(({rect,offset})=>({offset,transform:`translate(${rect.left-sourceBox.left}px, ${rect.top-sourceBox.top}px) scale(${rect.width/sourceBox.width}, ${rect.height/sourceBox.height})`}));
+      if(!opening&&interrupted)sourceFrames[0]={transform:interrupted.source,offset:0};
+      play(source,sourceFrames,duration);
+      // The sliced shell remains round; the source paint resolves only near the end.
+      // All live geometry still uses transforms, without per-frame layout/radius changes.
       play(surface,opening?[{opacity:interrupted?.surfaceOpacity||0},{opacity:1,offset:.3},{opacity:1}]:[{opacity:interrupted?.surfaceOpacity||1},{opacity:1,offset:.7},{opacity:0}],duration,'linear');
       play(source,opening?[{opacity:interrupted?.sourceOpacity||1},{opacity:0,offset:.3},{opacity:0}]:[{opacity:interrupted?.sourceOpacity||0},{opacity:0,offset:.7},{opacity:1}],duration,'linear');
-      play(label,[interrupted?{transform:interrupted.label}:(opening?labelSmall:labelFull),opening?labelFull:labelSmall],duration);
+      const initialScale=interrupted?Number(interrupted.label.match(/matrix(?:3d)?\(([^,]+)/)?.[1])||1:1;
+      const inset=interrupted?{x:interrupted.labelBox.left-startFrame.left,y:interrupted.labelBox.top-startFrame.top}:{x:box.titleX,y:box.titleY};
+      const labelFrames=opening?[interrupted?{transform:interrupted.label}:labelSmall,labelFull]:path.map(({rect,offset:p})=>({offset:p,transform:`translate(${rect.left+inset.x*(1-p)+rect.width/2*p}px, ${rect.top+inset.y*(1-p)+rect.height/2*p}px) scale(${initialScale+(fontScale-initialScale)*p}) translate(${-50*p}%, ${-50*p}%)`}));
+      if(!opening&&interrupted)labelFrames[0]={transform:interrupted.label,offset:0};
+      play(label,labelFrames,duration);
       play(label,[{opacity:opening?(interrupted?.labelOpacity||1):1},{opacity:1}],duration,'linear');
       follow(main,opening?reveal:entry.finish);
     };
@@ -261,5 +322,5 @@
     matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',finishAll);
     document.addEventListener('visibilitychange',()=>{if(document.hidden){finishAll();for(const element of jobs.keys())removeJob(element);}else for(const element of known)if(!element.open)schedulePrepare(element);});
   }
-  window.DuckPopupMotion={capture,mark,prepare,schedulePrepare,reset,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform}};
+  window.DuckPopupMotion={capture,mark,prepare,schedulePrepare,reset,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform,sliceGeometry,returnGeometry}};
 })();

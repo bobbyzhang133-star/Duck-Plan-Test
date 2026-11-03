@@ -104,3 +104,58 @@ test('reset releases reserved bounds and restores native form state after dismis
   const {api,Element,panel}=fixture(),p=panel();p.style.width='80%';api.open(p,api.capture(new Element()));p.open=false;api.reset(p);
   assert.equal(p.style.width,'80%');assert.equal(p.dataset.popupStaged,undefined);assert.equal(p.dataset.popupStage,undefined);assert(!p.form.inert);assert(p.children.every(n=>n.removed));
 });
+
+test('sliced corners stay circular and meet their neighboring edges throughout closing',()=>{
+  const {api}=fixture(),box={left:250,top:40,width:680,height:680,radius:24};
+  for(const target of [{left:350,top:40,width:124,height:44,radius:22},{left:20,top:240,width:44,height:44,radius:22},{left:900,top:60,width:88,height:32,radius:8}]){
+    const slices=api.__testing.sliceGeometry(box,target,target.radius);
+    for(const progress of [0,.1,.25,.5,.75,.9,.99,1]){
+      const rects=slices.map(s=>Object.fromEntries(['x','y','width','height'].map(k=>[k,s.base[k]+(s.end[k]-s.base[k])*progress])));
+      for(const [index,s] of slices.entries())if(s.corner){
+        const sx=rects[index].width/s.base.width,sy=rects[index].height/s.base.height;
+        assert(Math.abs(sx-sy)<1e-9,'corner must never be flattened by unequal scale');
+        assert(s.radius*sx>=Math.min(box.radius,target.radius)-1e-9);
+      }
+      for(let row=0;row<3;row++)for(let col=0;col<2;col++){
+        const a=rects[row*3+col],b=rects[row*3+col+1];assert(Math.abs(a.x+a.width-b.x)<1e-8,'horizontal edges must stay joined');
+      }
+      for(let row=0;row<2;row++)for(let col=0;col<3;col++){
+        const a=rects[row*3+col],b=rects[(row+1)*3+col];assert(Math.abs(a.y+a.height-b.y)<1e-8,'vertical edges must stay joined');
+      }
+      const width=Math.max(...rects.map(r=>r.x+r.width))-Math.min(...rects.map(r=>r.x));
+      const height=Math.max(...rects.map(r=>r.y+r.height))-Math.min(...rects.map(r=>r.y));
+      assert(Math.abs(width-(box.width+(target.width-box.width)*progress))<1e-8);
+      assert(Math.abs(height-(box.height+(target.height-box.height)*progress))<1e-8);
+    }
+  }
+});
+test('reversing a sliced shell preserves each live corner transform',()=>{
+  const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();api.open(p,api.capture(source));const start=animations.length;
+  api.close(p,api.capture(source));
+  const transforms=animations.slice(start).filter(a=>a.target.className==='popup-morph-tile');assert.equal(transforms.length,9);
+  assert(transforms.every(a=>a.frames[0].transform==='matrix(1,0,0,1,5,8)'));api.cancel(p);
+});
+
+test('closing returns the original launcher caption, including its icon',async()=>{
+  const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();source.textContent='＋ Add task';const anchor=api.capture(source);
+  api.open(p,anchor);assert.equal(p.children.at(-1).textContent,'Add task');await settle(animations[0]);await settle(animations.find(a=>a.target===p.form));
+  api.close(p,anchor);assert.equal(p.children.at(-1).textContent,'＋ Add task');api.cancel(p);
+});
+
+test('closing proportions approach the button throughout the return rather than in a final snap',()=>{
+  const {api}=fixture(),start={left:300,top:20,width:680,height:680,radius:24},target={left:360,top:33,width:100,height:38,radius:19};
+  let previous=start;for(let i=1;i<=100;i++){const r=api.__testing.returnGeometry(start,target,i/100);assert(r.width<=previous.width);assert(r.height<=previous.height);assert(r.width/r.height>=previous.width/previous.height-1e-10);previous=r;}
+  assert(api.__testing.returnGeometry(start,target,.5).width/api.__testing.returnGeometry(start,target,.5).height>1.6);
+  assert(Math.abs(previous.width-target.width)<1e-8);assert(Math.abs(previous.height-target.height)<1e-8);assert(Math.abs(previous.left-target.left)<1e-8);assert(Math.abs(previous.top-target.top)<1e-8);
+});
+
+
+test('native prototype-backed button rectangle yields valid closing transforms',async()=>{
+  const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();const anchor=api.capture(source);
+  source.getBoundingClientRect=()=>Object.create({left:20,top:30,width:100,height:38});
+  api.prepare(p);api.open(p,anchor);await settle(animations[0]);await settle(animations.find(a=>a.target===p.form));
+  const start=animations.length;api.close(p,anchor);await settle(animations.slice(start).find(a=>a.target===p.form));
+  const tiles=animations.slice(start).filter(a=>a.target.className==='popup-morph-tile');assert.equal(tiles.length,9);
+  for(const tile of tiles)for(const frame of tile.frames)assert(!/NaN|undefined|Infinity/.test(frame.transform),frame.transform);
+  const frame=api.__testing.returnGeometry({left:0,top:0,width:680,height:680},{left:20,top:20,width:100,height:38,radius:19},.5);assert(Number.isFinite(frame.radius));api.cancel(p);
+});

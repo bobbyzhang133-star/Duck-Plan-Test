@@ -78,3 +78,18 @@
   }
   write();if(params.get('auto')==='1')automatic();
 })();
+
+// Local held-frame inspection only; never loaded by the normal planner.
+(() => {
+  const value=new URLSearchParams(location.search).get('holdClosing');if(value===null)return;
+  const fraction=Math.min(.999,Math.max(.001,Number(value))),modal=document.querySelector('#task-modal');let held=false;
+  new MutationObserver(()=>{
+    if(held||modal.dataset.popupMotion!=='closing'||modal.dataset.popupStage!=='shell')return;
+    held=true;
+    for(const animation of modal.getAnimations({subtree:true})){
+      const duration=animation.effect?.getTiming().duration;
+      if(duration===240){animation.pause();animation.currentTime=duration*fraction;}
+    }
+    modal.dataset.heldClosing=String(fraction);
+  }).observe(modal,{attributes:true,attributeFilter:['data-popup-stage']});
+})();

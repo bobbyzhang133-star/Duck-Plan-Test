@@ -77,3 +77,8 @@ See [Apple motion research, changes and measurements](apple-motion-review.md). R
 ## Shell first, fields after settling — 2026-11-02
 
 [Implementation and evidence](staged-popup-review.md): prepare the closed form during idle, reserve final bounds, animate lightweight source/window silhouettes and title using only transforms/opacity, then reveal native fields after shell travel.240ms geometry +120ms content; close60+240ms. No hidden-form measurement on an early cold click, no field layout during movement, native semantics/Escape/focus and stable responsive bounds retained.123 tests pass. Final eight-transition sample max21.3ms callback gap, but the prior version was also mostly smooth; universal lag elimination is not claimed. Full glass returns at stable geometry. Desktop/phone screenshots and raw timing files saved. Local4208 review; no public/shared deployment.
+
+
+## Rounded return to the launcher — 2026-11-02
+
+[Fix and validation](rounded-close-review.md): preserve circular corner geometry with nine clipped transform pieces and gradually change closing proportions toward the button. Caption/icon and terminal bounds match the source. Native form staging and sidebar behavior remain.128 tests pass; eight instrumented transitions had20.1ms maximum callback gap, with no universal performance claim. Paused mid/final screenshots and target geometry are saved here. Local4208 review only.
