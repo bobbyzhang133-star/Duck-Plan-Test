@@ -38,7 +38,12 @@
     const source=event.target.closest('button');if(!source)return;
     const start=performance.now(),opening=!modal.open,frames=[];
     current={wall:new Date().toISOString(),start,eventAt:event.timeStamp,delay:round(start-event.timeStamp),trusted:event.isTrusted,input:event.type,source:source.id||source.className,opening,frames,phases:[],ready:document.readyState,fonts:document.fonts.status,visibility:document.visibilityState};
-    let last=start;const tick=timestamp=>{const now=performance.now();frames.push({at:round(now-start),timestamp:round(timestamp-start),gap:round(now-last),lateness:round(now-timestamp)});last=now;if(current)raf=requestAnimationFrame(tick);};raf=requestAnimationFrame(tick);
+    let last=start;const tick=timestamp=>{const now=performance.now();const frame={at:round(now-start),timestamp:round(timestamp-start),gap:round(now-last),lateness:round(now-timestamp)};
+      if(params.get('geometry')==='1'&&modal.dataset.popupStage==='shell'){
+        const tiles=[...modal.querySelectorAll('.popup-morph-tile')].map(e=>e.getBoundingClientRect());
+        if(tiles.length){const left=Math.min(...tiles.map(r=>r.left)),top=Math.min(...tiles.map(r=>r.top));frame.shell={left,top,width:Math.max(...tiles.map(r=>r.right))-left,height:Math.max(...tiles.map(r=>r.bottom))-top};}
+      }
+      frames.push(frame);last=now;if(current)raf=requestAnimationFrame(tick);};raf=requestAnimationFrame(tick);
     attention('begin');
   }
   // Capture before the app's click listener; include dispatch/setup time.

@@ -82,3 +82,8 @@ See [Apple motion research, changes and measurements](apple-motion-review.md). R
 ## Rounded return to the launcher — 2026-11-02
 
 [Fix and validation](rounded-close-review.md): preserve circular corner geometry with nine clipped transform pieces and gradually change closing proportions toward the button. Caption/icon and terminal bounds match the source. Native form staging and sidebar behavior remain.128 tests pass; eight instrumented transitions had20.1ms maximum callback gap, with no universal performance claim. Paused mid/final screenshots and target geometry are saved here. Local4208 review only.
+
+
+## Shared opening/closing path — 2026-11-02
+
+[Correction and measured trajectory](reverse-close-review.md): removed the separate center/size curve after the user identified a down/up dip. All corner pieces, source paint and title now share opening endpoints in reverse order for closing. Four natural close traces each have15 monotonically progressing top-edge samples,19.8125→~32.993px.128 tests pass, including explicit reversed-pair regression; normal Cancel and keyboard interruption restore focus without leftover layers/errors. Local4208 review only.

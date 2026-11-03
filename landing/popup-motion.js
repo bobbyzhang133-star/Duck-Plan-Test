@@ -92,13 +92,6 @@
         full:{transform:'translate(0px, 0px) scale(1, 1)'}};
     }));
   }
-  function returnGeometry(start,target,progress) {
-    const p=Math.max(0,Math.min(1,progress));
-    const width=start.width*Math.pow(target.width/start.width,p),height=start.height*Math.pow(target.height/start.height,p);
-    const cx=start.left+start.width/2+(target.left+target.width/2-start.left-start.width/2)*p;
-    const cy=start.top+start.height/2+(target.top+target.height/2-start.top-start.height/2)*p;
-    return {left:cx-width/2,top:cy-height/2,width,height,radius:Math.min((start.radius??24)+(target.radius-(start.radius??24))*p,width/2,height/2)};
-  }
   function layers(element) {
     if(nodes.has(element))return nodes.get(element);
     const surface=document.createElement('div'),source=document.createElement('div'),label=document.createElement('div');
@@ -176,12 +169,6 @@
       label:getComputedStyle(oldLayers.label).transform,labelOpacity:getComputedStyle(oldLayers.label).opacity,
       content:previous.stage==='shell'?'0':getComputedStyle(form).opacity,box:previous.box
     }:null;
-    if(interrupted){
-      const corners=[0,2,6,8].map(index=>oldLayers.tiles[index].tile.getBoundingClientRect());
-      const left=Math.min(...corners.map(r=>r.left)),top=Math.min(...corners.map(r=>r.top));
-      interrupted.frame={left,top,width:Math.max(...corners.map(r=>r.right??r.left+r.width))-left,height:Math.max(...corners.map(r=>r.bottom??r.top+r.height))-top,radius:corners[1].width};
-      interrupted.labelBox=oldLayers.label.getBoundingClientRect();
-    }
     cancel(element);
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate;
     if(reduced){
@@ -247,26 +234,18 @@
       entry.stage='shell';
       if(!opening){element.dataset.popupStage='shell';form.inert=true;form.setAttribute('aria-hidden','true');}
       const main=play(surface,[{transform:'none'},{transform:'none'}],duration);
-      const startFrame=interrupted?.frame||box;
-      const path=opening?null:Array.from({length:33},(_,i)=>({offset:i/32,rect:returnGeometry(startFrame,{left:sourceBox.left,top:sourceBox.top,width:sourceBox.width,height:sourceBox.height,radius:Math.min(material.radius,sourceBox.width/2,sourceBox.height/2)},i/32)}));
-      const slicePath=path?.map(frame=>sliceGeometry(box,frame.rect,frame.rect.radius));
-      tiles.forEach(({tile},index)=>{
-        const frames=opening?[interrupted?{transform:interrupted.slices[index]}:slices[index].small,slices[index].full]:path.map((frame,i)=>({...slicePath[i][index].small,offset:frame.offset}));
-        if(!opening&&interrupted)frames[0]={transform:interrupted.slices[index],offset:0};
-        play(tile,frames,duration);
-      });
-      const sourceFrames=opening?[interrupted?{transform:interrupted.source}:full,sourceFull]:path.map(({rect,offset})=>({offset,transform:`translate(${rect.left-sourceBox.left}px, ${rect.top-sourceBox.top}px) scale(${rect.width/sourceBox.width}, ${rect.height/sourceBox.height})`}));
-      if(!opening&&interrupted)sourceFrames[0]={transform:interrupted.source,offset:0};
-      play(source,sourceFrames,duration);
+      // One endpoint pair per layer, traversed in the opposite direction on close.
+      // A separate center/size curve can make the top edge dip then rise.
+      const travel=(target,small,large,live)=>play(target,[
+        interrupted?{transform:live}:(opening?small:large),opening?large:small
+      ],duration);
+      tiles.forEach(({tile},index)=>travel(tile,slices[index].small,slices[index].full,interrupted?.slices[index]));
+      travel(source,full,sourceFull,interrupted?.source);
       // The sliced shell remains round; the source paint resolves only near the end.
       // All live geometry still uses transforms, without per-frame layout/radius changes.
       play(surface,opening?[{opacity:interrupted?.surfaceOpacity||0},{opacity:1,offset:.3},{opacity:1}]:[{opacity:interrupted?.surfaceOpacity||1},{opacity:1,offset:.7},{opacity:0}],duration,'linear');
       play(source,opening?[{opacity:interrupted?.sourceOpacity||1},{opacity:0,offset:.3},{opacity:0}]:[{opacity:interrupted?.sourceOpacity||0},{opacity:0,offset:.7},{opacity:1}],duration,'linear');
-      const initialScale=interrupted?Number(interrupted.label.match(/matrix(?:3d)?\(([^,]+)/)?.[1])||1:1;
-      const inset=interrupted?{x:interrupted.labelBox.left-startFrame.left,y:interrupted.labelBox.top-startFrame.top}:{x:box.titleX,y:box.titleY};
-      const labelFrames=opening?[interrupted?{transform:interrupted.label}:labelSmall,labelFull]:path.map(({rect,offset:p})=>({offset:p,transform:`translate(${rect.left+inset.x*(1-p)+rect.width/2*p}px, ${rect.top+inset.y*(1-p)+rect.height/2*p}px) scale(${initialScale+(fontScale-initialScale)*p}) translate(${-50*p}%, ${-50*p}%)`}));
-      if(!opening&&interrupted)labelFrames[0]={transform:interrupted.label,offset:0};
-      play(label,labelFrames,duration);
+      travel(label,labelSmall,labelFull,interrupted?.label);
       play(label,[{opacity:opening?(interrupted?.labelOpacity||1):1},{opacity:1}],duration,'linear');
       follow(main,opening?reveal:entry.finish);
     };
@@ -322,5 +301,5 @@
     matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',finishAll);
     document.addEventListener('visibilitychange',()=>{if(document.hidden){finishAll();for(const element of jobs.keys())removeJob(element);}else for(const element of known)if(!element.open)schedulePrepare(element);});
   }
-  window.DuckPopupMotion={capture,mark,prepare,schedulePrepare,reset,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform,sliceGeometry,returnGeometry}};
+  window.DuckPopupMotion={capture,mark,prepare,schedulePrepare,reset,open:(el,anchor,done)=>animate(el,anchor,true,done),close:(el,anchor,done)=>animate(el,anchor,false,done),cancel,__testing:{transform,sliceGeometry}};
 })();

@@ -1,5 +1,7 @@
 # Rounded popup return — 2026-11-02
 
+**Superseded:** the user found a vertical dip in this separate closing path. See [the shared reverse-path correction](reverse-close-review.md). The original held-frame and terminal checks below did not establish a smooth trajectory.
+
 The previous return shrank a full-size rounded panel nonuniformly into a short button. Its corner radius became vertically compressed; the button-shaped paint did not take over until late in wall-clock time. Linear width/height interpolation also kept the panel nearly square until late in travel.
 
 The moving shell now has nine reusable clipped paint pieces. Corners scale uniformly; edge bands and center fill the changing rectangle. Closing uses 33 precomputed transform keyframes: geometric size interpolation, linear center travel, and shared damped timing. The label follows that same rectangle and ends with the launcher's original caption/icon. Original button paint resolves at matching geometry. Unblurred background dimming fades during shell travel. Internal half-pixel overlaps plus an opaque neutral backing prevent cracks/doubled translucency; moving tint/highlights remain source-derived, while full native glass returns at settled bounds. This adds nine transform layers; it is not a new renderer or per-frame JavaScript solver.

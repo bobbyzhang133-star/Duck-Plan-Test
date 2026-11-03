@@ -142,13 +142,22 @@ test('closing returns the original launcher caption, including its icon',async()
   api.close(p,anchor);assert.equal(p.children.at(-1).textContent,'＋ Add task');api.cancel(p);
 });
 
-test('closing proportions approach the button throughout the return rather than in a final snap',()=>{
-  const {api}=fixture(),start={left:300,top:20,width:680,height:680,radius:24},target={left:360,top:33,width:100,height:38,radius:19};
-  let previous=start;for(let i=1;i<=100;i++){const r=api.__testing.returnGeometry(start,target,i/100);assert(r.width<=previous.width);assert(r.height<=previous.height);assert(r.width/r.height>=previous.width/previous.height-1e-10);previous=r;}
-  assert(api.__testing.returnGeometry(start,target,.5).width/api.__testing.returnGeometry(start,target,.5).height>1.6);
-  assert(Math.abs(previous.width-target.width)<1e-8);assert(Math.abs(previous.height-target.height)<1e-8);assert(Math.abs(previous.left-target.left)<1e-8);assert(Math.abs(previous.top-target.top)<1e-8);
+test('normal closing retraces opening endpoints for every corner, source paint and title',async()=>{
+  const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element({left:360,top:33,width:100,height:38}),anchor=api.capture(source);
+  api.prepare(p);api.open(p,anchor);
+  const opening=animations.filter(a=>['popup-morph-tile','popup-morph-source','popup-morph-label'].includes(a.target.className)&&a.frames[0].transform!==undefined);
+  assert.equal(opening.length,11);
+  await settle(animations[0]);await settle(animations.find(a=>a.target===p.form));
+  const start=animations.length;api.close(p,anchor);await settle(animations.slice(start).find(a=>a.target===p.form));
+  const closing=animations.slice(start).filter(a=>a.options.duration===240&&['popup-morph-tile','popup-morph-source','popup-morph-label'].includes(a.target.className)&&a.frames[0].transform!==undefined);
+  assert.equal(closing.length,11);
+  for(let i=0;i<opening.length;i++){
+    assert.equal(closing[i].frames.length,2);
+    assert.deepEqual(closing[i].frames[0],opening[i].frames[1]);assert.deepEqual(closing[i].frames[1],opening[i].frames[0]);
+    assert.equal(closing[i].options.easing,opening[i].options.easing);
+  }
+  api.cancel(p);
 });
-
 
 test('native prototype-backed button rectangle yields valid closing transforms',async()=>{
   const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();const anchor=api.capture(source);
@@ -157,5 +166,5 @@ test('native prototype-backed button rectangle yields valid closing transforms',
   const start=animations.length;api.close(p,anchor);await settle(animations.slice(start).find(a=>a.target===p.form));
   const tiles=animations.slice(start).filter(a=>a.target.className==='popup-morph-tile');assert.equal(tiles.length,9);
   for(const tile of tiles)for(const frame of tile.frames)assert(!/NaN|undefined|Infinity/.test(frame.transform),frame.transform);
-  const frame=api.__testing.returnGeometry({left:0,top:0,width:680,height:680},{left:20,top:20,width:100,height:38,radius:19},.5);assert(Number.isFinite(frame.radius));api.cancel(p);
+  api.cancel(p);
 });
