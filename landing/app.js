@@ -118,23 +118,31 @@ function saveReminderSettings() {
   localStorage.setItem(REMINDER_KEY, JSON.stringify(reminderSettings));
 }
 
+const taskReminderChoices = ["default", "off", "15", "60", "1440"];
+
+function taskReminderLead(choice) {
+  if (choice === "off") return null;
+  if (choice && taskReminderChoices.includes(choice) && choice !== "default") return Number(choice);
+  return reminderSettings.enabled ? reminderSettings.lead : null;
+}
+
 function refreshReminders({ announce = false, now = Date.now() } = {}) {
   const upcoming = tasks
     .filter(task => !task.completed && task.dueDate)
     .map(task => {
       const deadline = new Date(`${task.dueDate}T${task.dueTime || "23:59"}`).getTime();
-      return { task, deadline, key: JSON.stringify([task.id, task.dueDate, task.dueTime]) };
+      const lead = taskReminderLead(task.reminderChoice);
+      return { task, deadline, lead, key: JSON.stringify([task.id, task.dueDate, task.dueTime, lead]) };
     })
-    .filter(({ deadline }) => deadline > now)
+    .filter(({ deadline, lead }) => deadline > now && lead !== null)
     .sort((a, b) => a.deadline - b.deadline);
   const activeKeys = new Set(upcoming.map(({ key }) => key));
   const seen = new Set(reminderSettings.seen.filter(key => activeKeys.has(key)));
-  const dueSoon = reminderSettings.enabled
-    ? upcoming.filter(({ deadline }) => deadline - now <= reminderSettings.lead * 60000)
-    : [];
+  const dueSoon = upcoming.filter(({ deadline, lead }) => deadline - now <= lead * 60000);
   reminderLead.disabled = !reminderSettings.enabled;
-  reminderEmpty.textContent = !reminderSettings.enabled ? "Reminders are off."
-    : dueSoon.length ? "Due within your reminder window" : "No tasks due within your reminder window.";
+  reminderEmpty.textContent = dueSoon.length
+    ? "Tasks due within their reminder window"
+    : "No tasks due within their reminder window.";
   reminderList.replaceChildren(...dueSoon.map(({ task, deadline }) => {
     const item = document.createElement("li");
     const due = new Date(deadline).toLocaleString(undefined, {
@@ -364,6 +372,8 @@ function openModal(prefill = {}) {
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
+  const choice = task?.reminderChoice;
+  els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
   DuckPopupMotion.mark(modalAnchor,"fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
@@ -441,6 +451,8 @@ els.form.addEventListener("submit", (event) => {
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
   const next = { title, className: form.get("className"), priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), schemaVersion: 2 };
+  const reminderChoice = form.get("reminderChoice");
+  next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
   if (editingTaskId) Object.assign(tasks.find((task) => task.id === editingTaskId), next);
