@@ -31,7 +31,8 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - Dark mode and themes
  - Recurring tasks/events
  - Breaking big assignments into subtasks
- - Time estimates and a "what should I work on now" suggestion
+ - Log actual time spent on Axis assignments and show an anonymous average from classmates when enough students have contributed.
+ - A "what should I work on now" suggestion
  - Grade view pulled from Axis
 
 ### Theming
@@ -138,11 +139,24 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - Testing: use a small **made-up** fixture `.ics` that copies the real structure (folded lines, entities, colons in titles, dashes in course names). **Never commit a real feed or feed link**, because both contain personal data.
  - Before relying on UIDs to prevent duplicates, download a feed twice, a day or more apart, and confirm the UIDs match.
 
+**Deadline notifications**
+ - Let students opt into assignment reminders and choose how far ahead they want to be notified. Use the student's time zone and a configurable local reminder time for all-day Axis deadlines.
+ - Recalculate pending reminders when a due date, preference, or time zone changes. Cancel reminders for completed or deleted tasks. Use an idempotency key so syncs and worker retries do not send the same reminder twice.
+ - Show upcoming reminders in the planner. Deliver web push after the student grants permission and registers a device, and add Expo push when the mobile app is available.
+
+**Actual time and shared assignment estimates**
+ - In the planner, let a student enter and edit total minutes actually spent on an imported Axis assignment. Keep this separate from planned calendar duration.
+ - Establish a shared assignment identifier scoped to the school and course section. Verify whether the same Axis UID appears for the same assignment across different students' feeds before using it to match records. If identity cannot be confirmed, keep the log private and omit the class average.
+ - Store one editable total per authenticated student and shared assignment in `assignment_time_logs`. Enforce uniqueness on that pair and validate minutes on the server. Allow students to remove their entry. Recompute the aggregate after an edit or removal.
+ - Keep raw entries private with row-level security. Return only the rounded mean and contributor count to students with a verified matching assignment. Show the average after at least five distinct students have logged time, for example **Class average · 45 min**.
+ - Verify that edits replace prior totals, students cannot read one another's logs, and similarly titled assignments from different sections never mix.
+
 **Backend phases and owners**
  - **Phase 0**: create the dev and prod Supabase projects and `supabase/`; first migration (schema, row-level security, profile trigger); seed data. *(Michael)*
  - **Phase 1**: auth, `planner-store.js`, switching `app.js` over to it, importing local tasks, realtime sync, class editing. *(Michael: data layer; Priya: sign-in and class screens)*
  - **Phase 2**: `ical-parser.js` with tests, the `axis-sync` function, scheduled re-sync, sync status in the UI. *(Bobby)*
  - **Phase 3**: reminders (`fire_at` from `profiles.time_zone`, delivered by web push and later Expo push), searching items in the database. *(Michael and Bobby)*
+ - **After Axis sync and authentication**: implement actual time logging, verify shared assignment identity with test feeds, then expose anonymous class averages.
  - **Stretch**: offline queue (enabled by client ids, `updated_at`, and soft deletes), recurring items, subtasks (`parent_id`).
 
 **Still open**
@@ -200,3 +214,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - 2026-10-28: Added `CLAUDE.md` with guidance for Claude Code: test and local-preview commands, the always-on Cursor rules (local-first release, fur as the fundamental button material with three-stage feedback, Chat Check), the plans.md collaboration procedure, and an overview of the `landing/` architecture (planner model, fur renderer and its lifecycle, interaction module, planner UI, Fur Lab). Documentation only; no public deployment was made.
 
  - 2026-10-28: Added a **Backend Plan** section: Supabase dev/prod projects with migrations in `supabase/`; schema for profiles, classes, items (local-date deadlines, client-generated UUIDs, soft deletes), private Axis connections, sync runs, and reminders; row-level security; a `planner-store.js` data layer for the current static site with a localStorage fallback and a local-task import; and phased owners. Inspected a real Axis iCal feed to define the Axis sync design (all-day items, class taken from the title prefix, GUID UIDs, no completion or grade data) and answered the iCal part of the Axis open question. No feed link or feed data was committed. Removed a leftover test line from Procedures. Documentation only; no public deployment was made.
+
+ - 2026-11-02: Added backend requirements for deadline notifications, actual time logs on Axis assignments, and private aggregation of class time estimates.
