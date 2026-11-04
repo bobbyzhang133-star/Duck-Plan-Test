@@ -1,4 +1,5 @@
 const Model = window.DuckPlannerModel;
+const PlannerUI = window.DuckPlannerUI;
 const CLASS_INFO = {
   Calculus: { color: "#538fc5", soft: "#e3f0fa", code: "M", teacher: "Ms. Nguyen", period: "Period 2" },
   English: { color: "#d96f63", soft: "#fce7e1", code: "E", teacher: "Mr. Ramirez", period: "Period 4" },
@@ -39,6 +40,11 @@ let editingTaskId = null;
 let collapsed = { overdue: false, completed: false };
 let toastTimer;
 let observedToday = nowKey();
+let calendarFocusSlot = { date: selectedDate, time: "09:00" };
+let calendarUserScrolled = false;
+let calendarProgrammaticScroll = false;
+let calendarDrag = null;
+let suppressCalendarEventClickUntil = 0;
 
 const els = {
   navItems: [...document.querySelectorAll("[data-view]")],
@@ -51,6 +57,9 @@ const els = {
   form: document.querySelector("#task-form"), modalTitle: document.querySelector("#modal-title"),
   modalKicker: document.querySelector("#modal-kicker"), deleteTask: document.querySelector("#delete-task"),
   saveTask: document.querySelector("#save-task"), toast: document.querySelector("#toast"),
+  toastMessage: document.querySelector("#toast-message"), toastAction: document.querySelector("#toast-action"),
+  calendarStatus: document.querySelector("#calendar-status"), taskPanel: document.querySelector("#daily-task-panel"),
+  taskPanelToggle: document.querySelector("#toggle-task-panel"), taskPanelScrim: document.querySelector(".task-panel-scrim"),
   selectedDayLabel: document.querySelector("#selected-day-label"), selectedDateHeading: document.querySelector("#selected-date-heading"),
   dailyProgressCopy: document.querySelector("#daily-progress-copy"), completionPercent: document.querySelector("#completion-percent"),
   completionRing: document.querySelector("#completion-ring"), dailyEmpty: document.querySelector("#daily-empty"),
@@ -69,12 +78,14 @@ const sidebarToggles = [...document.querySelectorAll("[data-open-navigation]")];
 const sidebarScrim = document.querySelector(".sidebar-scrim");
 const sidebar = document.querySelector(".sidebar");
 const workspace = document.querySelector(".workspace");
+const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 
 function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
   document.body.classList.toggle("sidebar-open", open);
-  sidebar.inert = !open;
-  sidebar.setAttribute("aria-hidden", String(!open));
+  // The collapsed drawer remains an interactive navigation rail.
+  sidebar.inert = false;
+  sidebar.setAttribute("aria-hidden", "false");
   // Docked navigation shares the workspace plane; the main page stays usable.
   workspace.inert = false;
   sidebarScrim.hidden = true;
@@ -88,6 +99,23 @@ function setSidebar(open) {
   if (open) document.querySelector(".sidebar .nav-item.active")?.focus({preventScroll:true});
   else if (wasOpen) sidebarToggles.find(toggle => toggle.getClientRects().length)?.focus({preventScroll:true});
   requestAnimationFrame(() => setupButtonMaterial());
+}
+
+function setTaskPanel(open, moveFocus = true) {
+  const compact = compactPlannerQuery.matches;
+  const nextOpen = compact && open;
+  document.body.classList.toggle("task-panel-open", nextOpen);
+  els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
+  els.taskPanelScrim.hidden = !nextOpen;
+  if (compact) {
+    els.taskPanel.inert = !nextOpen;
+    els.taskPanel.setAttribute("aria-hidden", String(!nextOpen));
+  } else {
+    els.taskPanel.inert = false;
+    els.taskPanel.removeAttribute("aria-hidden");
+  }
+  if (moveFocus && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
+  else if (moveFocus && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
 }
 
 function loadTasks() {
@@ -187,11 +215,9 @@ function taskScheduleText(task) {
 
 function taskCardMarkup(task, mode = "daily") {
   const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
-  const scheduled = Model.scheduledParts(task);
   const due = task.dueDate ? `${formatShortDate(task.dueDate)}${task.dueTime ? ` · ${formatTime(task.dueTime)}` : ""}` : "No deadline";
-  const leading = mode === "scheduled" ? `<span class="task-time">${formatTime(scheduled.time)}</span>` : "";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
-    ${leading}<input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
+    <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
     <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)} · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${task.priority === "High" ? '<span class="priority-tag">High</span>' : ""}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
@@ -250,7 +276,7 @@ function renderClasses() {
   els.classGrid.innerHTML = Object.entries(CLASS_INFO).map(([name, info]) => {
     const classTasks = tasks.filter((task) => task.className === name);
     const open = classTasks.filter((task) => !task.completed).length;
-    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${info.code}</span><button class="class-menu" type="button" aria-label="More options for ${name}">•••</button></div><h2>${name}</h2><p>${info.teacher} · ${info.period}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div></article>`;
+    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${info.code}</span></div><h2>${name}</h2><p>${info.teacher} · ${info.period}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div></article>`;
   }).join("");
 }
 
@@ -288,21 +314,31 @@ function renderTimeline(dates) {
   const startHour = 7;
   const endHour = 22;
   const hourHeight = 62;
+  if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
   const deadlineRows = dates.map((date) => `<div class="deadline-cell">${deadlineChips(date)}</div>`).join("");
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span>${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span>`).join("");
   const columns = dates.map((date) => {
+    const current = new Date();
+    const currentMinutes = current.getHours() * 60 + current.getMinutes();
+    const currentTimeLine = date === nowKey() && currentMinutes >= startHour * 60 && currentMinutes < endHour * 60
+      ? `<div class="current-time-line" style="top:${((currentMinutes - startHour * 60) / 60) * hourHeight}px" aria-hidden="true"><span></span></div>`
+      : "";
     const scheduled = tasks.filter((task) => Model.scheduledParts(task)?.date === date && !task.completed);
     const events = layoutEvents(scheduled).map(({ task, start, end, lane, lanes }) => {
       const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
       const top = ((start - startHour * 60) / 60) * hourHeight;
       const height = Math.max(30, ((end - start) / 60) * hourHeight);
-      return `<button type="button" class="calendar-event-block ${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * 100}% + 3px);width:calc(${100 / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small></button>`;
+      return `<button type="button" class="calendar-event-block ${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-drag-task="${task.id}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * 100}% + 3px);width:calc(${100 / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small></button>`;
     }).join("");
-    const slots = Array.from({ length: endHour - startHour }, (_, index) => `<button type="button" class="calendar-slot" data-slot-date="${date}" data-slot-time="${String(startHour + index).padStart(2, "0")}:00" aria-label="Plan work on ${formatLongDate(date)} at ${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}"></button>`).join("");
-    return `<div class="timeline-column ${date === selectedDate ? "selected-day" : ""}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${events}</div>`;
+    const slots = Array.from({ length: endHour - startHour }, (_, index) => {
+      const time = `${String(startHour + index).padStart(2, "0")}:00`;
+      const isFocusSlot = calendarFocusSlot.date === date && calendarFocusSlot.time === time;
+      return `<button type="button" class="calendar-slot" tabindex="${isFocusSlot ? "0" : "-1"}" data-slot-date="${date}" data-slot-time="${time}" aria-label="Plan work on ${formatLongDate(date)} at ${formatTime(time)}"></button>`;
+    }).join("");
+    return `<div class="timeline-column ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}</div>`;
   }).join("");
-  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-height:${hourHeight}px"><div class="timeline-corner">Due</div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Deadlines</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
+  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Due</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
 }
 function renderMonth(dates) {
   const currentMonth = dateObject(selectedDate).getMonth();
@@ -314,12 +350,53 @@ function renderMonth(dates) {
   }).join("");
   return `<div class="month-calendar"><div class="month-weekdays">${weekdays}</div><div class="month-grid">${cells}</div></div>`;
 }
-function renderCalendar() {
+function relevantCalendarMinutes(dates) {
+  const scheduled = tasks
+    .filter((task) => dates.includes(Model.scheduledParts(task)?.date) && !task.completed)
+    .map((task) => Model.scheduledParts(task))
+    .filter(Boolean)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.minutes - b.minutes);
+  const selected = scheduled.filter((parts) => parts.date === selectedDate);
+  const candidates = selected.length ? selected : scheduled;
+  if (candidates.length) {
+    if (selectedDate === nowKey()) {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      return (candidates.find((parts) => parts.minutes >= nowMinutes - 30) || candidates[0]).minutes;
+    }
+    return candidates[0].minutes;
+  }
+  if (selectedDate === nowKey()) {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+  return 9 * 60;
+}
+
+function scrollCalendarToRelevant(dates) {
+  if (calendarView === "month" || calendarUserScrolled) return;
+  requestAnimationFrame(() => {
+    calendarProgrammaticScroll = true;
+    els.calendar.scrollTop = PlannerUI.timelineScrollTop({
+      targetMinutes: relevantCalendarMinutes(dates),
+      viewportHeight: els.calendar.clientHeight,
+      scrollHeight: els.calendar.scrollHeight,
+    });
+    requestAnimationFrame(() => { calendarProgrammaticScroll = false; });
+  });
+}
+
+function renderCalendar({ autoScroll = false } = {}) {
   const dates = Model.datesForView(calendarView, selectedDate);
   els.calendarRange.textContent = rangeLabel(dates);
   els.calendar.className = `planner-calendar ${calendarView}-view`;
   els.calendar.innerHTML = calendarView === "month" ? renderMonth(dates) : renderTimeline(dates);
   document.querySelectorAll("[data-calendar-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.calendarView === calendarView)));
+  els.calendarStatus.textContent = `${calendarView[0].toUpperCase()}${calendarView.slice(1)} view, ${els.calendarRange.textContent}`;
+  if (autoScroll) {
+    calendarUserScrolled = false;
+    scrollCalendarToRelevant(dates);
+  }
 }
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
@@ -329,7 +406,7 @@ function setupButtonMaterial(root = document) {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll({ autoScrollCalendar = false } = {}) { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
   const normalized = ["today", "calendar"].includes(name) ? "home" : name;
@@ -340,13 +417,159 @@ function setView(name, preserveDrawer = false) {
   els.pageTitle.textContent = next.dataset.pageTitle;
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${normalized}`);
+  if (normalized !== "home") setTaskPanel(false, false);
   if(!preserveDrawer) setSidebar(false);
   window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupButtonMaterial());
 }
-function showToast(message) { clearTimeout(toastTimer); els.toast.textContent = message; els.toast.classList.add("show"); toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2600); }
-function selectDate(date) { selectedDate = date; selectedTaskId = null; renderDailyPlan(); renderCalendar(); requestAnimationFrame(() => setupButtonMaterial()); }
+function hideToast() {
+  clearTimeout(toastTimer);
+  els.toast.classList.remove("show");
+  els.toastAction.hidden = true;
+  els.toastAction.onclick = null;
+}
+function showToast(message, { actionLabel = "", onAction = null, duration = 2600 } = {}) {
+  clearTimeout(toastTimer);
+  els.toastMessage.textContent = message;
+  els.toastAction.hidden = !actionLabel;
+  els.toastAction.textContent = actionLabel;
+  els.toastAction.onclick = actionLabel && onAction ? () => { hideToast(); onAction(); } : null;
+  els.toast.classList.add("show");
+  toastTimer = setTimeout(hideToast, duration);
+}
+function selectDate(date) { selectedDate = date; selectedTaskId = null; calendarFocusSlot = { date, time: calendarFocusSlot.time }; renderDailyPlan(); renderCalendar({ autoScroll: true }); requestAnimationFrame(() => setupButtonMaterial()); }
 function selectTask(id) { selectedTaskId = selectedTaskId === id ? null : id; renderDailyPlan(); renderCalendar(); setupButtonMaterial(); }
+
+function focusMovedCalendarTask(taskId) {
+  requestAnimationFrame(() => {
+    const target = [...els.calendar.querySelectorAll("[data-calendar-drag-task]")]
+      .find((item) => item.dataset.calendarDragTask === taskId);
+    target?.focus({ preventScroll: true });
+  });
+}
+
+function moveCalendarTask(task, drop, { focus = false } = {}) {
+  const previousStart = task.scheduledStart;
+  const previousSelectedDate = selectedDate;
+  const nextStart = `${drop.date}T${drop.time}`;
+  if (nextStart === previousStart) {
+    if (focus) focusMovedCalendarTask(task.id);
+    return false;
+  }
+  task.scheduledStart = nextStart;
+  task.scheduledEnd = null;
+  selectedDate = drop.date;
+  selectedTaskId = task.id;
+  saveTasks();
+  renderAll();
+  const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
+  els.calendarStatus.textContent = `${task.title} moved to ${destination}.`;
+  showToast(`Moved to ${destination}.`, {
+    actionLabel: "Undo",
+    duration: 5000,
+    onAction: () => {
+      task.scheduledStart = previousStart;
+      task.scheduledEnd = null;
+      selectedDate = Model.scheduledParts(task)?.date || previousSelectedDate;
+      selectedTaskId = task.id;
+      saveTasks();
+      renderAll();
+      els.calendarStatus.textContent = `${task.title} returned to its previous time.`;
+      showToast("Calendar move undone.");
+      if (focus) focusMovedCalendarTask(task.id);
+    },
+  });
+  if (focus) focusMovedCalendarTask(task.id);
+  return true;
+}
+
+function calendarColumnAt(clientX) {
+  return [...els.calendar.querySelectorAll(".timeline-column")].find((column) => {
+    const rect = column.getBoundingClientRect();
+    return clientX >= rect.left && clientX <= rect.right;
+  }) || null;
+}
+
+function updateCalendarDragPosition(clientX, clientY) {
+  if (!calendarDrag?.started) return;
+  calendarDrag.lastPointer = { x: clientX, y: clientY };
+  const column = calendarColumnAt(clientX);
+  calendarDrag.targetColumn?.classList.remove("calendar-drop-target");
+  calendarDrag.targetColumn = column;
+  if (!column) {
+    calendarDrag.drop = null;
+    calendarDrag.ghost.hidden = true;
+    return;
+  }
+  const rect = column.getBoundingClientRect();
+  const durationMinutes = Number(calendarDrag.task.durationMinutes || 45);
+  const hourHeight = rect.height / 15;
+  const drop = PlannerUI.snapCalendarDrop({
+    date: column.dataset.columnDate,
+    pointerY: clientY - calendarDrag.offsetY,
+    columnTop: rect.top,
+    hourHeight,
+    durationMinutes,
+  });
+  const top = rect.top + ((drop.minutes - 7 * 60) / 60) * hourHeight;
+  calendarDrag.drop = drop;
+  column.classList.add("calendar-drop-target");
+  calendarDrag.ghost.hidden = false;
+  calendarDrag.ghost.style.left = `${rect.left + 3}px`;
+  calendarDrag.ghost.style.top = `${top}px`;
+  calendarDrag.ghost.style.width = `${Math.max(32, rect.width - 6)}px`;
+  calendarDrag.ghost.querySelector("small").textContent = formatTime(drop.time);
+  const viewport = els.calendar.getBoundingClientRect();
+  const edge = 52;
+  calendarDrag.scrollVelocity = clientY < viewport.top + edge ? -12 : clientY > viewport.bottom - edge ? 12 : 0;
+}
+
+function runCalendarDragAutoscroll() {
+  if (!calendarDrag?.started) return;
+  if (calendarDrag.scrollVelocity) {
+    const before = els.calendar.scrollTop;
+    els.calendar.scrollTop += calendarDrag.scrollVelocity;
+    if (els.calendar.scrollTop !== before) {
+      updateCalendarDragPosition(calendarDrag.lastPointer.x, calendarDrag.lastPointer.y);
+    }
+  }
+  calendarDrag.raf = requestAnimationFrame(runCalendarDragAutoscroll);
+}
+
+function startCalendarDragPreview() {
+  const ghost = calendarDrag.source.cloneNode(true);
+  ghost.classList.add("calendar-drag-ghost");
+  ghost.classList.remove("selected", "interaction-pressed", "interaction-released");
+  ghost.removeAttribute("data-select-task");
+  ghost.removeAttribute("data-edit-task");
+  ghost.removeAttribute("data-calendar-drag-task");
+  ghost.removeAttribute("aria-describedby");
+  ghost.setAttribute("aria-hidden", "true");
+  ghost.tabIndex = -1;
+  ghost.style.height = `${calendarDrag.sourceRect.height}px`;
+  document.body.append(ghost);
+  calendarDrag.ghost = ghost;
+  calendarDrag.started = true;
+  calendarDrag.source.classList.add("is-drag-source");
+  document.body.classList.add("is-calendar-dragging");
+  calendarDrag.raf = requestAnimationFrame(runCalendarDragAutoscroll);
+}
+
+function clearCalendarDrag() {
+  if (!calendarDrag) return;
+  cancelAnimationFrame(calendarDrag.raf);
+  calendarDrag.targetColumn?.classList.remove("calendar-drop-target");
+  calendarDrag.source?.classList.remove("is-drag-source");
+  calendarDrag.ghost?.remove();
+  document.body.classList.remove("is-calendar-dragging");
+  calendarDrag = null;
+}
+
+function cancelCalendarDrag({ announce = false } = {}) {
+  if (!calendarDrag?.started) { calendarDrag = null; return; }
+  clearCalendarDrag();
+  if (announce) showToast("Calendar move cancelled.");
+}
 
 let modalAnchor = null;
 let modalClosing = false;
@@ -409,11 +632,16 @@ function commitMaterialAction(source, update, event) {
 }
 
 document.addEventListener("click", (event) => {
+  if (performance.now() < suppressCalendarEventClickUntil && event.target.closest(".calendar-event-block")) {
+    suppressCalendarEventClickUntil = 0;
+    event.preventDefault();
+    return;
+  }
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
   const viewButton = event.target.closest("[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>setView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>setView(goButton.dataset.go,sidebar.contains(goButton)),event); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
-  const slot = event.target.closest("[data-slot-date]"); if (slot) openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate });
+  const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
   const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ source: edit, id: edit.dataset.editTask });
   const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
@@ -428,13 +656,99 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
-document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar(); },event)));
-sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); setSidebar(!document.body.classList.contains("sidebar-open")); }));
-document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !els.modal.open && document.body.classList.contains("sidebar-open")) setSidebar(false); });
+document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar({ autoScroll: true }); },event)));
+sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); const nextOpen = !document.body.classList.contains("sidebar-open"); setTaskPanel(false, false); setSidebar(nextOpen); }));
+els.taskPanelToggle.addEventListener("click", () => setTaskPanel(!document.body.classList.contains("task-panel-open")));
+document.querySelectorAll("[data-close-task-panel]").forEach((button) => button.addEventListener("click", () => setTaskPanel(false)));
+compactPlannerQuery.addEventListener("change", () => setTaskPanel(false, false));
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || els.modal.open) return;
+  if (calendarDrag?.started) cancelCalendarDrag({ announce: true });
+  else if (document.body.classList.contains("task-panel-open")) setTaskPanel(false);
+  else if (document.body.classList.contains("sidebar-open")) setSidebar(false);
+});
 window.addEventListener("hashchange", () => { if (location.hash === "#planner-sidebar") setSidebar(true); });
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));
 document.querySelector("#calendar-next").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, 1)));
 document.querySelector("#calendar-today").addEventListener("click", () => selectDate(nowKey()));
+els.calendar.addEventListener("scroll", () => { if (!calendarProgrammaticScroll) calendarUserScrolled = true; }, { passive: true });
+els.calendar.addEventListener("pointerdown", (event) => {
+  const source = event.target.closest("[data-calendar-drag-task]");
+  if (!source || event.button !== 0 || event.isPrimary === false || calendarView === "month") return;
+  const task = tasks.find((item) => item.id === source.dataset.calendarDragTask);
+  if (!task) return;
+  const sourceRect = source.getBoundingClientRect();
+  calendarDrag = {
+    pointerId: event.pointerId,
+    source,
+    sourceRect,
+    task,
+    startX: event.clientX,
+    startY: event.clientY,
+    offsetY: event.clientY - sourceRect.top,
+    lastPointer: { x: event.clientX, y: event.clientY },
+    scrollVelocity: 0,
+    started: false,
+    drop: null,
+    ghost: null,
+    targetColumn: null,
+    raf: 0,
+  };
+  source.setPointerCapture?.(event.pointerId);
+});
+els.calendar.addEventListener("pointermove", (event) => {
+  if (!calendarDrag || event.pointerId !== calendarDrag.pointerId) return;
+  const distance = Math.hypot(event.clientX - calendarDrag.startX, event.clientY - calendarDrag.startY);
+  if (!calendarDrag.started && distance < 5) return;
+  event.preventDefault();
+  if (!calendarDrag.started) startCalendarDragPreview();
+  updateCalendarDragPosition(event.clientX, event.clientY);
+});
+els.calendar.addEventListener("pointerup", (event) => {
+  if (!calendarDrag || event.pointerId !== calendarDrag.pointerId) return;
+  if (!calendarDrag.started) { calendarDrag = null; return; }
+  event.preventDefault();
+  const { task, drop } = calendarDrag;
+  suppressCalendarEventClickUntil = performance.now() + 650;
+  clearCalendarDrag();
+  if (drop) moveCalendarTask(task, drop);
+});
+els.calendar.addEventListener("pointercancel", (event) => {
+  if (calendarDrag && event.pointerId === calendarDrag.pointerId) cancelCalendarDrag();
+});
+els.calendar.addEventListener("keydown", (event) => {
+  const scheduledEvent = event.target.closest("[data-calendar-drag-task]");
+  if (scheduledEvent && event.altKey && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+    const task = tasks.find((item) => item.id === scheduledEvent.dataset.calendarDragTask);
+    const parts = task && Model.scheduledParts(task);
+    if (!task || !parts) return;
+    event.preventDefault();
+    const duration = Number(task.durationMinutes || 45);
+    const minimum = 7 * 60;
+    const maximum = 22 * 60 - duration;
+    let date = parts.date;
+    let minutes = parts.minutes;
+    if (event.key === "ArrowUp") minutes -= 15;
+    if (event.key === "ArrowDown") minutes += 15;
+    if (event.key === "ArrowLeft") date = Model.addDays(date, -1);
+    if (event.key === "ArrowRight") date = Model.addDays(date, 1);
+    minutes = Math.max(minimum, Math.min(maximum, minutes));
+    moveCalendarTask(task, { date, minutes, time: Model.timeFromMinutes(minutes) }, { focus: true });
+    return;
+  }
+  const slot = event.target.closest(".calendar-slot");
+  if (!slot || !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
+  event.preventDefault();
+  const dates = Model.datesForView(calendarView, selectedDate);
+  const next = PlannerUI.nextSlot({ date: slot.dataset.slotDate, time: slot.dataset.slotTime }, event.key, dates);
+  const target = els.calendar.querySelector(`[data-slot-date="${next.date}"][data-slot-time="${next.time}"]`);
+  if (!target) return;
+  slot.tabIndex = -1;
+  target.tabIndex = 0;
+  calendarFocusSlot = next;
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ block: "nearest", inline: "nearest" });
+});
 document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
 document.querySelector("#open-task-modal").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
@@ -459,7 +773,26 @@ els.form.addEventListener("submit", (event) => {
   else tasks.push({ id: `task-${Date.now()}`, completed: false, ...next });
   saveTasks(); renderAll(); closeModal(); showToast(wasEditing ? "Task updated." : "Task added to your plan.");
 });
-els.deleteTask.addEventListener("click", () => { if (!editingTaskId) return; tasks = tasks.filter((task) => task.id !== editingTaskId); saveTasks(); closeModal(); renderAll(); showToast("Task deleted."); });
+els.deleteTask.addEventListener("click", () => {
+  if (!editingTaskId) return;
+  const index = tasks.findIndex((task) => task.id === editingTaskId);
+  const deletedTask = tasks[index];
+  if (!deletedTask) return;
+  tasks = tasks.filter((task) => task.id !== editingTaskId);
+  saveTasks();
+  closeModal();
+  renderAll();
+  showToast("Task deleted.", {
+    actionLabel: "Undo",
+    duration: 6000,
+    onAction: () => {
+      tasks = PlannerUI.restoreDeletedTask(tasks, deletedTask, index);
+      saveTasks();
+      renderAll();
+      showToast("Task restored.");
+    },
+  });
+});
 document.querySelector("#notification-button").addEventListener("click", () => {
   setView("settings");
   refreshReminders();
@@ -477,13 +810,13 @@ reminderLead.addEventListener("change", () => {
 });
 document.querySelector("#sync-info").addEventListener("click", () => showToast("Axis sync remains a prototype until API or iCal access is confirmed."));
 document.querySelector("#connect-axis").addEventListener("click", () => showToast("Axis connection is intentionally disabled in this local prototype."));
-document.querySelector("#reset-demo").addEventListener("click", () => { tasks = Model.migrateTasks(structuredClone(DEFAULT_TASKS)); saveTasks(); selectedDate = nowKey(); renderAll(); showToast("Demo tasks reset."); });
+document.querySelector("#reset-demo").addEventListener("click", () => { tasks = Model.migrateTasks(structuredClone(DEFAULT_TASKS)); saveTasks(); selectedDate = nowKey(); renderAll({ autoScrollCalendar: true }); showToast("Demo tasks reset."); });
 
 function refreshDateBoundary() {
   const nextToday = nowKey();
   if (nextToday === observedToday) return;
   if (selectedDate === observedToday) selectedDate = nextToday;
-  observedToday = nextToday; renderAll();
+  observedToday = nextToday; renderAll({ autoScrollCalendar: true });
 }
 function refreshPlannerClock() {
   refreshDateBoundary();
@@ -494,8 +827,9 @@ window.addEventListener("focus", refreshPlannerClock);
 setInterval(refreshPlannerClock, 60000);
 
 const requestedView = location.hash.replace("#", "");
-renderAll();
+renderAll({ autoScrollCalendar: true });
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
+setTaskPanel(false, false);
 
 refreshReminders({ announce: true });
 

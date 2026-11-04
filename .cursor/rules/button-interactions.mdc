@@ -3,13 +3,20 @@ description: Use lightweight glass planner controls with complete hover, press, 
 alwaysApply: true
 ---
 
-# Three-Stage Button Interaction Feedback
+# Mandatory Button Hover and Click Effects
+
+Every enabled button and button-like control must always include both of these non-negotiable effects:
+
+1. **Hover effect:** a clearly visible visual change while a hover-capable pointer is over the control.
+2. **Click effect:** immediate, clearly visible feedback while pointer, touch, Space, or Enter activation is held.
+
+Do not add, retain, or approve a button without both effects. Apply this rule project-wide to native buttons, role-based buttons, and links styled as buttons. Disabled controls are the only interaction-state exception.
 
 - Glass is the current planner button material, with native crisp text and icons. Use the shared `.glass-button` styling and delegated interaction feedback. Do not mount WebGL fur or fur sheet transitions in the planner.
 - Preserve the archived fur renderer, tuning and labs for future research; checkpoint `073ef53` precedes the glass switch. Fur is opt-in within dedicated labs only.
 - Preserve native semantic labels and accessible names. Icon-only controls need explicit `aria-label` text.
 - Repeated calendar cells, time slots, task rows and event blocks stay lightweight, without individual backdrop filters. Keep their existing hover, press and release feedback.
-- Every enabled button and button-like control must provide three visibly distinct interaction stages, regardless of its material or visual style:
+- In addition to the two mandatory effects above, every enabled button and button-like control must provide a visible post-release response, regardless of its material or visual style:
   1. **Hover:** visible while a hover-capable pointer is over the control.
   2. **Press:** immediate feedback while pointer, touch, Space, or Enter is held down.
   3. **Release:** a brief, visible response after the press is released; this must be more than simply removing the pressed style.
