@@ -1,0 +1,5 @@
+# Security headers for Cloudflare Workers static assets (same values as netlify.toml).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
