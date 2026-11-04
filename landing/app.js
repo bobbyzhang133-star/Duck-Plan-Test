@@ -22,7 +22,7 @@ const defaultTasks = () => [
 
 const store = window.DuckPlannerStore.createPlannerStore({
   storage: localStorage, model: Model, defaultClasses: () => DEFAULT_CLASSES, defaultTasks,
-  config: window.DUCKPLAN_SUPABASE || {}, redirectTo: `${location.origin}${location.pathname}`,
+  config: window.DUCKPLAN_CLOUD || {}, redirectPath: location.pathname,
 });
 let tasks = [];
 let selectedDate = nowKey();
@@ -200,7 +200,7 @@ function renderAccount() {
   const user = store.user;
   let body;
   if (!store.configured) body = `<div><h2>Account</h2><p>Cloud sync isn't set up on this copy of DuckPlan yet, so your tasks are saved in this browser only.</p></div>`;
-  else if (!user) body = `<div><h2>Account</h2><p>Sign in to keep your planner in sync across devices. We'll email you a sign-in link.</p></div><form class="settings-form" id="sign-in-form"><label><span class="sr-only">Email address</span><input name="email" type="email" required autocomplete="email" placeholder="you@school.org" /></label><button type="submit" class="secondary-button">Email me a link</button><button type="button" class="secondary-button" id="google-sign-in">Use Google</button></form>`;
+  else if (!user) body = `<div><h2>Account</h2><p>Sign in to keep your planner in sync across devices. We'll email you a sign-in link.</p></div><form class="settings-form" id="sign-in-form"><label><span class="sr-only">Email address</span><input name="email" type="email" required autocomplete="email" placeholder="you@school.org" /></label><button type="submit" class="secondary-button">Email me a link</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}</form>`;
   else body = `<div><h2>Account</h2><p>Signed in as ${safeText(user.email || "your account")}. Your planner syncs to every device you sign in on.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="sign-out">Sign out</button></div>`;
   const offer = localImportCount ? `<div class="settings-row" id="local-import-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} task${localImportCount === 1 ? "" : "s"} from before you signed in. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
   replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${offer}`);
@@ -504,4 +504,4 @@ const requestedView = location.hash.replace("#", "");
 renderAll();
 renderAccount(); renderAxis();
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
-store.init().catch(reportError);
+store.init().then(() => { const problem = store.takeAuthError(); if (problem) showToast(problem); }, reportError);

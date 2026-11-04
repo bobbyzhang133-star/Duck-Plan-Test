@@ -13,54 +13,6 @@ const defaultClasses = () => [
 ];
 const defaultTasks = () => [{ id: "demo-1", title: "Demo", className: "Calculus", dueDate: "2026-10-30", dueTime: "17:00", priority: "High", completed: false }];
 
-// A tiny stand-in for supabase-js that records every call and serves rows from memory.
-function fakeSupabase({ user = null, tables = {}, failOn = null } = {}) {
-  const calls = [];
-  const rows = { classes: [], items: [], ...tables };
-  const channels = [];
-  let authListener = null;
-  function builder(table) {
-    const query = { table, op: "select", filters: [] };
-    const run = () => {
-      calls.push(query);
-      if (failOn && failOn(query)) return { data: null, error: new Error("boom") };
-      if (query.op !== "select") return { data: null, error: null };
-      let data = rows[table].filter((row) => query.filters.every(([kind, column, value]) => (kind === "is" ? (row[column] ?? null) === value : row[column] === value)));
-      if (query.range) data = data.slice(query.range[0], query.range[1] + 1);
-      return { data, error: null };
-    };
-    const api = {
-      select() { return api; },
-      order() { return api; },
-      range(from, to) { query.range = [from, to]; return api; },
-      is(column, value) { query.filters.push(["is", column, value]); return api; },
-      eq(column, value) { query.filters.push(["eq", column, value]); return api; },
-      upsert(payload) { Object.assign(query, { op: "upsert", payload }); return api; },
-      insert(payload) { Object.assign(query, { op: "insert", payload }); return api; },
-      update(payload) { Object.assign(query, { op: "update", payload }); return api; },
-      then(resolve, reject) { return Promise.resolve(run()).then(resolve, reject); },
-    };
-    return api;
-  }
-  const client = {
-    calls, rows, channels,
-    from: builder,
-    auth: {
-      getSession: async () => ({ data: { session: user ? { user } : null } }),
-      onAuthStateChange: (listener) => { authListener = listener; },
-      signOut: async () => {},
-    },
-    channel(name) {
-      const channel = { name, handlers: [], on(type, filter, handler) { channel.handlers.push({ filter, handler }); return channel; }, subscribe() { return channel; } };
-      channels.push(channel);
-      return channel;
-    },
-    removeChannel() {},
-    emitAuth(nextUser) { authListener("SIGNED_IN", nextUser ? { user: nextUser } : null); },
-  };
-  return client;
-}
-const tick = () => new Promise((resolve) => setTimeout(resolve, 5));
 function makeStore(options = {}) {
   return Store.createPlannerStore({ storage: options.storage || memoryStorage(), model: Model, defaultClasses, defaultTasks, ...options });
 }
@@ -112,8 +64,8 @@ test("local mode migrates legacy className tasks to class ids and persists edits
   assert.equal(JSON.parse(storage.getItem("duckplan-demo-tasks-v1")).length, 1);
 });
 
-test("without Supabase settings the store stays local and account calls explain why", async () => {
-  const store = makeStore({ config: { url: "", anonKey: "" } });
+test("without a cloud API the store stays local and account calls explain why", async () => {
+  const store = makeStore({ config: { apiUrl: "" } });
   await store.init();
   assert.equal(store.configured, false);
   await assert.rejects(store.signInWithEmail("a@b.test"), /isn't set up/);
@@ -133,59 +85,5 @@ test("planLocalImport reuses classes by name, creates the rest, and remaps every
   assert.equal(plan.itemRows[0].scheduled_start, null);
 });
 
-const user = { id: "user-a" };
-const cloudConfig = { url: "https://example.supabase.co", anonKey: "anon" };
-
-test("signed-in mode reads from Supabase and soft-deletes", async () => {
-  const client = fakeSupabase({ user, tables: { classes: [{ id: "c1", name: "Calc", color: "#538fc5" }], items: [{ id: "i1", title: "Cloud task", class_id: "c1", priority: "medium", completed: false, deleted_at: null }] } });
-  const store = makeStore({ config: cloudConfig, createClient: () => client });
-  await store.init();
-  assert.equal(store.mode, "cloud");
-  assert.deepEqual(store.listItems().map((task) => task.title), ["Cloud task"]);
-  assert.equal(store.listClasses()[0].soft, Store.softColor("#538fc5"));
-
-  await store.deleteItem("i1");
-  const deletion = client.calls.at(-1);
-  assert.equal(deletion.op, "update");
-  assert.ok(deletion.payload.deleted_at, "deletes set deleted_at instead of removing the row");
-  assert.equal(store.listItems().length, 0);
-});
-
-test("a failed cloud write rolls back and reloads", async () => {
-  const client = fakeSupabase({ user, tables: { items: [{ id: "i1", title: "Keep me", priority: "low", completed: false, deleted_at: null }] }, failOn: (query) => query.op === "update" });
-  const store = makeStore({ config: cloudConfig, createClient: () => client });
-  await store.init();
-  const reasons = [];
-  store.subscribe(({ reason }) => reasons.push(reason));
-  await assert.rejects(store.toggleComplete("i1", true), /boom/);
-  assert.equal(store.listItems()[0].completed, false);
-  assert.deepEqual(reasons, ["local", "error"]);
-});
-
-test("realtime changes from another device update the cache", async () => {
-  const client = fakeSupabase({ user });
-  const store = makeStore({ config: cloudConfig, createClient: () => client });
-  await store.init();
-  const itemHandler = client.channels[0].handlers.find((entry) => entry.filter.table === "items");
-  assert.equal(itemHandler.filter.filter, "user_id=eq.user-a");
-  itemHandler.handler({ eventType: "INSERT", new: { id: "r1", title: "From phone", priority: "medium", completed: false, deleted_at: null } });
-  assert.deepEqual(store.listItems().map((task) => task.title), ["From phone"]);
-  itemHandler.handler({ eventType: "UPDATE", new: { id: "r1", title: "From phone", priority: "medium", completed: false, deleted_at: "2026-10-30T00:00:00Z" } });
-  assert.equal(store.listItems().length, 0, "a soft delete elsewhere removes the task here");
-});
-
-test("signing in switches from local data to the account and offers a one-time import", async () => {
-  const storage = memoryStorage();
-  const client = fakeSupabase();
-  const store = makeStore({ storage, config: cloudConfig, createClient: () => client });
-  await store.init();
-  assert.equal(store.mode, "local");
-  client.emitAuth(user);
-  await tick();
-  assert.equal(store.mode, "cloud");
-  assert.equal(await store.localImportOffer(), 1);
-  assert.equal(await store.importLocalTasks(), 1);
-  const inserts = client.calls.filter((call) => call.op === "insert");
-  assert.deepEqual(inserts.map((call) => call.table), ["classes", "items"]);
-  assert.equal(await store.localImportOffer(), 0, "the offer only appears once per account");
-});
+// Cloud mode (sign-in, D1 writes, live updates, local-task import) is tested against the real
+// Worker in tests/cloudflare-worker.test.mjs.

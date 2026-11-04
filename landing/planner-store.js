@@ -3,13 +3,11 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.DuckPlannerStore = api;
 })(typeof window !== "undefined" ? window : globalThis, function buildPlannerStore() {
-  // The only code that reads or writes planner data. Signed in with Supabase configured, data lives in
-  // the cloud; otherwise it stays in localStorage so the demo keeps working.
+  // The only code that reads or writes planner data. Signed in to the DuckPlan Worker (cloudflare/),
+  // data lives in Cloudflare D1; otherwise it stays in localStorage so the demo keeps working.
   const TASKS_KEY = "duckplan-demo-tasks-v1";
   const CLASSES_KEY = "duckplan-demo-classes-v1";
   const IMPORTED_KEY = "duckplan-local-import-v1";
-  const SUPABASE_SCRIPT = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
-  const PAGE_SIZE = 1000;
   const NO_CLASS = { id: null, name: "No class", color: "#8f8a7d", soft: "#efede7", code: "•", teacher: "", period: "", archived: false };
 
   function newId() { return globalThis.crypto.randomUUID(); }
@@ -107,69 +105,109 @@
     };
   }
 
-  function createCloudBackend({ client, user }) {
-    async function fetchAll(table, filter) {
-      const rows = [];
-      for (let from = 0; ; from += PAGE_SIZE) {
-        const { data, error } = await filter(client.from(table).select("*")).order("created_at").range(from, from + PAGE_SIZE - 1);
-        if (error) throw error;
-        rows.push(...data);
-        if (data.length < PAGE_SIZE) return rows;
+  // Talks to the DuckPlan Worker (cloudflare/). Auth is an HttpOnly session cookie on the same
+  // origin, so requests only need credentials: "same-origin".
+  function createApi({ apiUrl, fetchImpl }) {
+    return async function api(method, path, body) {
+      let response;
+      try {
+        response = await fetchImpl(`${apiUrl}${path}`, {
+          method, credentials: "same-origin",
+          headers: body === undefined ? { Accept: "application/json" } : { Accept: "application/json", "Content-Type": "application/json" },
+          body: body === undefined ? undefined : JSON.stringify(body),
+        });
+      } catch { throw new Error("Couldn't reach DuckPlan. Check your connection and try again."); }
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(data.error || `DuckPlan answered with status ${response.status}.`);
+        error.status = response.status;
+        throw error;
       }
+      return data;
+    };
+  }
+
+  // Live updates over a WebSocket to the user's PlannerLive Durable Object. Reconnects with backoff
+  // and reloads after a reconnect, so anything missed while offline still arrives.
+  function openLiveSocket({ url, WebSocketImpl, onMessage, onReconnect, timers = globalThis }) {
+    if (!WebSocketImpl || !url) return () => {};
+    let socket = null;
+    let closed = false;
+    let attempts = 0;
+    let retryTimer = null;
+    let pingTimer = null;
+    function connect() {
+      socket = new WebSocketImpl(url);
+      socket.onopen = () => {
+        if (attempts > 0) onReconnect();
+        attempts = 0;
+        pingTimer = timers.setInterval(() => { try { socket.send("ping"); } catch { /* reconnecting */ } }, 30_000);
+      };
+      socket.onmessage = (event) => {
+        if (event.data === "pong") return;
+        try { onMessage(JSON.parse(event.data)); } catch { /* ignore malformed messages */ }
+      };
+      socket.onclose = () => {
+        timers.clearInterval(pingTimer);
+        if (closed) return;
+        attempts += 1;
+        retryTimer = timers.setTimeout(connect, Math.min(30_000, 1000 * 2 ** Math.min(attempts, 5)));
+      };
     }
-    async function check(promise) { const { error } = await promise; if (error) throw error; }
+    connect();
+    return () => { closed = true; timers.clearTimeout(retryTimer); timers.clearInterval(pingTimer); try { socket.close(1000); } catch { /* already closed */ } };
+  }
+
+  function createCloudBackend({ api, user, liveUrl, WebSocketImpl }) {
     return {
       mode: "cloud",
       user,
       async load() {
-        const [classRows, itemRows] = await Promise.all([fetchAll("classes", (query) => query), fetchAll("items", (query) => query.is("deleted_at", null))]);
-        return { classes: classRows.map(rowToClass), tasks: itemRows.map(rowToTask) };
+        const { classes, items } = await api("GET", "/planner");
+        return { classes: classes.map(rowToClass), tasks: items.map(rowToTask) };
       },
-      saveTask: (task) => check(client.from("items").upsert(taskToRow(task))),
-      setCompleted: (id, completed) => check(client.from("items").update({ completed }).eq("id", id)),
-      // Soft delete, so the deletion reaches every device.
-      deleteTask: (id) => check(client.from("items").update({ deleted_at: new Date().toISOString() }).eq("id", id)),
-      saveClass: (item) => check(client.from("classes").upsert(classToRow(item))),
-      watch(onRowChange) {
-        const channel = client.channel(`planner-${user.id}`);
-        ["items", "classes"].forEach((table) => channel.on("postgres_changes", { event: "*", schema: "public", table, filter: `user_id=eq.${user.id}` }, (payload) => onRowChange(table, payload)));
-        channel.subscribe();
-        return () => client.removeChannel(channel);
+      saveTask: (task) => api("PUT", `/items/${encodeURIComponent(task.id)}`, taskToRow(task)),
+      setCompleted: (id, completed) => api("PATCH", `/items/${encodeURIComponent(id)}`, { completed }),
+      // Soft delete on the server, so the deletion reaches every device.
+      deleteTask: (id) => api("DELETE", `/items/${encodeURIComponent(id)}`),
+      saveClass: (item) => api("PUT", `/classes/${encodeURIComponent(item.id)}`, classToRow(item)),
+      watch({ onRow, onReload }) {
+        return openLiveSocket({
+          url: liveUrl, WebSocketImpl,
+          onMessage: (message) => (message.reload ? onReload() : message.table && message.row && onRow(message.table, message.row)),
+          onReconnect: onReload,
+        });
       },
-      importRows: async ({ classRows, itemRows }) => {
-        if (classRows.length) await check(client.from("classes").insert(classRows));
-        for (let index = 0; index < itemRows.length; index += 200) await check(client.from("items").insert(itemRows.slice(index, index + 200)));
-      },
+      importRows: (plan) => api("POST", "/import", plan),
     };
   }
 
-  function loadSupabaseScript(documentRef) {
-    if (globalThis.supabase?.createClient) return Promise.resolve(globalThis.supabase);
-    return new Promise((resolve, reject) => {
-      const script = documentRef.createElement("script");
-      script.src = SUPABASE_SCRIPT;
-      script.onload = () => resolve(globalThis.supabase);
-      script.onerror = () => reject(new Error("Couldn't load the Supabase library."));
-      documentRef.head.append(script);
-    });
+  function liveSocketUrl(apiUrl, locationRef) {
+    if (!locationRef?.href) return null;
+    const url = new URL(`${apiUrl}/live`, locationRef.href);
+    url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+    return url.href;
   }
 
-  async function functionErrorMessage(error) {
-    try { const body = await error.context.json(); if (body?.error) return body.error; } catch { /* not a JSON response */ }
-    return error.message || "Something went wrong.";
-  }
-
-  function createPlannerStore({ storage, model, defaultClasses, defaultTasks, config = {}, createClient, documentRef = globalThis.document, redirectTo }) {
+  function createPlannerStore({
+    storage, model, defaultClasses, defaultTasks, config = {}, redirectPath = "/",
+    fetchImpl = globalThis.fetch?.bind(globalThis), WebSocketImpl = globalThis.WebSocket,
+    locationRef = globalThis.location, historyRef = globalThis.history, documentRef = globalThis.document,
+  }) {
     const local = createLocalBackend({ storage, model, defaultClasses, defaultTasks });
     const listeners = new Set();
+    const apiUrl = String(config.apiUrl || "").replace(/\/+$/, "");
+    const configured = Boolean(apiUrl);
+    const api = configured ? createApi({ apiUrl, fetchImpl }) : null;
     let backend = local;
-    let client = null;
     let state = { classes: [], tasks: [] };
     let unwatch = () => {};
+    let authError = null;
+    let providers = { email: true, google: false };
 
-    const configured = Boolean(config.url && config.anonKey);
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
     function replaceState(next) { state = next; }
+    function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
 
     async function activate(nextBackend) {
       unwatch();
@@ -177,18 +215,22 @@
       replaceState(await backend.load());
       unwatch = backend.mode === "local"
         ? backend.watch((next) => { replaceState(next); notify("remote"); })
-        : backend.watch(applyRowChange);
+        : backend.watch({ onRow: applyRowChange, onReload: reloadCloud });
       notify("load");
     }
-    function applyRowChange(table, payload) {
-      const row = payload.eventType === "DELETE" ? null : payload.new;
-      const id = row?.id || payload.old?.id;
+    async function reloadCloud() {
+      if (backend.mode !== "cloud") return;
+      try { replaceState(await backend.load()); notify("remote"); } catch (error) {
+        if (error.status === 401) { await activate(local); notify("auth"); }
+      }
+    }
+    function applyRowChange(table, row) {
       if (table === "items") {
-        const others = state.tasks.filter((task) => task.id !== id);
-        state = { ...state, tasks: row && !row.deleted_at ? [...others, rowToTask(row)] : others };
-      } else {
-        const others = state.classes.filter((item) => item.id !== id);
-        state = { ...state, classes: row ? [...others, rowToClass(row)] : others };
+        const others = state.tasks.filter((task) => task.id !== row.id);
+        state = { ...state, tasks: row.deleted_at ? others : [...others, rowToTask(row)] };
+      } else if (table === "classes") {
+        const others = state.classes.filter((item) => item.id !== row.id);
+        state = { ...state, classes: [...others, rowToClass(row)] };
       }
       notify("remote");
     }
@@ -203,9 +245,37 @@
         throw error;
       }
     }
-    async function userFromSession() {
-      const { data } = await client.auth.getSession();
-      return data.session?.user || null;
+
+    // Sign-in links land on the planner page with ?login_token=…; Google failures come back with
+    // ?sign_in_error=…. Both are read once and removed from the address bar.
+    async function consumeSignInParams() {
+      if (!locationRef?.href) return;
+      const url = new URL(locationRef.href);
+      const token = url.searchParams.get("login_token");
+      const error = url.searchParams.get("sign_in_error");
+      if (!token && !error) return;
+      url.searchParams.delete("login_token");
+      url.searchParams.delete("sign_in_error");
+      historyRef?.replaceState?.(historyRef.state, "", `${url.pathname}${url.search}${url.hash}`);
+      if (error) authError = error.slice(0, 200);
+      if (token) {
+        try { await api("POST", "/auth/email/verify", { token }); } catch (verifyError) { authError = verifyError.message; }
+      }
+    }
+    async function sessionUser() {
+      const session = await api("GET", "/session");
+      providers = { email: true, google: Boolean(session.providers?.google) };
+      return session.user || null;
+    }
+
+    // Another tab may have signed in or out, and a sleeping laptop may have missed live updates.
+    async function refreshOnFocus() {
+      if (!configured || documentRef?.hidden) return;
+      try {
+        const user = await sessionUser();
+        if ((user?.id || null) !== (backend.user?.id || null)) { await activate(user ? cloudFor(user) : local); notify("auth"); }
+        else if (backend.mode === "cloud") await reloadCloud();
+      } catch { /* offline: keep what we have */ }
     }
 
     return {
@@ -213,21 +283,18 @@
       get mode() { return backend.mode; },
       get configured() { return configured; },
       get user() { return backend.user || null; },
+      // Which sign-in methods the Worker has set up (Google needs its client id and secret).
+      get providers() { return providers; },
+      // A sign-in problem from the last redirect (expired link, cancelled Google sign-in), shown once.
+      takeAuthError() { const message = authError; authError = null; return message; },
 
       async init() {
         if (configured) {
           try {
-            const make = createClient || (await loadSupabaseScript(documentRef)).createClient;
-            // PKCE returns sign-in codes in the query string, which survives the app rewriting the #view hash.
-            client = make(config.url, config.anonKey, { auth: { flowType: "pkce" } });
-            const user = await userFromSession();
-            await activate(user ? createCloudBackend({ client, user }) : local);
-            client.auth.onAuthStateChange((event, session) => {
-              const nextUser = session?.user || null;
-              if ((nextUser?.id || null) === (backend.user?.id || null)) return;
-              // Supabase warns against awaiting other calls inside this callback.
-              setTimeout(() => activate(nextUser ? createCloudBackend({ client, user: nextUser }) : local).then(() => notify("auth")), 0);
-            });
+            await consumeSignInParams();
+            const user = await sessionUser();
+            await activate(user ? cloudFor(user) : local);
+            documentRef?.addEventListener?.("visibilitychange", refreshOnFocus);
             return;
           } catch (error) {
             console.warn("DuckPlan is using local data:", error.message);
@@ -236,6 +303,7 @@
         await activate(local);
       },
       subscribe(onChange) { listeners.add(onChange); return () => listeners.delete(onChange); },
+      refresh: refreshOnFocus,
 
       listItems(range) { return state.tasks.filter((task) => taskInRange(task, range)); },
       listClasses({ includeArchived = false } = {}) { return state.classes.filter((item) => includeArchived || !item.archived); },
@@ -267,16 +335,19 @@
 
       // Accounts --------------------------------------------------------------
       async signInWithEmail(email) {
-        if (!client) throw new Error("Cloud sync isn't set up on this site yet.");
-        const { error } = await client.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
-        if (error) throw error;
+        if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
+        await api("POST", "/auth/email", { email, next: redirectPath });
       },
       async signInWithGoogle() {
-        if (!client) throw new Error("Cloud sync isn't set up on this site yet.");
-        const { error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
-        if (error) throw error;
+        if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
+        locationRef.assign(`${apiUrl}/auth/google?next=${encodeURIComponent(redirectPath)}`);
       },
-      async signOut() { if (client) await client.auth.signOut(); },
+      async signOut() {
+        if (!configured) return;
+        await api("POST", "/auth/sign-out");
+        await activate(local);
+        notify("auth");
+      },
 
       // First sign-in: offer to copy this browser's local tasks into the account.
       async localImportOffer() {
@@ -298,25 +369,21 @@
       // Axis ------------------------------------------------------------------
       async axisStatus() {
         if (backend.mode !== "cloud") return { connected: false, lastSyncedAt: null, lastError: null };
-        const { data, error } = await client.rpc("axis_connection_status");
-        if (error) throw error;
-        const row = Array.isArray(data) ? data[0] : data;
-        return { connected: Boolean(row?.connected), lastSyncedAt: row?.last_synced_at || null, lastError: row?.last_error || null };
+        const status = await api("GET", "/axis");
+        return { connected: Boolean(status.connected), lastSyncedAt: status.lastSyncedAt || null, lastError: status.lastError || null };
       },
       async connectAxis(icalUrl) { return this.invokeAxis({ mode: "connect", icalUrl }); },
       async syncAxisNow() { return this.invokeAxis({ mode: "sync" }); },
       async invokeAxis(body) {
         if (backend.mode !== "cloud") throw new Error("Sign in to connect Axis.");
-        const { data, error } = await client.functions.invoke("axis-sync", { body });
-        if (error) throw new Error(await functionErrorMessage(error));
+        const result = await api("POST", "/axis", body);
         replaceState(await backend.load());
         notify("load");
-        return data;
+        return result;
       },
       async disconnectAxis() {
         if (backend.mode !== "cloud") return;
-        const { error } = await client.rpc("disconnect_axis");
-        if (error) throw error;
+        await api("DELETE", "/axis");
       },
     };
   }
