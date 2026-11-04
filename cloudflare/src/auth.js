@@ -70,9 +70,15 @@ async function sendMagicLink(request, env) {
   const body = await readJson(request);
   const email = String(body.email || "").trim().toLowerCase();
   if (!EMAIL_PATTERN.test(email) || email.length > 254) throw new HttpError(400, "Enter a valid email address.");
+  // The limit stops someone flooding an inbox, so only links that were sent and never used count;
+  // signing in with a link gives that slot back.
   const windowStart = addMinutes(-LOGIN_TOKEN_MINUTES);
-  const recent = await env.DB.prepare("SELECT count(*) AS n FROM login_tokens WHERE email = ? AND created_at > ?").bind(email, windowStart).first("n");
-  if (recent >= MAX_LINKS_PER_WINDOW) throw new HttpError(429, "Too many sign-in links. Wait a few minutes and try again.");
+  const recent = await env.DB.prepare("SELECT count(*) AS n, min(created_at) AS oldest FROM login_tokens WHERE email = ? AND created_at > ? AND used_at IS NULL")
+    .bind(email, windowStart).first();
+  if (recent.n >= MAX_LINKS_PER_WINDOW) {
+    const minutes = Math.max(1, Math.ceil((Date.parse(recent.oldest) + LOGIN_TOKEN_MINUTES * 60_000 - Date.now()) / 60_000));
+    throw new HttpError(429, `We've already sent ${MAX_LINKS_PER_WINDOW} sign-in links to that address. Use one of those, or try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`);
+  }
 
   const token = randomToken();
   await env.DB.batch([

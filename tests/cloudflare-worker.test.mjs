@@ -61,10 +61,14 @@ test("magic links sign in once, set an HttpOnly session cookie, and are rate lim
   const stored = app.env.DB.raw.prepare("SELECT token_hash FROM sessions").all();
   assert.ok(stored.every((row) => !cookie.includes(row.token_hash)), "only a hash of the session token is stored");
 
-  await app.call("/api/auth/email", { method: "POST", body: { email: "duck@school.test" } });
-  await app.call("/api/auth/email", { method: "POST", body: { email: "duck@school.test" } });
+  // Links that were used to sign in don't count toward the limit; only unused ones do.
+  await app.signIn("duck@school.test");
+  await app.signIn("duck@school.test");
+  for (let sent = 0; sent < 3; sent += 1) assert.equal((await app.call("/api/auth/email", { method: "POST", body: { email: "duck@school.test" } })).status, 200);
   const limited = await app.call("/api/auth/email", { method: "POST", body: { email: "duck@school.test" } });
   assert.equal(limited.status, 429);
+  assert.match(limited.data.error, /already sent 3 sign-in links.*try again in 15 minutes/);
+  assert.equal((await app.call("/api/auth/email", { method: "POST", body: { email: "other@school.test" } })).status, 200, "the limit is per address");
 
   const signedOut = await app.call("/api/auth/sign-out", { method: "POST", cookie });
   assert.match(signedOut.headers.get("set-cookie"), /Max-Age=0/);
