@@ -72,9 +72,18 @@ npm run check                       # (in cloudflare/) wrangler dry-run bundle o
 limits (50-character LIKE/GLOB patterns, 100 bound parameters) and covers auth, user isolation (the
 old RLS test), the Axis sync rules, cron, Google sign-in, and the browser store against the Worker.
 
+## Hosted environments
+
+**Status (2026-11-05):** both D1 databases exist (their ids are in `wrangler.jsonc`). **Dev is live** at
+<https://duckplan-dev.duckplan-cloudflare.workers.dev> with the migration applied (no seed). The
+account has no domain yet, so dev runs with `EMAIL_MODE=log`: to sign in, request a link on the site
+while `npx wrangler tail duckplan-dev` is running and open the link it prints. Only the account owner
+can read those logs. **Prod (`duckplan-prod`) is empty:** no migration, no Worker.
+
 ## Set up the hosted environments (one time)
 
-Needs a Cloudflare account and a domain added to Cloudflare (Email Service sends from it).
+Needs a Cloudflare account and a domain added to Cloudflare (Email Service sends from it). Without a
+domain, dev can still run with `EMAIL_MODE: "log"` in its `vars` (see Status above).
 
 ```sh
 cd cloudflare

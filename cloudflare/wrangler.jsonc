@@ -17,7 +17,7 @@
     "run_worker_first": ["/api/*", "/cloud-config.js"]
   },
   "d1_databases": [
-    { "binding": "DB", "database_name": "duckplan-dev", "database_id": "REPLACE_WITH_DEV_D1_ID", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "duckplan-dev", "database_id": "a4483220-c814-4e99-9926-91e3fcd60084", "migrations_dir": "migrations" }
   ],
   "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["PlannerLive"] }],
@@ -25,6 +25,9 @@
   "triggers": { "crons": ["*/30 * * * *"] },
   "vars": {
     "EMAIL_FROM": "sign-in@REPLACE_WITH_YOUR_EMAIL_DOMAIN",
+    // Dev has no sending domain yet: sign-in links are printed to the Worker's logs
+    // (`npx wrangler tail`), which only the account owner can read. Remove once a domain is onboarded.
+    "EMAIL_MODE": "log",
     "AXIS_SYNC_INTERVAL_HOURS": "4",
     "AXIS_SYNC_PER_RUN": "4"
   },
@@ -34,7 +37,7 @@
     "production": {
       "name": "duckplan",
       "d1_databases": [
-        { "binding": "DB", "database_name": "duckplan-prod", "database_id": "REPLACE_WITH_PROD_D1_ID", "migrations_dir": "migrations" }
+        { "binding": "DB", "database_name": "duckplan-prod", "database_id": "c9841e56-286e-4cb4-b42e-8e0939ae2884", "migrations_dir": "migrations" }
       ],
       "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
       "send_email": [{ "name": "EMAIL" }],
