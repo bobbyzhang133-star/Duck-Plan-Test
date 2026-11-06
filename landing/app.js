@@ -196,15 +196,43 @@ function replaceSettings(container, markup) {
   if (window.DuckFur) container.querySelectorAll("button").forEach((button) => window.DuckFur.unmount(button));
   container.innerHTML = markup;
 }
+// Account forms. Sign-in never sends email: the email is only a login name, and a recovery code
+// (shown once, at sign-up or after a reset) is the way back in after a forgotten password.
+let accountMode = "sign-in"; // signed out: "sign-in" | "recover"; signed in: null | "change-password" | "recovery-code"
+let shownRecoveryCode = null;
+const passwordInput = (name, placeholder, autocomplete) => `<label><span class="sr-only">${placeholder}</span><input name="${name}" type="password" required minlength="8" maxlength="200" autocomplete="${autocomplete}" placeholder="${placeholder}" /></label>`;
+const emailInput = `<label><span class="sr-only">Email address</span><input name="email" type="email" required autocomplete="username" placeholder="you@school.org" /></label>`;
+function signedOutAccount() {
+  if (accountMode === "recover") {
+    return `<div><h2>Reset your password</h2><p>Enter the recovery code you saved when you made your account. DuckPlan doesn't send email, so this code is the only way to reset a password.</p></div><form class="settings-form" id="recover-form">${emailInput}<label><span class="sr-only">Recovery code</span><input name="recoveryCode" type="text" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" /></label>${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button">Reset password</button><button type="button" class="secondary-button" id="show-sign-in">Back to sign in</button></form>`;
+  }
+  return `<div><h2>Account</h2><p>Sign in to keep your planner in sync across devices. New here? Pick a password of 8 or more characters and choose Create account. We never send you email.</p></div><form class="settings-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<button type="submit" class="secondary-button" data-action="sign-in">Sign in</button><button type="submit" class="secondary-button" data-action="sign-up">Create account</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}<button type="button" class="secondary-button" id="show-recover">Forgot password?</button></form>`;
+}
+function signedInAccount(user) {
+  const intro = `<div><h2>Account</h2><p>Signed in as ${safeText(user.email || "your account")}. Your planner syncs to every device you sign in on.</p></div>`;
+  if (accountMode === "change-password") {
+    return `${intro}<form class="settings-form" id="password-form">${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button">Save password</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
+  }
+  if (accountMode === "recovery-code") {
+    return `${intro}<form class="settings-form" id="recovery-code-form">${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button">Make a new code</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
+  }
+  return `${intro}<div class="settings-actions"><button type="button" class="secondary-button" id="show-change-password">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code">New recovery code</button>` : ""}<button type="button" class="secondary-button" id="sign-out">Sign out</button></div>`;
+}
 function renderAccount() {
   const user = store.user;
   let body;
   if (!store.configured) body = `<div><h2>Account</h2><p>Cloud sync isn't set up on this copy of DuckPlan yet, so your tasks are saved in this browser only.</p></div>`;
-  else if (!user) body = `<div><h2>Account</h2><p>Sign in to keep your planner in sync across devices. We'll email you a sign-in link.</p></div><form class="settings-form" id="sign-in-form"><label><span class="sr-only">Email address</span><input name="email" type="email" required autocomplete="email" placeholder="you@school.org" /></label><button type="submit" class="secondary-button">Email me a link</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}</form>`;
-  else body = `<div><h2>Account</h2><p>Signed in as ${safeText(user.email || "your account")}. Your planner syncs to every device you sign in on.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="sign-out">Sign out</button></div>`;
+  else body = user ? signedInAccount(user) : signedOutAccount();
+  const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>If you forget your password, this code is the only way back in, because DuckPlan never sends email. Write it down or keep it in a password manager. It won't be shown again.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
   const offer = localImportCount ? `<div class="settings-row" id="local-import-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} task${localImportCount === 1 ? "" : "s"} from before you signed in. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
-  replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${offer}`);
+  replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${recovery}${offer}`);
   els.resetDemo.closest(".settings-row").hidden = store.mode === "cloud";
+}
+function setAccountMode(mode, { focus = true } = {}) {
+  accountMode = mode;
+  renderAccount();
+  requestAnimationFrame(() => setupFurMaterial());
+  if (focus) els.accountSettings.querySelector("form input")?.focus();
 }
 function renderAxis() {
   let body;
@@ -452,16 +480,46 @@ async function syncAxisNow() {
   showToast(`Axis synced: ${result.added} new, ${result.updated} updated.`);
   await refreshAccountState();
 }
+function showRecoveryCode(code) {
+  if (!code) return;
+  shownRecoveryCode = code;
+  setAccountMode(null, { focus: false });
+  els.accountSettings.querySelector("#recovery-row")?.scrollIntoView({ block: "nearest" });
+}
 els.accountSettings.addEventListener("submit", (event) => {
-  if (event.target.id !== "sign-in-form") return;
+  const form = event.target;
+  const data = new FormData(form);
+  const value = (name) => String(data.get(name) || "");
   event.preventDefault();
-  const email = new FormData(event.target).get("email").trim();
-  runAction(event.submitter, async () => { await store.signInWithEmail(email); showToast(`Check ${email} for your sign-in link.`); });
+  if (form.id === "sign-in-form") {
+    const email = value("email").trim();
+    if (event.submitter?.dataset.action === "sign-up") {
+      runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.signUp(email, value("password"))); showToast("Account created. Save your recovery code."); });
+    } else {
+      runAction(event.submitter, async () => { accountMode = null; await store.signIn(email, value("password")); showToast(`Signed in as ${email}.`); });
+    }
+  }
+  if (form.id === "recover-form") {
+    runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.recoverAccount(value("email").trim(), value("recoveryCode"), value("newPassword"))); showToast("Password reset. Save your new recovery code; the old one no longer works."); });
+  }
+  if (form.id === "password-form") {
+    runAction(event.submitter, async () => { const code = await store.changePassword(value("currentPassword"), value("newPassword")); setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved. Your other devices were signed out."); });
+  }
+  if (form.id === "recovery-code-form") {
+    runAction(event.submitter, async () => { showRecoveryCode(await store.newRecoveryCode(value("password"))); showToast("New recovery code made. The old one no longer works."); });
+  }
 });
 els.accountSettings.addEventListener("click", (event) => {
   const button = event.target.closest("button"); if (!button) return;
   if (button.id === "google-sign-in") runAction(button, () => store.signInWithGoogle());
-  if (button.id === "sign-out") runAction(button, async () => { await store.signOut(); showToast("Signed out. Showing this browser's local tasks."); });
+  if (button.id === "show-recover") setAccountMode("recover");
+  if (button.id === "show-sign-in") setAccountMode("sign-in");
+  if (button.id === "show-change-password") setAccountMode("change-password");
+  if (button.id === "show-recovery-code") setAccountMode("recovery-code");
+  if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
+  if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
+  if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
+  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await store.signOut(); showToast("Signed out. Showing this browser's local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
   if (button.id === "import-local") runAction(button, async () => { const count = await store.importLocalTasks(); showToast(`Imported ${count} task${count === 1 ? "" : "s"}.`); await refreshAccountState(); });
 });

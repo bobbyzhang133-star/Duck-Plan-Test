@@ -13,6 +13,7 @@ const Store = require("../landing/planner-store.js");
 const Model = require("../landing/planner-model.js");
 const fixture = fs.readFileSync(path.join(repoRoot, "tests/fixtures/axis-feed.ics"), "utf8");
 const FEED_LINK = "webcal://example.myschoolapp.com/podium/feed/iCal.aspx?z=made-up-test-token";
+const PASSWORD = "quack quack 123";
 const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
 function setup(overrides) {
@@ -33,54 +34,103 @@ function setup(overrides) {
     try { data = JSON.parse(text); } catch { data = text; }
     return { status: response.status, data, headers: response.headers };
   }
-  async function signIn(email) {
-    const sent = await call("/api/auth/email", { method: "POST", body: { email, next: "/" } });
-    assert.equal(sent.status, 200);
-    const link = new URL(fake.emails.at(-1).text.match(/https:\/\/\S+/)[0]);
-    const verified = await call("/api/auth/email/verify", { method: "POST", body: { token: link.searchParams.get("login_token") } });
-    assert.equal(verified.status, 200);
-    return { cookie: verified.headers.get("set-cookie").split(";")[0], user: verified.data.user, link };
+  // Creates the account the first time, then signs in with the same password.
+  async function signIn(email, password = PASSWORD) {
+    let response = await call("/api/auth/sign-up", { method: "POST", body: { email, password } });
+    if (response.status === 409) response = await call("/api/auth/sign-in", { method: "POST", body: { email, password } });
+    assert.ok(response.status === 200 || response.status === 201, JSON.stringify(response.data));
+    return { cookie: response.headers.get("set-cookie").split(";")[0], user: response.data.user, recoveryCode: response.data.recoveryCode };
   }
   return { ...fake, ctx, call, signIn, feedRequests, fetchImpl, setFeed: (text) => { feedText = text; } };
 }
 
-test("magic links sign in once, set an HttpOnly session cookie, and are rate limited", async () => {
+test("password accounts: sign-up, sign-in, HttpOnly hashed sessions, and no email is ever sent", async () => {
   const app = setup();
-  const { cookie, user, link } = await app.signIn("Duck@School.test");
-  assert.equal(user.email, "duck@school.test");
-  assert.equal(link.origin, ORIGIN);
-  assert.equal(app.emails[0].to, "duck@school.test");
-  assert.equal(app.emails[0].from, "sign-in@duckplan.test");
-  assert.match(cookie, /^duckplan_session=/);
-  const session = await app.call("/api/session", { cookie });
-  assert.equal(session.data.user.id, user.id);
-  assert.equal(session.data.providers.google, false);
+  const created = await app.call("/api/auth/sign-up", { method: "POST", body: { email: "Duck@School.test", password: PASSWORD } });
+  assert.equal(created.status, 201);
+  assert.equal(created.data.user.email, "duck@school.test");
+  assert.equal(created.data.user.hasPassword, true);
+  assert.match(created.data.recoveryCode, /^[2-9A-HJKMNP-Z]{5}(-[2-9A-HJKMNP-Z]{5}){3}$/);
+  const cookie = created.headers.get("set-cookie");
+  assert.match(cookie, /^duckplan_session=.*HttpOnly.*Secure/);
+  const session = await app.call("/api/session", { cookie: cookie.split(";")[0] });
+  assert.equal(session.data.user.id, created.data.user.id);
+  assert.deepEqual(session.data.providers, { password: true, google: false });
+  assert.ok(!("password_hash" in session.data.user), "the hash never leaves the server");
 
-  const reused = await app.call("/api/auth/email/verify", { method: "POST", body: { token: link.searchParams.get("login_token") } });
-  assert.equal(reused.status, 400, "a sign-in link works only once");
+  const row = app.env.DB.raw.prepare("SELECT password_hash, recovery_hash FROM users").get();
+  assert.match(row.password_hash, /^pbkdf2-sha256\$50000\$/);
+  assert.ok(!row.password_hash.includes(PASSWORD) && row.recovery_hash !== created.data.recoveryCode, "only hashes are stored");
   const stored = app.env.DB.raw.prepare("SELECT token_hash FROM sessions").all();
-  assert.ok(stored.every((row) => !cookie.includes(row.token_hash)), "only a hash of the session token is stored");
+  assert.ok(stored.every((entry) => !cookie.includes(entry.token_hash)), "only a hash of the session token is stored");
 
-  // Links that were used to sign in don't count toward the limit; only unused ones do.
-  await app.signIn("duck@school.test");
-  await app.signIn("duck@school.test");
-  for (let sent = 0; sent < 3; sent += 1) assert.equal((await app.call("/api/auth/email", { method: "POST", body: { email: "duck@school.test" } })).status, 200);
-  const limited = await app.call("/api/auth/email", { method: "POST", body: { email: "duck@school.test" } });
-  assert.equal(limited.status, 429);
-  assert.match(limited.data.error, /already sent 3 sign-in links.*try again in 15 minutes/);
-  assert.equal((await app.call("/api/auth/email", { method: "POST", body: { email: "other@school.test" } })).status, 200, "the limit is per address");
+  const duplicate = await app.call("/api/auth/sign-up", { method: "POST", body: { email: "duck@school.test", password: "something else" } });
+  assert.equal(duplicate.status, 409);
+  assert.equal((await app.call("/api/auth/sign-up", { method: "POST", body: { email: "short@school.test", password: "1234567" } })).status, 400);
+  assert.equal((await app.call("/api/auth/sign-up", { method: "POST", body: { email: "not-an-email", password: PASSWORD } })).status, 400);
 
-  const signedOut = await app.call("/api/auth/sign-out", { method: "POST", cookie });
+  const wrong = await app.call("/api/auth/sign-in", { method: "POST", body: { email: "duck@school.test", password: "wrong password" } });
+  assert.equal(wrong.status, 401);
+  assert.equal((await app.call("/api/auth/sign-in", { method: "POST", body: { email: "nobody@school.test", password: PASSWORD } })).data.error, wrong.data.error, "unknown emails get the same answer");
+  const again = await app.call("/api/auth/sign-in", { method: "POST", body: { email: " DUCK@school.test ", password: PASSWORD } });
+  assert.equal(again.status, 200);
+  assert.equal(again.data.user.id, created.data.user.id);
+
+  assert.equal(app.emails.length, 0, "nothing is ever emailed");
+
+  const signedOut = await app.call("/api/auth/sign-out", { method: "POST", cookie: cookie.split(";")[0] });
   assert.match(signedOut.headers.get("set-cookie"), /Max-Age=0/);
-  assert.equal((await app.call("/api/session", { cookie })).data.user, null);
+  assert.equal((await app.call("/api/session", { cookie: cookie.split(";")[0] })).data.user, null);
 });
 
-test("sign-in links only redirect within the site", async () => {
+test("wrong passwords are limited per account, and a right one clears the count", async () => {
   const app = setup();
-  for (const next of ["https://evil.test/", "//evil.test/", "/api/session"]) {
-    await app.call("/api/auth/email", { method: "POST", body: { email: `x${app.emails.length}@a.test`, next } });
-    assert.equal(new URL(app.emails.at(-1).text.match(/https:\/\/\S+/)[0]).pathname, "/");
-  }
+  await app.signIn("a@a.test");
+  const attempt = (password) => app.call("/api/auth/sign-in", { method: "POST", body: { email: "a@a.test", password } });
+  for (let tries = 0; tries < 9; tries += 1) assert.equal((await attempt("nope nope")).status, 401);
+  assert.equal((await attempt(PASSWORD)).status, 200, "a right password before the limit still works");
+  for (let tries = 0; tries < 10; tries += 1) assert.equal((await attempt("nope nope")).status, 401);
+  const locked = await attempt(PASSWORD);
+  assert.equal(locked.status, 429);
+  assert.match(locked.data.error, /Too many wrong tries.*15 minutes/);
+  await app.signIn("b@b.test");
+  assert.equal((await app.call("/api/auth/sign-in", { method: "POST", body: { email: "b@b.test", password: PASSWORD } })).status, 200, "the limit is per account");
+});
+
+test("a recovery code resets a forgotten password once, signs out other devices, and is replaced", async () => {
+  const app = setup();
+  const first = await app.signIn("a@a.test");
+  const reset = (recoveryCode, newPassword = "brand new pass") => app.call("/api/auth/recover", { method: "POST", body: { email: "a@a.test", recoveryCode, newPassword } });
+  assert.equal((await reset("AAAAA-AAAAA-AAAAA-AAAAA")).status, 400);
+
+  // Codes are forgiving about case and dashes.
+  const done = await reset(first.recoveryCode.toLowerCase().replace(/-/g, " "));
+  assert.equal(done.status, 200);
+  assert.notEqual(done.data.recoveryCode, first.recoveryCode);
+  assert.equal((await app.call("/api/session", { cookie: first.cookie })).data.user, null, "old sessions are signed out");
+  assert.equal((await app.call("/api/auth/sign-in", { method: "POST", body: { email: "a@a.test", password: PASSWORD } })).status, 401);
+  assert.equal((await app.call("/api/auth/sign-in", { method: "POST", body: { email: "a@a.test", password: "brand new pass" } })).status, 200);
+  assert.equal((await reset(first.recoveryCode)).status, 400, "a used code stops working");
+  assert.equal((await reset(done.data.recoveryCode, "third password")).status, 200);
+});
+
+test("signed in, changing the password needs the current one and signs out other devices", async () => {
+  const app = setup();
+  const laptop = await app.signIn("a@a.test");
+  const phone = await app.signIn("a@a.test");
+  const change = (currentPassword, newPassword) => app.call("/api/auth/password", { method: "POST", cookie: laptop.cookie, body: { currentPassword, newPassword } });
+  assert.equal((await app.call("/api/auth/password", { method: "POST", body: { currentPassword: PASSWORD, newPassword: "x".repeat(9) } })).status, 401);
+  assert.equal((await change("not it at all", "a new password")).status, 401);
+  const changed = await change(PASSWORD, "a new password");
+  assert.equal(changed.status, 200);
+  assert.equal(changed.data.recoveryCode, null, "an account that already has a code keeps it");
+  assert.ok((await app.call("/api/session", { cookie: laptop.cookie })).data.user, "this device stays signed in");
+  assert.equal((await app.call("/api/session", { cookie: phone.cookie })).data.user, null, "other devices are signed out");
+
+  const fresh = await app.call("/api/auth/recovery-code", { method: "POST", cookie: laptop.cookie, body: { password: "a new password" } });
+  assert.equal(fresh.status, 200);
+  assert.equal((await app.call("/api/auth/recover", { method: "POST", body: { email: "a@a.test", recoveryCode: laptop.recoveryCode, newPassword: "x".repeat(9) } })).status, 400, "the old code is replaced");
+  assert.equal((await app.call("/api/auth/recover", { method: "POST", body: { email: "a@a.test", recoveryCode: fresh.data.recoveryCode, newPassword: "x".repeat(9) } })).status, 200);
 });
 
 test("the API needs a session and refuses cross-site writes", async () => {
@@ -241,9 +291,10 @@ test("the cron trigger re-syncs only connections that are due, oldest first", as
   assert.equal(attempted[0].user_id, a.user.id, "B (the oldest) went first; A waits for the next run");
 });
 
-test("Google sign-in uses state, nonce, and PKCE and links to an existing email account", async () => {
+test("Google sign-in uses state, nonce, and PKCE, and never takes over a password account", async () => {
   const app = setup({ GOOGLE_CLIENT_ID: "client-123", GOOGLE_CLIENT_SECRET: "secret" });
-  const existing = await app.signIn("student@school.test");
+  // Password accounts' emails are unverified, so someone may have registered this address first.
+  await app.signIn("taken@school.test");
   const start = await app.call("/api/auth/google?next=/");
   assert.equal(start.status, 302);
   const google = new URL(start.headers.get("location"));
@@ -260,16 +311,33 @@ test("Google sign-in uses state, nonce, and PKCE and links to an existing email 
   const realFetch = globalThis.fetch;
   let tokenRequest = null;
   globalThis.fetch = async (url, init) => { tokenRequest = { url, body: new URLSearchParams(init.body) }; return Response.json({ id_token: `x.${encode(claims)}.sig` }); };
+  const finish = () => app.call(`/api/auth/google/callback?code=abc&state=${google.searchParams.get("state")}`, { cookie: oauthCookie });
+  const sessionFrom = async (response) => (await app.call("/api/session", { cookie: response.headers.getSetCookie().find((value) => value.startsWith("duckplan_session=")).split(";")[0] })).data.user;
   try {
-    const done = await app.call(`/api/auth/google/callback?code=abc&state=${google.searchParams.get("state")}`, { cookie: oauthCookie });
+    const done = await finish();
     assert.equal(done.status, 302);
     assert.equal(done.headers.get("location"), `${ORIGIN}/`);
     assert.ok(tokenRequest.body.get("code_verifier"));
-    const session = done.headers.getSetCookie().find((value) => value.startsWith("duckplan_session="));
-    assert.equal((await app.call("/api/session", { cookie: session.split(";")[0] })).data.user.id, existing.user.id, "same email, same account");
+    const user = await sessionFrom(done);
+    assert.equal(user.email, "student@school.test");
+    assert.equal(user.hasPassword, false);
+    assert.equal((await sessionFrom(await finish())).id, user.id, "the same Google account signs back into the same planner");
+
+    // A Google account can add a password, and then gets its first recovery code.
+    const googleCookie = (await finish()).headers.getSetCookie().find((value) => value.startsWith("duckplan_session=")).split(";")[0];
+    const added = await app.call("/api/auth/password", { method: "POST", cookie: googleCookie, body: { newPassword: "now with a password" } });
+    assert.equal(added.status, 200);
+    assert.ok(added.data.recoveryCode);
+    assert.equal((await app.call("/api/auth/sign-in", { method: "POST", body: { email: "student@school.test", password: "now with a password" } })).data.user.id, user.id);
+    assert.equal((await sessionFrom(await finish())).id, user.id, "Google still works after adding a password");
+
+    Object.assign(claims, { sub: "g-2", email: "taken@school.test" });
+    const takeover = await finish();
+    assert.match(new URL(takeover.headers.get("location")).searchParams.get("sign_in_error"), /already has a DuckPlan password account/);
+    assert.ok(!takeover.headers.getSetCookie().some((value) => value.startsWith("duckplan_session=")), "no session for the password account");
 
     claims.email_verified = false;
-    const unverified = await app.call(`/api/auth/google/callback?code=abc&state=${google.searchParams.get("state")}`, { cookie: oauthCookie });
+    const unverified = await finish();
     assert.match(new URL(unverified.headers.get("location")).searchParams.get("sign_in_error"), /didn't confirm/);
   } finally { globalThis.fetch = realFetch; }
 });
@@ -315,16 +383,19 @@ function browserStore(app, { cookieJar, storage = memoryStorage(), href = `${ORI
   return { store, location };
 }
 
-test("browser store: a magic link signs in, imports local tasks once, and syncs writes to D1", async () => {
+test("browser store: creating an account signs in, imports local tasks once, and syncs writes to D1", async () => {
   const app = setup();
   const jar = { value: null };
-  await app.call("/api/auth/email", { method: "POST", body: { email: "a@a.test", next: "/" } });
-  const link = app.emails.at(-1).text.match(/https:\/\/\S+/)[0];
-  const { store, location } = browserStore(app, { cookieJar: jar, href: link });
+  const { store } = browserStore(app, { cookieJar: jar });
   await store.init();
+  assert.equal(store.mode, "local");
+  const reasons = [];
+  store.subscribe(({ reason }) => reasons.push(reason));
+  const recoveryCode = await store.signUp("a@a.test", PASSWORD);
+  assert.match(recoveryCode, /^[2-9A-Z]{5}-/);
   assert.equal(store.mode, "cloud");
   assert.equal(store.user.email, "a@a.test");
-  assert.ok(!location.href.includes("login_token"), "the token is removed from the address bar");
+  assert.ok(reasons.includes("auth"));
   assert.equal(FakeSocket.sockets.at(-1).url, "wss://duckplan.test/api/live");
 
   assert.equal(await store.localImportOffer(), 1);
@@ -363,11 +434,25 @@ test("browser store: live messages from another device update the cache, and fai
   assert.equal(jar.value, null);
 });
 
-test("browser store: an expired sign-in link falls back to local mode with a message", async () => {
+test("browser store: wrong passwords stay local, recovery and password changes work, and Google errors show once", async () => {
   const app = setup();
-  const { store } = browserStore(app, { cookieJar: { value: null }, href: `${ORIGIN}/?login_token=expired#settings` });
+  const created = await app.signIn("a@a.test");
+  const jar = { value: null };
+  const { store, location } = browserStore(app, { cookieJar: jar, href: `${ORIGIN}/?sign_in_error=Google%20sign-in%20was%20cancelled.#settings` });
   await store.init();
   assert.equal(store.mode, "local");
-  assert.match(store.takeAuthError(), /expired or was already used/);
+  assert.equal(store.takeAuthError(), "Google sign-in was cancelled.");
   assert.equal(store.takeAuthError(), null);
+  assert.equal(location.href, `${ORIGIN}/#settings`, "the error is removed from the address bar");
+
+  await assert.rejects(store.signIn("a@a.test", "wrong password"), /don't match/);
+  assert.equal(store.mode, "local");
+  const nextCode = await store.recoverAccount("a@a.test", created.recoveryCode, "fresh password");
+  assert.ok(nextCode && nextCode !== created.recoveryCode);
+  assert.equal(store.mode, "cloud");
+  assert.equal(await store.changePassword("fresh password", "fresher password"), null);
+  assert.ok(await store.newRecoveryCode("fresher password"));
+  await store.signOut();
+  await store.signIn("a@a.test", "fresher password");
+  assert.equal(store.user.id, created.user.id);
 });

@@ -1,10 +1,9 @@
 -- Local/dev sample data: the planner's demo classes and tasks for one demo user.
 -- Run with `npm run db:seed:local` after `npm run db:migrate:local`. Never run it against prod.
--- Sign in locally as demo@duckplan.test with a magic link; in `wrangler dev` the link is printed to
--- the terminal instead of being emailed.
+-- Sign in locally as demo@duckplan.test with the password duckplan-demo.
 
-INSERT OR IGNORE INTO users (id, email, display_name) VALUES
-  ('d0c0d0c0-0000-4000-8000-000000000001', 'demo@duckplan.test', 'Demo Duck');
+INSERT OR IGNORE INTO users (id, email, display_name, password_hash) VALUES
+  ('d0c0d0c0-0000-4000-8000-000000000001', 'demo@duckplan.test', 'Demo Duck', 'pbkdf2-sha256$50000$rpclJ86oKVwPIm7JgVOMzQ$2B_tvCZ9oQt7EW20p8nqxVzelvPry7u_FWzsEMO-DLY');
 
 INSERT OR IGNORE INTO classes (id, user_id, name, teacher, period, color, code) VALUES
   ('c1a55000-0000-4000-8000-000000000001', 'd0c0d0c0-0000-4000-8000-000000000001', 'Calculus', 'Ms. Nguyen', 'Period 2', '#538fc5', 'M'),

@@ -68,7 +68,7 @@ test("without a cloud API the store stays local and account calls explain why", 
   const store = makeStore({ config: { apiUrl: "" } });
   await store.init();
   assert.equal(store.configured, false);
-  await assert.rejects(store.signInWithEmail("a@b.test"), /isn't set up/);
+  await assert.rejects(store.signIn("a@b.test", "password123"), /isn't set up/);
   assert.deepEqual(await store.axisStatus(), { connected: false, lastSyncedAt: null, lastError: null });
 });
 

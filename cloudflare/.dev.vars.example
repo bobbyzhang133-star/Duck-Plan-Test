@@ -1,6 +1,5 @@
 # Copy to .dev.vars for `npm run dev`. .dev.vars is gitignored; never commit real secrets.
-# Print magic sign-in links to the wrangler terminal instead of emailing them.
-EMAIL_MODE=log
+# Nothing is required: sign-in is email + password and works without any secrets.
 # Optional: Google sign-in on http://127.0.0.1:8787 (add .../api/auth/google/callback as a redirect URI).
 # GOOGLE_CLIENT_ID=
 # GOOGLE_CLIENT_SECRET=

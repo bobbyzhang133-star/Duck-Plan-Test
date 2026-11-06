@@ -1,8 +1,8 @@
 // DuckPlan on Cloudflare: one Worker serves the static site in ../landing and the /api backend.
 //   D1 (DB)                  planner data, accounts, sessions
 //   Durable Object (LIVE)    per-user WebSocket fan-out that keeps devices in sync
-//   Email Service (EMAIL)    magic sign-in links
 //   Cron Trigger             Axis re-sync
+// Sign-in is email + password inside the Worker, so no email is ever sent (no sending domain needed).
 // The top level is the **dev** environment; `--env production` is prod. Deploying or migrating
 // production counts as a public deployment and needs explicit approval (local-first rule).
 {
@@ -21,13 +21,8 @@
   ],
   "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["PlannerLive"] }],
-  "send_email": [{ "name": "EMAIL" }],
   "triggers": { "crons": ["*/30 * * * *"] },
   "vars": {
-    "EMAIL_FROM": "sign-in@REPLACE_WITH_YOUR_EMAIL_DOMAIN",
-    // Dev has no sending domain yet: sign-in links are printed to the Worker's logs
-    // (`npx wrangler tail`), which only the account owner can read. Remove once a domain is onboarded.
-    "EMAIL_MODE": "log",
     "AXIS_SYNC_INTERVAL_HOURS": "4",
     "AXIS_SYNC_PER_RUN": "4"
   },
@@ -40,10 +35,8 @@
         { "binding": "DB", "database_name": "duckplan-prod", "database_id": "c9841e56-286e-4cb4-b42e-8e0939ae2884", "migrations_dir": "migrations" }
       ],
       "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
-      "send_email": [{ "name": "EMAIL" }],
-      "triggers": { "crons": ["*/30 * * * *"] },
+          "triggers": { "crons": ["*/30 * * * *"] },
       "vars": {
-        "EMAIL_FROM": "sign-in@REPLACE_WITH_YOUR_EMAIL_DOMAIN",
         "AXIS_SYNC_INTERVAL_HOURS": "4",
         "AXIS_SYNC_PER_RUN": "4"
       }
