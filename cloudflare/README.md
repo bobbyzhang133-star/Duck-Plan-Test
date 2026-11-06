@@ -7,7 +7,7 @@ sign-in is a plain first-party HttpOnly cookie.
 | Supabase piece (before)            | Cloudflare piece (now)                                         |
 | ---------------------------------- | -------------------------------------------------------------- |
 | Postgres + row-level security      | **D1** (SQLite); every query is scoped to the session's user   |
-| Supabase Auth (magic link, Google) | Worker auth: **Email Service** magic links + Google OIDC/PKCE  |
+| Supabase Auth (magic link, Google) | Worker auth: **email + password** (PBKDF2) with recovery codes, + Google OIDC/PKCE. No email is ever sent. |
 | Realtime on `items` / `classes`    | **Durable Object** `PlannerLive` per user (WebSocket hibernation) |
 | `axis-sync` Edge Function          | `src/axis.js` in the same Worker                               |
 | pg_cron + pg_net + Vault           | **Cron Trigger** (`*/30 * * * *`) — no shared secret needed    |
@@ -15,11 +15,12 @@ sign-in is a plain first-party HttpOnly cookie.
 
 ```
 cloudflare/
-  wrangler.jsonc            bindings: D1 (DB), Durable Object (LIVE), Email (EMAIL), assets, cron; dev + production envs
+  wrangler.jsonc            bindings: D1 (DB), Durable Object (LIVE), assets, cron; dev + production envs
   migrations/0001_initial_schema.sql   tables, ownership triggers, checks
+  migrations/0002_password_sign_in.sql password + recovery-code columns, login_failures; drops login_tokens
   seed.sql                  demo user, classes, and tasks (local/dev only)
   src/index.js              router, /cloud-config.js, /api/live, scheduled()
-  src/auth.js               sessions, magic links, Google sign-in
+  src/auth.js               sessions, passwords, recovery codes, Google sign-in
   src/planner.js            classes/items CRUD, local-task import
   src/axis.js               Axis connect / sync / cron (imports ../../landing/ical-parser.js directly)
   src/live.js               PlannerLive Durable Object + broadcast()
@@ -32,8 +33,11 @@ All routes are JSON, need the session cookie (except auth), and reject cross-sit
 | Route                                   | What it does                                          |
 | --------------------------------------- | ----------------------------------------------------- |
 | `GET /api/session`                      | `{ user, providers }`                                 |
-| `POST /api/auth/email` `{ email, next }`| emails a single-use 15-minute link (3 per 15 min)     |
-| `POST /api/auth/email/verify` `{ token }` | spends the link, sets the session cookie            |
+| `POST /api/auth/sign-up` `{ email, password }` | creates the account, signs in, returns a one-time `recoveryCode` |
+| `POST /api/auth/sign-in` `{ email, password }` | signs in (10 wrong tries per account per 15 min, then 429) |
+| `POST /api/auth/recover` `{ email, recoveryCode, newPassword }` | forgot password: new password, signs out other devices, returns a new `recoveryCode` |
+| `POST /api/auth/password` `{ currentPassword, newPassword }` | signed in: change (or, for Google accounts, add) a password; signs out other devices |
+| `POST /api/auth/recovery-code` `{ password }` | signed in: replace the recovery code              |
 | `GET /api/auth/google?next=/`           | Google sign-in (callback: `/api/auth/google/callback`)|
 | `POST /api/auth/sign-out`               | ends the session                                      |
 | `GET /api/planner`                      | `{ classes, items }` (soft-deleted items left out)    |
@@ -52,13 +56,13 @@ Worker (Netlify, `python3 -m http.server`) stays local-only. The Worker answers 
 ```sh
 cd cloudflare
 npm install
-cp .dev.vars.example .dev.vars      # EMAIL_MODE=log prints sign-in links in the terminal
+cp .dev.vars.example .dev.vars      # optional: only needed for Google sign-in
 npm run db:migrate:local
-npm run db:seed:local               # optional: demo@duckplan.test with sample tasks
+npm run db:seed:local               # optional: demo@duckplan.test / duckplan-demo with sample tasks
 npm run dev                         # → http://127.0.0.1:8787/  (site + API, labeled local)
 ```
 
-Sign in with any email; the link appears in the `wrangler dev` output. Trigger the Axis cron locally
+Use Settings → Account → Create account with any email and a password (nothing is emailed). Trigger the Axis cron locally
 with `curl "http://127.0.0.1:8787/cdn-cgi/handler/scheduled?cron=*/30+*+*+*+*"`.
 
 ## Test
@@ -75,15 +79,13 @@ old RLS test), the Axis sync rules, cron, Google sign-in, and the browser store 
 ## Hosted environments
 
 **Status (2026-11-05):** both D1 databases exist (their ids are in `wrangler.jsonc`). **Dev is live** at
-<https://duckplan-dev.duckplan-cloudflare.workers.dev> with the migration applied (no seed). The
-account has no domain yet, so dev runs with `EMAIL_MODE=log`: to sign in, request a link on the site
-while `npx wrangler tail duckplan-dev` is running and open the link it prints. Only the account owner
-can read those logs. **Prod (`duckplan-prod`) is empty:** no migration, no Worker.
+<https://duckplan-dev.duckplan-cloudflare.workers.dev> with the migration applied (no seed). Since the
+switch to passwords, dev needs `npm run db:migrate:dev && npm run deploy:dev` once more to pick up
+`0002_password_sign_in.sql`; after that, anyone can create an account on the site. **Prod (`duckplan-prod`) is empty:** no migration, no Worker.
 
 ## Set up the hosted environments (one time)
 
-Needs a Cloudflare account and a domain added to Cloudflare (Email Service sends from it). Without a
-domain, dev can still run with `EMAIL_MODE: "log"` in its `vars` (see Status above).
+Needs only a Cloudflare account (the free plan is enough). No domain or email service is needed, because sign-in never sends email.
 
 ```sh
 cd cloudflare
@@ -92,13 +94,11 @@ npx wrangler d1 create duckplan-dev        # paste the id into wrangler.jsonc (t
 npx wrangler d1 create duckplan-prod       # paste the id into env.production.d1_databases
 ```
 
-1. **Email:** onboard your domain in **Email Service**, then set `EMAIL_FROM` (both envs) to an
-   address on it, e.g. `sign-in@duckplan.example`.
-2. **Google (optional):** create an OAuth client (Web application) in Google Cloud. Add the redirect URI
+1. **Google (optional):** create an OAuth client (Web application) in Google Cloud. Add the redirect URI
    `https://<worker-host>/api/auth/google/callback` for each environment, then
    `npx wrangler secret put GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` (add `--env production` for prod).
    The "Use Google" button only appears once these are set.
-3. **Dev:** `npm run db:migrate:dev && npm run deploy:dev` → `https://duckplan-dev.<account>.workers.dev`.
+2. **Dev:** `npm run db:migrate:dev && npm run deploy:dev` → `https://duckplan-dev.<account>.workers.dev`.
 
 **Prod is a deployment.** Under the local-first-release rule, `db:migrate:prod`, `deploy:prod`, and
 moving the public site from Netlify to the Worker (or adding a custom domain) all need explicit approval.
@@ -116,3 +116,21 @@ moving the public site from Netlify to the Worker (or adding a custom domain) al
 - Session and sign-in tokens are stored only as SHA-256 hashes.
 - Keep LIKE/GLOB patterns under 50 characters (D1 rejects longer ones at write time).
 - Never commit a real Axis feed or feed link; `tests/fixtures/axis-feed.ics` is made up.
+
+## Sign-in without email
+
+Sending email needs a paid domain, so the Worker never sends any:
+
+- **Email + password.** The email is only a login name; it is never verified. Passwords are hashed with
+  PBKDF2-SHA256 through Web Crypto (`PBKDF2_ITERATIONS` in `src/auth.js`, 50,000 to stay within the free
+  plan's CPU limit; Workers caps it at 100,000). The count is stored in each hash, and accounts are
+  re-hashed at the new count when they sign in, so it can be raised later.
+- **Recovery code instead of "reset by email".** Sign-up shows a 20-character code once (only its SHA-256
+  is stored). It resets a forgotten password and is then replaced. Signed-in users can make a new one.
+  If someone loses both, the account owner can delete their `users` row in D1 so they can sign up again
+  (this deletes their planner data).
+- **Google can't take over a password account.** Because password emails are unverified, someone could
+  register another student's address first. Google sign-in therefore refuses to join a password account
+  with the same email, so the real owner's Google sign-in never lands in a planner someone else controls.
+  The trade-off: whoever registers an address first owns it, and the owner can delete a squatted account.
+

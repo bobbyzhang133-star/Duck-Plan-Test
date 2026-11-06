@@ -203,7 +203,7 @@
     let state = { classes: [], tasks: [] };
     let unwatch = () => {};
     let authError = null;
-    let providers = { email: true, google: false };
+    let providers = { password: true, google: false };
 
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
     function replaceState(next) { state = next; }
@@ -246,26 +246,29 @@
       }
     }
 
-    // Sign-in links land on the planner page with ?login_token=…; Google failures come back with
-    // ?sign_in_error=…. Both are read once and removed from the address bar.
-    async function consumeSignInParams() {
+    // A failed Google sign-in comes back with ?sign_in_error=…, read once and removed from the address bar.
+    function consumeSignInParams() {
       if (!locationRef?.href) return;
       const url = new URL(locationRef.href);
-      const token = url.searchParams.get("login_token");
       const error = url.searchParams.get("sign_in_error");
-      if (!token && !error) return;
-      url.searchParams.delete("login_token");
+      if (!error) return;
       url.searchParams.delete("sign_in_error");
       historyRef?.replaceState?.(historyRef.state, "", `${url.pathname}${url.search}${url.hash}`);
-      if (error) authError = error.slice(0, 200);
-      if (token) {
-        try { await api("POST", "/auth/email/verify", { token }); } catch (verifyError) { authError = verifyError.message; }
-      }
+      authError = error.slice(0, 200);
     }
     async function sessionUser() {
       const session = await api("GET", "/session");
-      providers = { email: true, google: Boolean(session.providers?.google) };
+      providers = { password: true, google: Boolean(session.providers?.google) };
       return session.user || null;
+    }
+
+    async function accountCall(path, body) {
+      if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
+      return api("POST", path, body);
+    }
+    async function signedIn(user) {
+      await activate(cloudFor(user));
+      notify("auth");
     }
 
     // Another tab may have signed in or out, and a sleeping laptop may have missed live updates.
@@ -285,13 +288,13 @@
       get user() { return backend.user || null; },
       // Which sign-in methods the Worker has set up (Google needs its client id and secret).
       get providers() { return providers; },
-      // A sign-in problem from the last redirect (expired link, cancelled Google sign-in), shown once.
+      // A sign-in problem from the last redirect (a cancelled Google sign-in), shown once.
       takeAuthError() { const message = authError; authError = null; return message; },
 
       async init() {
         if (configured) {
           try {
-            await consumeSignInParams();
+            consumeSignInParams();
             const user = await sessionUser();
             await activate(user ? cloudFor(user) : local);
             documentRef?.addEventListener?.("visibilitychange", refreshOnFocus);
@@ -334,9 +337,29 @@
       },
 
       // Accounts --------------------------------------------------------------
-      async signInWithEmail(email) {
-        if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
-        await api("POST", "/auth/email", { email, next: redirectPath });
+      // Email + password. Nothing is ever emailed: the email is just the login name. Sign-up and
+      // recovery return a one-time recovery code that the person must save to reset a forgotten password.
+      async signUp(email, password) {
+        const { user, recoveryCode } = await accountCall("/auth/sign-up", { email, password });
+        await signedIn(user);
+        return recoveryCode;
+      },
+      async signIn(email, password) {
+        await signedIn((await accountCall("/auth/sign-in", { email, password })).user);
+      },
+      async recoverAccount(email, recoveryCode, newPassword) {
+        const { user, recoveryCode: nextCode } = await accountCall("/auth/recover", { email, recoveryCode, newPassword });
+        await signedIn(user);
+        return nextCode;
+      },
+      // Returns a recovery code only when the account didn't have one yet (a Google account's first password).
+      async changePassword(currentPassword, newPassword) {
+        const { recoveryCode } = await accountCall("/auth/password", { currentPassword, newPassword });
+        if (backend.user) backend.user.hasPassword = true;
+        return recoveryCode || null;
+      },
+      async newRecoveryCode(password) {
+        return (await accountCall("/auth/recovery-code", { password })).recoveryCode;
       },
       async signInWithGoogle() {
         if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
