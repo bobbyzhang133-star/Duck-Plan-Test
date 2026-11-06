@@ -1,1 +1,10 @@
 .netlify/
+
+# Cloudflare / wrangler
+cloudflare/node_modules/
+.wrangler/
+cloudflare/.dev.vars
+cloudflare/dist/
+
+# Left over from the old Supabase CLI link
+supabase/.temp/
