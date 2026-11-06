@@ -820,9 +820,16 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   animation:popup-backdrop-out calc(var(--motion-popupClose) - var(--motion-popupContentOut,60ms)) var(--motion-ease) both;
 }
 
-.reminder-options { display: grid; gap: 8px; padding-block: 12px; font-size: .84rem; }
+.reminder-options { display: grid; width: min(100%, 290px); gap: 10px; padding-block: 12px; font-size: .84rem; }
 .reminder-options select { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: #fffdf7; color: inherit; font: inherit; }
 #reminder-list { padding-inline-start: 20px; color: var(--muted); font-size: .84rem; }
+.notification-help { max-width: 60ch; }
+.notification-permission { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+.notification-permission strong { display: inline-flex; min-height: 27px; align-items: center; padding: 4px 9px; border-radius: 999px; color: #655a45; background: #eee9dd; font-size: .74rem; line-height: 1.2; text-align: center; }
+.notification-permission strong[data-state="granted"] { color: #176541; background: #dff2e7; }
+.notification-permission strong[data-state="denied"] { color: #8a3b32; background: #f9e4df; }
+.notification-permission-button { width: 100%; }
+#notification-permission-help { color: var(--muted); line-height: 1.45; }
 
 /* Reference-inspired drawer: a persistent icon rail expands into a grouped
    navigation panel, and both states own layout space instead of overlaying it. */

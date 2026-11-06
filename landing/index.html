@@ -32,7 +32,7 @@
           <div class="topbar-title"><div><p class="eyebrow" id="page-eyebrow">Task-first planner</p><h1 id="page-title">Home</h1></div></div>
           <div class="topbar-actions">
             <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">Search tasks</span><input id="global-search" type="search" placeholder="Search your planner" autocomplete="off" /></label>
-            <button class="icon-button" type="button" id="notification-button" aria-label="Open in-app deadline reminder settings" title="In-app deadline reminders"><span aria-hidden="true">◷</span></button>
+            <button class="icon-button" type="button" id="notification-button" aria-label="Open deadline reminder settings" title="Deadline reminders"><span aria-hidden="true">◷</span></button>
             <button class="primary-button" type="button" id="open-task-modal">＋ Add task</button>
           </div>
         </header>
@@ -83,6 +83,7 @@
             <div>
               <h2 id="reminders-heading" tabindex="-1">Deadline reminders</h2>
               <p>Set the default for tasks without a custom reminder. Deadlines without a time use 11:59 PM local time.</p>
+              <p class="notification-help">DuckPlan shows an in-app alert while you are using it. With permission, it can also show a device notification while this browser tab remains open in the background.</p>
               <p id="reminders-empty"></p>
               <ul id="reminder-list"></ul>
             </div>
@@ -94,6 +95,12 @@
                 <option value="60">1 hour before</option>
                 <option value="1440">1 day before</option>
               </select>
+              <div class="notification-permission">
+                <span>Device notifications</span>
+                <strong id="notification-permission-status" data-state="default">Checking…</strong>
+              </div>
+              <button type="button" class="secondary-button notification-permission-button" id="enable-device-notifications">Allow device notifications</button>
+              <small id="notification-permission-help">Your browser will ask before DuckPlan can notify you.</small>
             </div>
           </section>
           <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" href="./fur-lab.html">Open material lab</a></div>
@@ -108,7 +115,7 @@
       <div class="form-grid"><label>Class<select name="className"><option>Calculus</option><option>English</option><option>Physics</option><option>Computer Science</option><option>Personal</option></select></label><label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label></div>
       <fieldset class="form-section">
         <legend>Deadline</legend>
-        <p>When this must be finished. Reminders need a due date and appear while DuckPlan is open.</p>
+        <p>When this must be finished. Reminders need a due date. Device notifications require permission and work while DuckPlan remains open.</p>
         <div class="form-grid">
           <label>Due date<input name="dueDate" type="date" /></label>
           <label>Due time<input name="dueTime" type="time" /></label>
@@ -131,6 +138,6 @@
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app.js?v=calendar-drag-1"></script>
+    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./browser-notifications.js?v=1"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app.js?v=notifications-1"></script>
   </body>
 </html>

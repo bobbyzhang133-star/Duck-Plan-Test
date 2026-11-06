@@ -1,5 +1,6 @@
 const Model = window.DuckPlannerModel;
 const PlannerUI = window.DuckPlannerUI;
+const BrowserNotifications = window.DuckBrowserNotifications;
 const CLASS_INFO = {
   Calculus: { color: "#538fc5", soft: "#e3f0fa", code: "M", teacher: "Ms. Nguyen", period: "Period 2" },
   English: { color: "#d96f63", soft: "#fce7e1", code: "E", teacher: "Mr. Ramirez", period: "Period 4" },
@@ -29,6 +30,9 @@ const reminderToggle = document.querySelector("#reminders-enabled");
 const reminderLead = document.querySelector("#reminder-lead");
 const reminderList = document.querySelector("#reminder-list");
 const reminderEmpty = document.querySelector("#reminders-empty");
+const notificationPermissionStatus = document.querySelector("#notification-permission-status");
+const notificationPermissionButton = document.querySelector("#enable-device-notifications");
+const notificationPermissionHelp = document.querySelector("#notification-permission-help");
 reminderToggle.checked = reminderSettings.enabled;
 reminderLead.value = String(reminderSettings.lead);
 let selectedDate = nowKey();
@@ -146,6 +150,59 @@ function saveReminderSettings() {
   localStorage.setItem(REMINDER_KEY, JSON.stringify(reminderSettings));
 }
 
+function notificationCapability() {
+  return BrowserNotifications.capability(window.Notification);
+}
+
+function updateNotificationPermission() {
+  const state = notificationCapability();
+  const copy = BrowserNotifications.settingsCopy(state);
+  notificationPermissionStatus.textContent = copy.label;
+  notificationPermissionStatus.dataset.state = state;
+  notificationPermissionButton.textContent = copy.action;
+  notificationPermissionButton.disabled = copy.disabled;
+  notificationPermissionHelp.textContent = state === "granted"
+    ? "Device alerts appear when DuckPlan is open in a background tab."
+    : state === "denied"
+      ? "Allow notifications for this site in your browser settings, then reload DuckPlan."
+      : state === "unsupported"
+        ? "This browser cannot create DuckPlan device notifications; in-app reminders still work."
+        : "Your browser will ask before DuckPlan can notify you.";
+  return state;
+}
+
+function displayBrowserNotification(payload, taskId = null) {
+  if (notificationCapability() !== "granted") return false;
+  try {
+    const notification = new Notification(payload.title, payload.options);
+    notification.onclick = () => {
+      window.focus();
+      if (taskId) {
+        selectedTaskId = taskId;
+        const task = tasks.find(item => item.id === taskId);
+        if (task?.dueDate) selectedDate = task.dueDate;
+        setView("home");
+        renderAll({ autoScrollCalendar: true });
+      } else {
+        setView("settings");
+        document.querySelector("#reminders-heading").focus();
+      }
+      notification.close();
+    };
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function notifyForTask(task, deadline) {
+  const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
+  return displayBrowserNotification(
+    BrowserNotifications.taskNotification(task, deadline, { icon }),
+    task.id,
+  );
+}
+
 const taskReminderChoices = ["default", "off", "15", "60", "1440"];
 
 function taskReminderLead(choice) {
@@ -179,11 +236,19 @@ function refreshReminders({ announce = false, now = Date.now() } = {}) {
     item.textContent = `${task.title} · Due ${due}`;
     return item;
   }));
-  if (announce && !document.hidden && !els.modal.open) {
+  if (announce) {
     const fresh = dueSoon.filter(({ key }) => !seen.has(key));
     if (fresh.length) {
-      fresh.forEach(({ key }) => seen.add(key));
-      showToast(fresh.length === 1 ? `Due soon: ${fresh[0].task.title}` : `${fresh.length} tasks are due soon. Check Deadline reminders in Settings.`);
+      const delivered = new Set();
+      if (document.hidden) {
+        fresh.forEach(({ task, deadline, key }) => {
+          if (notifyForTask(task, deadline)) delivered.add(key);
+        });
+      } else if (!els.modal.open) {
+        fresh.forEach(({ key }) => delivered.add(key));
+        showToast(fresh.length === 1 ? `Due soon: ${fresh[0].task.title}` : `${fresh.length} tasks are due soon. Check Deadline reminders in Settings.`);
+      }
+      delivered.forEach(key => seen.add(key));
     }
   }
   if (seen.size !== reminderSettings.seen.length || [...seen].some(key => !reminderSettings.seen.includes(key))) {
@@ -798,6 +863,29 @@ document.querySelector("#notification-button").addEventListener("click", () => {
   refreshReminders();
   document.querySelector("#reminders-heading").focus();
 });
+notificationPermissionButton.addEventListener("click", async () => {
+  const state = notificationCapability();
+  if (state === "granted") {
+    const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
+    const delivered = displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
+    showToast(delivered ? "Test notification sent." : "The test notification could not be shown.");
+    return;
+  }
+  if (state !== "default") return;
+  notificationPermissionButton.disabled = true;
+  try {
+    await Notification.requestPermission();
+  } catch {
+    showToast("The browser could not open notification permission settings.");
+  } finally {
+    const nextState = updateNotificationPermission();
+    if (nextState !== "default") {
+      showToast(nextState === "granted"
+        ? "Device notifications enabled."
+        : "Device notifications were not enabled. In-app reminders will still work.");
+    }
+  }
+});
 reminderToggle.addEventListener("change", () => {
   reminderSettings.enabled = reminderToggle.checked;
   saveReminderSettings();
@@ -832,6 +920,7 @@ setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"
 setTaskPanel(false, false);
 
 refreshReminders({ announce: true });
+updateNotificationPermission();
 
 // Warm the existing form while closed; no modal, focus or user data is changed.
 setupButtonMaterial(els.modal);
