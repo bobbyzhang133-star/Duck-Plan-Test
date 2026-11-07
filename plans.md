@@ -31,7 +31,8 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - Dark mode and themes
  - Recurring tasks/events
  - Breaking big assignments into subtasks
- - Time estimates and a "what should I work on now" suggestion
+ - Log actual time spent on Axis assignments and show an anonymous average from classmates when enough students have contributed.
+ - A "what should I work on now" suggestion
  - Grade view pulled from Axis
 
 ### Theming
@@ -41,7 +42,7 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - **Language**: TypeScript
  - **App (web + iOS + Android)**: React Native with Expo (Expo Router, react-native-web for the web build)
  - **Desktop (macOS / Windows / Linux)**: wrap the web build with Tauri or Electron
- - **Backend / database / auth**: Supabase (Postgres, auth, row-level security) or Firebase
+ - **Backend / database / auth**: Cloudflare (Workers, D1, Durable Objects, Cron Triggers). Supabase was used until 2026-11-04.
  - **Axis integration**: server-side function that talks to Axis so credentials/tokens never live in the client
  - **Version control**: GitHub, feature branches + pull requests, at least one teammate reviews each PR
 
@@ -54,9 +55,10 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
 ### Open Questions
  - What does Axis offer for integration — a public API, an export (iCal/CSV), or nothing? Do we need school/IT permission? This decides how Phase 2 works. 
     - We know that it offers iCal, we are not sure if it has an API
+    - Answered for iCal (2026-10-28): each student has a private Blackbaud "Podium" feed link (`https://` or `webcal://<school>.myschoolapp.com/podium/feed/iCal.aspx?z=...`). See **Backend Plan → Axis sync** for what it contains. Still unknown: whether item UIDs stay stable across downloads.
  - If there is no API: fall back to an iCal feed import or manual entry until access is figured out.
  - Supabase or Firebase?
-  - Supabase
+  - Supabase at first; migrated to Cloudflare on 2026-11-04 (see Backend Plan)
  - Tauri or Electron for desktop (or skip desktop until later)?
   -Electron
 
@@ -86,6 +88,64 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - **Bobby**: Axis integration and sync logic
  - **Priya**: UI/UX — calendar and task list views, design, theming
  - **Everyone**: testing, code review, updating this file
+
+### Backend Plan
+**Approach:** build the backend behind the current static `landing/` site instead of waiting for the Expo rewrite. As of 2026-11-04 it runs on Cloudflare: one Worker serves `landing/` and a JSON API under `/api` on the same origin. The Expo app can later call the same API while only the UI is rewritten.
+
+**Repo layout**
+ - `cloudflare/migrations/`: tracked D1 (SQLite) schema files
+ - `cloudflare/src/`: Worker auth, planner API, Axis sync, and the `PlannerLive` Durable Object
+ - `cloudflare/seed.sql`: demo classes and tasks as sample data
+ - `landing/planner-store.js`: local/cloud planner data layer
+ - `landing/ical-parser.js`: parser shared by the browser and Worker
+ - Separate Wrangler dev (`duckplan-dev`) and production (`duckplan`) environments with separate D1 databases. Production migration or deployment requires explicit approval under the local-first rule.
+
+**Schema**
+ - `users`: identity, display name, time zone, JSON settings, password/recovery hashes
+ - `sessions`: hashed session tokens
+ - `classes`: user-scoped classes with Axis keys
+ - `items`: user-scoped tasks/events with local wall-clock deadlines, schedules, Axis identity, completion, revisions, and soft deletion
+ - `axis_connections`: private iCal feed credentials; never returned to the browser
+ - `sync_runs`: Axis synchronization audit rows
+ - `reminders`: initial reminder schedule shape; durable delivery work remains Phase 3
+
+**Auth and security**
+ - The Worker uses email + password without sending email. A one-time recovery code is shown at sign-up. Optional Google OIDC uses PKCE and does not join password accounts automatically.
+ - Sessions use HttpOnly cookies and only token hashes are stored.
+ - D1 has no row-level security, so every Worker query must be scoped to the authenticated `user_id`; ownership triggers provide a second guard.
+
+**Planner store**
+ - `planner-store.js` supports localStorage when signed out and the Worker API when signed in.
+ - Main uses `classId`/`class_id` and cloud UUIDs. TEST currently retains its newer local `className` UI until that UI is deliberately adapted; do not replace TEST `app.js` blindly.
+ - The Worker-backed store provides optimistic writes, local import, per-user WebSocket updates, and focus/reconnect reloads.
+
+**Axis sync**
+ - Students connect a private Blackbaud Podium iCal URL. Only the expected `*.myschoolapp.com/podium/feed/iCal.aspx` endpoint is allowed, and redirects are refused.
+ - The parser unfolds lines, decodes entities, maps the first title separator, extracts sections, and classifies quizzes/tests/exams.
+ - `UID` becomes `axis_uid`; all-day `DTSTART` becomes `due_date`; imported items have no due time.
+ - Re-sync adds/updates by Axis identity, never overwrites student-owned completion/scheduling/priority, and marks dropped items `axis_missing` rather than deleting them.
+ - The current 30-minute Cron Trigger schedules Axis refreshes. It does not dispatch reminder notifications.
+
+**Deadline notifications**
+ - Use `users.time_zone`, account defaults, per-task overrides, and a configurable local time for all-day Axis deadlines.
+ - Recalculate on deadline, preference, time-zone, completion, deletion, and Axis-sync changes.
+ - Durable web push requires device subscriptions, atomic occurrence claims, retries, and idempotency. See `docs/reminder-backend-pwa-plan.md` for the TEST integration design.
+
+**Actual time and shared estimates**
+ - Store actual time separately from scheduled duration.
+ - Verify a shared Axis assignment identifier before aggregating across students.
+ - Raw entries remain private; expose only a rounded mean and contributor count after a sufficient anonymity threshold.
+
+**Backend phases**
+ - **Phase 0:** Cloudflare environments, D1 schema, seed data
+ - **Phase 1:** auth, planner-store, local import, real-time sync, class editing
+ - **Phase 2:** iCal parser, Axis sync, scheduled re-sync, status UI
+ - **Phase 3:** reminders from `users.time_zone`, web push, later native push, and database search
+ - **Stretch:** offline queue, recurring items, and subtasks
+
+**Still open**
+ - Confirm Axis UIDs stay stable across downloads.
+ - School email uses Microsoft 365, so Google sign-in only helps users with personal Google accounts. Microsoft sign-in would require an Azure application that may need school approval.
 
 ## Progress
  - 2026-10-30: Completed the previously pending Blender-realism Chat Check after the user reopened the external conversation. Reviewer reports exact-source comparison of uploaded `9945193` versus pre-Blender `2d8b46c`: better local recovery consistency is supported, substantial visible realism improvement is unproven, and the Blender segmented-contact behavior was not translated into browser strands. Recommended a controlled segmented-strand Fur Lab A/B, with optional pile memory/neighborhood response and matched input traces. Reviewer did not inspect binary images/.blend/video or rerun tests. Saved full response and proposed prompt under `references/chat-checks/`; added an audit correction that the ordinary button shader was unchanged, despite one reviewer statement. Prompt not implemented; review-only docs and TEST backup, no deployment/shared changes.
@@ -235,3 +295,5 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
 - 2026-11-06 — Extended local deadline reminders with permission-aware browser notifications. Settings now reports the browser permission state, requests access only from an explicit user action, offers a test notification after access is granted, and explains blocked/unsupported fallback behavior. Due reminders use in-app alerts while DuckPlan is active and device notifications while the open tab is in the background; selecting a notification returns to its task. Stable per-deadline tags prevent duplicate system alerts, while undelivered reminders remain eligible for the in-app fallback. Added isolated notification payload/permission tests. All 138 tests, JavaScript syntax and diff checks pass. Browser verification at `http://127.0.0.1:8000/#settings` confirmed the default permission state, interactive glass control, no horizontal overflow and no console warnings/errors; the OS permission prompt was deliberately left for the user. This does not provide closed-app or offline push; that requires a service worker, server-side scheduler and durable user/task storage. Local TEST implementation only; no public deployment or shared-repository change.
 
 - 2026-11-06 — Hardened the local TEST notification prototype from the exact Chat Check baseline `28ff18a` without modifying shared main. Added pure `reminder-domain.js` occurrence calculation with explicit IANA time zones, deterministic DST gap/overlap handling, stable task/deadline/lead/zone identity, and a bounded one-hour missed-deadline grace so sleeping tabs do not permanently lose reminders. Added a bounded cross-tab delivery ledger with Web Locks/localStorage leases and distinct claimed/submitted/failed/acknowledged states; edits, completion, deletion and undo prune stale occurrences. Browser capability now distinguishes insecure/unsupported and permission-granted-but-unusable paths, constructor success is described only as submission, permission refreshes on focus, and notification clicks resolve current task state, focus the task card, announce success or handle missing tasks. Preserved the Settings layout and glass interactions while adding live status semantics, precise limitation copy and a 390px overflow fix. Added a read-only main integration map plus proposed D1/API, PWA/web-push and Capacitor/native architecture in `docs/reminder-backend-pwa-plan.md`; confirmed at shared commit `304bcef` that `taskToRow()` omits reminder preferences, the D1 reminder table lacks a durable delivery ledger/device targets, and the 30-minute scheduled handler only runs Axis sync. All 155 Node tests, JavaScript syntax and diff checks pass. Local browser verification at `http://127.0.0.1:8000/#settings` covered a granted permission state, honest test-submission copy, a real due-soon in-app reminder, desktop and 390px Settings layouts with no horizontal overflow, and zero console warnings/errors. Permission denial, hidden-tab display, closed-app/offline/PWA/mobile/native delivery and real-device alarms remain unverified or unimplemented and are not claimed. A clearly labeled `Temporary reminder QA` task remains only in the local preview browser for visual review; source defaults are unchanged. Local TEST work only; no Netlify/Cloudflare/database deployment, production secret, or shared-repository edit.
+
+- 2026-11-06 — Synchronized TEST with shared GitHub `main` through `23a3ba79a862ce3d2857a40d807f67a72517ba94`. Accepted the current Cloudflare Worker, D1 migrations, password/recovery authentication, Axis parser/scheduler, `planner-store`, Worker/store tests, deployment documentation and public URL record. Preserved TEST's newer glass planner, calendar drag/drop, popup work, fur labs, reminder-domain implementation and project rules instead of replacing those conflicts with main's older fur UI. Added the current Cloudflare backend plan to this file. Shared main records that production already serves at `https://duckplan.duckplan-cloudflare.workers.dev`; this local merge did not deploy, migrate a database, change secrets, or modify that public environment. The backend source is now present locally, but TEST `app.js` intentionally remains local-first until its `className` task model is deliberately adapted to main's `classId`/authenticated store contract.
