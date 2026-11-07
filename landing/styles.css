@@ -1128,6 +1128,19 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   }
 }
 
+/* Cloud account and Axis controls use the same calm glass settings surface. */
+.settings-group > .settings-row:first-child { border-top: 1px solid var(--line); }
+.settings-panel > .settings-group:first-child > .settings-row:first-child { border-top: 0; }
+.settings-form,.settings-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:10px; }
+.settings-form label { flex:1 1 260px; }
+.settings-form input { width:100%; min-height:44px; padding:0 12px; border:1px solid var(--line); border-radius:12px; color:var(--ink-deep); background:rgba(255,255,255,.78); }
+.settings-row p code { padding:1px 5px; border-radius:6px; background:rgba(248,201,67,.18); font-size:.8rem; }
+.settings-row button:disabled { opacity:.55; cursor:progress; }
+.recovery-row .recovery-code { margin-top:10px; }
+.recovery-row .recovery-code code { display:inline-block; padding:8px 12px; font-size:1.05rem; letter-spacing:.06em; overflow-wrap:anywhere; user-select:all; }
+.settings-row[hidden] { display:none; }
+@media (max-width:760px) { .settings-form,.settings-actions { width:100%; justify-content:flex-start; } }
+
 /* Project-wide design rule: every enabled button gets visible hover and held
    activation feedback, including controls that intentionally skip glass. */
 :is(button,[role="button"],a.secondary-button,a.nav-open-button) {

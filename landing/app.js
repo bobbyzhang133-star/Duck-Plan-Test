@@ -3,29 +3,34 @@ const PlannerUI = window.DuckPlannerUI;
 const ReminderDomain = window.DuckReminderDomain;
 const ReminderLedger = window.DuckReminderLedger;
 const BrowserNotifications = window.DuckBrowserNotifications;
-const CLASS_INFO = {
-  Calculus: { color: "#538fc5", soft: "#e3f0fa", code: "M", teacher: "Ms. Nguyen", period: "Period 2" },
-  English: { color: "#d96f63", soft: "#fce7e1", code: "E", teacher: "Mr. Ramirez", period: "Period 4" },
-  Physics: { color: "#7d6fbd", soft: "#ece9f8", code: "P", teacher: "Dr. Shah", period: "Period 5" },
-  "Computer Science": { color: "#3e946d", soft: "#deeee6", code: "CS", teacher: "Ms. Chen", period: "Period 7" },
-  Personal: { color: "#c48b34", soft: "#fff2c2", code: "★", teacher: "Personal", period: "Anytime" },
-};
-
-const STORAGE_KEY = "duckplan-demo-tasks-v1";
+const DEFAULT_CLASSES = [
+  { id: "calculus", name: "Calculus", color: "#538fc5", code: "M", teacher: "Ms. Nguyen", period: "Period 2" },
+  { id: "english", name: "English", color: "#d96f63", code: "E", teacher: "Mr. Ramirez", period: "Period 4" },
+  { id: "physics", name: "Physics", color: "#7d6fbd", code: "P", teacher: "Dr. Shah", period: "Period 5" },
+  { id: "computer-science", name: "Computer Science", color: "#3e946d", code: "CS", teacher: "Ms. Chen", period: "Period 7" },
+  { id: "personal", name: "Personal", color: "#c48b34", code: "★", teacher: "Personal", period: "Anytime" },
+];
 const nowKey = () => Model.todayKey();
 const relativeDate = (amount) => Model.addDays(nowKey(), amount);
 const schedule = (dayOffset, time) => `${relativeDate(dayOffset)}T${time}`;
-const DEFAULT_TASKS = [
-  { id: "calculus-practice", title: "Finish calculus practice set", className: "Calculus", dueDate: relativeDate(0), dueTime: "17:00", scheduledStart: schedule(0, "15:30"), durationMinutes: 60, priority: "High", completed: false },
-  { id: "english-response", title: "Submit reading response", className: "English", dueDate: relativeDate(0), dueTime: "20:00", scheduledStart: null, durationMinutes: 45, priority: "Medium", completed: false },
-  { id: "physics-notes", title: "Organize lab notes", className: "Physics", dueDate: relativeDate(1), dueTime: "09:00", scheduledStart: schedule(1, "07:45"), durationMinutes: 45, priority: "Medium", completed: false },
-  { id: "cs-wireframe", title: "Review app wireframe", className: "Computer Science", dueDate: relativeDate(2), dueTime: "14:15", scheduledStart: schedule(1, "16:00"), durationMinutes: 60, priority: "Low", completed: false },
-  { id: "english-vocab", title: "Study vocabulary cards", className: "English", dueDate: relativeDate(3), dueTime: "16:00", scheduledStart: null, durationMinutes: 30, priority: "Medium", completed: false },
-  { id: "physics-quiz", title: "Complete motion quiz", className: "Physics", dueDate: relativeDate(-1), dueTime: "12:30", scheduledStart: null, durationMinutes: 45, priority: "High", completed: false },
-  { id: "backpack", title: "Pack materials for Monday", className: "Personal", dueDate: relativeDate(0), dueTime: "20:00", scheduledStart: null, durationMinutes: 30, priority: "Low", completed: true },
+const defaultTasks = () => [
+  { id: "calculus-practice", title: "Finish calculus practice set", classId: "calculus", dueDate: relativeDate(0), dueTime: "17:00", scheduledStart: schedule(0, "15:30"), durationMinutes: 60, priority: "High", completed: false },
+  { id: "english-response", title: "Submit reading response", classId: "english", dueDate: relativeDate(0), dueTime: "20:00", scheduledStart: null, durationMinutes: 45, priority: "Medium", completed: false },
+  { id: "physics-notes", title: "Organize lab notes", classId: "physics", dueDate: relativeDate(1), dueTime: "09:00", scheduledStart: schedule(1, "07:45"), durationMinutes: 45, priority: "Medium", completed: false },
+  { id: "cs-wireframe", title: "Review app wireframe", classId: "computer-science", dueDate: relativeDate(2), dueTime: "14:15", scheduledStart: schedule(1, "16:00"), durationMinutes: 60, priority: "Low", completed: false },
+  { id: "english-vocab", title: "Study vocabulary cards", classId: "english", dueDate: relativeDate(3), dueTime: "16:00", scheduledStart: null, durationMinutes: 30, priority: "Medium", completed: false },
+  { id: "physics-quiz", title: "Complete motion quiz", classId: "physics", dueDate: relativeDate(-1), dueTime: "12:30", scheduledStart: null, durationMinutes: 45, priority: "High", completed: false },
+  { id: "backpack", title: "Pack materials for Monday", classId: "personal", dueDate: relativeDate(0), dueTime: "20:00", scheduledStart: null, durationMinutes: 30, priority: "Low", completed: true },
 ];
-
-let tasks = loadTasks();
+const store = window.DuckPlannerStore.createPlannerStore({
+  storage: localStorage,
+  model: Model,
+  defaultClasses: () => DEFAULT_CLASSES,
+  defaultTasks,
+  config: window.DUCKPLAN_CLOUD || {},
+  redirectPath: location.pathname,
+});
+let tasks = [];
 const REMINDER_KEY = "duckplan-deadline-reminders-v1";
 const reminderSettings = loadReminderSettings();
 const reminderLedger = ReminderLedger.createLedger({ storage: localStorage });
@@ -44,6 +49,8 @@ let currentFilter = "all";
 let searchTerm = "";
 let selectedTaskId = null;
 let editingTaskId = null;
+let axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
+let localImportCount = 0;
 let collapsed = { overdue: false, completed: false };
 let toastTimer;
 let notificationConstructorFailed = false;
@@ -68,6 +75,8 @@ const els = {
   toastMessage: document.querySelector("#toast-message"), toastAction: document.querySelector("#toast-action"),
   calendarStatus: document.querySelector("#calendar-status"), taskPanel: document.querySelector("#daily-task-panel"),
   taskPanelToggle: document.querySelector("#toggle-task-panel"), taskPanelScrim: document.querySelector(".task-panel-scrim"),
+  accountSettings: document.querySelector("#account-settings"), axisSettings: document.querySelector("#axis-settings"),
+  syncCopy: document.querySelector(".sync-copy"), syncInfo: document.querySelector("#sync-info"), resetDemo: document.querySelector("#reset-demo"),
   selectedDayLabel: document.querySelector("#selected-day-label"), selectedDateHeading: document.querySelector("#selected-date-heading"),
   dailyProgressCopy: document.querySelector("#daily-progress-copy"), completionPercent: document.querySelector("#completion-percent"),
   completionRing: document.querySelector("#completion-ring"), dailyEmpty: document.querySelector("#daily-empty"),
@@ -126,17 +135,6 @@ function setTaskPanel(open, moveFocus = true) {
   else if (moveFocus && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
 }
 
-function loadTasks() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    const source = Array.isArray(parsed) && parsed.length ? parsed : structuredClone(DEFAULT_TASKS);
-    const migrated = Model.migrateTasks(source);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-    return migrated;
-  } catch {
-    return Model.migrateTasks(structuredClone(DEFAULT_TASKS));
-  }
-}
 function loadReminderSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(REMINDER_KEY));
@@ -315,7 +313,8 @@ function refreshReminders({ announce = false, now = Date.now() } = {}) {
   if (announce) void announceReminders(dueSoon, now);
 }
 
-function saveTasks() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
+function classInfo(task) { return store.classById(task.classId); }
+function reportError(error) { console.error(error); showToast(error.message || "Something went wrong. Try again."); }
 function safeText(value) { const span = document.createElement("span"); span.textContent = value ?? ""; return span.innerHTML; }
 function dateObject(value) { return Model.fromDateKey(value); }
 function formatLongDate(value) { return new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(dateObject(value)); }
@@ -337,11 +336,11 @@ function taskScheduleText(task) {
 }
 
 function taskCardMarkup(task, mode = "daily") {
-  const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
+  const info = classInfo(task);
   const due = task.dueDate ? `${formatShortDate(task.dueDate)}${task.dueTime ? ` · ${formatTime(task.dueTime)}` : ""}` : "No deadline";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)} · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${task.priority === "High" ? '<span class="priority-tag">High</span>' : ""}</span></button>
+    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(info.name)} · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${task.priority === "High" ? '<span class="priority-tag">High</span>' : ""}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
 }
@@ -372,11 +371,11 @@ function renderDailyPlan() {
 }
 
 function allTaskMarkup(task) {
-  const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
+  const info = classInfo(task);
   const scheduled = Model.scheduledParts(task);
   return `<article class="all-task-row ${task.completed ? "completed" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)}${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}</span></button>
+    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(info.name)}${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}${task.axisMissing ? " · No longer in Axis" : ""}</span></button>
     <span class="task-due"><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${formatTime(task.dueTime)}</small></span>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
@@ -384,7 +383,7 @@ function allTaskMarkup(task) {
 function renderAllTasks() {
   const sorted = [...tasks].sort((a, b) => `${a.dueDate || "9999"}${a.dueTime || "99"}`.localeCompare(`${b.dueDate || "9999"}${b.dueTime || "99"}`));
   const filtered = sorted.filter((task) => {
-    if (searchTerm && !`${task.title} ${task.className}`.toLowerCase().includes(searchTerm)) return false;
+    if (searchTerm && !`${task.title} ${classInfo(task).name}`.toLowerCase().includes(searchTerm)) return false;
     if (currentFilter === "today") return task.dueDate === nowKey() && !task.completed;
     if (currentFilter === "upcoming") return task.dueDate > nowKey() && !task.completed;
     if (currentFilter === "done") return task.completed;
@@ -396,11 +395,91 @@ function renderAllTasks() {
 }
 
 function renderClasses() {
-  els.classGrid.innerHTML = Object.entries(CLASS_INFO).map(([name, info]) => {
-    const classTasks = tasks.filter((task) => task.className === name);
+  els.classGrid.innerHTML = store.listClasses().map((info) => {
+    const classTasks = tasks.filter((task) => task.classId === info.id);
     const open = classTasks.filter((task) => !task.completed).length;
-    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${info.code}</span></div><h2>${name}</h2><p>${info.teacher} · ${info.period}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div></article>`;
+    const details = [info.teacher, info.period].filter(Boolean).join(" · ") || (info.axisKey ? "Imported from Axis" : "Class details");
+    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${safeText(info.code)}</span></div><h2>${safeText(info.name)}</h2><p>${safeText(details)}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div></article>`;
   }).join("");
+}
+
+function renderClassOptions() {
+  const select = els.form.elements.classId;
+  const current = select.value;
+  select.innerHTML = `${store.listClasses().map((info) => `<option value="${info.id}">${safeText(info.name)}</option>`).join("")}<option value="">No class</option>`;
+  select.value = current;
+}
+
+function relativeSyncTime(value) {
+  if (!value) return "Not synced yet";
+  const minutes = Math.round((Date.now() - Date.parse(value)) / 60000);
+  if (minutes < 1) return "Synced just now";
+  if (minutes < 60) return `Synced ${minutes} min ago`;
+  return `Synced ${new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(value))}`;
+}
+function replaceSettings(container, markup) {
+  container.innerHTML = markup;
+  setupButtonMaterial(container);
+}
+let accountMode = "sign-in";
+let shownRecoveryCode = null;
+const passwordInput = (name, placeholder, autocomplete) => `<label><span class="sr-only">${placeholder}</span><input name="${name}" type="password" required minlength="8" maxlength="200" autocomplete="${autocomplete}" placeholder="${placeholder}" /></label>`;
+const emailInput = `<label><span class="sr-only">Email address</span><input name="email" type="email" required autocomplete="username" placeholder="you@school.org" /></label>`;
+function signedOutAccount() {
+  if (accountMode === "recover") return `<div><h2>Reset your password</h2><p>Use the recovery code you saved when you created your account.</p></div><form class="settings-form" id="recover-form">${emailInput}<label><span class="sr-only">Recovery code</span><input name="recoveryCode" type="text" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" /></label>${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button">Reset password</button><button type="button" class="secondary-button" id="show-sign-in">Back to sign in</button></form>`;
+  return `<div><h2>Account</h2><p>Sign in to sync your planner across devices, or create an account with an 8-character password.</p></div><form class="settings-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<button type="submit" class="secondary-button" data-action="sign-in">Sign in</button><button type="submit" class="secondary-button" data-action="sign-up">Create account</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}<button type="button" class="secondary-button" id="show-recover">Forgot password?</button></form>`;
+}
+function signedInAccount(user) {
+  const intro = `<div><h2>Account</h2><p>Signed in as ${safeText(user.email || "your account")}. Your planner is syncing across devices.</p></div>`;
+  if (accountMode === "change-password") return `${intro}<form class="settings-form" id="password-form">${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button">Save password</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
+  if (accountMode === "recovery-code") return `${intro}<form class="settings-form" id="recovery-code-form">${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button">Make a new code</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
+  return `${intro}<div class="settings-actions"><button type="button" class="secondary-button" id="show-change-password">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code">New recovery code</button>` : ""}<button type="button" class="secondary-button" id="sign-out">Sign out</button></div>`;
+}
+function renderAccount() {
+  const user = store.user;
+  const body = !store.configured
+    ? `<div><h2>Account</h2><p>Cloud sync is unavailable on this copy, so tasks stay in this browser.</p></div>`
+    : user ? signedInAccount(user) : signedOutAccount();
+  const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
+  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} local task${localImportCount === 1 ? "" : "s"}. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
+  replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${recovery}${offer}`);
+  els.resetDemo.closest(".settings-row").hidden = store.mode === "cloud";
+}
+function setAccountMode(mode, { focus = true } = {}) {
+  accountMode = mode;
+  renderAccount();
+  if (focus) requestAnimationFrame(() => els.accountSettings.querySelector("form input")?.focus());
+}
+function renderAxis() {
+  let body;
+  if (store.mode !== "cloud") body = `<div><h2>Axis connection</h2><p>Sign in, then paste your Axis calendar feed link to import classes and assignments.</p></div><button type="button" class="secondary-button" id="connect-axis">Sign in first</button>`;
+  else if (!axisStatus.connected) body = `<div><h2>Axis connection</h2><p>Copy the private calendar feed link from Axis. It ends in <code>iCal.aspx</code>.</p></div><form class="settings-form" id="axis-form"><label><span class="sr-only">Axis feed link</span><input name="icalUrl" type="url" required autocomplete="off" spellcheck="false" placeholder="webcal://…iCal.aspx?z=…" /></label><button type="submit" class="secondary-button">Connect Axis</button></form>`;
+  else body = `<div><h2>Axis connection</h2><p>${safeText(relativeSyncTime(axisStatus.lastSyncedAt))}.${axisStatus.lastError ? ` Last problem: ${safeText(axisStatus.lastError)}` : ""}</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="axis-sync-now">Sync now</button><button type="button" class="secondary-button" id="axis-disconnect">Disconnect</button></div>`;
+  replaceSettings(els.axisSettings, `<div class="settings-row">${body}</div>`);
+  els.syncCopy.textContent = store.mode !== "cloud" ? "Not signed in" : axisStatus.connected ? (axisStatus.lastError ? "Needs attention" : relativeSyncTime(axisStatus.lastSyncedAt)) : "Not connected";
+  els.syncInfo.setAttribute("aria-label", axisStatus.connected ? "Sync Axis now" : "Set up Axis sync");
+}
+async function refreshAccountState() {
+  try { [axisStatus, localImportCount] = await Promise.all([store.axisStatus(), store.localImportOffer()]); }
+  catch (error) { console.error(error); }
+  renderAccount(); renderAxis();
+}
+async function runAction(button, action) {
+  button.disabled = true;
+  try { await action(); }
+  catch (error) { reportError(error); }
+  finally { if (button.isConnected) button.disabled = false; }
+}
+async function syncAxisNow() {
+  const result = await store.syncAxisNow();
+  showToast(`Axis synced: ${result.added} new, ${result.updated} updated.`);
+  await refreshAccountState();
+}
+function showRecoveryCode(code) {
+  if (!code) return;
+  shownRecoveryCode = code;
+  setAccountMode(null, { focus: false });
+  els.accountSettings.querySelector("#recovery-row")?.scrollIntoView({ block: "nearest" });
 }
 
 function rangeLabel(dates) {
@@ -413,7 +492,7 @@ function rangeLabel(dates) {
 }
 function deadlineChips(date) {
   return tasks.filter((task) => task.dueDate === date && !task.completed).slice(0, 3).map((task) => {
-    const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
+    const info = classInfo(task);
     return `<button type="button" class="deadline-chip ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color}" data-select-task="${task.id}" data-edit-task="${task.id}"><span></span>${safeText(task.title)}</button>`;
   }).join("");
 }
@@ -449,7 +528,7 @@ function renderTimeline(dates) {
       : "";
     const scheduled = tasks.filter((task) => Model.scheduledParts(task)?.date === date && !task.completed);
     const events = layoutEvents(scheduled).map(({ task, start, end, lane, lanes }) => {
-      const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
+      const info = classInfo(task);
       const top = ((start - startHour * 60) / 60) * hourHeight;
       const height = Math.max(30, ((end - start) / 60) * hourHeight);
       return `<button type="button" class="calendar-event-block ${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-drag-task="${task.id}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * 100}% + 3px);width:calc(${100 / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small></button>`;
@@ -468,7 +547,7 @@ function renderMonth(dates) {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => `<span>${day}</span>`).join("");
   const cells = dates.map((date) => {
     const dayTasks = tasks.filter((task) => task.dueDate === date || Model.scheduledParts(task)?.date === date);
-    const dots = dayTasks.slice(0, 4).map((task) => `<i style="--course-color:${(CLASS_INFO[task.className] || CLASS_INFO.Personal).color}"></i>`).join("");
+    const dots = dayTasks.slice(0, 4).map((task) => `<i style="--course-color:${classInfo(task).color}"></i>`).join("");
     return `<button type="button" class="month-day ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""} ${dateObject(date).getMonth() !== currentMonth ? "outside" : ""}" data-date="${date}"><strong>${dateObject(date).getDate()}</strong><span class="month-dots">${dots}</span><small>${dayTasks.length ? `${dayTasks.length} item${dayTasks.length === 1 ? "" : "s"}` : ""}</small></button>`;
   }).join("");
   return `<div class="month-calendar"><div class="month-weekdays">${weekdays}</div><div class="month-grid">${cells}</div></div>`;
@@ -529,7 +608,7 @@ function setupButtonMaterial(root = document) {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll({ autoScrollCalendar = false } = {}) { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
   const normalized = ["today", "calendar"].includes(name) ? "home" : name;
@@ -579,24 +658,18 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
     if (focus) focusMovedCalendarTask(task.id);
     return false;
   }
-  task.scheduledStart = nextStart;
-  task.scheduledEnd = null;
   selectedDate = drop.date;
   selectedTaskId = task.id;
-  saveTasks();
-  renderAll();
+  store.upsertItem({ ...task, scheduledStart: nextStart, scheduledEnd: null }).catch(reportError);
   const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
   els.calendarStatus.textContent = `${task.title} moved to ${destination}.`;
   showToast(`Moved to ${destination}.`, {
     actionLabel: "Undo",
     duration: 5000,
     onAction: () => {
-      task.scheduledStart = previousStart;
-      task.scheduledEnd = null;
-      selectedDate = Model.scheduledParts(task)?.date || previousSelectedDate;
+      selectedDate = previousStart?.slice(0, 10) || previousSelectedDate;
       selectedTaskId = task.id;
-      saveTasks();
-      renderAll();
+      store.upsertItem({ ...task, scheduledStart: previousStart, scheduledEnd: null }).catch(reportError);
       els.calendarStatus.textContent = `${task.title} returned to its previous time.`;
       showToast("Calendar move undone.");
       if (focus) focusMovedCalendarTask(task.id);
@@ -711,7 +784,7 @@ function openModal(prefill = {}) {
   els.saveTask.textContent = task ? "Save changes" : "Add to DuckPlan";
   els.deleteTask.hidden = !task;
   els.form.elements.title.value = task?.title || "";
-  els.form.elements.className.value = task?.className || "Calculus";
+  els.form.elements.classId.value = task ? task.classId || "" : store.listClasses()[0]?.id || "";
   els.form.elements.priority.value = task?.priority || "Medium";
   els.form.elements.dueDate.value = task?.dueDate || prefill.dueDate || selectedDate;
   els.form.elements.dueTime.value = task?.dueTime || prefill.dueTime || "";
@@ -774,7 +847,8 @@ document.addEventListener("change", (event) => {
   const checkbox = event.target.closest("[data-task-id]");
   if (!checkbox) return;
   const task = tasks.find((item) => item.id === checkbox.dataset.taskId); if (!task) return;
-  task.completed = checkbox.checked; saveTasks(); renderAll(); showToast(task.completed ? "Task completed. Nice work!" : "Task returned to your plan.");
+  store.toggleComplete(task.id, checkbox.checked)
+    .then(() => showToast(checkbox.checked ? "Task completed. Nice work!" : "Task returned to your plan."), reportError);
 });
 document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListener("click", () => {
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
@@ -888,34 +962,21 @@ els.form.addEventListener("submit", (event) => {
   const form = new FormData(els.form); const title = form.get("title").trim(); if (!title) return;
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
-  const next = { title, className: form.get("className"), priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), schemaVersion: 2 };
+  const existing = editingTaskId ? tasks.find((task) => task.id === editingTaskId) : null;
+  const next = { ...existing, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), schemaVersion: 2 };
   const reminderChoice = form.get("reminderChoice");
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
-  if (editingTaskId) Object.assign(tasks.find((task) => task.id === editingTaskId), next);
-  else tasks.push({ id: `task-${Date.now()}`, completed: false, ...next });
-  saveTasks(); renderAll(); closeModal(); showToast(wasEditing ? "Task updated." : "Task added to your plan.");
+  closeModal();
+  store.upsertItem(next).then(() => showToast(wasEditing ? "Task updated." : "Task added to your plan."), reportError);
 });
 els.deleteTask.addEventListener("click", () => {
   if (!editingTaskId) return;
-  const index = tasks.findIndex((task) => task.id === editingTaskId);
-  const deletedTask = tasks[index];
+  const deletedTask = tasks.find((task) => task.id === editingTaskId);
   if (!deletedTask) return;
-  tasks = tasks.filter((task) => task.id !== editingTaskId);
-  saveTasks();
   closeModal();
-  renderAll();
-  showToast("Task deleted.", {
-    actionLabel: "Undo",
-    duration: 6000,
-    onAction: () => {
-      tasks = PlannerUI.restoreDeletedTask(tasks, deletedTask, index);
-      saveTasks();
-      renderAll();
-      showToast("Task restored.");
-    },
-  });
+  store.deleteItem(deletedTask.id).then(() => showToast("Task deleted."), reportError);
 });
 document.querySelector("#notification-button").addEventListener("click", () => {
   setView("settings");
@@ -957,9 +1018,59 @@ reminderLead.addEventListener("change", () => {
   saveReminderSettings();
   refreshReminders({ announce: true });
 });
-document.querySelector("#sync-info").addEventListener("click", () => showToast("Axis sync remains a prototype until API or iCal access is confirmed."));
-document.querySelector("#connect-axis").addEventListener("click", () => showToast("Axis connection is intentionally disabled in this local prototype."));
-document.querySelector("#reset-demo").addEventListener("click", () => { tasks = Model.migrateTasks(structuredClone(DEFAULT_TASKS)); saveTasks(); selectedDate = nowKey(); renderAll({ autoScrollCalendar: true }); showToast("Demo tasks reset."); });
+els.accountSettings.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const form = event.target;
+  const data = new FormData(form);
+  const value = (name) => String(data.get(name) || "");
+  if (form.id === "sign-in-form") {
+    const email = value("email").trim();
+    if (event.submitter?.dataset.action === "sign-up") runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.signUp(email, value("password"))); showToast("Account created. Save your recovery code."); });
+    else runAction(event.submitter, async () => { accountMode = null; await store.signIn(email, value("password")); showToast(`Signed in as ${email}.`); });
+  }
+  if (form.id === "recover-form") runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.recoverAccount(value("email").trim(), value("recoveryCode"), value("newPassword"))); showToast("Password reset. Save your new recovery code."); });
+  if (form.id === "password-form") runAction(event.submitter, async () => { const code = await store.changePassword(value("currentPassword"), value("newPassword")); setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved."); });
+  if (form.id === "recovery-code-form") runAction(event.submitter, async () => { showRecoveryCode(await store.newRecoveryCode(value("password"))); showToast("New recovery code created."); });
+});
+els.accountSettings.addEventListener("click", (event) => {
+  const button = event.target.closest("button"); if (!button) return;
+  if (button.id === "google-sign-in") runAction(button, () => store.signInWithGoogle());
+  if (button.id === "show-recover") setAccountMode("recover");
+  if (button.id === "show-sign-in") setAccountMode("sign-in");
+  if (button.id === "show-change-password") setAccountMode("change-password");
+  if (button.id === "show-recovery-code") setAccountMode("recovery-code");
+  if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
+  if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
+  if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
+  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await store.signOut(); showToast("Signed out. Showing local tasks."); });
+  if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
+  if (button.id === "import-local") runAction(button, async () => { const count = await store.importLocalTasks(); showToast(`Imported ${count} task${count === 1 ? "" : "s"}.`); await refreshAccountState(); });
+});
+els.axisSettings.addEventListener("submit", (event) => {
+  if (event.target.id !== "axis-form") return;
+  event.preventDefault();
+  const input = event.target.elements.icalUrl;
+  let link;
+  try { link = window.DuckAxisIcal.normalizeFeedUrl(input.value); }
+  catch (error) { showToast(error.message); input.focus(); return; }
+  runAction(event.submitter, async () => {
+    showToast("Connecting to Axis…");
+    const result = await store.connectAxis(link);
+    showToast(`Axis connected: ${result.added} assignments and ${result.classesAdded} classes imported.`);
+    await refreshAccountState();
+  });
+});
+els.axisSettings.addEventListener("click", (event) => {
+  const button = event.target.closest("button"); if (!button) return;
+  if (button.id === "connect-axis") { els.accountSettings.querySelector("input[name=email]")?.focus(); showToast(store.configured ? "Sign in first, then connect Axis." : "Cloud sync is unavailable on this copy."); }
+  if (button.id === "axis-sync-now") runAction(button, syncAxisNow);
+  if (button.id === "axis-disconnect") runAction(button, async () => { await store.disconnectAxis(); showToast("Axis disconnected. Imported assignments remain."); await refreshAccountState(); });
+});
+els.syncInfo.addEventListener("click", () => {
+  if (store.mode === "cloud" && axisStatus.connected) runAction(els.syncInfo, syncAxisNow);
+  else { setView("settings"); showToast(store.mode === "cloud" ? "Paste your Axis feed link to connect." : "Sign in to connect Axis."); }
+});
+els.resetDemo.addEventListener("click", () => { store.resetLocalDemo().then(() => { selectedDate = nowKey(); showToast("Demo tasks reset."); }, reportError); });
 
 function refreshDateBoundary() {
   const nextToday = nowKey();
@@ -977,6 +1088,8 @@ setInterval(refreshPlannerClock, 60000);
 
 const requestedView = location.hash.replace("#", "");
 renderAll({ autoScrollCalendar: true });
+renderAccount();
+renderAxis();
 setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
 setTaskPanel(false, false);
 
@@ -987,3 +1100,12 @@ updateNotificationPermission();
 setupButtonMaterial(els.modal);
 DuckPopupMotion.schedulePrepare(els.modal);
 document.fonts?.ready.then(() => DuckPopupMotion.schedulePrepare(els.modal));
+
+store.subscribe(({ reason }) => {
+  renderAll();
+  if (reason === "load" || reason === "auth") refreshAccountState();
+});
+store.init().then(() => {
+  const problem = store.takeAuthError();
+  if (problem) showToast(problem);
+}, reportError);
