@@ -83,7 +83,7 @@
             <div>
               <h2 id="reminders-heading" tabindex="-1">Deadline reminders</h2>
               <p>Set the default for tasks without a custom reminder. Deadlines without a time use 11:59 PM local time.</p>
-              <p class="notification-help">DuckPlan shows an in-app alert while you are using it. With permission, it can also show a device notification while this browser tab remains open in the background.</p>
+              <p class="notification-help">DuckPlan shows an in-app alert while you are using it. With permission, it can submit a device notification while this page remains open in the background. Closed-app, offline, and alarm delivery are not included yet.</p>
               <p id="reminders-empty"></p>
               <ul id="reminder-list"></ul>
             </div>
@@ -97,10 +97,10 @@
               </select>
               <div class="notification-permission">
                 <span>Device notifications</span>
-                <strong id="notification-permission-status" data-state="default">Checking…</strong>
+                <strong id="notification-permission-status" data-state="default" role="status" aria-live="polite" aria-atomic="true">Checking…</strong>
               </div>
-              <button type="button" class="secondary-button notification-permission-button" id="enable-device-notifications">Allow device notifications</button>
-              <small id="notification-permission-help">Your browser will ask before DuckPlan can notify you.</small>
+              <button type="button" class="secondary-button notification-permission-button" id="enable-device-notifications" aria-describedby="notification-permission-help">Allow device notifications</button>
+              <small id="notification-permission-help" role="note">Your browser will ask before DuckPlan can notify you.</small>
             </div>
           </section>
           <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" href="./fur-lab.html">Open material lab</a></div>
@@ -115,7 +115,7 @@
       <div class="form-grid"><label>Class<select name="className"><option>Calculus</option><option>English</option><option>Physics</option><option>Computer Science</option><option>Personal</option></select></label><label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label></div>
       <fieldset class="form-section">
         <legend>Deadline</legend>
-        <p>When this must be finished. Reminders need a due date. Device notifications require permission and work while DuckPlan remains open.</p>
+        <p>When this must be finished. Reminders need a due date. Device notifications require permission and are only submitted while DuckPlan remains open.</p>
         <div class="form-grid">
           <label>Due date<input name="dueDate" type="date" /></label>
           <label>Due time<input name="dueTime" type="time" /></label>
@@ -138,6 +138,6 @@
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./browser-notifications.js?v=1"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app.js?v=notifications-1"></script>
+    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=2"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app.js?v=notifications-2"></script>
   </body>
 </html>

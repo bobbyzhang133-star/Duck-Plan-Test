@@ -827,9 +827,14 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 .notification-permission { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
 .notification-permission strong { display: inline-flex; min-height: 27px; align-items: center; padding: 4px 9px; border-radius: 999px; color: #655a45; background: #eee9dd; font-size: .74rem; line-height: 1.2; text-align: center; }
 .notification-permission strong[data-state="granted"] { color: #176541; background: #dff2e7; }
+.notification-permission strong[data-state="granted-unusable"] { color: #6c4b10; background: #fff0bd; }
 .notification-permission strong[data-state="denied"] { color: #8a3b32; background: #f9e4df; }
 .notification-permission-button { width: 100%; }
 #notification-permission-help { color: var(--muted); line-height: 1.45; }
+@media (max-width: 520px) {
+  .notification-permission { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .notification-permission strong { max-width: 100%; white-space: normal; }
+}
 
 /* Reference-inspired drawer: a persistent icon rail expands into a grouped
    navigation panel, and both states own layout space instead of overlaying it. */

@@ -1,5 +1,7 @@
 const Model = window.DuckPlannerModel;
 const PlannerUI = window.DuckPlannerUI;
+const ReminderDomain = window.DuckReminderDomain;
+const ReminderLedger = window.DuckReminderLedger;
 const BrowserNotifications = window.DuckBrowserNotifications;
 const CLASS_INFO = {
   Calculus: { color: "#538fc5", soft: "#e3f0fa", code: "M", teacher: "Ms. Nguyen", period: "Period 2" },
@@ -26,6 +28,7 @@ const DEFAULT_TASKS = [
 let tasks = loadTasks();
 const REMINDER_KEY = "duckplan-deadline-reminders-v1";
 const reminderSettings = loadReminderSettings();
+const reminderLedger = ReminderLedger.createLedger({ storage: localStorage });
 const reminderToggle = document.querySelector("#reminders-enabled");
 const reminderLead = document.querySelector("#reminder-lead");
 const reminderList = document.querySelector("#reminder-list");
@@ -43,6 +46,7 @@ let selectedTaskId = null;
 let editingTaskId = null;
 let collapsed = { overdue: false, completed: false };
 let toastTimer;
+let notificationConstructorFailed = false;
 let observedToday = nowKey();
 let calendarFocusSlot = { date: selectedDate, time: "09:00" };
 let calendarUserScrolled = false;
@@ -139,10 +143,9 @@ function loadReminderSettings() {
     return {
       enabled: saved?.enabled === true,
       lead: [15, 60, 1440].includes(saved?.lead) ? saved.lead : 60,
-      seen: Array.isArray(saved?.seen) ? saved.seen : [],
     };
   } catch {
-    return { enabled: false, lead: 60, seen: [] };
+    return { enabled: false, lead: 60 };
   }
 }
 
@@ -151,7 +154,10 @@ function saveReminderSettings() {
 }
 
 function notificationCapability() {
-  return BrowserNotifications.capability(window.Notification);
+  return BrowserNotifications.capability(window.Notification, {
+    isSecureContext: window.isSecureContext,
+    constructorFailed: notificationConstructorFailed,
+  });
 }
 
 function updateNotificationPermission() {
@@ -162,43 +168,68 @@ function updateNotificationPermission() {
   notificationPermissionButton.textContent = copy.action;
   notificationPermissionButton.disabled = copy.disabled;
   notificationPermissionHelp.textContent = state === "granted"
-    ? "Device alerts appear when DuckPlan is open in a background tab."
+    ? "DuckPlan can submit alerts while this page remains open. Browser acceptance does not confirm that your device displayed one."
+    : state === "granted-unusable"
+      ? "Permission is allowed, but this browser cannot use DuckPlan's open-page delivery method. In-app reminders still work."
     : state === "denied"
-      ? "Allow notifications for this site in your browser settings, then reload DuckPlan."
+      ? "Allow notifications for this site in your browser settings, then return to DuckPlan. In-app reminders still work."
       : state === "unsupported"
         ? "This browser cannot create DuckPlan device notifications; in-app reminders still work."
         : "Your browser will ask before DuckPlan can notify you.";
   return state;
 }
 
+function focusReminderTask(task) {
+  requestAnimationFrame(() => {
+    const card = [...document.querySelectorAll("[data-task-card]")]
+      .find((item) => item.dataset.taskCard === String(task.id));
+    if (!card) {
+      els.calendarStatus.textContent = `${task.title} is selected, but its task card is not available in this view.`;
+      return;
+    }
+    card.tabIndex = -1;
+    card.scrollIntoView({ block: "center", inline: "nearest" });
+    card.focus({ preventScroll: true });
+    els.calendarStatus.textContent = `${task.title} selected from a deadline reminder.`;
+  });
+}
+
 function displayBrowserNotification(payload, taskId = null) {
-  if (notificationCapability() !== "granted") return false;
-  try {
-    const notification = new Notification(payload.title, payload.options);
-    notification.onclick = () => {
-      window.focus();
-      if (taskId) {
-        selectedTaskId = taskId;
-        const task = tasks.find(item => item.id === taskId);
-        if (task?.dueDate) selectedDate = task.dueDate;
+  if (notificationCapability() !== "granted") return { status: "unavailable" };
+  const result = BrowserNotifications.createNotification(window.Notification, payload);
+  if (result.status !== "submitted") {
+    notificationConstructorFailed = true;
+    updateNotificationPermission();
+    return result;
+  }
+  result.notification.onclick = () => {
+    window.focus();
+    if (taskId) {
+      const target = BrowserNotifications.resolveTaskTarget(tasks, taskId);
+      if (target.status === "found") {
+        selectedTaskId = target.task.id;
+        if (target.date) selectedDate = target.date;
         setView("home");
         renderAll({ autoScrollCalendar: true });
+        focusReminderTask(target.task);
       } else {
         setView("settings");
         document.querySelector("#reminders-heading").focus();
+        showToast("That reminder's task is no longer available.");
       }
-      notification.close();
-    };
-    return true;
-  } catch {
-    return false;
-  }
+    } else {
+      setView("settings");
+      document.querySelector("#reminders-heading").focus();
+    }
+    result.notification.close();
+  };
+  return result;
 }
 
-function notifyForTask(task, deadline) {
+function notifyForTask(task, occurrence) {
   const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
   return displayBrowserNotification(
-    BrowserNotifications.taskNotification(task, deadline, { icon }),
+    BrowserNotifications.taskNotification(task, occurrence, { icon }),
     task.id,
   );
 }
@@ -211,50 +242,77 @@ function taskReminderLead(choice) {
   return reminderSettings.enabled ? reminderSettings.lead : null;
 }
 
+function reminderOccurrences(now = Date.now()) {
+  const timeZone = ReminderDomain.browserTimeZone();
+  return tasks.map((task) => {
+    const lead = taskReminderLead(task.reminderChoice);
+    const occurrence = ReminderDomain.calculateOccurrence({
+      taskId: task.id,
+      dueDate: task.dueDate,
+      dueTime: task.dueTime,
+      leadMinutes: lead,
+      enabled: lead !== null,
+      completed: task.completed,
+      deleted: task.deleted === true,
+      evaluationTime: now,
+      timeZone,
+    });
+    return { task, occurrence };
+  }).sort((left, right) => (left.occurrence.deadlineAt || Infinity) - (right.occurrence.deadlineAt || Infinity));
+}
+
+async function announceReminders(dueSoon, now) {
+  if (!dueSoon.length || els.modal.open) return;
+  const claimed = (await Promise.all(dueSoon.map(async (entry) => ({
+    ...entry,
+    token: await reminderLedger.claim(entry.occurrence.occurrenceId, now, { forceRetry: !document.hidden }),
+  })))).filter((entry) => entry.token);
+  if (!claimed.length) return;
+
+  if (!document.hidden) {
+    showToast(claimed.length === 1
+      ? `${claimed[0].occurrence.status === "missed" ? "Missed reminder" : "Due soon"}: ${claimed[0].task.title}`
+      : `${claimed.length} deadline reminders are ready. Check Settings for details.`);
+    await Promise.all(claimed.map((entry) => reminderLedger.finish(
+      entry.occurrence.occurrenceId,
+      entry.token,
+      "acknowledged",
+      { channel: "in-app" },
+      now,
+    )));
+    return;
+  }
+
+  await Promise.all(claimed.map(async (entry) => {
+    const result = notifyForTask(entry.task, entry.occurrence);
+    if (result.status === "submitted") {
+      await reminderLedger.finish(entry.occurrence.occurrenceId, entry.token, "submitted", { channel: "browser" }, now);
+    } else {
+      await reminderLedger.finish(entry.occurrence.occurrenceId, entry.token, "failed", { channel: "browser", reason: result.reason || result.status }, now);
+    }
+  }));
+}
+
 function refreshReminders({ announce = false, now = Date.now() } = {}) {
-  const upcoming = tasks
-    .filter(task => !task.completed && task.dueDate)
-    .map(task => {
-      const deadline = new Date(`${task.dueDate}T${task.dueTime || "23:59"}`).getTime();
-      const lead = taskReminderLead(task.reminderChoice);
-      return { task, deadline, lead, key: JSON.stringify([task.id, task.dueDate, task.dueTime, lead]) };
-    })
-    .filter(({ deadline, lead }) => deadline > now && lead !== null)
-    .sort((a, b) => a.deadline - b.deadline);
-  const activeKeys = new Set(upcoming.map(({ key }) => key));
-  const seen = new Set(reminderSettings.seen.filter(key => activeKeys.has(key)));
-  const dueSoon = upcoming.filter(({ deadline, lead }) => deadline - now <= lead * 60000);
+  const occurrences = reminderOccurrences(now);
+  const activeIds = occurrences
+    .filter(({ occurrence }) => ["pending", "due", "missed"].includes(occurrence.status))
+    .map(({ occurrence }) => occurrence.occurrenceId);
+  reminderLedger.prune(activeIds, now);
+  const dueSoon = occurrences.filter(({ occurrence }) => occurrence.eligible);
   reminderLead.disabled = !reminderSettings.enabled;
   reminderEmpty.textContent = dueSoon.length
-    ? "Tasks due within their reminder window"
-    : "No tasks due within their reminder window.";
-  reminderList.replaceChildren(...dueSoon.map(({ task, deadline }) => {
+    ? "Active open-page reminders"
+    : "No tasks are currently inside their reminder window.";
+  reminderList.replaceChildren(...dueSoon.map(({ task, occurrence }) => {
     const item = document.createElement("li");
-    const due = new Date(deadline).toLocaleString(undefined, {
+    const due = new Date(occurrence.deadlineAt).toLocaleString(undefined, {
       month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
     });
-    item.textContent = `${task.title} · Due ${due}`;
+    item.textContent = `${occurrence.status === "missed" ? "Missed reminder · " : ""}${task.title} · Due ${due}`;
     return item;
   }));
-  if (announce) {
-    const fresh = dueSoon.filter(({ key }) => !seen.has(key));
-    if (fresh.length) {
-      const delivered = new Set();
-      if (document.hidden) {
-        fresh.forEach(({ task, deadline, key }) => {
-          if (notifyForTask(task, deadline)) delivered.add(key);
-        });
-      } else if (!els.modal.open) {
-        fresh.forEach(({ key }) => delivered.add(key));
-        showToast(fresh.length === 1 ? `Due soon: ${fresh[0].task.title}` : `${fresh.length} tasks are due soon. Check Deadline reminders in Settings.`);
-      }
-      delivered.forEach(key => seen.add(key));
-    }
-  }
-  if (seen.size !== reminderSettings.seen.length || [...seen].some(key => !reminderSettings.seen.includes(key))) {
-    reminderSettings.seen = [...seen];
-    saveReminderSettings();
-  }
+  if (announce) void announceReminders(dueSoon, now);
 }
 
 function saveTasks() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
@@ -680,6 +738,7 @@ function closeModal() {
     modalClosing = false;
     const returnTarget = modalAnchor?.element?.isConnected ? modalAnchor.element : document.querySelector(".view.active button");
     returnTarget?.focus({preventScroll:true});
+    refreshReminders({ announce: true });
   });
 }
 els.modal.addEventListener("cancel", event => { event.preventDefault(); closeModal(); });
@@ -867,14 +926,16 @@ notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
     const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
-    const delivered = displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
-    showToast(delivered ? "Test notification sent." : "The test notification could not be shown.");
+    const result = displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
+    showToast(result.status === "submitted"
+      ? "Test submitted to your browser; device display is not confirmed."
+      : "The browser could not submit the test. In-app reminders still work.");
     return;
   }
   if (state !== "default") return;
   notificationPermissionButton.disabled = true;
   try {
-    await Notification.requestPermission();
+    await window.Notification.requestPermission();
   } catch {
     showToast("The browser could not open notification permission settings.");
   } finally {
@@ -911,7 +972,7 @@ function refreshPlannerClock() {
   refreshReminders({ announce: true });
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPlannerClock(); });
-window.addEventListener("focus", refreshPlannerClock);
+window.addEventListener("focus", () => { updateNotificationPermission(); refreshPlannerClock(); });
 setInterval(refreshPlannerClock, 60000);
 
 const requestedView = location.hash.replace("#", "");
