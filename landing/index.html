@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="DuckPlan is a calm, task-first student planner that keeps deadlines and study time together." />
     <meta name="theme-color" content="#f8c943" />
-    <link rel="icon" type="image/png" href="./assets/duckplan-mascot-v8.png" />
+    <meta name="application-name" content="DuckPlan" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="DuckPlan" />
+    <link rel="manifest" href="./app.webmanifest" />
+    <link rel="apple-touch-icon" href="./assets/duckplan-app-icon-512.png" />
+    <link rel="icon" type="image/svg+xml" href="./assets/duckplan-app-icon.svg" />
     <link rel="stylesheet" href="./styles.css?v=calendar-drag-1" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
   <body class="planner-glass">
     <div class="app-shell unified-shell">
       <aside class="sidebar" id="planner-sidebar">
-        <a class="brand" href="#home" data-go="home" aria-label="DuckPlan home"><span class="brand-mark"><img src="./assets/duckplan-mascot-v8.png" alt="" /></span><span>DuckPlan</span></a>
+        <a class="brand" href="#home" data-go="home" aria-label="DuckPlan home"><span class="brand-mark"><img src="./assets/duckplan-app-icon.svg" alt="" /></span><span>DuckPlan</span></a>
         <p class="sidebar-section-label">Planner</p>
         <nav class="primary-nav" aria-label="Planner navigation">
           <button class="nav-item active" type="button" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></button>
@@ -78,13 +84,17 @@
         </section></section>
         <section class="view" id="view-classes" data-page-title="Classes" data-eyebrow="Keep every class sorted"><div class="class-grid" id="class-grid"></div></section>
         <section class="view" id="view-settings" data-page-title="Settings" data-eyebrow="Make DuckPlan yours"><section class="panel settings-panel">
+          <section class="settings-row" id="install-app-settings" aria-labelledby="install-app-heading">
+            <div><h2 id="install-app-heading">DuckPlan app</h2><p id="install-app-copy">Checking whether DuckPlan can be installed…</p></div>
+            <button type="button" class="secondary-button" id="install-app-button" hidden>Install app</button>
+          </section>
           <div id="account-settings" class="settings-group"></div>
           <div id="axis-settings" class="settings-group"></div>
           <section class="settings-row" id="deadline-reminders" aria-labelledby="reminders-heading">
             <div>
               <h2 id="reminders-heading" tabindex="-1">Deadline reminders</h2>
               <p>Set the default for tasks without a custom reminder. Deadlines without a time use 11:59 PM local time.</p>
-              <p class="notification-help">DuckPlan shows an in-app alert while you are using it. With permission, it can submit a device notification while this page remains open in the background. Closed-app, offline, and alarm delivery are not included yet.</p>
+              <p class="notification-help">DuckPlan shows an in-app alert while you are using it. With permission, the installed app can submit a device notification while DuckPlan remains open or backgrounded. Closed-app, offline, and alarm delivery are not included yet.</p>
               <p id="reminders-empty"></p>
               <ul id="reminder-list"></ul>
             </div>
@@ -139,6 +149,6 @@
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=20261106-glass-1"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=2"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app.js?v=20261106-glass-1"></script>
+    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=20261106-glass-1"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=app-1"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=motion-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app-install.js?v=app-1"></script><script src="./app.js?v=app-1"></script>
   </body>
 </html>

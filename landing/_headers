@@ -3,3 +3,9 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
+
+/service-worker.js
+  Cache-Control: no-cache
+
+/app.webmanifest
+  Cache-Control: no-cache

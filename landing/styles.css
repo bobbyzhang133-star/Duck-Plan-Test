@@ -22,6 +22,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
@@ -1140,6 +1141,20 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 .recovery-row .recovery-code code { display:inline-block; padding:8px 12px; font-size:1.05rem; letter-spacing:.06em; overflow-wrap:anywhere; user-select:all; }
 .settings-row[hidden] { display:none; }
 @media (max-width:760px) { .settings-form,.settings-actions { width:100%; justify-content:flex-start; } }
+
+/* Installed PWA: respect device safe areas and remove browser-like overscroll. */
+@media (display-mode: standalone) {
+  html { background: var(--canvas); }
+  .planner-glass {
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+  }
+  .planner-glass .unified-shell { min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
 
 /* Project-wide design rule: every enabled button gets visible hover and held
    activation feedback, including controls that intentionally skip glass. */

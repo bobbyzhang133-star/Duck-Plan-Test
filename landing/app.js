@@ -155,6 +155,7 @@ function notificationCapability() {
   return BrowserNotifications.capability(window.Notification, {
     isSecureContext: window.isSecureContext,
     constructorFailed: notificationConstructorFailed,
+    serviceWorkerAvailable: Boolean(window.DuckPlanApp?.serviceWorkerSupported),
   });
 }
 
@@ -166,7 +167,7 @@ function updateNotificationPermission() {
   notificationPermissionButton.textContent = copy.action;
   notificationPermissionButton.disabled = copy.disabled;
   notificationPermissionHelp.textContent = state === "granted"
-    ? "DuckPlan can submit alerts while this page remains open. Browser acceptance does not confirm that your device displayed one."
+    ? "DuckPlan can submit alerts through the installed app while it remains open or backgrounded. Browser acceptance does not confirm that your device displayed one."
     : state === "granted-unusable"
       ? "Permission is allowed, but this browser cannot use DuckPlan's open-page delivery method. In-app reminders still work."
     : state === "denied"
@@ -192,45 +193,54 @@ function focusReminderTask(task) {
   });
 }
 
-function displayBrowserNotification(payload, taskId = null) {
+function openNotificationTarget(taskId = null, view = "settings") {
+  window.focus();
+  if (taskId) {
+    const target = BrowserNotifications.resolveTaskTarget(tasks, taskId);
+    if (target.status === "found") {
+      selectedTaskId = target.task.id;
+      if (target.date) selectedDate = target.date;
+      setView("home");
+      renderAll({ autoScrollCalendar: true });
+      focusReminderTask(target.task);
+      return;
+    }
+    setView("settings");
+    document.querySelector("#reminders-heading").focus();
+    showToast("That reminder's task is no longer available.");
+    return;
+  }
+  setView(view);
+  if (view === "settings") document.querySelector("#reminders-heading").focus();
+}
+
+async function displayBrowserNotification(payload, taskId = null) {
   if (notificationCapability() !== "granted") return { status: "unavailable" };
-  const result = BrowserNotifications.createNotification(window.Notification, payload);
+  const registration = await window.DuckPlanApp?.ready?.catch(() => null);
+  const result = await BrowserNotifications.submitNotification(window.Notification, payload, { registration });
   if (result.status !== "submitted") {
     notificationConstructorFailed = true;
     updateNotificationPermission();
     return result;
   }
-  result.notification.onclick = () => {
-    window.focus();
-    if (taskId) {
-      const target = BrowserNotifications.resolveTaskTarget(tasks, taskId);
-      if (target.status === "found") {
-        selectedTaskId = target.task.id;
-        if (target.date) selectedDate = target.date;
-        setView("home");
-        renderAll({ autoScrollCalendar: true });
-        focusReminderTask(target.task);
-      } else {
-        setView("settings");
-        document.querySelector("#reminders-heading").focus();
-        showToast("That reminder's task is no longer available.");
-      }
-    } else {
-      setView("settings");
-      document.querySelector("#reminders-heading").focus();
-    }
+  if (result.notification) result.notification.onclick = () => {
+    openNotificationTarget(taskId, payload.options?.data?.view || "settings");
     result.notification.close();
   };
   return result;
 }
 
 function notifyForTask(task, occurrence) {
-  const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
+  const icon = new URL("./assets/duckplan-app-icon-512.png", location.href).href;
   return displayBrowserNotification(
-    BrowserNotifications.taskNotification(task, occurrence, { icon }),
+    BrowserNotifications.taskNotification({ ...task, className: classInfo(task).name }, occurrence, { icon }),
     task.id,
   );
 }
+
+window.addEventListener("duckplan:notification-open", (event) => {
+  openNotificationTarget(event.detail?.taskId || null, event.detail?.view || "home");
+});
 
 const taskReminderChoices = ["default", "off", "15", "60", "1440"];
 
@@ -282,7 +292,7 @@ async function announceReminders(dueSoon, now) {
   }
 
   await Promise.all(claimed.map(async (entry) => {
-    const result = notifyForTask(entry.task, entry.occurrence);
+    const result = await notifyForTask(entry.task, entry.occurrence);
     if (result.status === "submitted") {
       await reminderLedger.finish(entry.occurrence.occurrenceId, entry.token, "submitted", { channel: "browser" }, now);
     } else {
@@ -986,8 +996,8 @@ document.querySelector("#notification-button").addEventListener("click", () => {
 notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
-    const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
-    const result = displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
+    const icon = new URL("./assets/duckplan-app-icon-512.png", location.href).href;
+    const result = await displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
     showToast(result.status === "submitted"
       ? "Test submitted to your browser; device display is not confirmed."
       : "The browser could not submit the test. In-app reminders still work.");
