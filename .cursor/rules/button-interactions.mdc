@@ -1,5 +1,5 @@
 ---
-description: Use lightweight glass planner controls with complete hover, press, release, and focus feedback; preserve fur in labs.
+description: Use lightweight glass planner controls with OCS-inspired rounded hover, center-out press wave, and accessible focus; preserve fur in labs.
 alwaysApply: true
 ---
 
@@ -20,16 +20,19 @@ Do not add, retain, or approve a button without both effects. Apply this rule pr
   1. **Hover:** visible while a hover-capable pointer is over the control.
   2. **Press:** immediate feedback while pointer, touch, Space, or Enter is held down.
   3. **Release:** a brief, visible response after the press is released; this must be more than simply removing the pressed style.
-- Match the effect to the material. Standard controls may lift, compress, tint, or rebound; fur controls must use localized brushing/compression and visible strand recovery rather than moving the whole control.
+- Adapt the OCS Navigation Design Handbook to standard planner controls: rest at 12px corners, round in place over 200ms on hover, and show a center-out theme-ink wave over 350ms at 14% opacity with a 71% final circular clip. Keep width, height, position, label, and icon scale fixed; do not lift, sink, compress, rotate, or rebound the control.
+- DuckPlan controls are usually local actions, so their action must happen immediately while the wave continues as post-release feedback. Only real same-origin page-navigation links may wait for the animation; never delay tabs, settings, menus, dialogs, task actions, calendar actions, or in-page hash navigation.
+- Preserve product hierarchy for dense calendar content controls: they may use an immediate tint/outline instead of a backdrop-filtered wave, but they still require hover, press, and release states.
+- Fur controls must use localized brushing/compression and visible strand recovery rather than moving the whole control.
 - Only popout windows/dialogs should expand from their launcher and close back toward the saved launcher position. Keep the sidebar sliding in/out in the same layout plane: it must take space and reframe the usable main panel, without overlay, dimming, blur or making content inert. Do not scale page or calendar navigation. Preserve focus, Escape, interruption cleanup and reduced motion.
 - Popout identity must continue its launcher: inherit its tint/material and action wording. Expand a lightweight shell/title from the launcher, then reveal native fields after shell geometry settles; reverse on close. Keep material coverage continuous when fixed source/window corner shapes cross over. Hide the duplicate launcher only during active motion.
 - Prepare the existing closed form layout during idle time without opening it, painting it, changing values or moving focus. Reserve stable final bounds before showing the shell; an early uncached click uses a bounded scrollable frame and must not synchronously measure the hidden form.
 - Animate only transforms/opacity during shell movement; keep each layer's corners/shadow fixed, omit moving backdrop blur, and keep the native fields out of rendered layout until the shell settles. Reveal fields at fixed bounds; preserve immediate Escape/backdrop dismissal, interruption cleanup and deferred field focus. Do not run expensive preparation behind an active moving shell.
 - Keep the sidebar toggle on the outer edge/seam, accessible when closed and open, rather than inside a page heading.
-- All animated planner movement must use the shared damped response/timing tokens in `landing/motion-tokens.js`; settle without repeated bounce or overshoot. Preserve fast press feedback and reduced-motion bypass.
+- Layout and popup movement must use the shared damped response/timing tokens in `landing/motion-tokens.js`. Button shape and ink feedback use the handbook's 200ms hover and 350ms wave timing; preserve reduced-motion bypass.
 - Interaction effects must not shift surrounding layout or reduce label readability.
 - Keep a clear `:focus-visible` state for keyboard users; hover must never be the only interaction cue.
 - Disabled controls must show none of the three interaction effects and must look unavailable.
 - Keyboard activation must receive equivalent press and release feedback.
 - Under reduced motion, replace movement with an immediate tint, outline, brightness, or elevation change while preserving all three states.
-- Verify hover, held press, post-release, keyboard, disabled, and reduced-motion behavior whenever a button is added or visually changed.
+- Verify rest, hover, held press, completed wave, keyboard, disabled, and reduced-motion behavior whenever a button is added or visually changed. Confirm geometry remains fixed and local actions are not delayed.
