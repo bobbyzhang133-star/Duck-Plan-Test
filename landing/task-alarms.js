@@ -13,7 +13,7 @@
   }
   async function refresh() {
     records.clear(); available=false;
-    if (!window.DUCKPLAN_CLOUD?.apiUrl) { copy.textContent='Sign in on the hosted DuckPlan app to schedule device alarms.'; enable.disabled=true; return; }
+    if (!window.DUCKPLAN_CLOUD?.apiUrl) { copy.textContent='Sign in on the hosted DuckPlan app to schedule task notifications.'; enable.disabled=true; return; }
     try {
       const config=await api('GET','/push/config');
       const data=await api('GET','/alarms');
@@ -21,11 +21,11 @@
       available=true;
       const registration=await window.DuckPlanApp.ready;
       const subscription=await registration?.pushManager?.getSubscription();
-      copy.textContent=!config.available?'Device alarm delivery is awaiting server activation. You can save alarm times now.':subscription?'Alarms enabled on this device. Other devices must opt in separately.':'Enable this device to receive task alarms, including while DuckPlan is closed. On iPhone, open DuckPlan from your Home Screen first.';
+      copy.textContent=!config.available?'Notification delivery is awaiting server activation. You can save notification times now.':subscription?'Task notifications enabled on this device. Other devices must opt in separately.':'Enable this device to receive task notifications, including while DuckPlan is closed. On iPhone, open DuckPlan from your Home Screen first.';
       enable.disabled=!config.available || !registration?.pushManager || !('Notification' in window);
       enable.hidden=Boolean(subscription);
       disable.hidden=!subscription;
-    } catch { copy.textContent='Sign in to schedule alarms and enable this device.'; enable.disabled=true; disable.hidden=true; }
+    } catch { copy.textContent='Sign in to schedule task notifications and enable this device.'; enable.disabled=true; disable.hidden=true; }
   }
   enable.addEventListener('click', async()=>{
     enable.disabled=true;

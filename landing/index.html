@@ -10,15 +10,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="DuckPlan" />
     <link rel="manifest" href="./app.webmanifest" />
-    <link rel="apple-touch-icon" href="./assets/duckplan-app-icon-512.png" />
-    <link rel="icon" type="image/svg+xml" href="./assets/duckplan-app-icon.svg" />
+    <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-512.png" />
+    <link rel="icon" type="image/png" href="./assets/duckplan-sigma-icon-192.png" />
     <link rel="stylesheet" href="./styles.css?v=two-button-rules-1" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
   <body class="planner-glass">
     <div class="app-shell unified-shell">
       <aside class="sidebar" id="planner-sidebar">
-        <a class="brand" href="#home" data-go="home" aria-label="DuckPlan home"><span class="brand-mark"><img src="./assets/duckplan-app-icon.svg" alt="" /></span><span>DuckPlan</span></a>
+        <a class="brand" href="#home" data-go="home" aria-label="DuckPlan home"><span class="brand-mark"><img src="./assets/duckplan-sigma-icon-192.png" alt="" /></span><span>DuckPlan</span></a>
         <p class="sidebar-section-label">Planner</p>
         <nav class="primary-nav" aria-label="Planner navigation">
           <button class="nav-item active" type="button" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></button>
@@ -90,12 +90,12 @@
           </section>
           <div id="account-settings" class="settings-group"></div>
           <div id="axis-settings" class="settings-group"></div>
-          <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Task alarms</h2><p id="task-alarm-status" role="status">Checking device alarms…</p><p>Choose an alarm time when editing a task. Your device controls notification sound and lock-screen visibility. Delivery may be delayed by connectivity or device settings.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms">Enable on this device</button><button type="button" class="secondary-button" id="disable-task-alarms" hidden>Disable on this device</button></div></section>
+          <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Start-work notifications</h2><p id="task-alarm-status" role="status">Checking device notifications…</p><p>Choose when to receive a task notification. This uses your device’s notification sound, rather than a ringing Clock alarm. Delivery may be delayed by connectivity or device settings.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms">Enable on this device</button><button type="button" class="secondary-button" id="disable-task-alarms" hidden>Disable on this device</button></div></section>
           <section class="settings-row" id="deadline-reminders" aria-labelledby="reminders-heading">
             <div>
               <h2 id="reminders-heading" tabindex="-1">Deadline reminders</h2>
               <p>Set the default for tasks without a custom reminder. Deadlines without a time use 11:59 PM local time.</p>
-              <p class="notification-help">Deadline reminders work while DuckPlan is open. For a start-work notification while the app is closed, set a task alarm and enable this device in Task alarms above.</p>
+              <p class="notification-help">Deadline reminders work while DuckPlan is open. For a task notification while the app is closed, choose a start-work notification time and enable this device above.</p>
               <p id="reminders-empty"></p>
               <ul id="reminder-list"></ul>
             </div>
@@ -147,7 +147,7 @@
         <label>Minutes spent<input name="actualMinutes" type="number" min="0" max="10080" step="1" inputmode="numeric" /></label>
         <p id="class-time-estimate">Class average becomes available when shared Axis assignment data is connected.</p>
       </fieldset>
-      <fieldset class="form-section"><legend>Start-work alarm</legend><p id="task-alarm-help">Choose when your device should tell you to start this task. This is separate from the deadline. Clear the time to cancel the alarm.</p><label>Alarm date and time<input name="alarmAt" type="datetime-local" aria-describedby="task-alarm-help" /></label><p id="task-alarm-save-error" role="alert"></p></fieldset>
+      <fieldset class="form-section"><legend>Start-work notification</legend><p id="task-alarm-help">Choose when your device should tell you to start this task. Clear the time to cancel the notification.</p><label>Notification date and time<input name="alarmAt" type="datetime-local" aria-describedby="task-alarm-help" /></label><p id="task-alarm-save-error" role="alert"></p></fieldset>
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>

@@ -12,7 +12,7 @@ test("web app manifest defines an installable standalone DuckPlan app", () => {
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.start_url, "/#home");
   assert.equal(manifest.scope, "/");
-  assert.ok(manifest.icons.some((icon) => icon.sizes === "any" && icon.purpose.includes("maskable")));
+  assert.ok(manifest.icons.some((icon) => icon.sizes === "512x512" && icon.purpose.includes("maskable")));
   manifest.icons.forEach((icon) => assert.ok(fs.existsSync(path.join(landing, icon.src.replace(/^\//, "")))));
 });
 
@@ -28,7 +28,7 @@ test("planner markup exposes install metadata and an accessible install control"
 
 test("service worker caches the shell, leaves APIs online-only, and handles notification clicks", () => {
   const worker = fs.readFileSync(path.join(landing, "service-worker.js"), "utf8");
-  assert.match(worker, /const CACHE_VERSION = "duckplan-app-v5"/);
+  assert.match(worker, /const CACHE_VERSION = "duckplan-app-v6"/);
   assert.match(worker, /event\.request\.mode === "navigate"/);
   assert.match(worker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(worker, /notificationclick/);

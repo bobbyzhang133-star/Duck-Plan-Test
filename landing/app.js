@@ -231,7 +231,7 @@ async function displayBrowserNotification(payload, taskId = null) {
 }
 
 function notifyForTask(task, occurrence) {
-  const icon = new URL("./assets/duckplan-app-icon-512.png", location.href).href;
+  const icon = new URL("./assets/duckplan-sigma-icon-512.png", location.href).href;
   return displayBrowserNotification(
     BrowserNotifications.taskNotification({ ...task, className: classInfo(task).name }, occurrence, { icon }),
     task.id,
@@ -808,7 +808,7 @@ function openModal(prefill = {}) {
   const alarmInput=els.form.elements.alarmAt;
   alarmInput.disabled=!window.DuckTaskAlarms.canSave();
   alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
-  document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a device alarm.':'Choose when to start this task. Clear the time to cancel. Your device controls delivery and sound.';
+  document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
   document.querySelector('#task-alarm-save-error').textContent='';
   DuckPopupMotion.mark(modalAnchor,"fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
@@ -986,7 +986,7 @@ els.form.addEventListener("submit", async (event) => {
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
   const alarmAt=form.get('alarmAt');
   if(alarmAt && (!Number.isFinite(new Date(alarmAt).getTime()) || new Date(alarmAt).getTime()<Date.now()+5000)) {
-    document.querySelector('#task-alarm-save-error').textContent='Choose a future alarm time.'; return;
+    document.querySelector('#task-alarm-save-error').textContent='Choose a future notification time.'; return;
   }
   els.saveTask.disabled=true;
   try {
@@ -994,9 +994,9 @@ els.form.addEventListener("submit", async (event) => {
     editingTaskId=saved.id;
     if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt);
     closeModal();
-    showToast(alarmAt?'Task and alarm saved.':wasEditing?'Task updated.':'Task added to your plan.');
+    showToast(alarmAt?'Task and notification saved.':wasEditing?'Task updated.':'Task added to your plan.');
   } catch(error) {
-    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the alarm was not updated: ${error.message}`;
+    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the notification was not updated: ${error.message}`;
   } finally { els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
@@ -1014,7 +1014,7 @@ document.querySelector("#notification-button").addEventListener("click", () => {
 notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
-    const icon = new URL("./assets/duckplan-app-icon-512.png", location.href).href;
+    const icon = new URL("./assets/duckplan-sigma-icon-512.png", location.href).href;
     const result = await displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
     showToast(result.status === "submitted"
       ? "Test submitted to your browser; device display is not confirmed."
