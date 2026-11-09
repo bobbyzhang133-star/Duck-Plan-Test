@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-v3";
+const CACHE_VERSION = "duckplan-app-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -18,6 +18,7 @@ const APP_SHELL = [
   "./browser-notifications.js",
   "./motion-tokens.js",
   "./button-interactions.js",
+  "./page-navigation-feedback.js",
   "./popup-motion.js",
   "./app-install.js",
   "./app.js"

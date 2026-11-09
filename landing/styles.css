@@ -1237,95 +1237,68 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   }
 }
 
-/* OCS handbook-inspired button language. DuckPlan keeps local actions
-   immediate: the 350ms center-out wave is feedback, never an input delay. */
-.planner-glass .glass-button {
-  --button-rest-radius: 12px;
-  --button-hover-radius: 999px;
-  border-radius: var(--button-rest-radius);
+/* Rule 1: only links that replace the current page receive the OCS handbook
+   wave, shape return, and held pressed state before navigation. */
+.planner-glass a[data-page-navigation].glass-button {
+  --page-button-rest-radius: 12px;
+  --page-button-hover-radius: 999px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--page-button-rest-radius);
   transform: none;
-  transition-property: border-radius, filter, box-shadow, background-color, border-color, color;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(.2,0,0,1);
+  transition: border-radius 200ms cubic-bezier(.2,0,0,1), box-shadow 200ms, filter 200ms;
 }
-.planner-glass .glass-button::after {
+.planner-glass a[data-page-navigation].glass-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   z-index: 0;
   border-radius: inherit;
   background: currentColor;
   opacity: 0;
   clip-path: circle(0 at 50% 50%);
+  pointer-events: none;
 }
 @media (hover: hover) {
-  .planner-glass .glass-button:not(:disabled):not([aria-disabled="true"]):hover {
-    border-radius: var(--button-hover-radius);
+  .planner-glass a[data-page-navigation].glass-button:hover {
+    border-radius: var(--page-button-hover-radius);
     transform: none;
-    filter: brightness(1.035);
-    box-shadow: inset 0 1px 0 white, inset 0 -1px 0 rgba(142,111,41,.1), 0 7px 18px rgba(74,52,10,.14);
   }
 }
-.planner-glass .glass-button:not(:disabled):not([aria-disabled="true"]):is(:active,.interaction-pressed,.interaction-released) {
+.planner-glass a[data-page-navigation].glass-button[data-activated="true"] {
   transform: none !important;
+  animation: duckplan-page-shape 350ms cubic-bezier(.2,0,0,1) forwards;
 }
-.planner-glass .glass-button.interaction-released:not(:disabled):not([aria-disabled="true"]) {
-  animation: none;
+.planner-glass a[data-page-navigation].glass-button:active {
+  transform: none !important;
+  filter: none;
 }
-.planner-glass .glass-button.interaction-wave:not(:disabled):not([aria-disabled="true"]) {
-  animation: duckplan-button-shape 350ms cubic-bezier(.2,0,0,1) both;
-}
-.planner-glass .glass-button.interaction-wave:not(:disabled):not([aria-disabled="true"])::after {
+.planner-glass a[data-page-navigation].glass-button[data-activated="true"]::after {
   opacity: .14;
-  animation: duckplan-button-wave 350ms cubic-bezier(.3,0,.7,1) forwards;
+  animation: duckplan-page-wave 350ms cubic-bezier(.3,0,.7,1) forwards;
 }
-@keyframes duckplan-button-wave {
+@keyframes duckplan-page-wave {
   from { clip-path: circle(0 at 50% 50%); }
   to { clip-path: circle(71% at 50% 50%); }
 }
-@keyframes duckplan-button-shape {
-  0%, 50% { border-radius: var(--button-hover-radius); }
-  100% { border-radius: var(--button-rest-radius); }
+@keyframes duckplan-page-shape {
+  0%, 50% { border-radius: var(--page-button-hover-radius); }
+  100% { border-radius: var(--page-button-rest-radius); }
 }
 
-/* The collapsed navigation rail exposes only its icon tile, so put the same
-   wave on that visible tile instead of animating clipped label space. */
-@media (min-width: 651px) {
-  .planner-glass:not(.sidebar-open) .unified-shell .nav-item .nav-icon {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-  }
-  .planner-glass:not(.sidebar-open) .unified-shell .nav-item .nav-icon::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    background: currentColor;
-    opacity: 0;
-    clip-path: circle(0 at 50% 50%);
-    pointer-events: none;
-  }
-  @media (hover: hover) {
-    .planner-glass:not(.sidebar-open) .unified-shell .nav-item:not(:disabled):hover .nav-icon {
-      border-radius: 50%;
-      transform: none;
-    }
-  }
-  .planner-glass:not(.sidebar-open) .unified-shell .nav-item:not(:disabled):is(:active,.interaction-pressed) .nav-icon {
-    transform: none;
-  }
-  .planner-glass:not(.sidebar-open) .unified-shell .nav-item.interaction-wave .nav-icon::after {
-    opacity: .14;
-    animation: duckplan-button-wave 350ms cubic-bezier(.3,0,.7,1) forwards;
-  }
+/* Rule 2: native buttons and local button-like controls keep DuckPlan's old
+   immediate tint, held compression, and release response. Popup launchers may
+   expand their destination UI, but the local action itself is never delayed. */
+.planner-glass :is(button,[role="button"],a.secondary-button:not([data-page-navigation]),a.nav-open-button):not(:disabled):not([aria-disabled="true"]) {
+  --local-button-rest-radius: 12px;
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .planner-glass .glass-button.interaction-wave:not(:disabled):not([aria-disabled="true"]) {
+  .planner-glass a[data-page-navigation].glass-button[data-activated="true"] {
     animation: none;
-    border-radius: var(--button-rest-radius);
+    border-radius: var(--page-button-rest-radius);
   }
-  .planner-glass .glass-button.interaction-wave:not(:disabled):not([aria-disabled="true"])::after,
-  .planner-glass:not(.sidebar-open) .unified-shell .nav-item.interaction-wave .nav-icon::after {
+  .planner-glass a[data-page-navigation].glass-button[data-activated="true"]::after {
     animation: none;
     opacity: .14;
     clip-path: circle(71% at 50% 50%);

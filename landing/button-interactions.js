@@ -1,10 +1,8 @@
 (() => {
   "use strict";
 
-  const CONTROL_SELECTOR = "button, [role='button'], a.secondary-button, a.nav-open-button";
-  const WAVE_DURATION = 350;
+  const CONTROL_SELECTOR = "button, [role='button'], a.secondary-button:not([data-page-navigation]), a.nav-open-button";
   const releaseTimers = new WeakMap();
-  const waveTimers = new WeakMap();
   const activePointerControls = new Map();
   let activeKeyboardControl = null;
 
@@ -17,14 +15,6 @@
   function beginInteraction(control) {
     clearTimeout(releaseTimers.get(control));
     control.classList.remove("interaction-released");
-    clearTimeout(waveTimers.get(control));
-    control.classList.remove("interaction-wave");
-    void control.offsetWidth;
-    control.classList.add("interaction-wave");
-    waveTimers.set(control, setTimeout(() => {
-      control.classList.remove("interaction-wave");
-      waveTimers.delete(control);
-    }, WAVE_DURATION));
     control.classList.add("interaction-pressed");
   }
 
@@ -65,9 +55,6 @@
     if (!control) return;
     activePointerControls.delete(event.pointerId);
     control.classList.remove("interaction-pressed");
-    control.classList.remove("interaction-wave");
-    clearTimeout(waveTimers.get(control));
-    waveTimers.delete(control);
   };
 
   document.addEventListener("pointercancel", cancelPointerInteraction, true);
@@ -95,8 +82,6 @@
   document.addEventListener("click", (event) => {
     const control = interactiveControlFrom(event.target);
     if (control && !control.classList.contains("interaction-pressed") && !control.classList.contains("interaction-released")) {
-      beginInteraction(control);
-      control.classList.remove("interaction-pressed");
       releaseInteraction(control);
     }
   }, true);
@@ -105,6 +90,5 @@
     activePointerControls.clear();
     activeKeyboardControl = null;
     document.querySelectorAll(".interaction-pressed").forEach((control) => control.classList.remove("interaction-pressed"));
-    document.querySelectorAll(".interaction-wave").forEach((control) => control.classList.remove("interaction-wave"));
   });
 })();

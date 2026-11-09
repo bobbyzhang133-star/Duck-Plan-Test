@@ -12,7 +12,7 @@
     <link rel="manifest" href="./app.webmanifest" />
     <link rel="apple-touch-icon" href="./assets/duckplan-app-icon-512.png" />
     <link rel="icon" type="image/svg+xml" href="./assets/duckplan-app-icon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=ocs-buttons-1" />
+    <link rel="stylesheet" href="./styles.css?v=two-button-rules-1" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
   <body class="planner-glass">
@@ -114,7 +114,7 @@
               <small id="notification-permission-help" role="note">Your browser will ask before DuckPlan can notify you.</small>
             </div>
           </section>
-          <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" href="./fur-lab.html">Open material lab</a></div>
+          <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" data-page-navigation="button" href="./fur-lab.html">Open material lab</a></div>
           <div class="settings-row"><div><h2>Local demo data</h2><p>Reset tasks saved in this browser without affecting a signed-in account.</p></div><button type="button" class="secondary-button" id="reset-demo">Reset demo</button></div>
         </section></section>
       </main>
@@ -149,6 +149,6 @@
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=20261106-glass-1"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=app-1"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./button-interactions.js?v=ocs-buttons-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app-install.js?v=app-1"></script><script src="./app.js?v=app-1"></script>
+    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=calendar-drag-1"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=20261106-glass-1"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=app-1"></script><script src="./motion-tokens.js?v=staged-1"></script><script src="./page-navigation-feedback.js?v=two-button-rules-1"></script><script src="./button-interactions.js?v=local-buttons-1"></script><script src="./popup-motion.js?v=reverse-1"></script><script src="./app-install.js?v=app-1"></script><script src="./app.js?v=app-1"></script>
   </body>
 </html>
