@@ -6,6 +6,7 @@ Use the plans.md file as agents.md. This project is collaborative, so ALWAYS pul
  - Follow `.cursor/rules/button-interactions.mdc` for every button and button-like control across the project.
  - Follow `.cursor/rules/local-first-release.mdc` for all website work: review changes locally and obtain explicit approval before any public deployment.
 ## Ideation
+- 2026-11-09 — Simplified the app/site icon to a clean white duck head with orange bill and a dot eye, using online white-duck meme references; updated SVG and both app PNG sizes. Added account-scoped start-work alarms, per-device Web Push opt-in/disable, D1 migration 0003, a one-minute scheduler with bounded retries/receipts and expired-subscription cleanup, service-worker notification display, and task selection when notifications open the app. Completion/deletion suppress dispatch. Payload-free pushes fetch task names through the authenticated same-origin API; expired sessions show generic alerts. Delivery awaits production-owner migration, VAPID secrets and approved deployment; real-device closed-app/lock-screen delivery is not yet verified. Activation steps and limits are in cloudflare/ALARMS.md. Existing two-family button rules remain in force.
  - ~~flashcard app~~
  - [x] digital planner linked with Axis
    - mix of calendar and task list

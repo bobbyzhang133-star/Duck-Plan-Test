@@ -804,6 +804,12 @@ function openModal(prefill = {}) {
   const choice = task?.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
+  const alarm = window.DuckTaskAlarms.get(task?.id);
+  const alarmInput=els.form.elements.alarmAt;
+  alarmInput.disabled=!window.DuckTaskAlarms.canSave();
+  alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
+  document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a device alarm.':'Choose when to start this task. Clear the time to cancel. Your device controls delivery and sound.';
+  document.querySelector('#task-alarm-save-error').textContent='';
   DuckPopupMotion.mark(modalAnchor,"fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
     if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
@@ -967,7 +973,7 @@ els.modal.addEventListener("click", event => {
   if(event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom)closeModal();
 });
 els.search.addEventListener("input", () => { searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
-els.form.addEventListener("submit", (event) => {
+els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const form = new FormData(els.form); const title = form.get("title").trim(); if (!title) return;
   const wasEditing = Boolean(editingTaskId);
@@ -978,8 +984,20 @@ els.form.addEventListener("submit", (event) => {
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
-  closeModal();
-  store.upsertItem(next).then(() => showToast(wasEditing ? "Task updated." : "Task added to your plan."), reportError);
+  const alarmAt=form.get('alarmAt');
+  if(alarmAt && (!Number.isFinite(new Date(alarmAt).getTime()) || new Date(alarmAt).getTime()<Date.now()+5000)) {
+    document.querySelector('#task-alarm-save-error').textContent='Choose a future alarm time.'; return;
+  }
+  els.saveTask.disabled=true;
+  try {
+    const saved=await store.upsertItem(next);
+    editingTaskId=saved.id;
+    if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt);
+    closeModal();
+    showToast(alarmAt?'Task and alarm saved.':wasEditing?'Task updated.':'Task added to your plan.');
+  } catch(error) {
+    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the alarm was not updated: ${error.message}`;
+  } finally { els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
   if (!editingTaskId) return;
@@ -1052,7 +1070,7 @@ els.accountSettings.addEventListener("click", (event) => {
   if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
   if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
   if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
-  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await store.signOut(); showToast("Signed out. Showing local tasks."); });
+  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await window.DuckTaskAlarms.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
   if (button.id === "import-local") runAction(button, async () => { const count = await store.importLocalTasks(); showToast(`Imported ${count} task${count === 1 ? "" : "s"}.`); await refreshAccountState(); });
 });
@@ -1113,9 +1131,13 @@ document.fonts?.ready.then(() => DuckPopupMotion.schedulePrepare(els.modal));
 
 store.subscribe(({ reason }) => {
   renderAll();
+  if (reason === 'load' || reason === 'auth') window.DuckTaskAlarms.refresh();
   if (reason === "load" || reason === "auth") refreshAccountState();
 });
 store.init().then(() => {
+  window.DuckTaskAlarms.refresh();
+  const alarmTarget=new URL(location.href).searchParams.get('alarmTask');
+  if(alarmTarget) { openNotificationTarget(alarmTarget,'home'); const url=new URL(location.href); url.searchParams.delete('alarmTask'); history.replaceState(null,'',url); }
   const problem = store.takeAuthError();
   if (problem) showToast(problem);
 }, reportError);

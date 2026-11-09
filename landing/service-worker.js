@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-v4";
+const CACHE_VERSION = "duckplan-app-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -21,6 +21,7 @@ const APP_SHELL = [
   "./page-navigation-feedback.js",
   "./popup-motion.js",
   "./app-install.js",
+  "./task-alarms.js",
   "./app.js"
 ];
 
@@ -90,6 +91,33 @@ self.addEventListener("notificationclick", (event) => {
       target.postMessage(message);
       return;
     }
-    await self.clients.openWindow(new URL(`./#${message.view}`, self.registration.scope).href);
+    const url=new URL(`./#${message.view}`,self.registration.scope);
+    if(message.taskId) url.searchParams.set('alarmTask',message.taskId);
+    await self.clients.openWindow(url.href);
+  })());
+});
+
+self.addEventListener('push',event=>{
+  event.waitUntil((async()=>{
+    let displayed=false;
+    try {
+      const subscription=await self.registration.pushManager.getSubscription();
+      const endpoint=subscription?.endpoint;
+      const response=await fetch('/api/push/inbox',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint})});
+      if(!response.ok) throw new Error('Session unavailable');
+      const {alarms}=await response.json();
+      for(const alarm of alarms) {
+        await self.registration.showNotification('Time to start your task',{
+          body:alarm.title,icon:'./assets/duckplan-app-icon-192.png',tag:`duckplan-alarm-${alarm.id}`,
+          requireInteraction:true,data:{taskId:alarm.item_id,view:'home'},
+        });
+        displayed=true;
+        await fetch('/api/push/ack',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,id:alarm.id})});
+      }
+    } catch { /* Always show a visible fallback for a payload-free push. */ }
+    if(!displayed) await self.registration.showNotification('DuckPlan task alarm',{
+      body:'Open DuckPlan to check your tasks. Sign in if your session has expired.',
+      icon:'./assets/duckplan-app-icon-192.png',tag:'duckplan-alarm-check',data:{view:'home'},
+    });
   })());
 });

@@ -4,6 +4,7 @@ import { handleAuth, requireUser } from "./auth.js";
 import { handlePlanner } from "./planner.js";
 import { handleAxis, syncDueConnections } from "./axis.js";
 import { PlannerLive, liveStub } from "./live.js";
+import { handleAlarms, dispatchAlarms } from "./alarms.js";
 
 export { PlannerLive };
 
@@ -36,7 +37,7 @@ export async function handleRequest(request, env, ctx, options = {}) {
     }
 
     const user = await requireUser(request, env);
-    const response = (await handlePlanner(request, env, ctx, path, user)) || (await handleAxis(request, env, path, user, options));
+    const response = (await handleAlarms(request, env, path, user)) || (await handlePlanner(request, env, ctx, path, user)) || (await handleAxis(request, env, path, user, options));
     if (response) return response;
     throw new HttpError(404, "Not found.");
   } catch (error) {
@@ -49,6 +50,7 @@ export async function handleRequest(request, env, ctx, options = {}) {
 export default {
   fetch: (request, env, ctx) => handleRequest(request, env, ctx),
   scheduled(controller, env, ctx) {
-    ctx.waitUntil(syncDueConnections(env).then((summary) => console.log("axis cron", JSON.stringify(summary))));
+    ctx.waitUntil(dispatchAlarms(env));
+    if (controller.cron === '*/30 * * * *') ctx.waitUntil(syncDueConnections(env).then((summary) => console.log("axis cron", JSON.stringify(summary))));
   },
 };
