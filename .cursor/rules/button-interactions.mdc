@@ -1,35 +1,39 @@
 ---
-description: Use lightweight glass planner controls with complete hover, press, release, and focus feedback; preserve fur in labs.
+description: Keep two distinct button systems: OCS feedback for page-changing links and immediate DuckPlan feedback for local controls.
 alwaysApply: true
 ---
 
-# Mandatory Button Hover and Click Effects
+# Two Mandatory Button Rules
 
-Every enabled button and button-like control must always include both of these non-negotiable effects:
+Classify every enabled control before styling it. A control belongs to exactly one family: page-changing navigation or a local/in-page action. Disabled controls are the only interaction-state exception.
 
-1. **Hover effect:** a clearly visible visual change while a hover-capable pointer is over the control.
-2. **Click effect:** immediate, clearly visible feedback while pointer, touch, Space, or Enter activation is held.
+## Rule 1 — Page-changing navigation
 
-Do not add, retain, or approve a button without both effects. Apply this rule project-wide to native buttons, role-based buttons, and links styled as buttons. Disabled controls are the only interaction-state exception.
+Use this rule only for a real anchor whose normal action replaces the current document with another same-origin pathname. Mark it with `data-page-navigation="button"` and retain its meaningful `href`.
 
-- Glass is the current planner button material, with native crisp text and icons. Use the shared `.glass-button` styling and delegated interaction feedback. Do not mount WebGL fur or fur sheet transitions in the planner.
-- Preserve the archived fur renderer, tuning and labs for future research; checkpoint `073ef53` precedes the glass switch. Fur is opt-in within dedicated labs only.
-- Preserve native semantic labels and accessible names. Icon-only controls need explicit `aria-label` text.
-- Repeated calendar cells, time slots, task rows and event blocks stay lightweight, without individual backdrop filters. Keep their existing hover, press and release feedback.
-- In addition to the two mandatory effects above, every enabled button and button-like control must provide a visible post-release response, regardless of its material or visual style:
-  1. **Hover:** visible while a hover-capable pointer is over the control.
-  2. **Press:** immediate feedback while pointer, touch, Space, or Enter is held down.
-  3. **Release:** a brief, visible response after the press is released; this must be more than simply removing the pressed style.
-- Match the effect to the material. Standard controls may lift, compress, tint, or rebound; fur controls must use localized brushing/compression and visible strand recovery rather than moving the whole control.
-- Only popout windows/dialogs should expand from their launcher and close back toward the saved launcher position. Keep the sidebar sliding in/out in the same layout plane: it must take space and reframe the usable main panel, without overlay, dimming, blur or making content inert. Do not scale page or calendar navigation. Preserve focus, Escape, interruption cleanup and reduced motion.
-- Popout identity must continue its launcher: inherit its tint/material and action wording. Expand a lightweight shell/title from the launcher, then reveal native fields after shell geometry settles; reverse on close. Keep material coverage continuous when fixed source/window corner shapes cross over. Hide the duplicate launcher only during active motion.
-- Prepare the existing closed form layout during idle time without opening it, painting it, changing values or moving focus. Reserve stable final bounds before showing the shell; an early uncached click uses a bounded scrollable frame and must not synchronously measure the hidden form.
-- Animate only transforms/opacity during shell movement; keep each layer's corners/shadow fixed, omit moving backdrop blur, and keep the native fields out of rendered layout until the shell settles. Reveal fields at fixed bounds; preserve immediate Escape/backdrop dismissal, interruption cleanup and deferred field focus. Do not run expensive preparation behind an active moving shell.
-- Keep the sidebar toggle on the outer edge/seam, accessible when closed and open, rather than inside a page heading.
-- All animated planner movement must use the shared damped response/timing tokens in `landing/motion-tokens.js`; settle without repeated bounce or overshoot. Preserve fast press feedback and reduced-motion bypass.
-- Interaction effects must not shift surrounding layout or reduce label readability.
-- Keep a clear `:focus-visible` state for keyboard users; hover must never be the only interaction cue.
-- Disabled controls must show none of the three interaction effects and must look unavailable.
-- Keyboard activation must receive equivalent press and release feedback.
-- Under reduced motion, replace movement with an immediate tint, outline, brightness, or elevation change while preserving all three states.
-- Verify hover, held press, post-release, keyboard, disabled, and reduced-motion behavior whenever a button is added or visually changed.
+- Rest at 12px corners. On hover, round in place over 200ms without changing position, width, height, label, or icon scale.
+- On activation, run the OCS center-out theme-ink wave for 350ms at 14% opacity with a 71% final circular clip.
+- Keep the rounded silhouette through the first half, return toward 12px corners during the second half, then hold the filled squarer state until navigation replaces the document.
+- Wait for the actual wave animation to finish before replaying the original link once. Use a finite 350ms fallback only when animation completion is unavailable.
+- Never delay external links, downloads, modified/new-tab clicks, or in-page hash navigation. Preserve Back/page-restoration cleanup and reduced-motion immediate navigation.
+- Use a real anchor, visible keyboard focus, and the original navigation semantics. Without JavaScript, the link must still work.
+
+## Rule 2 — Local and in-page controls
+
+Use this rule for every native button, role-based button, tab, disclosure, task/calendar action, settings action, menu, in-page route, hash link, and dialog or panel launcher.
+
+- The action is immediate. Never wait for the page-navigation wave or add an artificial navigation delay.
+- Hover gives the existing DuckPlan tint/elevation change. Press gives immediate held compression/brightness feedback. Release gives the existing brief expansion/settle response.
+- If the control opens a dialog, sheet, drawer, menu, or panel, expand that UI immediately from the launcher using the established popup/layout motion. Simple toggles and commands keep the tint/press/release response without inventing a popup.
+- Repeated calendar cells, time slots, task rows, and event blocks stay lightweight without individual backdrop filters; use their existing tint/outline press states.
+- The sidebar continues to reshape the workspace in the same layout plane. It must not use a page-navigation delay or wave.
+- Popup identity continues its launcher tint/material and action wording. Preserve focus, Escape/backdrop dismissal, interruption cleanup, stable bounds, and reduced-motion behavior.
+
+## Shared requirements
+
+- Every enabled control in either family must have visible hover, activation, keyboard-focus, and reduced-motion feedback. Disabled controls show none of the interaction effects and look unavailable.
+- Glass remains the planner material with crisp native labels and icons. Fur remains opt-in inside its dedicated labs; do not mount WebGL fur in the planner.
+- Preserve semantic labels and accessible names. Icon-only controls require explicit `aria-label` text.
+- Interaction effects must not shift surrounding layout or reduce readability.
+- Layout and popup motion use the shared tokens in `landing/motion-tokens.js`; page-navigation shape and wave feedback use the handbook's 200ms and 350ms timings.
+- Verify both families whenever buttons change: page-link hover, wave, held shape, single navigation, modified clicks, Back and reduced motion; local hover, held press, release/settle, immediate action, popup expansion where applicable, keyboard, disabled and reduced motion.

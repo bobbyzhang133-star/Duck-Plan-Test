@@ -155,6 +155,7 @@ function notificationCapability() {
   return BrowserNotifications.capability(window.Notification, {
     isSecureContext: window.isSecureContext,
     constructorFailed: notificationConstructorFailed,
+    serviceWorkerAvailable: Boolean(window.DuckPlanApp?.serviceWorkerSupported),
   });
 }
 
@@ -166,7 +167,7 @@ function updateNotificationPermission() {
   notificationPermissionButton.textContent = copy.action;
   notificationPermissionButton.disabled = copy.disabled;
   notificationPermissionHelp.textContent = state === "granted"
-    ? "DuckPlan can submit alerts while this page remains open. Browser acceptance does not confirm that your device displayed one."
+    ? "DuckPlan can submit alerts through the installed app while it remains open or backgrounded. Browser acceptance does not confirm that your device displayed one."
     : state === "granted-unusable"
       ? "Permission is allowed, but this browser cannot use DuckPlan's open-page delivery method. In-app reminders still work."
     : state === "denied"
@@ -192,45 +193,54 @@ function focusReminderTask(task) {
   });
 }
 
-function displayBrowserNotification(payload, taskId = null) {
+function openNotificationTarget(taskId = null, view = "settings") {
+  window.focus();
+  if (taskId) {
+    const target = BrowserNotifications.resolveTaskTarget(tasks, taskId);
+    if (target.status === "found") {
+      selectedTaskId = target.task.id;
+      if (target.date) selectedDate = target.date;
+      setView("home");
+      renderAll({ autoScrollCalendar: true });
+      focusReminderTask(target.task);
+      return;
+    }
+    setView("settings");
+    document.querySelector("#reminders-heading").focus();
+    showToast("That reminder's task is no longer available.");
+    return;
+  }
+  setView(view);
+  if (view === "settings") document.querySelector("#reminders-heading").focus();
+}
+
+async function displayBrowserNotification(payload, taskId = null) {
   if (notificationCapability() !== "granted") return { status: "unavailable" };
-  const result = BrowserNotifications.createNotification(window.Notification, payload);
+  const registration = await window.DuckPlanApp?.ready?.catch(() => null);
+  const result = await BrowserNotifications.submitNotification(window.Notification, payload, { registration });
   if (result.status !== "submitted") {
     notificationConstructorFailed = true;
     updateNotificationPermission();
     return result;
   }
-  result.notification.onclick = () => {
-    window.focus();
-    if (taskId) {
-      const target = BrowserNotifications.resolveTaskTarget(tasks, taskId);
-      if (target.status === "found") {
-        selectedTaskId = target.task.id;
-        if (target.date) selectedDate = target.date;
-        setView("home");
-        renderAll({ autoScrollCalendar: true });
-        focusReminderTask(target.task);
-      } else {
-        setView("settings");
-        document.querySelector("#reminders-heading").focus();
-        showToast("That reminder's task is no longer available.");
-      }
-    } else {
-      setView("settings");
-      document.querySelector("#reminders-heading").focus();
-    }
+  if (result.notification) result.notification.onclick = () => {
+    openNotificationTarget(taskId, payload.options?.data?.view || "settings");
     result.notification.close();
   };
   return result;
 }
 
 function notifyForTask(task, occurrence) {
-  const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
+  const icon = new URL("./assets/duckplan-sigma-icon-v3-512.png", location.href).href;
   return displayBrowserNotification(
-    BrowserNotifications.taskNotification(task, occurrence, { icon }),
+    BrowserNotifications.taskNotification({ ...task, className: classInfo(task).name }, occurrence, { icon }),
     task.id,
   );
 }
+
+window.addEventListener("duckplan:notification-open", (event) => {
+  openNotificationTarget(event.detail?.taskId || null, event.detail?.view || "home");
+});
 
 const taskReminderChoices = ["default", "off", "15", "60", "1440"];
 
@@ -282,7 +292,7 @@ async function announceReminders(dueSoon, now) {
   }
 
   await Promise.all(claimed.map(async (entry) => {
-    const result = notifyForTask(entry.task, entry.occurrence);
+    const result = await notifyForTask(entry.task, entry.occurrence);
     if (result.status === "submitted") {
       await reminderLedger.finish(entry.occurrence.occurrenceId, entry.token, "submitted", { channel: "browser" }, now);
     } else {
@@ -438,7 +448,7 @@ function signedInAccount(user) {
 function renderAccount() {
   const user = store.user;
   const body = !store.configured
-    ? `<div><h2>Account</h2><p>Cloud sync is unavailable on this copy, so tasks stay in this browser.</p></div>`
+    ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
     : user ? signedInAccount(user) : signedOutAccount();
   const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
   const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} local task${localImportCount === 1 ? "" : "s"}. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
@@ -794,6 +804,17 @@ function openModal(prefill = {}) {
   const choice = task?.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
+  const alarm = window.DuckTaskAlarms.get(task?.id);
+  const alarmInput=els.form.elements.alarmAt;
+  alarmInput.disabled=!window.DuckTaskAlarms.canSave();
+  alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
+  document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
+  if (window.DuckTaskAlarms.native) {
+    document.querySelector('#task-alarm-help').textContent='Rings on this iPhone even while DuckPlan is closed. Clear the time to cancel. Changing scheduled work time does not move this alarm automatically.';
+    els.form.elements.alarmSound.value=alarm?.sound || 'system';
+    els.form.elements.alarmSnooze.value=String(alarm?.snoozeMinutes ?? 5);
+  }
+  document.querySelector('#task-alarm-save-error').textContent='';
   DuckPopupMotion.mark(modalAnchor,"fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
     if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
@@ -957,7 +978,7 @@ els.modal.addEventListener("click", event => {
   if(event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom)closeModal();
 });
 els.search.addEventListener("input", () => { searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
-els.form.addEventListener("submit", (event) => {
+els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const form = new FormData(els.form); const title = form.get("title").trim(); if (!title) return;
   const wasEditing = Boolean(editingTaskId);
@@ -968,8 +989,22 @@ els.form.addEventListener("submit", (event) => {
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
-  closeModal();
-  store.upsertItem(next).then(() => showToast(wasEditing ? "Task updated." : "Task added to your plan."), reportError);
+  const alarmAt=form.get('alarmAt');
+  if(alarmAt && (!Number.isFinite(new Date(alarmAt).getTime()) || new Date(alarmAt).getTime()<Date.now()+5000)) {
+    document.querySelector('#task-alarm-save-error').textContent=window.DuckTaskAlarms.native?'Choose a future alarm time.':'Choose a future notification time.'; return;
+  }
+  els.saveTask.disabled=true;
+  try {
+    const saved=await store.upsertItem(next);
+    editingTaskId=saved.id;
+    if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt,{
+      title:saved.title, sound:form.get('alarmSound') || 'system', snoozeMinutes:Number(form.get('alarmSnooze') ?? 5),
+    });
+    closeModal();
+    showToast(alarmAt?(window.DuckTaskAlarms.native?'Task and iPhone alarm saved.':'Task and notification saved.'):wasEditing?'Task updated.':'Task added to your plan.');
+  } catch(error) {
+    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+  } finally { els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
   if (!editingTaskId) return;
@@ -986,8 +1021,8 @@ document.querySelector("#notification-button").addEventListener("click", () => {
 notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
-    const icon = new URL("./assets/duckplan-mascot-v8.png", location.href).href;
-    const result = displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
+    const icon = new URL("./assets/duckplan-sigma-icon-v3-512.png", location.href).href;
+    const result = await displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
     showToast(result.status === "submitted"
       ? "Test submitted to your browser; device display is not confirmed."
       : "The browser could not submit the test. In-app reminders still work.");
@@ -1042,7 +1077,7 @@ els.accountSettings.addEventListener("click", (event) => {
   if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
   if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
   if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
-  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await store.signOut(); showToast("Signed out. Showing local tasks."); });
+  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await window.DuckTaskAlarms.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
   if (button.id === "import-local") runAction(button, async () => { const count = await store.importLocalTasks(); showToast(`Imported ${count} task${count === 1 ? "" : "s"}.`); await refreshAccountState(); });
 });
@@ -1103,9 +1138,16 @@ document.fonts?.ready.then(() => DuckPopupMotion.schedulePrepare(els.modal));
 
 store.subscribe(({ reason }) => {
   renderAll();
+  if (window.DuckTaskAlarms.native && ['load','auth','remote','persisted'].includes(reason)) {
+    window.DuckTaskAlarms.setContext(store.user?.id || 'local', store.listItems()).catch(reportError);
+  } else if (reason === 'load' || reason === 'auth') window.DuckTaskAlarms.refresh();
   if (reason === "load" || reason === "auth") refreshAccountState();
 });
 store.init().then(() => {
+  if (window.DuckTaskAlarms.native) window.DuckTaskAlarms.setContext(store.user?.id || 'local',store.listItems()).catch(reportError);
+  else window.DuckTaskAlarms.refresh();
+  const alarmTarget=new URL(location.href).searchParams.get('alarmTask');
+  if(alarmTarget) { openNotificationTarget(alarmTarget,'home'); const url=new URL(location.href); url.searchParams.delete('alarmTask'); history.replaceState(null,'',url); }
   const problem = store.takeAuthError();
   if (problem) showToast(problem);
 }, reportError);

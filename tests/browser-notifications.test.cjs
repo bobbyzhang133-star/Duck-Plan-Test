@@ -16,6 +16,7 @@ test("notification capability distinguishes permission, context, and constructor
   assert.equal(Notifications.capability(notificationApi("denied")), "denied");
   assert.equal(Notifications.capability(notificationApi("granted"), { isSecureContext: false }), "unsupported");
   assert.equal(Notifications.capability({ permission: "granted", requestPermission() {} }), "granted-unusable");
+  assert.equal(Notifications.capability({ permission: "granted", requestPermission() {} }, { serviceWorkerAvailable: true }), "granted");
   assert.equal(Notifications.capability(notificationApi("granted"), { constructorFailed: true }), "granted-unusable");
 });
 
@@ -44,7 +45,7 @@ test("task notifications separate occurrence identity from display tag", () => {
   assert.equal(payload.options.tag, occurrence.displayTag);
   assert.equal(payload.options.icon, "duck.png");
   assert.deepEqual(payload.options.data, {
-    taskId: "essay", occurrenceId: occurrence.occurrenceId, dueDate: "2026-11-06",
+    taskId: "essay", occurrenceId: occurrence.occurrenceId, dueDate: "2026-11-06", view: "home",
   });
 });
 
@@ -63,6 +64,22 @@ test("notification construction reports submission rather than delivery", () => 
   assert.match(failed.reason, /mobile unsupported/);
 });
 
+test("installed app notifications prefer the service worker and fall back to the window", async () => {
+  let workerPayload;
+  const workerResult = await Notifications.submitNotification(notificationApi("granted"), { title: "App", options: { tag: "one" } }, {
+    registration: { async showNotification(title, options) { workerPayload = { title, options }; } },
+  });
+  assert.equal(workerResult.status, "submitted");
+  assert.equal(workerResult.channel, "service-worker");
+  assert.deepEqual(workerPayload, { title: "App", options: { tag: "one" } });
+
+  const fallback = await Notifications.submitNotification(notificationApi("granted", () => ({ close() {} })), { title: "Window", options: {} }, {
+    registration: { async showNotification() { throw new Error("worker unavailable"); } },
+  });
+  assert.equal(fallback.status, "submitted");
+  assert.equal(fallback.channel, "window");
+});
+
 test("notification click targets resolve current tasks and handle stale ids", () => {
   const task = { id: "essay", title: "Submit essay", dueDate: "2026-11-06" };
   assert.deepEqual(Notifications.resolveTaskTarget([task], "essay"), { status: "found", task, date: "2026-11-06" });
@@ -74,4 +91,5 @@ test("test notification states the open-page and unconfirmed-display limitation"
   assert.match(payload.options.body, /planner is open/);
   assert.match(payload.options.body, /device decide/);
   assert.equal(payload.options.tag, "duckplan-notification-test");
+  assert.deepEqual(payload.options.data, { view: "settings" });
 });

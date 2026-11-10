@@ -22,6 +22,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
@@ -632,6 +633,7 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
     box-shadow: inset 0 1px 0 white, inset 0 -1px 0 rgba(142,111,41,.1), 0 7px 18px rgba(74,52,10,.14);
   }
 }
+
 .planner-glass .glass-button:not(:disabled):not([aria-disabled="true"]):is(:active,.interaction-pressed) {
   transform: scale(.975);
   filter: brightness(.96);
@@ -1141,6 +1143,20 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
 .settings-row[hidden] { display:none; }
 @media (max-width:760px) { .settings-form,.settings-actions { width:100%; justify-content:flex-start; } }
 
+/* Installed PWA: respect device safe areas and remove browser-like overscroll. */
+@media (display-mode: standalone) {
+  html { background: var(--canvas); }
+  .planner-glass {
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+  }
+  .planner-glass .unified-shell { min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
+
 /* Project-wide design rule: every enabled button gets visible hover and held
    activation feedback, including controls that intentionally skip glass. */
 :is(button,[role="button"],a.secondary-button,a.nav-open-button) {
@@ -1218,5 +1234,73 @@ body[data-view="home"] .planner-calendar { min-height: 0; flex: 1; }
   }
   .planner-glass:not(.sidebar-open) .unified-shell .nav-item .nav-icon {
     transform: none !important;
+  }
+}
+
+/* Rule 1: only links that replace the current page receive the OCS handbook
+   wave, shape return, and held pressed state before navigation. */
+.planner-glass a[data-page-navigation].glass-button {
+  --page-button-rest-radius: 12px;
+  --page-button-hover-radius: 999px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--page-button-rest-radius);
+  transform: none;
+  transition: border-radius 200ms cubic-bezier(.2,0,0,1), box-shadow 200ms, filter 200ms;
+}
+.planner-glass a[data-page-navigation].glass-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  clip-path: circle(0 at 50% 50%);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .planner-glass a[data-page-navigation].glass-button:hover {
+    border-radius: var(--page-button-hover-radius);
+    transform: none;
+  }
+}
+.planner-glass a[data-page-navigation].glass-button[data-activated="true"] {
+  transform: none !important;
+  animation: duckplan-page-shape 350ms cubic-bezier(.2,0,0,1) forwards;
+}
+.planner-glass a[data-page-navigation].glass-button:active {
+  transform: none !important;
+  filter: none;
+}
+.planner-glass a[data-page-navigation].glass-button[data-activated="true"]::after {
+  opacity: .14;
+  animation: duckplan-page-wave 350ms cubic-bezier(.3,0,.7,1) forwards;
+}
+@keyframes duckplan-page-wave {
+  from { clip-path: circle(0 at 50% 50%); }
+  to { clip-path: circle(71% at 50% 50%); }
+}
+@keyframes duckplan-page-shape {
+  0%, 50% { border-radius: var(--page-button-hover-radius); }
+  100% { border-radius: var(--page-button-rest-radius); }
+}
+
+/* Rule 2: native buttons and local button-like controls keep DuckPlan's old
+   immediate tint, held compression, and release response. Popup launchers may
+   expand their destination UI, but the local action itself is never delayed. */
+.planner-glass :is(button,[role="button"],a.secondary-button:not([data-page-navigation]),a.nav-open-button):not(:disabled):not([aria-disabled="true"]) {
+  --local-button-rest-radius: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .planner-glass a[data-page-navigation].glass-button[data-activated="true"] {
+    animation: none;
+    border-radius: var(--page-button-rest-radius);
+  }
+  .planner-glass a[data-page-navigation].glass-button[data-activated="true"]::after {
+    animation: none;
+    opacity: .14;
+    clip-path: circle(71% at 50% 50%);
   }
 }

@@ -21,7 +21,7 @@
   ],
   "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["PlannerLive"] }],
-  "triggers": { "crons": ["*/30 * * * *"] },
+  "triggers": { "crons": ["* * * * *", "*/30 * * * *"] },
   "vars": {
     "AXIS_SYNC_INTERVAL_HOURS": "4",
     "AXIS_SYNC_PER_RUN": "4"
@@ -35,7 +35,7 @@
         { "binding": "DB", "database_name": "duckplan-prod", "database_id": "c9841e56-286e-4cb4-b42e-8e0939ae2884", "migrations_dir": "migrations" }
       ],
       "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
-          "triggers": { "crons": ["*/30 * * * *"] },
+          "triggers": { "crons": ["* * * * *", "*/30 * * * *"] },
       "vars": {
         "AXIS_SYNC_INTERVAL_HOURS": "4",
         "AXIS_SYNC_PER_RUN": "4"

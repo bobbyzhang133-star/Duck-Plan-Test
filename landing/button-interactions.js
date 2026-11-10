@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const CONTROL_SELECTOR = "button, [role='button'], a.secondary-button, a.nav-open-button";
+  const CONTROL_SELECTOR = "button, [role='button'], a.secondary-button:not([data-page-navigation]), a.nav-open-button";
   const releaseTimers = new WeakMap();
   const activePointerControls = new Map();
   let activeKeyboardControl = null;
