@@ -28,7 +28,7 @@ test("planner markup exposes install metadata and an accessible install control"
 
 test("service worker caches the shell, leaves APIs online-only, and handles notification clicks", () => {
   const worker = fs.readFileSync(path.join(landing, "service-worker.js"), "utf8");
-  assert.match(worker, /const CACHE_VERSION = "duckplan-app-v8"/);
+  assert.match(worker, /const CACHE_VERSION = "duckplan-app-v9"/);
   assert.match(worker, /event\.request\.mode === "navigate"/);
   assert.match(worker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(worker, /notificationclick/);

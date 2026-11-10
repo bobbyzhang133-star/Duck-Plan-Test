@@ -4,7 +4,7 @@
   const installCopy = document.querySelector("#install-app-copy");
   const standaloneQuery = window.matchMedia("(display-mode: standalone)");
   const isStandalone = () => standaloneQuery.matches || window.navigator.standalone === true;
-  const serviceWorkerSupported = "serviceWorker" in navigator;
+  const serviceWorkerSupported = !window.DuckNativeAlarms && "serviceWorker" in navigator;
   let installPrompt = null;
 
   const ready = serviceWorkerSupported
@@ -17,6 +17,11 @@
 
   function renderInstallState() {
     if (!installRow) return;
+    if (window.DuckNativeAlarms) {
+      installCopy.textContent = 'DuckPlan iPhone app. Tasks and ringing alarms are saved on this device.';
+      installButton.hidden = true;
+      return;
+    }
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
     if (isStandalone()) {
       installCopy.textContent = "DuckPlan is installed. It opens in its own app window and keeps the planner shell available offline.";

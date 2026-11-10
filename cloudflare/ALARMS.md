@@ -9,17 +9,17 @@ the current push implementation as that native alarm feature.
 
 Apple's AlarmKit (iOS/iPadOS 26+) is the native implementation path. It supports
 user-authorized alarms that break through Silent mode and Focus, alarm titles,
-stop/snooze, and custom bundled sounds. A future native DuckPlan client should
-schedule/cancel alarms locally with AlarmManager, use stable task-to-alarm IDs,
-reconcile task edits/completion/deletion, expose permission status honestly, and
-provide a sound picker backed by bundled sound files. Snooze/countdown requires
-an ActivityKit Live Activity extension. The web planner may continue using push
-notifications as a separate delivery option.
+stop/snooze, and custom bundled sounds. The native implementation is now in `ios/`:
+AlarmManager scheduling, task-based IDs, completion/deletion cancellation,
+permission feedback, sound selection and an ActivityKit snooze widget extension.
+See `ios/README.md` for build steps, scope and the physical-device test checklist.
+The web planner continues using push notifications as a separate delivery option.
 
 Reference: https://developer.apple.com/documentation/AlarmKit/scheduling-an-alarm-with-alarmkit
-and https://developer.apple.com/videos/play/wwdc2025/230/ . This checkout contains
-no native iOS project, and the current machine has Command Line Tools only (no
-iPhone SDK). Native build, signing and physical-device alarm testing remain pending.
+and https://developer.apple.com/videos/play/wwdc2025/230/ . The current machine
+still has Command Line Tools only (no iPhone SDK). Native compilation, signing,
+installation and physical-device alarm testing remain pending; generated project
+and JavaScript tests do not establish that iPhone ringing works.
 
 The task editor saves an absolute alarm instant plus its IANA time zone. Editing
 an alarm replaces its delivery receipts. Completion and deletion suppress dispatch.

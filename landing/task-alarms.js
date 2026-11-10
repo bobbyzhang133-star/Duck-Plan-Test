@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  if (window.DuckNativeAlarms) return;
   const records = new Map();
   const copy = document.querySelector('#task-alarm-status');
   const enable = document.querySelector('#enable-task-alarms');

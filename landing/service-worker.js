@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-v8";
+const CACHE_VERSION = "duckplan-app-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -21,6 +21,7 @@ const APP_SHELL = [
   "./popup-motion.js",
   "./app-install.js",
   "./task-alarms.js",
+  "./native-task-alarms.js",
   "./app.js"
 ];
 

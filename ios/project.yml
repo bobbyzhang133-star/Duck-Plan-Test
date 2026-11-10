@@ -1,0 +1,64 @@
+name: DuckPlan
+options:
+  bundleIdPrefix: com.duckplan
+  deploymentTarget:
+    iOS: '26.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    TARGETED_DEVICE_FAMILY: '1,2'
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ''
+targets:
+  DuckPlan:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Shared
+      - path: ../landing
+        type: folder
+        buildPhase: resources
+      - path: Resources/Assets.xcassets
+      - path: Resources/Sounds/gentle.wav
+        buildPhase: resources
+      - path: Resources/Sounds/bright.wav
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.duckplan.app
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: DuckPlan
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        NSAlarmKitUsageDescription: DuckPlan rings at the task times you choose, with Stop and Snooze controls.
+        NSSupportsLiveActivities: true
+    dependencies:
+      - target: DuckPlanAlarmWidget
+  DuckPlanAlarmWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Widgets
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.duckplan.app.alarms
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: DuckPlan Alarms
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        NSSupportsLiveActivities: true
+schemes:
+  DuckPlan:
+    build:
+      targets:
+        DuckPlan: all

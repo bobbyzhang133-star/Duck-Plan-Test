@@ -448,7 +448,7 @@ function signedInAccount(user) {
 function renderAccount() {
   const user = store.user;
   const body = !store.configured
-    ? `<div><h2>Account</h2><p>Cloud sync is unavailable on this copy, so tasks stay in this browser.</p></div>`
+    ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
     : user ? signedInAccount(user) : signedOutAccount();
   const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
   const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} local task${localImportCount === 1 ? "" : "s"}. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
@@ -809,6 +809,11 @@ function openModal(prefill = {}) {
   alarmInput.disabled=!window.DuckTaskAlarms.canSave();
   alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
   document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
+  if (window.DuckTaskAlarms.native) {
+    document.querySelector('#task-alarm-help').textContent='Rings on this iPhone even while DuckPlan is closed. Clear the time to cancel. Changing scheduled work time does not move this alarm automatically.';
+    els.form.elements.alarmSound.value=alarm?.sound || 'system';
+    els.form.elements.alarmSnooze.value=String(alarm?.snoozeMinutes ?? 5);
+  }
   document.querySelector('#task-alarm-save-error').textContent='';
   DuckPopupMotion.mark(modalAnchor,"fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
@@ -986,17 +991,19 @@ els.form.addEventListener("submit", async (event) => {
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
   const alarmAt=form.get('alarmAt');
   if(alarmAt && (!Number.isFinite(new Date(alarmAt).getTime()) || new Date(alarmAt).getTime()<Date.now()+5000)) {
-    document.querySelector('#task-alarm-save-error').textContent='Choose a future notification time.'; return;
+    document.querySelector('#task-alarm-save-error').textContent=window.DuckTaskAlarms.native?'Choose a future alarm time.':'Choose a future notification time.'; return;
   }
   els.saveTask.disabled=true;
   try {
     const saved=await store.upsertItem(next);
     editingTaskId=saved.id;
-    if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt);
+    if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt,{
+      title:saved.title, sound:form.get('alarmSound') || 'system', snoozeMinutes:Number(form.get('alarmSnooze') ?? 5),
+    });
     closeModal();
-    showToast(alarmAt?'Task and notification saved.':wasEditing?'Task updated.':'Task added to your plan.');
+    showToast(alarmAt?(window.DuckTaskAlarms.native?'Task and iPhone alarm saved.':'Task and notification saved.'):wasEditing?'Task updated.':'Task added to your plan.');
   } catch(error) {
-    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the notification was not updated: ${error.message}`;
+    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
   } finally { els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
@@ -1131,11 +1138,14 @@ document.fonts?.ready.then(() => DuckPopupMotion.schedulePrepare(els.modal));
 
 store.subscribe(({ reason }) => {
   renderAll();
-  if (reason === 'load' || reason === 'auth') window.DuckTaskAlarms.refresh();
+  if (window.DuckTaskAlarms.native && ['load','auth','remote','persisted'].includes(reason)) {
+    window.DuckTaskAlarms.setContext(store.user?.id || 'local', store.listItems()).catch(reportError);
+  } else if (reason === 'load' || reason === 'auth') window.DuckTaskAlarms.refresh();
   if (reason === "load" || reason === "auth") refreshAccountState();
 });
 store.init().then(() => {
-  window.DuckTaskAlarms.refresh();
+  if (window.DuckTaskAlarms.native) window.DuckTaskAlarms.setContext(store.user?.id || 'local',store.listItems()).catch(reportError);
+  else window.DuckTaskAlarms.refresh();
   const alarmTarget=new URL(location.href).searchParams.get('alarmTask');
   if(alarmTarget) { openNotificationTarget(alarmTarget,'home'); const url=new URL(location.href); url.searchParams.delete('alarmTask'); history.replaceState(null,'',url); }
   const problem = store.takeAuthError();
