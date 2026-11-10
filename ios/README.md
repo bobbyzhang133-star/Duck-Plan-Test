@@ -61,7 +61,10 @@ feature. No production cloud migration or VAPID key is required for local AlarmK
 
 Current verification: JavaScript adapter/state tests and generated project/plist
 validation pass. Native compilation, signing, installation, ringing and lock-screen
-behavior remain unverified on this machine until a compatible macOS/Xcode is installed.
+behavior remain unverified. As of November 10, 2026, this Mac runs macOS 27.2.1 and
+Xcode 27.2 is installed, with its signature and Gatekeeper assessment passing.
+First-launch setup is waiting for the owner to review and accept the Xcode and
+Apple SDKs agreement, then install the required iOS components before building.
 
 ## Apple references
 
