@@ -59,12 +59,16 @@ feature. No production cloud migration or VAPID key is required for local AlarmK
    the alarm was scheduled. Relaunch/reboot and verify saved system alarms persist.
 6. Check replacement failures, multiple alarms and task titles on the lock screen.
 
-Current verification: JavaScript adapter/state tests and generated project/plist
-validation pass. Native compilation, signing, installation, ringing and lock-screen
-behavior remain unverified. As of November 10, 2026, this Mac runs macOS 27.2.1 and
-Xcode 27.2 is installed, with its signature and Gatekeeper assessment passing.
-First-launch setup is waiting for the owner to review and accept the Xcode and
-Apple SDKs agreement, then install the required iOS components before building.
+Current verification (November 10, 2026): Xcode 27.2 on macOS 27.2.1 successfully
+compiled the app and alarm widget for both iOS Simulator and physical iPhone
+using the iOS 27.2 SDK, with `CODE_SIGNING_ALLOWED=NO`. Corrected the iPad
+orientation declaration found by the device build; the rebuilt device target has
+no warnings or errors. All eight focused native-alarm adapter and PWA tests pass,
+as do project/plist and diff checks. The owner accepted the Xcode agreement and
+first-launch onboarding is complete. Simulator runtime components are downloading;
+the Xcode account sign-in prompt is open and no physical device was connected at
+the last check. Signed installation, native runtime behavior, audible ringing and
+lock-screen/Stop/Snooze behavior still require testing and are not claimed verified.
 
 ## Apple references
 
