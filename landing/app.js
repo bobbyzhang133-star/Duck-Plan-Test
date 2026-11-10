@@ -65,8 +65,9 @@ const workspace = document.querySelector(".workspace");
 function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
   document.body.classList.toggle("sidebar-open", open);
-  sidebar.inert = !open;
-  sidebar.setAttribute("aria-hidden", String(!open));
+  const desktopNavigation = window.matchMedia("(min-width: 1001px)").matches;
+  sidebar.inert = !open && !desktopNavigation;
+  sidebar.setAttribute("aria-hidden", String(!open && !desktopNavigation));
   workspace.inert = open;
   sidebarScrim.hidden = !open;
   sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
@@ -108,6 +109,11 @@ function taskScheduleText(task) {
   return parts ? `${formatTime(parts.time)}–${formatTime(Model.scheduledEnd(task))}` : "Not scheduled";
 }
 
+function priorityBadge(task) {
+  const priority = ["High", "Medium", "Low"].includes(task.priority) ? task.priority : "Medium";
+  return `<span class="priority-tag priority-${priority.toLowerCase()}">${priority}</span>`;
+}
+
 function taskCardMarkup(task, mode = "daily") {
   const info = CLASS_INFO[task.className] || CLASS_INFO.Personal;
   const scheduled = Model.scheduledParts(task);
@@ -115,7 +121,7 @@ function taskCardMarkup(task, mode = "daily") {
   const leading = mode === "scheduled" ? `<span class="task-time">${formatTime(scheduled.time)}</span>` : "";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
     ${leading}<input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)} · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${task.priority === "High" ? '<span class="priority-tag">High</span>' : ""}</span></button>
+    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(task.className)}</span> · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${priorityBadge(task)}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
 }
@@ -143,6 +149,7 @@ function renderDailyPlan() {
     button.setAttribute("aria-expanded", String(!collapsed[button.dataset.collapse]));
     button.closest(".task-section").classList.toggle("collapsed", collapsed[button.dataset.collapse]);
   });
+  document.dispatchEvent(new Event("planner:render"));
 }
 
 function allTaskMarkup(task) {
@@ -150,7 +157,7 @@ function allTaskMarkup(task) {
   const scheduled = Model.scheduledParts(task);
   return `<article class="all-task-row ${task.completed ? "completed" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="course-dot"></span>${safeText(task.className)}${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}</span></button>
+    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(task.className)}</span>${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}${priorityBadge(task)}</span></button>
     <span class="task-due"><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${formatTime(task.dueTime)}</small></span>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
@@ -212,7 +219,7 @@ function renderTimeline(dates) {
   const startHour = 7;
   const endHour = 22;
   const hourHeight = 62;
-  const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
+  const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
   const deadlineRows = dates.map((date) => `<div class="deadline-cell">${deadlineChips(date)}</div>`).join("");
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span>${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span>`).join("");
   const columns = dates.map((date) => {
@@ -224,7 +231,7 @@ function renderTimeline(dates) {
       return `<button type="button" class="calendar-event-block ${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * 100}% + 3px);width:calc(${100 / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small></button>`;
     }).join("");
     const slots = Array.from({ length: endHour - startHour }, (_, index) => `<button type="button" class="calendar-slot" data-slot-date="${date}" data-slot-time="${String(startHour + index).padStart(2, "0")}:00" aria-label="Plan work on ${formatLongDate(date)} at ${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}"></button>`).join("");
-    return `<div class="timeline-column ${date === selectedDate ? "selected-day" : ""}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${events}</div>`;
+    return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${events}</div>`;
   }).join("");
   return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-height:${hourHeight}px"><div class="timeline-corner">Due</div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Deadlines</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
 }
@@ -233,8 +240,8 @@ function renderMonth(dates) {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => `<span>${day}</span>`).join("");
   const cells = dates.map((date) => {
     const dayTasks = tasks.filter((task) => task.dueDate === date || Model.scheduledParts(task)?.date === date);
-    const dots = dayTasks.slice(0, 4).map((task) => `<i style="--course-color:${(CLASS_INFO[task.className] || CLASS_INFO.Personal).color}"></i>`).join("");
-    return `<button type="button" class="month-day ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""} ${dateObject(date).getMonth() !== currentMonth ? "outside" : ""}" data-date="${date}"><strong>${dateObject(date).getDate()}</strong><span class="month-dots">${dots}</span><small>${dayTasks.length ? `${dayTasks.length} item${dayTasks.length === 1 ? "" : "s"}` : ""}</small></button>`;
+    const dots = dayTasks.slice(0, 2).map((task) => `<span class="month-task-label ${task.completed ? "is-complete" : ""}" style="--course-color:${(CLASS_INFO[task.className] || CLASS_INFO.Personal).color}"><i></i>${safeText(task.title)}</span>`).join("");
+    return `<button type="button" class="month-day ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""} ${dateObject(date).getMonth() !== currentMonth ? "outside" : ""}" data-date="${date}"><strong>${dateObject(date).getDate()}</strong><span class="month-dots">${dots}</span><small>${dayTasks.length ? `${dayTasks.length} item${dayTasks.length === 1 ? "" : "s"}` : ""}</small></button>`;
   }).join("");
   return `<div class="month-calendar"><div class="month-weekdays">${weekdays}</div><div class="month-grid">${cells}</div></div>`;
 }
@@ -272,7 +279,7 @@ function setupFurMaterial(root = document) {
 function renderAll() { renderDailyPlan(); renderAllTasks(); renderClasses(); renderCalendar(); requestAnimationFrame(() => setupFurMaterial()); }
 
 function setView(name) {
-  const normalized = ["today", "calendar"].includes(name) ? "home" : name;
+  const normalized = name === "today" ? "home" : name;
   const next = document.querySelector(`#view-${normalized}`) || document.querySelector("#view-home");
   document.body.dataset.view = normalized;
   els.views.forEach((view) => view.classList.toggle("active", view === next));
@@ -300,18 +307,19 @@ function openModal(prefill = {}) {
   els.form.elements.title.value = task?.title || "";
   els.form.elements.className.value = task?.className || "Calculus";
   els.form.elements.priority.value = task?.priority || "Medium";
-  els.form.elements.dueDate.value = task?.dueDate || prefill.dueDate || selectedDate;
+  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate || selectedDate;
   els.form.elements.dueTime.value = task?.dueTime || prefill.dueTime || "";
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
   els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
+  document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   els.modal.showModal(); setupFurMaterial(); els.form.elements.title.focus();
 }
 function closeModal() { els.modal.close(); editingTaskId = null; setupFurMaterial(); }
 
 document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest("[data-view]"); if (viewButton) setView(viewButton.dataset.view);
+  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton) setView(viewButton.dataset.view);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); setView(goButton.dataset.go); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) openModal({ scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate });
@@ -337,7 +345,7 @@ document.querySelector("#calendar-previous").addEventListener("click", () => sel
 document.querySelector("#calendar-next").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, 1)));
 document.querySelector("#calendar-today").addEventListener("click", () => selectDate(nowKey()));
 document.querySelector("#plan-selected-date").addEventListener("click", () => openModal({ dueDate: selectedDate }));
-document.querySelector("#open-task-modal").addEventListener("click", () => openModal({ dueDate: selectedDate }));
+document.querySelector("#open-task-modal").addEventListener("click", () => openModal({ dueDate: document.body.dataset.view === "calendar" ? selectedDate : nowKey() }));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);
 els.modal.addEventListener("click", (event) => { if (event.target === els.modal) closeModal(); });

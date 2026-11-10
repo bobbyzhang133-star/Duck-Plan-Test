@@ -1,0 +1,147 @@
+/* Final UI scale and hierarchy. Shared tokens apply across every planner page. */
+:root {
+  --font-body: 16px;
+  --font-secondary: 14px;
+  --font-caption: 13px;
+  --font-section: 21px;
+  --font-page: 30px;
+  --radius-card: 16px;
+  --space-page: 28px;
+  --ink: #45443d;
+  --muted: #68675e;
+  --shadow: none;
+}
+:root[data-theme="dark"] { --ink: #dedbcf; --muted: #bdb8a8; }
+[hidden] { display: none !important; }
+html { font-size: 16px; }
+body { font-size: var(--font-body); line-height: 1.55; background: var(--canvas); }
+button,input,select,textarea { font: inherit; }
+button,a { touch-action: manipulation; }
+.unified-shell { grid-template-columns: 232px minmax(0,1fr); }
+.unified-shell .sidebar { width: 232px; padding: 24px 16px 20px; background: var(--card); box-shadow: none; }
+.unified-shell .brand { margin: 0 8px 28px; font-size: 23px; }
+.unified-shell .nav-item { min-height: 48px; grid-template-columns: 22px minmax(0,1fr) auto; gap: 9px; padding: 10px 12px; font-size: 15px; font-weight: 550; border-radius: 9px; line-height: 1.45; }
+.unified-shell .nav-item:hover { transform: none; }
+.unified-shell .nav-item.active { box-shadow: none; }
+.nav-label,.nav-group-label { font-size: 13px; font-weight: 600; text-transform: none; letter-spacing: 0; margin: 0 12px 10px; }
+.nav-group-label { margin-top: 25px; }
+.preview-nav-tag { padding: 2px 5px; font-size: 11px; }
+.nav-count,.nav-item.active .nav-count { font-size: 12px; min-width: 24px; }
+.profile-card { grid-template-columns: 34px minmax(0,1fr) 14px; min-height: 64px; }
+.profile-card strong { font-size: 15px; }.profile-card small { font-size: 13px; }.profile-card .avatar { font-size: 12px; }
+.unified-workspace,body[data-view="home"] .unified-workspace { padding: 0 var(--space-page) 40px; max-width: 1600px; }
+.compact-topbar,body[data-view="home"] .compact-topbar { min-height: 96px; padding: 22px 0; margin: 0 0 26px; gap: 24px; background: transparent; box-shadow: none; }
+.topbar h1,.compact-topbar h1 { font-size: var(--font-page); font-weight: 700; letter-spacing: -.035em; line-height: 1.2; }
+#page-eyebrow { display: none; }
+.topbar-actions { gap: 16px; }
+.search-box { width: 240px; min-height: 44px; padding: 9px 12px; border-radius: 9px; }
+.search-box input { font-size: 15px; }
+.primary-button,.secondary-button,.danger-button { min-height: 44px; padding: 0 16px; border-radius: 9px; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.primary-button { box-shadow: 0 2px 0 #c69d1e; }.primary-button:hover { box-shadow: 0 3px 0 #c69d1e; }
+.text-link { min-height: 40px; font-size: 14px; gap: 8px; }
+.icon-button,.close-button,.nav-open-button { width: 44px; height: 44px; min-height: 44px; }
+.panel,.class-card { border-radius: var(--radius-card); box-shadow: none; }
+.panel { padding: 24px; }
+.panel-heading { gap: 16px; margin-bottom: 16px; align-items: center; }
+.panel-heading h2,.dashboard-layout .panel-heading h2,.calendar-toolbar h2 { font-size: var(--font-section); font-weight: 650; letter-spacing: -.025em; line-height: 1.3; }
+.section-kicker,.eyebrow { font-size: 14px; font-weight: 550; text-transform: none; letter-spacing: 0; line-height: 1.5; }
+.section-helper,.welcome-copy,.home-subtitle,.panel-date,.panel-progress { color: var(--muted); font-size: var(--font-secondary); line-height: 1.6; }
+.quiet-badge { font-size: 13px; padding: 4px 8px; line-height: 1.5; }
+.dashboard-welcome { min-height: 100px; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 0; margin-bottom: 26px; border: 0; border-radius: 0; background: none; overflow: visible; }
+.welcome-content { max-width: none; flex: 1; }
+.dashboard-welcome h2 { max-width: none; font-size: 26px; font-weight: 650; line-height: 1.3; }
+.dashboard-welcome .section-kicker { margin-bottom: 4px; font-size: 14px; color: var(--muted); }
+.dashboard-welcome .welcome-copy { max-width: none; font-size: 16px; margin-top: 7px; line-height: 1.55; color: var(--muted); }
+.welcome-companion { width: 86px; align-self: center; }.welcome-duck { width: 80px; height: 80px; margin: 0; }
+.mascot-halo,#duck-companion-caption { display: none; }
+.dashboard-layout { display: grid; grid-template-columns: minmax(0,1.7fr) minmax(300px,1fr); align-items: start; gap: 24px; }
+.dashboard-today { grid-column: 1; grid-row: 1; padding: 24px; }
+.dashboard-side { display: contents; }
+.dashboard-upcoming { grid-column: 2; grid-row: 1; padding: 24px; }
+.dashboard-schedule { grid-column: 1; grid-row: 2; }
+.dashboard-progress { grid-column: 2; grid-row: 2; padding: 24px; }
+.dashboard-week { grid-column: 1 / -1; grid-row: 3; padding: 24px; }
+.dashboard-today .panel-heading .section-kicker { display: none; }
+#dashboard-priority-copy { margin: 0 0 18px; font-size: 14px; }
+.dashboard-task-list,.daily-task-list { gap: 10px; }
+.daily-task-card,.dashboard-today .daily-task-card,.daily-task-card:not(:has(.task-time)) { min-height: 94px; padding: 12px 8px; grid-template-columns: 36px minmax(0,1fr) 40px; gap: 6px; border-radius: 10px; background: var(--card); box-shadow: none; }
+.daily-task-card:has(.task-time) { padding-top: 32px; grid-template-columns: 36px minmax(0,1fr) 40px; }
+.task-time { top: 9px; left: 51px; font-size: 13px; font-weight: 500; }
+.task-title,.dashboard-today .task-title,#view-tasks .task-title { font-size: 16px; font-weight: 600; line-height: 1.5; }
+.task-meta,.dashboard-today .task-meta,#view-tasks .task-meta { font-size: 14px; gap: 5px; margin-top: 7px; line-height: 1.6; }
+.category-tag { font-size: 13px; padding: 0 5px; background: var(--surface); border-color: transparent; }
+.priority-tag { font-size: 13px; padding: 0 6px; border-radius: 4px; line-height: 1.7; }
+.task-check { width: 24px; height: 24px; margin: 4px; border-radius: 6px; }
+.task-check:checked::after { left: 5px; top: 1px; font-size: 15px; }
+.task-select { padding: 4px 3px; min-width: 0; }
+.task-edit { width: 40px; height: 42px; min-height: 42px; font-size: 14px; }
+.is-today-focus,.dashboard-today .is-today-focus,.daily-task-card.is-today-focus:not(:has(.task-time)) { grid-template-columns: 36px minmax(0,1fr) 98px; min-height: 125px; background: var(--canvas); border: 1px solid #d9bb5a; }
+.focus-label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.focus-open { display: inline-flex; justify-content: center; align-items: center; gap: 4px; width: 98px; padding: 0 7px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink-deep); font-size: 13px; font-weight: 550; }
+.dashboard-completed { margin-top: 18px; padding-top: 14px; }
+.dashboard-completed summary { font-size: 14px; min-height: 36px; }
+.dashboard-panel-footer { margin-top: 14px; padding-top: 10px; }
+.dashboard-panel-footer .text-link { font-size: 14px; }
+.upcoming-item { gap: 12px; min-height: 88px; padding: 13px 0; }
+.upcoming-date { width: 46px; height: 54px; border-radius: 8px; }.upcoming-date strong { font-size: 20px; }.upcoming-date small { font-size: 12px; }
+.upcoming-copy strong { font-size: 15px; line-height: 1.5; }.upcoming-copy small { font-size: 13px; line-height: 1.5; margin-top: 4px; }
+.overdue-notice { min-height: 44px; margin: 12px 0 4px; padding: 10px; font-size: 14px; gap: 7px; }.overdue-notice > span:last-child { font-size: 13px; }
+.schedule-item { display: grid; grid-template-columns: 100px minmax(0,1fr) 22px; align-items: center; gap: 16px; width: 100%; padding: 16px 0; border: 0; border-top: 1px solid var(--line); color: var(--ink-deep); background: none; text-align: left; cursor: pointer; }
+.schedule-time { display: grid; gap: 3px; border-left: 3px solid #88a7ba; padding-left: 10px; }.schedule-time strong { font-size: 15px; font-weight: 600; }.schedule-time small { font-size: 13px; color: var(--muted); }
+.schedule-title { min-width: 0; }.schedule-title strong { display: block; font-size: 16px; font-weight: 550; overflow-wrap: anywhere; }.schedule-title small { display: block; color: var(--muted); font-size: 14px; margin-top: 4px; }.schedule-open { color: var(--muted); }.schedule-item:hover .schedule-title strong { color: var(--accent); }
+.schedule-empty p { margin: 15px 0 4px; font-size: 15px; color: var(--muted); }
+.plain-disclosure { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.plain-disclosure > summary { min-height: 34px; font-size: 14px; font-weight: 550; color: var(--ink); cursor: pointer; }
+.plain-disclosure > form,.check-in-content { display: grid; gap: 12px; padding-top: 14px; }
+.plain-disclosure label,.check-in-content label { font-size: 14px; font-weight: 550; }
+.plain-disclosure input,.plain-disclosure select,.check-in-content select { min-width: 0; max-width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink-deep); background: var(--card); font-size: 16px; }
+.check-in-content p { margin: 0; font-size: 15px; line-height: 1.6; }.check-in-content .section-helper { font-size: 13px; }.check-in-content .secondary-button { justify-self: start; font-size: 14px; }
+.inline-form { display: flex; gap: 8px; flex-wrap: wrap; }.inline-form input { width: 82px; }.inline-form .secondary-button { font-size: 14px; }
+.field-feedback { color: var(--green); margin: 0; font-size: 14px; }
+.dashboard-progress .panel-heading { margin-bottom: 14px; }.pond-progress-ring { width: 48px; height: 48px; }.pond-progress-ring .progress-number { font-size: 15px; }
+.progress-pond { height: 82px; border-radius: 10px; }.pond-cloud,.pond-reeds,.pond-marker { display: none; }.pond-duck-track { left: 10px; right: 64px; top: -1px; height: 63px; }.pond-duck,.pond-duck .duck-character { width: 64px; height: 63px; }.pond-ripple { top: 10px; }
+.dashboard-progress .daily-progress-track { margin-top: 12px; height: 6px; }.dashboard-progress .section-helper { margin-top: 10px; font-size: 15px; color: var(--ink); }
+.daily-target-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 14px; }.target-reached { color: var(--green); background: var(--green-soft); }
+#daily-target-options .section-helper { color: var(--muted); font-size: 13px; margin: 0; }
+.dashboard-week .panel-heading { margin-bottom: 16px; }.dashboard-week .text-link { max-width: none; font-size: 14px; }.dashboard-week-strip { gap: 10px; }.week-preview-day { min-height: 114px; padding: 12px 5px; gap: 6px; }.week-preview-day > span:first-child { font-size: 14px; }.week-preview-day > strong { font-size: 19px; width: 32px; height: 32px; }.week-preview-day > small { font-size: 13px; }.week-preview-day:hover { transform: none; }
+.dashboard-week .section-helper { font-size: 13px; }#weekly-completion-copy { display: none; }
+.weekly-recap { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; padding-top: 14px; border-top: 1px solid var(--line); }.weekly-recap p { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; }.weekly-recap strong { font-size: 23px; font-weight: 650; color: var(--ink-deep); }.recap-context { color: var(--muted); font-size: 13px; }
+#view-calendar .home-heading h2 { font-size: 25px; }#view-calendar .home-subtitle { font-size: 15px; }.completion-ring { width: 70px; height: 70px; }.completion-ring strong { font-size: 17px; }.completion-ring span { font-size: 11px; }
+#view-calendar .planner-workspace { display: grid; grid-template-columns: minmax(0,1fr); gap: 24px; }#view-calendar .unified-calendar-panel { grid-row: 1; padding: 24px; }#view-calendar .daily-panel { grid-row: 2; padding: 24px; }
+#view-calendar .planner-workspace:has(.day-view) { grid-template-columns: minmax(320px,.85fr) minmax(0,1.5fr); }#view-calendar .planner-workspace:has(.day-view) .daily-panel { grid-column: 1; grid-row: 1; }#view-calendar .planner-workspace:has(.day-view) .unified-calendar-panel { grid-column: 2; grid-row: 1; }
+.calendar-toolbar-actions { gap: 8px; }.calendar-range { font-size: 15px; }.calendar-legend { font-size: 13px; margin-top: 18px; gap: 20px; }.calendar-toolbar-actions .compact-button,.calendar-stepper button,.view-switcher button { min-height: 40px; font-size: 14px; }.calendar-stepper button { width: 40px; }.view-switcher button { padding: 0 12px; }
+#view-calendar .planner-calendar { max-height: 640px; }.timeline-calendar { min-width: 830px; grid-template-columns: 70px minmax(0,1fr); grid-template-rows: 72px auto auto; }.day-view .timeline-calendar { min-width: 0; }.calendar-date-button { min-height: 72px; }.calendar-date-button span { font-size: 13px; }.calendar-date-button strong { width: 30px; height: 30px; font-size: 16px; }.time-axis span { font-size: 12px; }.timeline-corner,.timeline-deadline-label { font-size: 11px; }.deadline-chip { font-size: 12px; min-height: 28px; }.calendar-event-block strong { font-size: 13px; }.calendar-event-block small { font-size: 12px; }.calendar-event-block { padding: 5px 7px; }
+.month-calendar { min-width: 750px; }.month-weekdays span { font-size: 13px; padding: 14px 0; }.month-day { min-height: 130px; padding: 10px; }.month-day strong { font-size: 16px; }.month-task-label { font-size: 13px; }.month-day > small { font-size: 12px; }
+.task-section-heading { font-size: 15px; min-height: 50px; }.task-section-heading strong { width: 25px; height: 25px; font-size: 13px; }.panel-date { font-size: 14px; }.compact-button { font-size: 14px; min-height: 42px; }
+#view-tasks .all-task-row,.all-task-row { min-height: 98px; grid-template-columns: 40px minmax(0,1fr) 100px 40px; gap: 10px; padding: 12px 4px; }.task-due { min-width: 0; }.task-due strong { font-size: 14px; }.task-due small { font-size: 13px; }.filter-chip { min-height: 42px; font-size: 14px; padding: 7px 14px; }.task-heading { align-items: center; }
+.class-grid { gap: 24px; }.class-card { padding: 24px; }.class-card h2 { font-size: 21px; }.class-card p { font-size: 15px; line-height: 1.6; }.class-card-icon { font-size: 16px; }.class-stats strong { font-size: 22px; }.class-stats span { font-size: 14px; }.class-menu { width: 44px; height: 44px; }
+.page-intro h2 { font-size: 27px; }.page-intro > p:last-child { font-size: 16px; }.prototype-banner { font-size: 14px; padding: 16px 18px; }.personal-grid .panel-heading h2,.notes-layout .panel-heading h2 { font-size: 21px; }.goal-preview h3 { font-size: 21px; }.category-badge { font-size: 13px; }.goal-preview-total span { font-size: 15px; }.preview-range-label { font-size: 14px; }.habit-grid-header { font-size: 13px; }.habit-grid-row > span { font-size: 15px; }.habit-grid-header,.habit-grid-row { grid-template-columns: minmax(140px,1fr) repeat(7,minmax(28px,38px)); gap: 5px; }.habit-grid-row label { min-height: 36px; }.habit-grid-row label > span { width: 28px; height: 28px; }.habit-preview-summary { font-size: 15px; }.note-editor label { font-size: 15px; }.note-editor input,.note-editor select,.note-editor textarea { font-size: 16px; }.note-preview-content { font-size: 16px; }.note-preview-footer { font-size: 13px; }
+.settings-panel { padding: 0 24px; }.settings-row { min-height: 124px; gap: 24px; }.settings-row h2 { font-size: 18px; }.settings-row p { font-size: 15px; line-height: 1.6; }.theme-field select { font-size: 16px; min-height: 44px; }.settings-panel .icon-button { display: grid; }.settings-panel .sync-card { min-height: 110px; margin: 0; padding: 20px 0; border: 0; border-radius: 0; background: none; grid-template-columns: 36px minmax(0,1fr) 44px; }.settings-panel .sync-title { font-size: 18px; }.settings-panel .sync-copy { font-size: 15px; }.settings-panel .sync-card button { width: 44px; height: 44px; font-size: 16px; }.settings-panel .sync-icon { width: 32px; height: 32px; }
+.task-modal { width: min(580px,calc(100% - 28px)); }.task-modal form { padding: 28px; max-height: calc(100dvh - 32px); overflow-y: auto; }.modal-heading { margin-bottom: 24px; }.modal-heading h2 { font-size: 27px; }#modal-kicker { display: none; }.modal-duck { display: none; }.task-modal label { font-size: 15px; font-weight: 550; gap: 8px; }.required-label { color: var(--muted); font-size: 13px; font-weight: 400; }.task-modal input,.task-modal select { font-size: 16px; min-height: 46px; padding: 9px 12px; }.quick-due-date { margin-top: 20px; }.field-help { font-size: 13px; line-height: 1.6; color: var(--muted); font-weight: 400; }.task-extra-options { margin-top: 22px; }.task-extra-options > summary { font-size: 15px; }.task-extra-options .form-grid { margin-top: 14px; }.schedule-disclosure > summary { font-size: 15px; min-height: 48px; }.schedule-disclosure > summary > span { font-size: 13px; }.form-section legend { font-size: 15px; }.form-section > p { font-size: 14px; }.schedule-grid { grid-template-columns: 1fr 1fr; }.modal-actions { margin-top: 26px; gap: 12px; }.modal-actions .primary-button { font-size: 15px; }.form-error { margin: 0 0 20px; padding: 12px 14px; border: 1px solid #be6551; border-radius: 8px; color: #853c2c; background: #fff2ed; font-size: 15px; line-height: 1.5; }:root[data-theme="dark"] .form-error { color: #f6c7b9; background: #4b3029; }.task-modal [aria-invalid="true"] { border-color: #be6551; }
+.toast { font-size: 15px; line-height: 1.5; padding: 13px 16px; }.completion-note strong { font-size: 15px; }.completion-note p { font-size: 14px; }.completion-note-duck { width: 54px; height: 60px; }.completion-note > button { width: 36px; height: 36px; }.completion-note { width: min(440px,calc(100% - 32px)); }.compact-empty h3,.daily-empty h3,.empty-state h3 { font-size: 19px; }.compact-empty p,.daily-empty p,.empty-state p { font-size: 15px; line-height: 1.6; }.empty-duck,.compact-empty > .empty-duck { width: 80px; height: 76px; }
+@media (max-width:1200px) {
+  :root { --space-page: 22px; }.unified-shell { grid-template-columns: 220px minmax(0,1fr); }.unified-shell .sidebar { width: 220px; }.dashboard-layout { grid-template-columns: minmax(0,1.5fr) minmax(280px,1fr); gap: 20px; }.dashboard-layout > .panel,.dashboard-side > .panel { padding: 20px; }.topbar-actions { gap: 12px; }.search-box { width: 190px; }.dashboard-welcome h2 { font-size: 26px; }.welcome-content { max-width: none; }.welcome-companion { width: 86px; }.welcome-duck { width: 80px; height: 80px; }.is-today-focus,.dashboard-today .is-today-focus,.daily-task-card.is-today-focus:not(:has(.task-time)) { grid-template-columns: 34px minmax(0,1fr) 40px; }.focus-open { width: 40px; padding: 0; font-size: 0; }.focus-open > span { font-size: 18px; }.personal-grid { grid-template-columns: 1fr; }
+}
+@media (max-width:1000px) {
+  .unified-shell { display: block; }.unified-shell .sidebar { width: 272px; padding-top: 24px; }.unified-shell .nav-item { font-size: 16px; }.topbar-nav-open-button { display: grid; }.topbar-title { gap: 14px; }.compact-topbar { flex-direction: row; align-items: center; }.dashboard-welcome { min-height: 100px; }#view-calendar .planner-workspace:has(.day-view) { grid-template-columns: minmax(0,1fr); }#view-calendar .planner-workspace:has(.day-view) .daily-panel { grid-column: 1; grid-row: 2; }#view-calendar .planner-workspace:has(.day-view) .unified-calendar-panel { grid-column: 1; grid-row: 1; }
+}
+@media (max-width:740px) {
+  :root { --space-page: 16px; --font-page: 26px; --font-section: 20px; }.unified-workspace,body[data-view="home"] .unified-workspace { padding: 0 16px 32px; }.compact-topbar,body[data-view="home"] .compact-topbar { display: grid; grid-template-columns: minmax(0,1fr); gap: 14px; padding: 18px 0; margin-bottom: 22px; }.compact-topbar .topbar-title > div,.topbar-title > div { display: block; }.topbar-actions { width: 100%; gap: 12px; }.search-box { flex: 1; width: auto; min-width: 0; min-height: 44px; padding: 9px 10px; }.search-box input { font-size: 16px; }.primary-button { min-height: 44px; font-size: 15px; padding: 0 14px; }.topbar-title { gap: 12px; }.topbar-nav-open-button { width: 40px; height: 40px; min-height: 40px; }.dashboard-welcome { display: flex; min-height: 92px; padding: 0; gap: 10px; margin-bottom: 22px; }.dashboard-welcome h2 { font-size: 24px; }.dashboard-welcome .section-kicker { font-size: 14px; }.dashboard-welcome .welcome-copy { font-size: 15px; }.welcome-companion { width: 58px; }.welcome-duck { width: 58px; height: 62px; }.dashboard-layout { grid-template-columns: minmax(0,1fr); gap: 20px; }.dashboard-today { grid-column: 1; grid-row: 1; }.dashboard-schedule { grid-column: 1; grid-row: 2; }.dashboard-upcoming { grid-column: 1; grid-row: 3; }.dashboard-progress { grid-column: 1; grid-row: 4; }.dashboard-week { grid-column: 1; grid-row: 5; }.dashboard-layout > .panel,.dashboard-side > .panel { padding: 20px 16px; }.dashboard-week .panel-heading { align-items: start; flex-wrap: wrap; }.dashboard-week .text-link { max-width: none; font-size: 14px; }.is-today-focus,.dashboard-today .is-today-focus,.daily-task-card.is-today-focus:not(:has(.task-time)) { grid-template-columns: 32px minmax(0,1fr) 36px; }.focus-open { width: 36px; }.daily-task-card,.dashboard-today .daily-task-card,.daily-task-card:not(:has(.task-time)) { grid-template-columns: 32px minmax(0,1fr) 36px; padding: 12px 5px; gap: 4px; }.task-title,.dashboard-today .task-title { font-size: 16px; }.task-meta,.dashboard-today .task-meta { font-size: 14px; }.task-check { width: 24px; height: 24px; margin: 3px; }.category-tag,.priority-tag { font-size: 13px; }.task-edit { width: 36px; }.quiet-badge { white-space: normal; font-size: 13px; }.schedule-item { grid-template-columns: 84px minmax(0,1fr) 18px; gap: 10px; }.schedule-time strong { font-size: 14px; }.schedule-time small { font-size: 12px; }.schedule-title strong { font-size: 15px; }.schedule-title small { font-size: 13px; }.progress-pond { height: 82px; }.dashboard-week-strip { gap: 5px; grid-template-columns: repeat(7,minmax(0,1fr)); }.week-preview-day { min-height: 106px; padding: 10px 0; gap: 6px; border-radius: 7px; }.week-preview-day > span:first-child { font-size: 12px; }.week-preview-day > strong { font-size: 17px; width: 28px; height: 28px; }.week-preview-day > small { font-size: 11px; line-height: 1.4; }.dashboard-week .section-helper { font-size: 13px; }.weekly-recap { gap: 12px; }.weekly-recap p { font-size: 14px; }.recap-context { font-size: 13px; }
+  #view-calendar .home-heading h2 { font-size: 23px; }#view-calendar .home-heading { align-items: center; }#view-calendar .unified-calendar-panel,#view-calendar .daily-panel { padding: 20px 16px; border-radius: 16px; }#view-calendar .calendar-toolbar { display: flex; flex-direction: column; gap: 16px; align-items: start; }#view-calendar .calendar-toolbar-actions { gap: 8px; width: 100%; flex-wrap: wrap; }#view-calendar .view-switcher { margin-left: 0; }.calendar-toolbar-actions .compact-button,.calendar-stepper button,.view-switcher button { font-size: 14px; min-height: 40px; }.view-switcher button { padding: 0 9px; }.calendar-legend { flex-wrap: wrap; gap: 7px 14px; font-size: 13px; }.calendar-range { font-size: 15px; }.completion-ring { width: 62px; height: 62px; }.completion-ring span { font-size: 10px; }
+  .task-heading { align-items: start; gap: 16px; }.filter-row { gap: 7px; }.filter-chip { font-size: 14px; padding: 7px 12px; }#view-tasks .all-task-row,.all-task-row { grid-template-columns: 32px minmax(0,1fr) 36px; gap: 5px; padding: 14px 0; }#view-tasks .task-title { font-size: 16px; }#view-tasks .task-meta { font-size: 14px; }.all-task-row .task-due { display: block; grid-column: 2; grid-row: 2; text-align: left; padding-left: 3px; }.all-task-row .task-due strong,.all-task-row .task-due small { display: inline; margin-right: 8px; font-size: 13px; }.all-task-row > .task-edit { grid-column: 3; grid-row: 1; }.all-task-row > .task-check { grid-row: 1; }
+  .class-grid { grid-template-columns: 1fr; }.class-card { padding: 22px; }.page-intro h2 { font-size: 25px; }.prototype-banner { padding: 14px; font-size: 14px; }.personal-grid,.notes-layout { grid-template-columns: minmax(0,1fr); }.goal-preview,.note-editor,.note-card { padding: 20px; }.habit-preview { padding: 18px 12px; overflow-x: auto; }#habit-preview-grid { min-width: 350px; }.habit-grid-header,.habit-grid-row { grid-template-columns: minmax(120px,1fr) repeat(7,28px); gap: 4px; }.habit-grid-header { font-size: 12px; }.habit-grid-row > span { font-size: 14px; }.habit-grid-row label > span { width: 26px; height: 28px; }.settings-panel { padding: 0 18px; }.settings-row { flex-direction: column; align-items: start; justify-content: center; gap: 18px; padding: 24px 0; }.settings-row h2 { font-size: 18px; }.settings-row p { font-size: 15px; }.settings-row .secondary-button { font-size: 15px; }
+  .task-modal form { padding: 22px 18px; }.task-modal label { font-size: 15px; }.modal-heading h2 { font-size: 25px; }.modal-actions { gap: 8px; flex-wrap: wrap; }.modal-actions button { min-height: 44px; padding: 0 12px; font-size: 15px; }.modal-spacer { min-width: 0; }.schedule-grid,.form-grid { grid-template-columns: 1fr; }.schedule-disclosure > summary { font-size: 15px; }.schedule-disclosure > summary > span { font-size: 12px; }.completion-note strong { font-size: 15px; }.completion-note p { font-size: 14px; }.completion-note-duck { width: 50px; }.toast { font-size: 15px; }
+}
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+.dashboard-welcome { flex-direction: row; }
+@media (max-width:1200px) {
+  .is-today-focus .task-select { grid-column: 2 / -1; }
+  .focus-open { grid-column: 2 / -1; grid-row: 2; justify-self: start; width: auto; min-height: 40px; padding: 0 10px; font-size: 14px; }
+  .focus-open > span { font-size: 15px; }
+}
+@media (max-width:740px) {
+  .dashboard-welcome { flex-direction: row; }
+  .week-preview-day > small { font-size: 12px; }
+}
+.daily-task-card.completed,.all-task-row.completed { opacity: 1; }
+.daily-task-card.completed .task-title,.all-task-row.completed .task-title { color: var(--muted); }
