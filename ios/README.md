@@ -66,8 +66,9 @@ orientation declaration found by the device build; the rebuilt device target has
 no warnings or errors. All eight focused native-alarm adapter and PWA tests pass,
 as do project/plist and diff checks. The owner accepted the Xcode agreement and
 first-launch onboarding is complete. Simulator runtime components are downloading;
-the Xcode account sign-in prompt is open and no physical device was connected at
-the last check. Signed installation, native runtime behavior, audible ringing and
+Xcode sign-in is confirmed with a free Personal Team (zero provisioned devices),
+and no physical device was connected at the last check. The project is open in
+Xcode. Signed installation, native runtime behavior, audible ringing and
 lock-screen/Stop/Snooze behavior still require testing and are not claimed verified.
 
 ## Apple references
