@@ -16,10 +16,11 @@ See `ios/README.md` for build steps, scope and the physical-device test checklis
 The web planner continues using push notifications as a separate delivery option.
 
 Reference: https://developer.apple.com/documentation/AlarmKit/scheduling-an-alarm-with-alarmkit
-and https://developer.apple.com/videos/play/wwdc2025/230/ . The current machine
-still has Command Line Tools only (no iPhone SDK). Native compilation, signing,
-installation and physical-device alarm testing remain pending; generated project
-and JavaScript tests do not establish that iPhone ringing works.
+and https://developer.apple.com/videos/play/wwdc2025/230/ . Native app and widget
+compilation now pass with Xcode 27.2 for both iPhone and Simulator without signing.
+Signed installation and physical-device alarm testing remain pending; successful
+builds and JavaScript tests do not establish that iPhone ringing works. See
+`ios/README.md` for the current verification status.
 
 The task editor saves an absolute alarm instant plus its IANA time zone. Editing
 an alarm replaces its delivery receipts. Completion and deletion suppress dispatch.
