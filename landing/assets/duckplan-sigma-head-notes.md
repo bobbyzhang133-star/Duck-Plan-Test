@@ -4,9 +4,13 @@ Created with the built-in image-generation tool by editing the user's supplied
 duck screenshot. Online expression references: https://knowyourmeme.com/memes/sigma-face
 and https://www.kapwing.com/explore/sigma-face-argenby-video-meme .
 
-Current master: duckplan-sigma-head-v2.png. Current app exports:
-duckplan-sigma-icon-v2-192.png and duckplan-sigma-icon-v2-512.png.
+Current master: duckplan-sigma-head-v3.png. Current app exports:
+duckplan-sigma-icon-v3-192.png and duckplan-sigma-icon-v3-512.png.
 Earlier icons are retained for comparison.
+
+## Broad reference neck correction (v3, built-in image editing)
+
+Edit image 1 (current upright sigma duck) using image 2 (user's original duck) as the exact reference for the broad neck silhouette. The user rejected image 1 because the neck is STILL TOO NARROW. Keep the face, eyes, eyebrows, orange bill, top of head, drawing style, colors and their positions EXACTLY unchanged. Change ONLY the outer silhouette below the widest part of the head. REMOVE THE INWARD PINCH ENTIRELY. The head should continue into a very broad stout neck, nearly as wide as the head, like the original reference when straightened. Both sides should descend almost straight down from the lower cheeks, with a very slight gentle taper at most. At every point below the orange bill, the neck's outer width must be at least 85–90% of the head's widest outer width. At bottom edge the duck fills about 65–70% of full canvas width. No hourglass curve, no concave waist, no stalk, no narrow base, no flaring shoulders. This is a continuous broad white duck neck that exits the bottom edge, not a floating head or bulb on a stem. Head stays upright with level eyes and unchanged approved sigma expression. Retain bold black organic outlines, warm orange bill and off-white flat background. Same square framing and scale. No other changes.
 
 ## Neck correction prompt (built-in image editing)
 

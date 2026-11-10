@@ -231,7 +231,7 @@ async function displayBrowserNotification(payload, taskId = null) {
 }
 
 function notifyForTask(task, occurrence) {
-  const icon = new URL("./assets/duckplan-sigma-icon-v2-512.png", location.href).href;
+  const icon = new URL("./assets/duckplan-sigma-icon-v3-512.png", location.href).href;
   return displayBrowserNotification(
     BrowserNotifications.taskNotification({ ...task, className: classInfo(task).name }, occurrence, { icon }),
     task.id,
@@ -1014,7 +1014,7 @@ document.querySelector("#notification-button").addEventListener("click", () => {
 notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
-    const icon = new URL("./assets/duckplan-sigma-icon-v2-512.png", location.href).href;
+    const icon = new URL("./assets/duckplan-sigma-icon-v3-512.png", location.href).href;
     const result = await displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
     showToast(result.status === "submitted"
       ? "Test submitted to your browser; device display is not confirmed."
