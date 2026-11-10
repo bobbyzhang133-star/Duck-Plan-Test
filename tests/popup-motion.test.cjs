@@ -60,6 +60,14 @@ test('cold click reserves a scrollable frame without synchronously measuring hid
   const {api,Element,panel}=fixture(),p=panel();api.open(p,api.capture(new Element()));
   assert.equal(p.form.reads,0);assert.equal(p.heading.reads,0);assert.equal(p.dataset.popupPrepared,'false');assert.equal(p.style.height,'668px');api.cancel(p);
 });
+test('cold click respects the redesigned dialog width and clamps it on phones',()=>{
+  for(const [viewport,expected] of [[1280,'580px'],[390,'362px']]){
+    const {api,Element,panel,ctx}=fixture(),p=panel();
+    ctx.window.innerWidth=viewport;p.dataset.popupWidth='580';
+    api.open(p,api.capture(new Element()));
+    assert.equal(p.style.width,expected);assert.equal(p.form.reads,0);api.cancel(p);
+  }
+});
 test('close resolves fields before shell shrinks and restores source before callback',async()=>{
   const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();api.prepare(p);api.open(p,api.capture(source));
   await settle(animations[0]);await settle(animations.find(a=>a.target===p.form));

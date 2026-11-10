@@ -73,7 +73,7 @@ test("planner markup and styles retain the responsive accessibility contract", (
   assert.match(css, /\.calendar-drag-ghost/);
   assert.match(html, /id="calendar-drag-instructions"/);
   assert.match(app, /actionLabel: "Undo"/);
-  assert.match(app, /sidebar\.inert = !open && !desktopNavigation/);
+  assert.match(app, /sidebar\.inert = false/);
   assert.match(html, /class="calendar-toolbar-primary"/);
   assert.match(html, /class="nav-label">Planning/);
   assert.doesNotMatch(html, /class="calendar-legend"/);

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./planner-ui.css" />
     <link rel="stylesheet" href="./duck-theme.css" />
     <link rel="stylesheet" href="./planner-clarity.css" />
+    <link rel="stylesheet" href="./planner-motion.css" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -18,12 +19,13 @@
     <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-v3-512.png" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
-  <body>
+  <body class="motion-preview">
     <a class="skip-link" href="#main-content">Skip to planner</a>
     <div class="app-shell unified-shell">
       <aside class="sidebar" id="planner-sidebar">
         <a class="brand" href="#home" data-go="home" aria-label="DuckPlan home"><span class="brand-mark" data-duck-state="happy" aria-hidden="true"></span><span>DuckPlan</span></a>
         <button class="drawer-close" type="button" aria-label="Close navigation">×</button>
+        <button class="sidebar-rail-toggle" type="button" data-open-navigation aria-label="Open navigation" aria-controls="planner-sidebar" aria-expanded="false" title="Expand navigation"><span data-sidebar-glyph aria-hidden="true">›</span><span class="rail-toggle-copy">Fold navigation</span></button>
         <p class="nav-label">Planning</p><nav class="primary-nav" aria-label="Planner navigation">
           <button class="nav-item active" type="button" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></button>
           <button class="nav-item" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true"></span><span>Calendar</span></button>
@@ -167,7 +169,7 @@
       </main>
     </div>
 
-    <dialog class="task-modal" id="task-modal" aria-labelledby="modal-title"><form method="dialog" id="task-form" novalidate>
+    <dialog class="task-modal" id="task-modal" data-popup-width="580" tabindex="-1" aria-labelledby="modal-title"><form method="dialog" id="task-form" novalidate>
       <div class="modal-heading"><div class="modal-duck" data-duck-state="focused" aria-hidden="true"></div><div><p class="section-kicker" id="modal-kicker">Plan your work</p><h2 id="modal-title">New task</h2></div><button class="close-button" type="button" id="close-task-modal" aria-label="Close">×</button></div>
       <p id="task-form-error" class="form-error" role="alert" hidden></p>
       <label>Task name <span class="required-label">Required</span><input name="title" required maxlength="80" placeholder="e.g. Finish the biology worksheet" /></label>
@@ -192,7 +194,22 @@
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
     <aside class="completion-note" id="completion-note" role="status" aria-live="polite" hidden><div class="completion-note-duck" data-duck-state="celebrating" aria-hidden="true"></div><div><strong>Today’s plan is complete!</strong><p id="completion-note-copy"></p></div><button type="button" id="dismiss-celebration" aria-label="Dismiss celebration">×</button></aside>
     <div class="completion-effects" id="completion-effects" aria-hidden="true"></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=ui-integration-20261110"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=ui-integration-20261110"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=app-1"></script><script src="./motion-tokens.js"></script><script src="./page-navigation-feedback.js?v=two-button-rules-1"></script><script src="./button-interactions.js?v=local-buttons-1"></script><script src="./app-install.js?v=app-1"></script><script src="./task-alarms.js?v=native-alarms-1"></script><script src="./native-task-alarms.js?v=1"></script><script src="./app.js?v=ui-integration-20261110"></script>
+    <script src="./planner-model.js"></script>
+    <script src="./planner-ui.js?v=ui-integration-20261110"></script>
+    <script src="./ical-parser.js"></script>
+    <script src="./cloud-config.js"></script>
+    <script src="./planner-store.js?v=ui-integration-20261110"></script>
+    <script src="./reminder-domain.js?v=2"></script>
+    <script src="./reminder-ledger.js?v=2"></script>
+    <script src="./browser-notifications.js?v=app-1"></script>
+    <script src="./motion-tokens.js"></script>
+    <script src="./popup-motion.js"></script>
+    <script src="./page-navigation-feedback.js?v=two-button-rules-1"></script>
+    <script src="./button-interactions.js?v=local-buttons-1"></script>
+    <script src="./app-install.js?v=app-1"></script>
+    <script src="./task-alarms.js?v=native-alarms-1"></script>
+    <script src="./native-task-alarms.js?v=1"></script>
+    <script src="./app.js?v=ui-integration-20261110"></script>
     <script src="./duck-mascot.js"></script>
     <script src="./planner-presentation.js?v=ui-integration-20261110"></script>
     <script src="./duck-interactions.js"></script>

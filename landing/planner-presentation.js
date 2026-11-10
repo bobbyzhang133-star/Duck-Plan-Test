@@ -16,7 +16,7 @@
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.querySelector(".nav-icon").innerHTML = icon(button.dataset.view);
   });
-  document.querySelectorAll("[data-open-navigation]").forEach((button) => { button.innerHTML = icon("menu"); });
+  document.querySelectorAll("[data-open-navigation]:not(.sidebar-rail-toggle)").forEach((button) => { button.innerHTML = icon("menu"); });
   document.querySelector("#notification-button").innerHTML = icon("bell");
 
   const themeControl = document.querySelector("#theme-preference");
@@ -67,7 +67,7 @@
       renderAllTasks();
     }
   });
-  document.querySelector("#dashboard-add-task").addEventListener("click", () => openModal({ dueDate: nowKey() }));
+  document.querySelector("#dashboard-add-task").addEventListener("click", (event) => openModal({ source: event.currentTarget, dueDate: nowKey() }));
 
   const emptyMessage = (title, copy) => `<div class="compact-empty"><span class="empty-duck" aria-hidden="true">${window.DuckPlanMascot.markup("swimming")}</span><h3>${title}</h3><p>${copy}</p></div>`;
   function renderDashboard() {

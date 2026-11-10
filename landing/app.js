@@ -100,16 +100,21 @@ const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
   document.body.classList.toggle("sidebar-open", open);
-  const desktopNavigation = window.matchMedia("(min-width: 1001px)").matches;
-  sidebar.inert = !open && !desktopNavigation;
-  sidebar.setAttribute("aria-hidden", String(!open && !desktopNavigation));
-  workspace.inert = open;
-  sidebarScrim.hidden = !open;
+  sidebar.inert = false;
+  sidebar.setAttribute("aria-hidden", "false");
+  workspace.inert = false;
+  sidebarScrim.hidden = true;
+  const profile = sidebar.querySelector(".profile-card");
+  profile.inert = !open;
+  profile.setAttribute("aria-hidden", String(!open));
   sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
-  sidebarScrim.tabIndex = open ? 0 : -1;
+  sidebarScrim.tabIndex = -1;
+  const railToggle = sidebar.querySelector(".sidebar-rail-toggle");
+  railToggle.title = open ? "Fold navigation" : "Expand navigation";
+  railToggle.querySelector("[data-sidebar-glyph]").textContent = open ? "‹" : "›";
   sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-expanded", String(open)));
-  if (open) document.querySelector(".sidebar .nav-item.active")?.focus();
-  else if (wasOpen) sidebarToggles.find((toggle) => toggle.getClientRects().length)?.focus();
+  if (open) document.querySelector(".sidebar .nav-item.active")?.focus({ preventScroll: true });
+  else if (wasOpen) railToggle.focus({ preventScroll: true });
   requestAnimationFrame(() => setupButtonMaterial());
 }
 
@@ -646,7 +651,7 @@ function setView(name, preserveDrawer = false) {
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${normalized}`);
   if (normalized !== "calendar") setTaskPanel(false, false);
-  setSidebar(false);
+  if (!preserveDrawer) setSidebar(false);
   window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupButtonMaterial());
 }
@@ -796,7 +801,9 @@ function cancelCalendarDrag({ announce = false } = {}) {
 let modalAnchor = null;
 let modalClosing = false;
 function openModal(prefill = {}) {
-  modalAnchor = { element: prefill.source || document.activeElement };
+  const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
+    ? document.activeElement : document.querySelector("#open-task-modal"));
+  modalAnchor = DuckPopupMotion.capture(source);
   modalClosing = false;
   els.modal.inert = false;
   editingTaskId = prefill.id || null;
@@ -832,17 +839,33 @@ function openModal(prefill = {}) {
   document.querySelector("#task-alarm-options").open = Boolean(alarm);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
-  els.modal.showModal();
-  els.form.elements.title.focus({ preventScroll: true });
+  DuckPopupMotion.mark(modalAnchor, "fields");
+  DuckPopupMotion.open(els.modal, modalAnchor, () => {
+    if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
+      els.form.elements.title.focus({ preventScroll: true });
+    }
+  });
 }
 function closeModal() {
-  if (!els.modal.open) return;
-  els.modal.close();
-  editingTaskId = null;
-  modalAnchor?.element?.isConnected && modalAnchor.element.focus({ preventScroll: true });
-  refreshReminders({ announce: true });
+  if (!els.modal.open || modalClosing) return;
+  modalClosing = true;
+  els.modal.inert = true;
+  DuckPopupMotion.close(els.modal, modalAnchor, () => {
+    els.modal.close();
+    els.modal.inert = false;
+    modalClosing = false;
+    const returnTarget = modalAnchor?.element?.isConnected ? modalAnchor.element : document.querySelector(".view.active button");
+    returnTarget?.focus({ preventScroll: true });
+    refreshReminders({ announce: true });
+  });
 }
-els.modal.addEventListener("close", () => { editingTaskId = null; });
+els.modal.addEventListener("cancel", (event) => { event.preventDefault(); closeModal(); });
+els.modal.addEventListener("close", () => {
+  if (els.modal.open) return;
+  DuckPopupMotion.reset(els.modal);
+  editingTaskId = null;
+});
+DuckPopupMotion.schedulePrepare(els.modal);
 
 // Button-origin motion belongs to popout dialogs, not page or calendar changes.
 function commitMaterialAction(source, update, event) {
