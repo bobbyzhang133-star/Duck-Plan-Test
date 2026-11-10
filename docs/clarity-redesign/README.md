@@ -14,7 +14,7 @@ The dashboard now prioritizes today's work, schedule, and deadlines. Page titles
 
 The UI branch was based on an older main, so integration preserved the newer store-based application and all shared backend changes. Cloudflare code, authentication, planner-store persistence, API contracts, Axis integration, reminder-domain/ledger code, and browser-notification logic remain unchanged from the fetched main.
 
-The shared pure calendar helpers retain the filename `landing/planner-ui.js`. The UI/theme/dashboard script is now `landing/planner-presentation.js`. Task cards and dashboard summaries use live `classId` lookups instead of the old hard-coded class-name table. Task forms retain per-task reminders and actual minutes. Calendar dragging, keyboard rescheduling, Undo, auto-scroll, and the mobile task drawer remain available. Native dialog transitions replace the previous glass popup effect as part of the requested visual redesign.
+The shared pure calendar helpers retain the filename `landing/planner-ui.js`. The UI/theme/dashboard script is now `landing/planner-presentation.js`. Task cards and dashboard summaries use live `classId` lookups instead of the old hard-coded class-name table. Task forms retain per-task reminders and actual minutes. Calendar dragging, keyboard rescheduling, Undo, auto-scroll, and the mobile task drawer remain available. The PWA installation controls, web push, and native iPhone alarm controls from the later main update are retained. The service worker cache was bumped and extended with the new frontend assets for offline loading. Native dialog transitions replace the previous glass popup effect as part of the requested visual redesign.
 
 The tests' presentation assertions were updated for the new sidebar markup; behavioral calendar assertions and all shared tests remain in place. `AGENTS.md` is preserved.
 
@@ -27,7 +27,7 @@ node --test tests/*.test.cjs tests/*.test.mjs
 
 The static preview uses local mode. Cloud sync uses the existing `cloudflare/` Worker and configuration described in `cloudflare/README.md`. There is no frontend build step.
 
-All **189 Node tests passed**, including the shared Cloudflare, planner store, reminder, parser, and calendar tests. Browser verification checks task creation/editing/deletion, live class IDs, reminder choices, logged time, goal/focus persistence, calendar keyboard rescheduling and Undo, settings, mobile drawers, reduced motion, and document overflow across 320, 390, 768, 1024, and 1440 pixels. Accessibility audit output is recorded separately; automated checks are not a full accessibility certification.
+All **205 Node tests passed**, including the shared Cloudflare, planner store, reminder, parser, and calendar tests. Browser verification checks task creation/editing/deletion, live class IDs, reminder choices, logged time, goal/focus persistence, calendar keyboard rescheduling and Undo, settings, mobile drawers, reduced motion, and document overflow across 320, 390, 768, 1024, and 1440 pixels. Accessibility audit output is recorded separately; automated checks are not a full accessibility certification.
 
 ## Evidence
 

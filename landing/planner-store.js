@@ -262,6 +262,7 @@
         notify("error");
         throw error;
       }
+      notify("persisted");
     }
 
     // A failed Google sign-in comes back with ?sign_in_error=…, read once and removed from the address bar.

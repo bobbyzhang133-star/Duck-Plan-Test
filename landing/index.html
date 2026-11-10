@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="./planner-ui.css" />
     <link rel="stylesheet" href="./duck-theme.css" />
     <link rel="stylesheet" href="./planner-clarity.css" />
+    <meta name="application-name" content="DuckPlan" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="DuckPlan" />
+    <link rel="manifest" href="./app.webmanifest" />
+    <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-v3-512.png" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
   <body>
@@ -122,13 +128,18 @@
         </section>
         <section class="view" id="view-settings" data-page-title="Settings" data-eyebrow="Make DuckPlan yours"><section class="panel settings-panel">
           <section class="sync-card" aria-label="Axis connection status"><div class="sync-icon" aria-hidden="true">↻</div><div><p class="sync-title">Axis sync</p><p class="sync-copy">Prototype mode</p></div><button type="button" id="sync-info" aria-label="Learn about Axis sync">i</button></section>
+          <section class="settings-row" id="install-app-settings" aria-labelledby="install-app-heading">
+            <div><h2 id="install-app-heading">DuckPlan app</h2><p id="install-app-copy">Checking whether DuckPlan can be installed…</p></div>
+            <button type="button" class="secondary-button" id="install-app-button" hidden>Install app</button>
+          </section>
           <div id="account-settings" class="settings-group"></div>
           <div id="axis-settings" class="settings-group"></div>
+          <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Start-work notifications</h2><p id="task-alarm-status" role="status">Checking device notifications…</p><p id="task-alarms-description">Choose when to receive a task notification. This uses your device’s notification sound, rather than a ringing Clock alarm. Delivery may be delayed by connectivity or device settings.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms">Enable on this device</button><button type="button" class="secondary-button" id="disable-task-alarms" hidden>Disable on this device</button></div></section>
           <section class="settings-row" id="deadline-reminders" aria-labelledby="reminders-heading">
             <div>
               <h2 id="reminders-heading" tabindex="-1">Deadline reminders</h2>
               <p>Set the default for tasks without a custom reminder. Deadlines without a time use 11:59 PM local time.</p>
-              <p class="notification-help">DuckPlan shows an in-app alert while you are using it. With permission, it can submit a device notification while this page remains open in the background. Closed-app, offline, and alarm delivery are not included yet.</p>
+              <p class="notification-help">Deadline reminders work while DuckPlan is open. For a task notification while the app is closed, choose a start-work notification time and enable this device above.</p>
               <p id="reminders-empty"></p>
               <ul id="reminder-list"></ul>
             </div>
@@ -150,7 +161,7 @@
           </section>
           <div class="settings-row"><div><h2>Appearance</h2><p>Choose a workspace that feels right for you.</p></div><label class="theme-field"><span class="sr-only">Color theme</span><select id="theme-preference"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div>
           <div class="settings-row"><div><h2>Mascot motion</h2><p>Gentle character animations and completion confetti. Reduced-motion preferences always take priority.</p></div><label class="switch"><input type="checkbox" id="mascot-motion" checked /><span></span><span class="sr-only">Enable mascot animations</span></label></div>
-          <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" href="./fur-lab.html">Open material lab</a></div>
+          <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" data-page-navigation="button" href="./fur-lab.html">Open material lab</a></div>
           <div class="settings-row"><div><h2>Local demo data</h2><p>Reset tasks saved in this browser without affecting a signed-in account.</p></div><button type="button" class="secondary-button" id="reset-demo">Reset demo</button></div>
         </section></section>
       </main>
@@ -175,12 +186,13 @@
         <label>Minutes spent<input name="actualMinutes" type="number" min="0" max="10080" step="1" inputmode="numeric" /></label>
         <p id="class-time-estimate">Class average becomes available when shared Axis assignment data is connected.</p>
       </fieldset></details>
+      <details class="plain-disclosure" id="task-alarm-options"><summary>Start-work notification</summary>      <fieldset class="form-section"><legend id="task-alarm-legend">Start-work notification</legend><p id="task-alarm-help">Choose when your device should tell you to start this task. Clear the time to cancel the notification.</p><label><span id="alarm-date-label">Notification date and time</span><input name="alarmAt" type="datetime-local" aria-describedby="task-alarm-help" /></label><div id="native-alarm-options" class="form-grid" hidden><label>Alarm sound<select name="alarmSound"><option value="system">iPhone default</option><option value="gentle">Gentle chime</option><option value="bright">Bright bells</option></select></label><label>Snooze<select name="alarmSnooze"><option value="0">Off</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label></div><p id="task-alarm-save-error" role="alert"></p></fieldset></details>
       <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
     <aside class="completion-note" id="completion-note" role="status" aria-live="polite" hidden><div class="completion-note-duck" data-duck-state="celebrating" aria-hidden="true"></div><div><strong>Today’s plan is complete!</strong><p id="completion-note-copy"></p></div><button type="button" id="dismiss-celebration" aria-label="Dismiss celebration">×</button></aside>
     <div class="completion-effects" id="completion-effects" aria-hidden="true"></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=ui-integration-20261110"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=ui-integration-20261110"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=2"></script><script src="./motion-tokens.js"></script><script src="./button-interactions.js"></script><script src="./app.js?v=ui-integration-20261110"></script>
+    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=ui-integration-20261110"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=ui-integration-20261110"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=app-1"></script><script src="./motion-tokens.js"></script><script src="./page-navigation-feedback.js?v=two-button-rules-1"></script><script src="./button-interactions.js?v=local-buttons-1"></script><script src="./app-install.js?v=app-1"></script><script src="./task-alarms.js?v=native-alarms-1"></script><script src="./native-task-alarms.js?v=1"></script><script src="./app.js?v=ui-integration-20261110"></script>
     <script src="./duck-mascot.js"></script>
     <script src="./planner-presentation.js?v=ui-integration-20261110"></script>
     <script src="./duck-interactions.js"></script>

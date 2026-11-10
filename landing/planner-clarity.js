@@ -87,7 +87,7 @@
   function clearErrors() {
     error.hidden = true;
     for (const field of form.querySelectorAll("input,select")) {
-      field.setCustomValidity(""); field.removeAttribute("aria-invalid"); field.removeAttribute("aria-describedby");
+      field.setCustomValidity(""); field.removeAttribute("aria-invalid"); if (field.getAttribute("aria-describedby") === "task-form-error") field.removeAttribute("aria-describedby");
     }
   }
   new MutationObserver(() => {

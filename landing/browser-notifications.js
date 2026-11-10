@@ -3,12 +3,12 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.DuckBrowserNotifications = api;
 })(typeof window !== "undefined" ? window : globalThis, function buildBrowserNotifications() {
-  function capability(NotificationApi, { isSecureContext = true, constructorFailed = false } = {}) {
+  function capability(NotificationApi, { isSecureContext = true, constructorFailed = false, serviceWorkerAvailable = false } = {}) {
     if (!isSecureContext || !NotificationApi || typeof NotificationApi.requestPermission !== "function") return "unsupported";
     const permission = ["default", "granted", "denied"].includes(NotificationApi.permission)
       ? NotificationApi.permission
       : "unsupported";
-    if (permission === "granted" && (typeof NotificationApi !== "function" || constructorFailed)) return "granted-unusable";
+    if (permission === "granted" && (typeof NotificationApi !== "function" || constructorFailed) && !serviceWorkerAvailable) return "granted-unusable";
     return permission;
   }
 
@@ -47,7 +47,7 @@
         badge: options.badge || options.icon,
         tag: occurrence.displayTag,
         renotify: false,
-        data: { taskId: task.id, occurrenceId: occurrence.occurrenceId, dueDate: task.dueDate || null },
+        data: { taskId: task.id, occurrenceId: occurrence.occurrenceId, dueDate: task.dueDate || null, view: "home" },
       },
     };
   }
@@ -61,6 +61,7 @@
         badge: options.badge || options.icon,
         tag: "duckplan-notification-test",
         renotify: false,
+        data: { view: "settings" },
       },
     };
   }
@@ -74,6 +75,20 @@
     }
   }
 
+  async function submitNotification(NotificationApi, payload, { registration = null } = {}) {
+    if (registration && typeof registration.showNotification === "function") {
+      try {
+        await registration.showNotification(payload.title, payload.options);
+        return { status: "submitted", notification: null, channel: "service-worker" };
+      } catch (error) {
+        if (typeof NotificationApi !== "function") {
+          return { status: "failed", reason: String(error?.message || error || "Notification unavailable") };
+        }
+      }
+    }
+    return { ...createNotification(NotificationApi, payload), channel: "window" };
+  }
+
   function resolveTaskTarget(tasks, taskId) {
     const task = Array.isArray(tasks) ? tasks.find((item) => String(item.id) === String(taskId)) : null;
     return task
@@ -81,5 +96,5 @@
       : { status: "missing", task: null, date: null };
   }
 
-  return { capability, createNotification, resolveTaskTarget, settingsCopy, taskNotification, testNotification };
+  return { capability, createNotification, resolveTaskTarget, settingsCopy, submitNotification, taskNotification, testNotification };
 });
