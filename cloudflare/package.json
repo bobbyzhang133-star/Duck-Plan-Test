@@ -1,0 +1,18 @@
+{
+  "name": "duckplan-cloudflare",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env='' --ip 127.0.0.1 --port 8787",
+    "db:migrate:local": "wrangler d1 migrations apply duckplan-dev --local --env=''",
+    "db:seed:local": "wrangler d1 execute duckplan-dev --local --env='' --file seed.sql",
+    "db:migrate:dev": "wrangler d1 migrations apply duckplan-dev --remote --env=''",
+    "deploy:dev": "wrangler deploy --env=''",
+    "check": "wrangler deploy --dry-run --env='' --outdir dist && wrangler deploy --dry-run --env production --outdir dist",
+    "db:migrate:prod": "wrangler d1 migrations apply duckplan-prod --remote --env production",
+    "deploy:prod": "wrangler deploy --env production"
+  },
+  "devDependencies": {
+    "wrangler": "^4.157.0"
+  }
+}

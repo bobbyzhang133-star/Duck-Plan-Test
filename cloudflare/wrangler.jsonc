@@ -1,0 +1,45 @@
+// DuckPlan on Cloudflare: one Worker serves the static site in ../landing and the /api backend.
+//   D1 (DB)                  planner data, accounts, sessions
+//   Durable Object (LIVE)    per-user WebSocket fan-out that keeps devices in sync
+//   Cron Trigger             Axis re-sync
+// Sign-in is email + password inside the Worker, so no email is ever sent (no sending domain needed).
+// The top level is the **dev** environment; `--env production` is prod. Deploying or migrating
+// production counts as a public deployment and needs explicit approval (local-first rule).
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "duckplan-dev",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "../landing",
+    "binding": "ASSETS",
+    // The Worker answers /api/* and also serves cloud-config.js, which turns cloud sync on.
+    "run_worker_first": ["/api/*", "/cloud-config.js"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "duckplan-dev", "database_id": "a4483220-c814-4e99-9926-91e3fcd60084", "migrations_dir": "migrations" }
+  ],
+  "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["PlannerLive"] }],
+  "triggers": { "crons": ["*/30 * * * *"] },
+  "vars": {
+    "AXIS_SYNC_INTERVAL_HOURS": "4",
+    "AXIS_SYNC_PER_RUN": "4"
+  },
+  // Secrets (`wrangler secret put …`): GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET. Locally, use .dev.vars.
+  "observability": { "enabled": true },
+  "env": {
+    "production": {
+      "name": "duckplan",
+      "d1_databases": [
+        { "binding": "DB", "database_name": "duckplan-prod", "database_id": "c9841e56-286e-4cb4-b42e-8e0939ae2884", "migrations_dir": "migrations" }
+      ],
+      "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
+          "triggers": { "crons": ["*/30 * * * *"] },
+      "vars": {
+        "AXIS_SYNC_INTERVAL_HOURS": "4",
+        "AXIS_SYNC_PER_RUN": "4"
+      }
+    }
+  }
+}

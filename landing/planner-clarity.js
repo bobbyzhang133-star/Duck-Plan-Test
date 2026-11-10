@@ -46,7 +46,7 @@
     const schedule = document.querySelector("#dashboard-schedule-list");
     schedule.innerHTML = groups.scheduled.length ? groups.scheduled.map((task) => {
       const parts = Model.scheduledParts(task);
-      return `<button type="button" class="schedule-item" data-edit-task="${task.id}"><span class="schedule-time"><strong>${formatTime(parts.time)}</strong><small>to ${formatTime(Model.scheduledEnd(task))}</small></span><span class="schedule-title"><strong>${safeText(task.title)}</strong><small>${safeText(task.className)} · ${task.durationMinutes} min</small></span><span class="schedule-open" aria-hidden="true">↗</span></button>`;
+      return `<button type="button" class="schedule-item" data-edit-task="${task.id}"><span class="schedule-time"><strong>${formatTime(parts.time)}</strong><small>to ${formatTime(Model.scheduledEnd(task))}</small></span><span class="schedule-title"><strong>${safeText(task.title)}</strong><small>${safeText(classInfo(task).name)} · ${task.durationMinutes} min</small></span><span class="schedule-open" aria-hidden="true">↗</span></button>`;
     }).join("") : '<div class="schedule-empty"><p>No work blocks scheduled today.</p><button class="text-link" type="button" data-open-planner="day">Choose a time in the calendar →</button></div>';
     document.querySelector("#daily-target-copy").textContent = `Daily target: ${completed} of ${dailyTarget} tasks`;
     const targetStatus = document.querySelector("#daily-target-status");

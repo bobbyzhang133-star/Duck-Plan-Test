@@ -150,7 +150,7 @@
     const cardRect = card?.getBoundingClientRect();
     const echo = motionAllowed() && card ? card.cloneNode(true) : null;
     setTimeout(() => {
-      if (!task.completed) return;
+      if (!tasks.find((item) => item.id === task.id)?.completed) return;
       const summary = dailySummary();
       const finishedDay = isToday && before.unfinished.length === 1 && summary.total > 0 && summary.unfinished.length === 0;
       Mascot.setState(hero, finishedDay ? "celebrating" : "happy");
