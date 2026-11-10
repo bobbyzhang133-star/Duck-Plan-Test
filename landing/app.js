@@ -443,12 +443,25 @@ function signedOutAccount() {
   return `<div><h2>Account</h2><p>Sign in to sync your planner across devices, or create an account with an 8-character password.</p></div><form class="settings-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<button type="submit" class="secondary-button" data-action="sign-in">Sign in</button><button type="submit" class="secondary-button" data-action="sign-up">Create account</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}<button type="button" class="secondary-button" id="show-recover">Forgot password?</button></form>`;
 }
 function signedInAccount(user) {
-  const intro = `<div><h2>Account</h2><p>Signed in as ${safeText(user.email || "your account")}. Your planner is syncing across devices.</p></div>`;
+  const { name } = PlannerUI.accountIdentity(user);
+  const email = user.email && user.email !== name ? ` · ${safeText(user.email)}` : "";
+  const intro = `<div><h2>Account</h2><p>Signed in as <strong>${safeText(name)}</strong>${email}. Your planner is syncing across devices.</p></div>`;
   if (accountMode === "change-password") return `${intro}<form class="settings-form" id="password-form">${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button">Save password</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
   if (accountMode === "recovery-code") return `${intro}<form class="settings-form" id="recovery-code-form">${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button">Make a new code</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
   return `${intro}<div class="settings-actions"><button type="button" class="secondary-button" id="show-change-password">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code">New recovery code</button>` : ""}<button type="button" class="secondary-button" id="sign-out">Sign out</button></div>`;
 }
+function renderAccountIdentity() {
+  const identity = PlannerUI.accountIdentity(store.user);
+  document.querySelector("#profile-name").textContent = identity.name;
+  document.querySelector("#profile-initials").textContent = identity.initials;
+  document.querySelector("#profile-status").textContent = identity.signedIn ? "Signed in" : "Local planner";
+  const card = document.querySelector(".profile-card");
+  const label = identity.signedIn ? `Open ${identity.name}'s settings` : "Open account settings";
+  card.setAttribute("aria-label", label);
+  card.title = label;
+}
 function renderAccount() {
+  renderAccountIdentity();
   const user = store.user;
   const body = !store.configured
     ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
@@ -621,7 +634,7 @@ function setupButtonMaterial(root = document) {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
   const normalized = name === "today" ? "home" : name;

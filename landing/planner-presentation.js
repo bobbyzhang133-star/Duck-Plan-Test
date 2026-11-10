@@ -77,10 +77,10 @@
     const total = todayTasks.length + groups.completed.length;
     const percent = total ? Math.round(groups.completed.length / total * 100) : 0;
     const high = todayTasks.filter((task) => task.priority === "High").length;
-    const name = document.querySelector(".profile-card strong").textContent.trim();
+    const identity = PlannerUI.accountIdentity(store.user);
     document.querySelector("#dashboard-date").textContent = formatLongDate(today);
     const hour = new Date().getHours();
-    document.querySelector("#dashboard-greeting").textContent = `${hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"}, ${name}.`;
+    document.querySelector("#dashboard-greeting").textContent = `${hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"}${identity.signedIn ? `, ${identity.name}` : ""}.`;
     document.querySelector("#dashboard-overview").textContent = todayTasks.length ? `${todayTasks.length} task${todayTasks.length === 1 ? "" : "s"} remaining today. Start with one, then keep going.` : "Your day has some breathing room. Plan something when you’re ready.";
     document.querySelector("#dashboard-task-total").textContent = `${todayTasks.length} remaining`;
     document.querySelector("#dashboard-priority-copy").textContent = high ? `${high} high-priority ${high === 1 ? "task" : "tasks"} first. Everything else can follow.` : "A clear list, one thing at a time.";

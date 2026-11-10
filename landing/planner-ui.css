@@ -42,6 +42,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .profile-card { display: grid !important; padding: 15px 4px 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; gap: 9px; grid-template-columns: 32px 1fr 16px; }
 .profile-card .avatar { width: 32px; height: 32px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); font-size: 11px; }
 .profile-card strong { font-size: 12px; }.profile-card small { color: var(--muted); font-size: 10px; }
+.profile-card > span:nth-child(2) { min-width: 0; }
+.profile-card strong, .profile-card small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#dashboard-greeting, #account-settings p { overflow-wrap: anywhere; }
 .drawer-close, .home-nav-open-button, .topbar-nav-open-button { display: none; }
 body[data-view="home"] { overflow: auto; }
 .unified-workspace, body[data-view="home"] .unified-workspace { padding: 0 32px 32px; height: auto; min-height: 100dvh; width: 100%; max-width: 1800px; }

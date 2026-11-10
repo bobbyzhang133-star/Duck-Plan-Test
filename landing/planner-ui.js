@@ -5,6 +5,16 @@
 })(typeof window !== "undefined" ? window : globalThis, function buildPlannerUi() {
   function pad(value) { return String(value).padStart(2, "0"); }
 
+  function accountIdentity(user) {
+    if (!user?.id) return { name: "Guest", initials: "?", signedIn: false };
+    const clean = (value) => typeof value === "string" ? value.trim().replace(/\s+/gu, " ") : "";
+    const name = clean(user.displayName) || clean(user.email) || "Your account";
+    const words = name.split(" ");
+    const initials = [words[0], ...(words.length > 1 ? [words.at(-1)] : [])]
+      .map((word) => Array.from(word)[0]).join("").toLocaleUpperCase();
+    return { name, initials, signedIn: true };
+  }
+
   function nextSlot(current, key, dates, startHour = 7, endHour = 22) {
     if (!current || !Array.isArray(dates) || !dates.length) return current;
     const dateIndex = Math.max(0, dates.indexOf(current.date));
@@ -62,5 +72,5 @@
     return { date, minutes, time: `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}` };
   }
 
-  return { nextSlot, restoreDeletedTask, snapCalendarDrop, timelineScrollTop };
+  return { accountIdentity, nextSlot, restoreDeletedTask, snapCalendarDrop, timelineScrollTop };
 });
