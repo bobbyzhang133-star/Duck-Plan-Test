@@ -5,6 +5,21 @@ const path = require("node:path");
 
 const UI = require("../landing/planner-ui.js");
 
+test("account identity follows the current session and clears after sign-out", () => {
+  assert.deepEqual(UI.accountIdentity({ id: "alice", displayName: " Alice  Jones ", email: "a@school.test" }),
+    { name: "Alice Jones", initials: "AJ", signedIn: true });
+  assert.deepEqual(UI.accountIdentity({ id: "priya", displayName: "Priya", email: "p@school.test" }),
+    { name: "Priya", initials: "P", signedIn: true });
+  assert.deepEqual(UI.accountIdentity(null), { name: "Guest", initials: "?", signedIn: false });
+});
+
+test("account identity handles missing names and Unicode without guessing another person's name", () => {
+  assert.equal(UI.accountIdentity({ id: "email", displayName: " ", email: "student@school.test" }).name, "student@school.test");
+  assert.equal(UI.accountIdentity({ id: "unicode", displayName: "张 伟" }).initials, "张伟");
+  assert.equal(UI.accountIdentity({ id: "unnamed" }).name, "Your account");
+  assert.equal(UI.accountIdentity({ displayName: "Stale name" }).signedIn, false);
+});
+
 test("calendar slot navigation moves by hour and day with bounded edges", () => {
   const dates = ["2026-11-02", "2026-11-03", "2026-11-04"];
   assert.deepEqual(UI.nextSlot({ date: dates[1], time: "09:00" }, "ArrowUp", dates), { date: dates[1], time: "08:00" });
@@ -58,7 +73,7 @@ test("planner markup and styles retain the responsive accessibility contract", (
   assert.match(css, /\.calendar-drag-ghost/);
   assert.match(html, /id="calendar-drag-instructions"/);
   assert.match(app, /actionLabel: "Undo"/);
-  assert.match(app, /sidebar\.inert = !open && !desktopNavigation/);
+  assert.match(app, /sidebar\.inert = false/);
   assert.match(html, /class="calendar-toolbar-primary"/);
   assert.match(html, /class="nav-label">Planning/);
   assert.doesNotMatch(html, /class="calendar-legend"/);

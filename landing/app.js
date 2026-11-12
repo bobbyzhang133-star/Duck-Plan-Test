@@ -100,22 +100,27 @@ const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
   document.body.classList.toggle("sidebar-open", open);
-  const desktopNavigation = window.matchMedia("(min-width: 1001px)").matches;
-  sidebar.inert = !open && !desktopNavigation;
-  sidebar.setAttribute("aria-hidden", String(!open && !desktopNavigation));
-  workspace.inert = open;
-  sidebarScrim.hidden = !open;
+  sidebar.inert = false;
+  sidebar.setAttribute("aria-hidden", "false");
+  workspace.inert = false;
+  sidebarScrim.hidden = true;
+  const profile = sidebar.querySelector(".profile-card");
+  profile.inert = !open;
+  profile.setAttribute("aria-hidden", String(!open));
   sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
-  sidebarScrim.tabIndex = open ? 0 : -1;
+  sidebarScrim.tabIndex = -1;
+  const railToggle = sidebar.querySelector(".sidebar-rail-toggle");
+  railToggle.title = open ? "Fold navigation" : "Expand navigation";
+  railToggle.querySelector("[data-sidebar-glyph]").textContent = open ? "‹" : "›";
   sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-expanded", String(open)));
-  if (open) document.querySelector(".sidebar .nav-item.active")?.focus();
-  else if (wasOpen) sidebarToggles.find((toggle) => toggle.getClientRects().length)?.focus();
+  if (open) document.querySelector(".sidebar .nav-item.active")?.focus({ preventScroll: true });
+  else if (wasOpen) railToggle.focus({ preventScroll: true });
   requestAnimationFrame(() => setupButtonMaterial());
 }
 
 
 function setTaskPanel(open, moveFocus = true) {
-  const compact = compactPlannerQuery.matches;
+  const compact = compactPlannerQuery.matches && !document.body.classList.contains("motion-preview");
   const nextOpen = compact && open;
   document.body.classList.toggle("task-panel-open", nextOpen);
   els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
@@ -127,8 +132,8 @@ function setTaskPanel(open, moveFocus = true) {
     els.taskPanel.inert = false;
     els.taskPanel.removeAttribute("aria-hidden");
   }
-  if (moveFocus && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
-  else if (moveFocus && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
+  if (moveFocus && compact && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
+  else if (moveFocus && compact && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
 }
 
 function loadReminderSettings() {
@@ -443,12 +448,25 @@ function signedOutAccount() {
   return `<div><h2>Account</h2><p>Sign in to sync your planner across devices, or create an account with an 8-character password.</p></div><form class="settings-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<button type="submit" class="secondary-button" data-action="sign-in">Sign in</button><button type="submit" class="secondary-button" data-action="sign-up">Create account</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}<button type="button" class="secondary-button" id="show-recover">Forgot password?</button></form>`;
 }
 function signedInAccount(user) {
-  const intro = `<div><h2>Account</h2><p>Signed in as ${safeText(user.email || "your account")}. Your planner is syncing across devices.</p></div>`;
+  const { name } = PlannerUI.accountIdentity(user);
+  const email = user.email && user.email !== name ? ` · ${safeText(user.email)}` : "";
+  const intro = `<div><h2>Account</h2><p>Signed in as <strong>${safeText(name)}</strong>${email}. Your planner is syncing across devices.</p></div>`;
   if (accountMode === "change-password") return `${intro}<form class="settings-form" id="password-form">${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button">Save password</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
   if (accountMode === "recovery-code") return `${intro}<form class="settings-form" id="recovery-code-form">${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button">Make a new code</button><button type="button" class="secondary-button" id="cancel-account-form">Cancel</button></form>`;
   return `${intro}<div class="settings-actions"><button type="button" class="secondary-button" id="show-change-password">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code">New recovery code</button>` : ""}<button type="button" class="secondary-button" id="sign-out">Sign out</button></div>`;
 }
+function renderAccountIdentity() {
+  const identity = PlannerUI.accountIdentity(store.user);
+  document.querySelector("#profile-name").textContent = identity.name;
+  document.querySelector("#profile-initials").textContent = identity.initials;
+  document.querySelector("#profile-status").textContent = identity.signedIn ? "Signed in" : "Local planner";
+  const card = document.querySelector(".profile-card");
+  const label = identity.signedIn ? `Open ${identity.name}'s settings` : "Open account settings";
+  card.setAttribute("aria-label", label);
+  card.title = label;
+}
 function renderAccount() {
+  renderAccountIdentity();
   const user = store.user;
   const body = !store.configured
     ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
@@ -621,11 +639,12 @@ function setupButtonMaterial(root = document) {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
-  const normalized = name === "today" ? "home" : name;
-  const next = document.querySelector(`#view-${normalized}`) || document.querySelector("#view-home");
+  const requested = name === "today" ? "home" : name;
+  const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
+  const normalized = next.id.replace("view-", "");
   document.body.dataset.view = normalized;
   els.views.forEach((view) => view.classList.toggle("active", view === next));
   els.navItems.forEach((item) => { const active = item.dataset.view === normalized; item.classList.toggle("active", active); active ? item.setAttribute("aria-current", "page") : item.removeAttribute("aria-current"); });
@@ -633,7 +652,7 @@ function setView(name, preserveDrawer = false) {
   els.pageEyebrow.textContent = next.dataset.eyebrow;
   history.replaceState(null, "", `#${normalized}`);
   if (normalized !== "calendar") setTaskPanel(false, false);
-  setSidebar(false);
+  if (!preserveDrawer) setSidebar(false);
   window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupButtonMaterial());
 }
@@ -653,7 +672,15 @@ function showToast(message, { actionLabel = "", onAction = null, duration = 2600
   toastTimer = setTimeout(hideToast, duration);
 }
 function selectDate(date) { selectedDate = date; selectedTaskId = null; calendarFocusSlot = { date, time: calendarFocusSlot.time }; renderDailyPlan(); renderCalendar({ autoScroll: true }); requestAnimationFrame(() => setupButtonMaterial()); }
-function selectTask(id) { selectedTaskId = selectedTaskId === id ? null : id; renderDailyPlan(); renderCalendar(); setupButtonMaterial(); }
+function selectTask(id) {
+  selectedTaskId = selectedTaskId === id ? null : id;
+  renderDailyPlan();
+  // Keep the launcher attached so popup motion and focus use its real calendar bounds.
+  els.calendar.querySelectorAll("[data-select-task]").forEach((control) => {
+    control.classList.toggle("selected", control.dataset.selectTask === selectedTaskId);
+  });
+  setupButtonMaterial();
+}
 
 function focusMovedCalendarTask(taskId) {
   requestAnimationFrame(() => {
@@ -783,7 +810,9 @@ function cancelCalendarDrag({ announce = false } = {}) {
 let modalAnchor = null;
 let modalClosing = false;
 function openModal(prefill = {}) {
-  modalAnchor = { element: prefill.source || document.activeElement };
+  const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
+    ? document.activeElement : document.querySelector("#open-task-modal"));
+  modalAnchor = DuckPopupMotion.capture(source);
   modalClosing = false;
   els.modal.inert = false;
   editingTaskId = prefill.id || null;
@@ -819,17 +848,33 @@ function openModal(prefill = {}) {
   document.querySelector("#task-alarm-options").open = Boolean(alarm);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
-  els.modal.showModal();
-  els.form.elements.title.focus({ preventScroll: true });
+  DuckPopupMotion.mark(modalAnchor, "fields");
+  DuckPopupMotion.open(els.modal, modalAnchor, () => {
+    if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
+      els.form.elements.title.focus({ preventScroll: true });
+    }
+  });
 }
 function closeModal() {
-  if (!els.modal.open) return;
-  els.modal.close();
-  editingTaskId = null;
-  modalAnchor?.element?.isConnected && modalAnchor.element.focus({ preventScroll: true });
-  refreshReminders({ announce: true });
+  if (!els.modal.open || modalClosing) return;
+  modalClosing = true;
+  els.modal.inert = true;
+  DuckPopupMotion.close(els.modal, modalAnchor, () => {
+    els.modal.close();
+    els.modal.inert = false;
+    modalClosing = false;
+    const returnTarget = modalAnchor?.element?.isConnected ? modalAnchor.element : document.querySelector(".view.active button");
+    returnTarget?.focus({ preventScroll: true });
+    refreshReminders({ announce: true });
+  });
 }
-els.modal.addEventListener("close", () => { editingTaskId = null; });
+els.modal.addEventListener("cancel", (event) => { event.preventDefault(); closeModal(); });
+els.modal.addEventListener("close", () => {
+  if (els.modal.open) return;
+  DuckPopupMotion.reset(els.modal);
+  editingTaskId = null;
+});
+DuckPopupMotion.schedulePrepare(els.modal);
 
 // Button-origin motion belongs to popout dialogs, not page or calendar changes.
 function commitMaterialAction(source, update, event) {
@@ -1113,7 +1158,7 @@ const requestedView = location.hash.replace("#", "");
 renderAll({ autoScrollCalendar: true });
 renderAccount();
 renderAxis();
-setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
+setView(requestedView);
 setTaskPanel(false, false);
 
 refreshReminders({ announce: true });

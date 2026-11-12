@@ -78,7 +78,8 @@
     document.dispatchEvent(new Event("planner:render"));
   });
   document.addEventListener("click", (event) => {
-    if (event.target.closest("[data-quick-add]")) openModal({ dueDate: nowKey() });
+    const quickAdd = event.target.closest("[data-quick-add]");
+    if (quickAdd) openModal({ source: quickAdd, dueDate: nowKey() });
   });
 
   // Keep the existing form field names and submit handler, adding UI validation before it runs.

@@ -1,0 +1,15 @@
+---
+description: Clarify ambiguous DuckPlan requests before making consequential implementation choices.
+alwaysApply: true
+---
+
+# Clarify Ambiguous Requests
+
+- For all DuckPlan work, ask a concise clarification question when a request has materially different plausible interpretations.
+- Identify the intended version, page, behavior or scope before editing when references such as "first version", "latest", "main page" or "that design" are ambiguous.
+- Offer concrete page names, links or short descriptions to make the choice easy.
+- Continue independent, reversible investigation while awaiting an answer; wait before making changes that depend on that answer.
+- Reuse confirmed decisions and do not ask the user to repeat them. Resolve minor implementation details using existing project conventions.
+- Preserve unrelated features unless their removal was requested. A local change does not authorize public deployment.
+- Confirmed November 11, 2026: Calendar (timetable and task panel) is the website's default opening page. The task list must be visible immediately without a Tasks click. Dashboard and the other sections remain available.
+- Use the original public site's unified task column and full-height calendar layout directly, with its compact toolbar. Adapt narrow screens while preserving immediate task-list visibility.
