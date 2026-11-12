@@ -4,9 +4,17 @@ Created with the built-in image-generation tool by editing the user's supplied
 duck screenshot. Online expression references: https://knowyourmeme.com/memes/sigma-face
 and https://www.kapwing.com/explore/sigma-face-argenby-video-meme .
 
-Current master: duckplan-sigma-head-v3.png. Current app exports:
-duckplan-sigma-icon-v3-192.png and duckplan-sigma-icon-v3-512.png.
+Current master: duckplan-sigma-head-v4.png. Current app exports:
+duckplan-sigma-icon-v4-192.png and duckplan-sigma-icon-v4-512.png.
 Earlier icons are retained for comparison.
+
+## Thicker app profile (v4, November 12, 2026)
+
+Created with built-in imagegen editing, using the user's original November 9 tilted duck screenshot as the broad-neck reference. Retains the upright Sigma face while widening and smoothing the lower outer contour. Full-body SVG mascot poses remain unchanged. The native app icon is exported at 1024×1024; website/PWA icons are exported at 192×192 and 512×512.
+
+Final edit prompt:
+
++ Use case: precise-object-edit. Image 1 is the DuckPlan app-icon edit target. Image 2 is the user's original duck reference for its broad continuous neck. Keep the FACE FEATURES of image 1 exactly unchanged: eyes, eyebrows, orange bill, positions, expression and scale. Correct only the EXTERIOR OUTLINE OF THE LOWER CHEEKS AND NECK. The lower-cheek contour IS allowed to change starting halfway down the image. Delete both pointed inward nicks at the cheek-to-neck junction. Redraw the outside silhouette as a smooth uninterrupted arch continuing into two broad nearly vertical sides, like a thick inverted U: the rounded upper head remains, the widest cheeks flow smoothly downward into the full-width neck, with no inward step, waist, corner or notch. From approximately image y=600 to the bottom at y=1254, the outer left contour should remain near x=210–220 and the right near x=1030–1040, with smooth gentle curvature only. The neck should be at least as wide as the head, clearly thick and stout as in the original reference. Do not preserve the old notched outline. Preserve all interior face artwork and the upper head arch. Same thick black outline, white duck, orange bill, opaque off-white background, upright orientation and square canvas. No shoulders, wings, torso, feet, tail, clothing, text or decorative elements. Return one polished square app icon.
 
 ## Broad reference neck correction (v3, built-in image editing)
 

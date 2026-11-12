@@ -25,7 +25,7 @@ tone('gentle',[523.25,659.25,783.99],0.8);
 tone('bright',[880,1174.66,1046.5,1318.51],0.32);
 const icons = path.join(root,'Resources/Assets.xcassets/AppIcon.appiconset');
 fs.mkdirSync(icons,{recursive:true});
-execFileSync('/usr/bin/sips',['-z','1024','1024',path.join(root,'../landing/assets/duckplan-sigma-head-v3.png'),'--out',path.join(icons,'AppIcon.png')]);
+execFileSync('/usr/bin/sips',['-z','1024','1024',path.join(root,'../landing/assets/duckplan-sigma-head-v4.png'),'--out',path.join(icons,'AppIcon.png')]);
 fs.writeFileSync(path.join(icons,'Contents.json'),JSON.stringify({images:[{filename:'AppIcon.png',idiom:'universal',platform:'ios',size:'1024x1024'}],info:{author:'xcode',version:1}},null,2)+'\n');
 fs.writeFileSync(path.join(root,'Resources/Assets.xcassets/Contents.json'),JSON.stringify({info:{author:'xcode',version:1}},null,2)+'\n');
 console.log('Prepared native app icon and alarm sounds.');

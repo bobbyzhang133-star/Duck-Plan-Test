@@ -1,6 +1,8 @@
 # Sigma mascot
 
-The sidebar and favicon reuse the original `landing/assets/duckplan-sigma-icon-v3-192.png`. The matching UI poses are native SVG markup in `landing/duck-mascot.js`, styled by `landing/duck-theme.css`, using `landing/assets/duckplan-sigma-head-v3.png` as the visual reference. No generated bitmap replacement or new rendering dependency is needed.
+The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v4.png` and its 192/512px icon exports. The November 12 edit uses the user's original broad-neck duck screenshot, widening the neck while retaining the upright Sigma expression. The native icon exports this master at 1024px. The final built-in imagegen prompt is recorded in `landing/assets/duckplan-sigma-head-notes.md`; previous images remain available.
+
+Full-body UI poses remain native SVG markup in `landing/duck-mascot.js`, styled by `landing/duck-theme.css`, using the earlier `landing/assets/duckplan-sigma-head-v3.png` as their visual reference. Their drawings, placements and reactions are unchanged by the app-profile edit.
 
 `front-view-states.png` is the current preview: happy, sleepy, focused, encouraging, celebrating and swimming. Front views have a plain rounded body outline, scaled Sigma head and webbed feet, with no visible tail or feather/wing lines on the chest. A lifted wing appears during greeting/celebration reactions. Swimming hides the feet under the water. `full-body-states.png` and `states.png` retain the previous versions for comparison. All existing mascot containers and interaction hooks remain in use. The previous yellow mascot preview remains in `docs/yellow-redesign/mascot-states.png` for comparison.
 
