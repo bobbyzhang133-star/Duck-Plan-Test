@@ -283,10 +283,10 @@
 .phone-week-strip[hidden] { display: none !important; }
 @media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
   .motion-preview[data-view="calendar"] .unified-workspace { overflow: clip; }
-  .motion-preview #view-calendar { position: relative; height: 100%; min-height: 0; overflow: hidden; }
+  .motion-preview #view-calendar { position: relative; height: 100%; min-height: 0; overflow: hidden; border-radius: 18px; }
   .motion-preview #view-calendar .planner-workspace,
   .motion-preview #view-calendar .planner-workspace:has(.day-view) {
-    display: block; position: static; height: 100%; min-height: 0;
+    display: block; position: static; height: 100%; min-height: 0; border-radius: 18px; box-shadow: none;
   }
   .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel {
     height: 100%; min-height: 0; padding: 12px; overflow: hidden;
@@ -343,16 +343,25 @@
     padding: 18px 16px 24px; border: 1px solid var(--line); border-radius: 22px 22px 0 0;
     background: var(--card); box-shadow: 0 -16px 50px #211d1233;
     overflow-y: auto; overscroll-behavior: contain;
-    transform: translateY(calc(100% + 16px)); transform-origin: center bottom;
-    transition: transform var(--motion-layout) var(--motion-ease); pointer-events: none;
+    transform: translate3d(0,calc(100% + 16px),0); transform-origin: center bottom;
+    transition: transform var(--motion-sheet,340ms) var(--motion-sheet-ease,cubic-bezier(.25,0,.2,1));
+    will-change: transform; pointer-events: none;
   }
-  .motion-preview.task-panel-open #view-calendar .planner-workspace > .daily-panel { transform: translateY(0); pointer-events: auto; }
+  .motion-preview.task-panel-open #view-calendar .planner-workspace > .daily-panel { transform: translate3d(0,0,0); pointer-events: auto; }
   .motion-preview #view-calendar #daily-task-panel > .panel-heading { grid-template-columns: minmax(0,1fr) auto auto; gap: 8px; }
   .motion-preview #view-calendar #daily-task-panel :is(.task-sidebar-heading,.task-sidebar-heading > div) { display: block; }
   .motion-preview #view-calendar #daily-task-panel :is(.section-kicker,.panel-date,.panel-progress) { grid-column: auto; grid-row: auto; }
   .motion-preview #view-calendar #plan-selected-date { grid-column: 2; grid-row: 1; align-self: start; margin: 0; }
   .motion-preview #view-calendar .task-panel-close-button { grid-column: 3; grid-row: 1; display: grid !important; place-items: center; width: 44px; min-height: 44px; padding: 0; }
-  .motion-preview #view-calendar .task-panel-scrim:not([hidden]) { display: block !important; position: absolute; inset: 0; z-index: 50; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 18px; background: #211d1260; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .motion-preview #view-calendar .task-panel-scrim:not([hidden]) {
+    display: block !important; position: absolute; inset: 0; z-index: 50;
+    width: 100%; height: 100%; padding: 0; border: 0; border-radius: inherit;
+    background: #211d1260; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+    opacity: 0; pointer-events: none; will-change: opacity;
+    transform: none; filter: none; box-shadow: none; animation: none;
+    transition: opacity var(--motion-sheetBackdrop,220ms) ease;
+  }
+  .motion-preview.task-panel-open #view-calendar .task-panel-scrim:not([hidden]) { opacity: 1; pointer-events: auto; }
 }
 @media (hover: hover) {
   .phone-week-day:hover { background: var(--accent-soft); }
@@ -368,5 +377,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .motion-preview #view-calendar .planner-workspace > .daily-panel { transition: none; }
+  .motion-preview #view-calendar .task-panel-scrim:not([hidden]) { transition: none; }
   .phone-week-day:is(:active,.interaction-pressed) { transform: none; }
 }

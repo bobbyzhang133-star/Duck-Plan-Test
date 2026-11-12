@@ -1,5 +1,17 @@
 # Phone and iPad layout review
 
+## November 12: drawer polish
+
+Removed the extra square edge below the phone task summary by matching the Calendar clipping wrapper and frame to 18px corners and removing the clipped frame shadow. The task button's intended rounded border and keyboard focus remain.
+
+The phone Tasks sheet now uses a dedicated 340ms transform curve and a coordinated 220ms backdrop fade. The transparent closed backdrop remains mounted but inert, so opening/closing can reverse smoothly; it does not block the calendar. Blur is constant rather than animated. Desktop/iPad layout timing is unchanged. Versioned the changed assets and advanced the app cache to v15.
+
+Verified 390px and the reported 484px width, cold/warm opening, 4× CPU throttling, five rapid reversals without position/opacity jumps, Escape/focus return, task editing, reduced motion and resizing during opening to iPad. Chromium measurements showed no long tasks or frame gaps above 25ms; physical-device smoothness was not measured. All 215 automated tests pass.
+
+Current screenshots: [clean phone corners](drawer-polish-closed.png) and [expanded drawer](drawer-polish-open.png).
+
+Current local preview: http://127.0.0.1:8034/?v=drawer-polish-20261112#calendar.
+
 ## November 12: phone Calendar and Tasks sheet
 
 Applied the user's review feedback after reading the open Chrome conversation and inspecting its two conceptual phone layouts and attached phone/iPad screenshots. The user explicitly chose a full-width phone Calendar with Tasks initially collapsed into a sheet. The iPad workspace remains intact.

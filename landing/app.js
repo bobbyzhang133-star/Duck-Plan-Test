@@ -135,7 +135,11 @@ function setTaskPanel(open, moveFocus = true, source = null) {
   document.body.classList.toggle("task-panel-open", nextOpen);
   els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
   els.phoneTaskSummary?.setAttribute("aria-expanded", String(nextOpen));
-  els.taskPanelScrim.hidden = !nextOpen;
+  // Keep the phone backdrop mounted so its opacity can animate in both directions.
+  els.taskPanelScrim.hidden = phone ? false : !nextOpen;
+  els.taskPanelScrim.inert = !nextOpen;
+  els.taskPanelScrim.tabIndex = -1;
+  els.taskPanelScrim.setAttribute("aria-hidden", "true");
   if (els.calendarPanel) els.calendarPanel.inert = phone && nextOpen;
   if (els.phoneNavigation) els.phoneNavigation.inert = phone && nextOpen;
   if (phone) {
@@ -689,7 +693,7 @@ function renderCalendar({ autoScroll = false } = {}) {
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
 function setupButtonMaterial(root = document) {
-  const contentControls = ".sidebar-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.phone-week-day,.task-select,.task-section-heading";
+  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.phone-week-day,.task-select,.task-section-heading";
   root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });

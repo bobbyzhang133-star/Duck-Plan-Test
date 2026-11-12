@@ -15,7 +15,7 @@ test("inline task panels stay interactive when startup, navigation or resize clo
       inert: true, setAttribute(name, value) { attributes.set(name, value); },
       removeAttribute(name) { attributes.delete(name); },
     };
-    const scrim = { hidden: false };
+    const scrim = { hidden: false, setAttribute() {} };
     const context = vm.createContext({
       compactPlannerQuery: { matches: compact },
       phonePlannerQuery: { matches: false },
@@ -57,7 +57,7 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   const launcher = element();
   const calendar = element();
   const navigation = element();
-  const scrim = { hidden: false };
+  const scrim = { hidden: false, setAttribute() {} };
   const phoneQuery = { matches: true };
   const context = vm.createContext({
     taskPanelLauncher: null, phonePlannerQuery: phoneQuery, compactPlannerQuery: { matches: true },
@@ -76,6 +76,8 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   vm.runInContext("setTaskPanel(false)", context);
   assert.equal(panel.inert, true);
   assert.equal(panel.attributes.get("aria-hidden"), "true");
+  assert.equal(scrim.hidden, false, "The transparent phone backdrop stays mounted for smooth entry");
+  assert.equal(scrim.inert, true, "A closed backdrop cannot intercept input");
   assert.equal(focused, null, "Startup does not steal focus");
   vm.runInContext("setTaskPanel(true)", context);
   assert.equal(panel.inert, false);
@@ -83,11 +85,13 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   assert.equal(calendar.inert, true);
   assert.equal(navigation.inert, true);
   assert.equal(scrim.hidden, false);
+  assert.equal(scrim.inert, false);
   assert.equal(focused, close);
   vm.runInContext("setTaskPanel(false)", context);
   assert.equal(focused, launcher);
   assert.equal(calendar.inert, false);
   assert.equal(navigation.inert, false);
+  assert.equal(scrim.inert, true);
   assert.equal(launcher.attributes.get("aria-expanded"), "false");
   vm.runInContext("setTaskPanel(true)", context);
   phoneQuery.matches = false;

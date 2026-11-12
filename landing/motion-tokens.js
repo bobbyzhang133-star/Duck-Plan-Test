@@ -9,11 +9,13 @@
   }
   const curve = `linear(${Array.from({length:61}, (_,i) => response(i/60).toFixed(6)).join(',')})`;
   const easing = typeof CSS !== 'undefined' && CSS.supports('animation-timing-function',curve) ? curve : 'cubic-bezier(.2,.8,.2,1)';
-  const duration = Object.freeze({layout:480,control:240,press:80,release:400,popupOpen:240,popupClose:300,popupContent:120,popupContentOut:60});
-  window.DuckMotion = Object.freeze({response,easing,duration});
+  const sheetEasing = 'cubic-bezier(.25,0,.2,1)';
+  const duration = Object.freeze({layout:480,control:240,press:80,release:400,popupOpen:240,popupClose:300,popupContent:120,popupContentOut:60,sheet:340,sheetBackdrop:220});
+  window.DuckMotion = Object.freeze({response,easing,sheetEasing,duration});
   if (typeof document !== 'undefined') {
     const style = document.documentElement.style;
     style.setProperty('--motion-ease',easing);
+    style.setProperty('--motion-sheet-ease',sheetEasing);
     for (const [name,value] of Object.entries(duration)) style.setProperty(`--motion-${name}`,`${value}ms`);
   }
 })();
