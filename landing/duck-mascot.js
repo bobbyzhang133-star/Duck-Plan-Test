@@ -3,8 +3,21 @@
   "use strict";
   const states = new Set(["happy", "sleepy", "focused", "encouraging", "celebrating", "swimming"]);
 
-  function markup(state = "happy") {
+  function sideMarkup(mood) {
+    return `<svg class="duck-character duck-sigma duck-side-profile duck-${mood}" data-mood="${mood}" data-profile="side" viewBox="0 0 180 170" fill="none" aria-hidden="true" focusable="false">
+      <path class="duck-body" d="M95 50c-1-15 8-26 23-24 16 2 26 13 24 27l-3 20c6 14 9 31-1 47-10 18-36 24-64 19-26-3-43-18-39-38-9-3-15-12-16-21 15 8 26 6 40 7 9-9 22-14 35-12Z" fill="#FFFEFA" stroke="#111113" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M141 52c13-4 28-1 31 6 2 6-11 12-26 11l-10-4" fill="#FFB475" stroke="#111113" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M146 61c7 2 14 2 21-1" stroke="#111113" stroke-width="2.2" stroke-linecap="round"/>
+      <g class="duck-open-eyes"><g class="duck-pupils"><path d="M118 50c0 12 12 12 12 0Z" fill="#111113"/></g><path d="M114 49h19" stroke="#111113" stroke-width="3.5" stroke-linecap="round"/></g>
+      <path d="M113 40c8-4 13 5 20 3" stroke="#111113" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M72 99c-14-6-25 3-19 14 8 15 35 19 53 6" stroke="#111113" stroke-width="3.2" stroke-linecap="round"/>
+      <g class="duck-water" stroke="#80B8BC" stroke-width="2.5" stroke-linecap="round"><path d="M26 143c28 8 91 9 127-1m-110 10c24 5 62 5 88-1"/></g>
+    </svg>`;
+  }
+
+  function markup(state = "happy", profile = "front") {
     const mood = states.has(state) ? state : "happy";
+    if (profile === "side") return sideMarkup(mood);
     return `<svg class="duck-character duck-sigma duck-${mood}" data-mood="${mood}" viewBox="0 0 180 170" fill="none" aria-hidden="true" focusable="false">
       <ellipse class="duck-ground" cx="89" cy="162" rx="46" ry="4" fill="#29251F" opacity=".1"/>
       <g class="duck-feet" fill="#FFB475" stroke="#111113" stroke-width="3" stroke-linejoin="round"><path d="m65 143-3 11-9 6 15 3 9-3 8-1-8-5-1-11Z"/><path d="m103 143 1 11-8 6 14 3 8-3 10-1-11-6-2-10Z"/></g>
@@ -36,7 +49,7 @@
     if (!element) return;
     element.innerHTML = element.classList.contains("brand-mark")
       ? '<img class="duck-brand-image" src="./assets/duckplan-sigma-icon-v3-192.png" alt="" aria-hidden="true" width="192" height="192" />'
-      : markup(state);
+      : markup(state, element.classList.contains("pond-duck") ? "side" : "front");
   }
   function setState(element, state) {
     const svg = element?.querySelector(".duck-character");

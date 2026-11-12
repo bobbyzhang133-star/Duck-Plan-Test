@@ -8,6 +8,7 @@ The default Calendar uses the original public site's unified task-column/calenda
 
 Use the original white Sigma duck identity for mascot artwork, preserving the current UI's mascot placements, pose states and reactions. The approved reference is `landing/assets/duckplan-sigma-head-v3.png`.
 Animated poses use a complete duck body and visible orange webbed feet on land. Front views have a plain body outline with no visible tail or feather/wing lines on the chest; a lifted wing appears only to wave. Keep the head-only original for the brand icon.
+The Daily progress pond uses a right-facing side-profile swimming duck; other mascot placements retain their front-facing poses.
 
 ## Project Structure & Module Organization
 
