@@ -1,6 +1,6 @@
 # Sigma mascot
 
-The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v4.png` and its 192/512px icon exports. The November 12 edit uses the user's original broad-neck duck screenshot, widening the neck while retaining the upright Sigma expression. The native icon exports this master at 1024px. The final built-in imagegen prompt is recorded in `landing/assets/duckplan-sigma-head-notes.md`; previous images remain available.
+The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v5.png` and its 192/512px icon exports. The November 12 redraw uses the user's original duck screenshot for a continuous head-to-neck silhouette, without cheek bulges or an inward neck pinch. Its outline is lighter than v4, with the upright Sigma expression retained. This is a cleaned upright interpretation of the reference, not an exact tracing. The native icon exports this master at 1024px. The selected built-in imagegen prompts are recorded in `landing/assets/duckplan-sigma-head-notes.md`; previous images remain available.
 
 Full-body UI poses remain native SVG markup in `landing/duck-mascot.js`, styled by `landing/duck-theme.css`, using the earlier `landing/assets/duckplan-sigma-head-v3.png` as their visual reference. Their drawings, placements and reactions are unchanged by the app-profile edit.
 

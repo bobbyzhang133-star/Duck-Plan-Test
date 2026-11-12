@@ -4,9 +4,21 @@ Created with the built-in image-generation tool by editing the user's supplied
 duck screenshot. Online expression references: https://knowyourmeme.com/memes/sigma-face
 and https://www.kapwing.com/explore/sigma-face-argenby-video-meme .
 
-Current master: duckplan-sigma-head-v4.png. Current app exports:
-duckplan-sigma-icon-v4-192.png and duckplan-sigma-icon-v4-512.png.
+Current master: duckplan-sigma-head-v5.png. Current app exports:
+duckplan-sigma-icon-v5-192.png and duckplan-sigma-icon-v5-512.png.
 Earlier icons are retained for comparison.
+
+## Reference silhouette redraw (v5, November 12, 2026)
+
+The user rejected v4's separate egg-shaped head, cheek bulges and inward taper. Built-in imagegen editing used the original November 9 screenshot as the primary shape reference. The selected result is an upright interpretation with one continuous head/neck contour, broad parallel sides, a lighter outline and the Sigma expression. It is not an exact tracing. Full-body SVG drawings remain unchanged. Native and web exports retain the existing 1024/512/192px sizes.
+
+Selected silhouette prompt:
+
++ Create the corrected DuckPlan app icon from this original duck reference. The essential correction is the OUTER SHAPE. Draw ONE continuous thin black outline shaped like a softly rounded arch with two almost-vertical sides continuing all the way to the bottom edge. This is a broad white column with a rounded top, NOT a separate bulb-shaped head plus a neck. On a 1254×1254 square: the arch's apex is around (625,175); its sides reach about (215,540) and (1035,540), then continue gently downward near x=215 and x=1035 to the bottom edge. Width at y=800, y=1000 and the bottom must remain about 820px, the same as at the sides of the head. Absolutely no inward-curving waist, cheek lobes, narrowing below the mouth or small stalk. Keep the lines gently hand-drawn and slightly asymmetric like the supplied reference, with lighter stroke thickness about 18–22px, not the thick heavy outline of previous versions. Put the reference duck's simple warm-orange bill and a restrained confident Sigma expression (half-lidded eyes and inward-raised eyebrows) inside the upper part of this ONE broad shape. Keep the duck upright with level eyes. Flat white fill and flat off-white opaque background, no gradients or shading. Crop the broad neck through the bottom edge without a closing horizontal line. No body, shoulders, wings, feet, tail, border, text, screenshot UI or extra objects. One square app icon.
+
+Final outline-legibility prompt:
+
++ Precise single-change edit of this app icon. Keep the existing outer contour PATH, width, proportions, broad continuous arch and straight sides EXACTLY unchanged. Keep all face features, orange bill shape, expression, positions, colors and background exactly unchanged. Change ONLY the thickness of the outer black silhouette line: make it match the black line thickness around the orange bill, approximately 18–20 pixels on this 1254px square, roughly 1.5–1.8 times the current thin outer contour. Keep the stroke centered on the same path. Do not reshape the figure, introduce cheek bulges or taper the sides. The only visible difference should be a slightly stronger, still simple and lighter-than-the-previous-icon exterior outline for legibility at app-icon sizes. Opaque background, same square canvas.
 
 ## Thicker app profile (v4, November 12, 2026)
 
