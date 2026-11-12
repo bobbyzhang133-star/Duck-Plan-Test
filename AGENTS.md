@@ -1,5 +1,14 @@
 # Repository Guidelines
 
+## Clarifying Requests
+
+For all DuckPlan work, ask a concise clarification question when the intended version, page, behavior or scope has materially different plausible interpretations. Reuse confirmed answers and continue safe independent investigation while waiting. See `.cursor/rules/clarify-ambiguous-requests.mdc`. Calendar is the confirmed default opening page; retain Dashboard and the other sections.
+
+The default Calendar uses the original public site's unified task-column/calendar layout and compact toolbar. Keep the task list visible immediately, including on phones. See `plans.md` for implementation and verification records.
+
+Use the original white Sigma duck identity for mascot artwork, preserving the current UI's mascot placements, pose states and reactions. The approved reference is `landing/assets/duckplan-sigma-head-v3.png`.
+Animated poses use a complete duck body and visible orange webbed feet on land. Front views have a plain body outline with no visible tail or feather/wing lines on the chest; a lifted wing appears only to wave. Keep the head-only original for the brand icon.
+
 ## Project Structure & Module Organization
 
 DuckPlan is a student planner built with plain HTML, CSS, and JavaScript. The deployable site lives in `landing/`:

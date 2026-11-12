@@ -120,7 +120,7 @@ function setSidebar(open) {
 
 
 function setTaskPanel(open, moveFocus = true) {
-  const compact = compactPlannerQuery.matches;
+  const compact = compactPlannerQuery.matches && !document.body.classList.contains("motion-preview");
   const nextOpen = compact && open;
   document.body.classList.toggle("task-panel-open", nextOpen);
   els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
@@ -132,8 +132,8 @@ function setTaskPanel(open, moveFocus = true) {
     els.taskPanel.inert = false;
     els.taskPanel.removeAttribute("aria-hidden");
   }
-  if (moveFocus && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
-  else if (moveFocus && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
+  if (moveFocus && compact && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
+  else if (moveFocus && compact && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
 }
 
 function loadReminderSettings() {
@@ -642,8 +642,9 @@ function setupButtonMaterial(root = document) {
 function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
 
 function setView(name, preserveDrawer = false) {
-  const normalized = name === "today" ? "home" : name;
-  const next = document.querySelector(`#view-${normalized}`) || document.querySelector("#view-home");
+  const requested = name === "today" ? "home" : name;
+  const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
+  const normalized = next.id.replace("view-", "");
   document.body.dataset.view = normalized;
   els.views.forEach((view) => view.classList.toggle("active", view === next));
   els.navItems.forEach((item) => { const active = item.dataset.view === normalized; item.classList.toggle("active", active); active ? item.setAttribute("aria-current", "page") : item.removeAttribute("aria-current"); });
@@ -671,7 +672,15 @@ function showToast(message, { actionLabel = "", onAction = null, duration = 2600
   toastTimer = setTimeout(hideToast, duration);
 }
 function selectDate(date) { selectedDate = date; selectedTaskId = null; calendarFocusSlot = { date, time: calendarFocusSlot.time }; renderDailyPlan(); renderCalendar({ autoScroll: true }); requestAnimationFrame(() => setupButtonMaterial()); }
-function selectTask(id) { selectedTaskId = selectedTaskId === id ? null : id; renderDailyPlan(); renderCalendar(); setupButtonMaterial(); }
+function selectTask(id) {
+  selectedTaskId = selectedTaskId === id ? null : id;
+  renderDailyPlan();
+  // Keep the launcher attached so popup motion and focus use its real calendar bounds.
+  els.calendar.querySelectorAll("[data-select-task]").forEach((control) => {
+    control.classList.toggle("selected", control.dataset.selectTask === selectedTaskId);
+  });
+  setupButtonMaterial();
+}
 
 function focusMovedCalendarTask(taskId) {
   requestAnimationFrame(() => {
@@ -1149,7 +1158,7 @@ const requestedView = location.hash.replace("#", "");
 renderAll({ autoScrollCalendar: true });
 renderAccount();
 renderAxis();
-setView(document.querySelector(`#view-${requestedView}`) || ["today", "calendar"].includes(requestedView) ? requestedView : "home");
+setView(requestedView);
 setTaskPanel(false, false);
 
 refreshReminders({ announce: true });

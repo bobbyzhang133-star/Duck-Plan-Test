@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-motion-preview-v3";
+const CACHE_VERSION = "duckplan-app-motion-preview-v11";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -60,14 +60,21 @@ async function networkFirst(request, fallbackUrl) {
 
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_VERSION);
-  const cached = await cache.match(request, { ignoreSearch: true });
+  // Versioned scripts must not resolve to an older, unversioned precache entry.
+  const cached = await cache.match(request);
   if (cached) {
     fetch(request).then((response) => { if (response.ok) cache.put(request, response); }).catch(() => {});
     return cached;
   }
-  const response = await fetch(request);
-  if (response.ok) cache.put(request, response.clone());
-  return response;
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  } catch (error) {
+    const offline = await cache.match(request, { ignoreSearch: true });
+    if (offline) return offline;
+    throw error;
+  }
 }
 
 self.addEventListener("fetch", (event) => {
