@@ -123,7 +123,7 @@
 .motion-preview #view-calendar .calendar-date-button span { font-size: 9.6px; font-weight: 800; }
 .motion-preview #view-calendar .calendar-date-button strong { width: 32px; height: 32px; font-size: 14.08px; font-weight: 760; }
 .motion-preview #view-calendar .time-axis span { font-size: 8.96px; white-space: nowrap; }
-.motion-preview #view-calendar .month-calendar { min-width: 620px; }
+.motion-preview #view-calendar .month-calendar { min-width: 0; }
 .motion-preview #toggle-task-panel,
 .motion-preview .task-panel-close-button,
 .motion-preview .task-panel-scrim { display: none !important; }
@@ -277,4 +277,96 @@
 @media (prefers-reduced-motion: reduce) {
   .motion-preview .unified-shell,.motion-preview .unified-shell .sidebar,.motion-preview .sidebar * { transition: none; }
   .motion-preview .task-modal::backdrop { animation: none !important; }
+}
+
+/* Phones give the calendar one full-width surface and open tasks on demand. */
+.phone-week-strip[hidden] { display: none !important; }
+@media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview[data-view="calendar"] .unified-workspace { overflow: clip; }
+  .motion-preview #view-calendar { position: relative; height: 100%; min-height: 0; overflow: hidden; }
+  .motion-preview #view-calendar .planner-workspace,
+  .motion-preview #view-calendar .planner-workspace:has(.day-view) {
+    display: block; position: static; height: 100%; min-height: 0;
+  }
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel {
+    height: 100%; min-height: 0; padding: 12px; overflow: hidden;
+  }
+  .motion-preview #view-calendar .calendar-toolbar { display: flex; gap: 8px; padding: 0 0 8px; }
+  .motion-preview #view-calendar .calendar-toolbar-primary {
+    display: grid; grid-template-columns: minmax(0,1fr) 44px 88px;
+    flex: 1 0 100%; gap: 4px; width: 100%;
+  }
+  .motion-preview #view-calendar .calendar-title-copy { grid-column: 1; grid-row: 1; min-width: 0; margin: 0; }
+  .motion-preview #view-calendar .calendar-title-copy h2 { margin-bottom: 6px; }
+  .motion-preview #view-calendar .calendar-range { font-size: 16px; line-height: 1.25; overflow-wrap: normal; }
+  .motion-preview #view-calendar .calendar-today-button { grid-column: 2; grid-row: 1; padding-inline: 0; font-size: 12px; }
+  .motion-preview #view-calendar .calendar-stepper { grid-column: 3; grid-row: 1; display: flex; gap: 0; padding: 0; border: 0; background: transparent; }
+  .motion-preview #view-calendar .calendar-stepper button { width: 44px; height: 44px; min-height: 44px; }
+  .motion-preview #view-calendar .calendar-toolbar-actions {
+    display: grid; grid-template-columns: minmax(0,1fr) auto 44px; width: 100%; gap: 6px;
+  }
+  .motion-preview #view-calendar .view-switcher { grid-column: 1; grid-row: 1; display: flex; flex-wrap: nowrap; justify-self: start; margin: 0; padding: 2px; }
+  .motion-preview #view-calendar .view-switcher button { min-height: 40px; padding-inline: 8px; font-size: 12px; }
+  .motion-preview #view-calendar #toggle-task-panel { grid-column: 2; grid-row: 1; display: block !important; min-height: 44px; padding-inline: 9px; font-size: 12px; white-space: nowrap; }
+  .motion-preview #view-calendar .phone-calendar-add { grid-column: 3; grid-row: 1; display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; }
+  .phone-calendar-add svg { width: 22px; height: 22px; }
+  .motion-preview #view-calendar .phone-week-strip { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); flex: 0 0 auto; gap: 2px; padding-bottom: 8px; }
+  .phone-week-day { display: grid; gap: 4px; justify-items: center; align-content: center; min-width: 0; min-height: 56px; padding: 4px 0; border: 0; border-radius: 10px; color: var(--ink-deep); background: transparent; cursor: pointer; }
+  .phone-week-day > span { font-size: 10px; color: var(--muted); }
+  .phone-week-day > strong { font-size: 16px; }
+  .phone-week-day[aria-current="date"] > strong { text-decoration: underline; text-underline-offset: 4px; }
+  .phone-week-day[aria-pressed="true"] { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+  .phone-week-day:is(:active,.interaction-pressed) { transform: scale(.96); background: var(--accent-soft); }
+  .motion-preview #view-calendar .planner-calendar { flex: 1 1 0; min-height: 0; overflow: auto; }
+  .motion-preview #view-calendar .timeline-calendar { min-width: 0; grid-template-columns: 48px minmax(0,1fr); grid-template-rows: 48px auto auto; }
+  .motion-preview #view-calendar .calendar-date-button { min-height: 48px; }
+  .motion-preview #view-calendar .calendar-date-button strong { width: 28px; height: 28px; }
+  .motion-preview #view-calendar .time-axis span { font-size: 10px; }
+  .motion-preview #view-calendar .calendar-event-block { touch-action: pan-y; }
+  .motion-preview #view-calendar .month-calendar { min-width: 0; }
+  .motion-preview #view-calendar .month-day { min-width: 0; min-height: 64px; padding: 7px 3px; gap: 5px; }
+  .motion-preview #view-calendar .month-day > small { display: none; }
+  .motion-preview #view-calendar .month-dots { gap: 3px; }
+  .motion-preview #view-calendar .month-dots i { width: 5px; height: 5px; }
+  .motion-preview #view-calendar .phone-task-summary {
+    display: grid; grid-template-columns: minmax(0,1fr) auto; flex: 0 0 auto;
+    align-items: center; gap: 3px 8px; min-height: 60px; margin-top: 10px; padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: 12px; color: var(--ink-deep);
+    background: var(--surface); text-align: left; cursor: pointer;
+  }
+  .phone-task-summary > span:first-child { font-size: 14px; font-weight: 700; }
+  .phone-task-summary > small { grid-column: 1; color: var(--muted); font-size: 12px; }
+  .phone-task-summary > span:last-child { grid-column: 2; grid-row: 1 / span 2; font-size: 22px; }
+  .motion-preview #view-calendar .planner-workspace > .daily-panel {
+    position: absolute; inset: auto 0 0; z-index: 51; width: 100%;
+    height: min(76dvh,calc(100% - 12px)); max-height: calc(100% - 12px);
+    padding: 18px 16px 24px; border: 1px solid var(--line); border-radius: 22px 22px 0 0;
+    background: var(--card); box-shadow: 0 -16px 50px #211d1233;
+    overflow-y: auto; overscroll-behavior: contain;
+    transform: translateY(calc(100% + 16px)); transform-origin: center bottom;
+    transition: transform var(--motion-layout) var(--motion-ease); pointer-events: none;
+  }
+  .motion-preview.task-panel-open #view-calendar .planner-workspace > .daily-panel { transform: translateY(0); pointer-events: auto; }
+  .motion-preview #view-calendar #daily-task-panel > .panel-heading { grid-template-columns: minmax(0,1fr) auto auto; gap: 8px; }
+  .motion-preview #view-calendar #daily-task-panel :is(.task-sidebar-heading,.task-sidebar-heading > div) { display: block; }
+  .motion-preview #view-calendar #daily-task-panel :is(.section-kicker,.panel-date,.panel-progress) { grid-column: auto; grid-row: auto; }
+  .motion-preview #view-calendar #plan-selected-date { grid-column: 2; grid-row: 1; align-self: start; margin: 0; }
+  .motion-preview #view-calendar .task-panel-close-button { grid-column: 3; grid-row: 1; display: grid !important; place-items: center; width: 44px; min-height: 44px; padding: 0; }
+  .motion-preview #view-calendar .task-panel-scrim:not([hidden]) { display: block !important; position: absolute; inset: 0; z-index: 50; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 18px; background: #211d1260; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+}
+@media (hover: hover) {
+  .phone-week-day:hover { background: var(--accent-soft); }
+}
+@media (min-width: 560px) and (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { padding: 8px; }
+  .motion-preview #view-calendar .calendar-toolbar { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px; min-height: 44px; }
+  .motion-preview #view-calendar .calendar-toolbar-primary,
+  .motion-preview #view-calendar .calendar-toolbar-actions { width: auto; }
+  .motion-preview #view-calendar .phone-week-strip { padding-bottom: 4px; }
+  .motion-preview #view-calendar .phone-week-day { min-height: 44px; gap: 2px; padding: 2px 0; }
+  .motion-preview #view-calendar .phone-task-summary { display: flex; justify-content: space-between; min-height: 44px; margin-top: 6px; padding-block: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-preview #view-calendar .planner-workspace > .daily-panel { transition: none; }
+  .phone-week-day:is(:active,.interaction-pressed) { transform: none; }
 }

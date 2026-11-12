@@ -11,5 +11,5 @@ alwaysApply: true
 - Continue independent, reversible investigation while awaiting an answer; wait before making changes that depend on that answer.
 - Reuse confirmed decisions and do not ask the user to repeat them. Resolve minor implementation details using existing project conventions.
 - Preserve unrelated features unless their removal was requested. A local change does not authorize public deployment.
-- Confirmed November 11, 2026: Calendar (timetable and task panel) is the website's default opening page. The task list must be visible immediately without a Tasks click. Dashboard and the other sections remain available.
-- Use the original public site's unified task column and full-height calendar layout directly, with its compact toolbar. Adapt narrow screens while preserving immediate task-list visibility.
+- Calendar is the website's default opening page. On iPad and desktop, show the task list immediately beside the timetable using the original site's unified frame and compact toolbar. Dashboard and the other sections remain available.
+- Confirmed November 12, 2026: phones use a full-width calendar, bottom navigation and tasks initially collapsed in an expandable sheet, with a visible task summary and Add Task action. Phone Week view uses a seven-day selector and one selected day's schedule. Preserve the iPad layout.

@@ -1,5 +1,26 @@
 # Phone and iPad layout review
 
+## November 12: phone Calendar and Tasks sheet
+
+Applied the user's review feedback after reading the open Chrome conversation and inspecting its two conceptual phone layouts and attached phone/iPad screenshots. The user explicitly chose a full-width phone Calendar with Tasks initially collapsed into a sheet. The iPad workspace remains intact.
+
+- Phones have Calendar, Home, Tasks, Classes and More in bottom navigation; Goals & habits, Notes and Settings remain available through More.
+- Day opens by default. Week uses seven date buttons above one selected day's schedule. Month fits the available width and opens at the top.
+- A visible Add Task button and task summary open the existing editor and task list. The sheet scrolls, traps focus, supports Escape/backdrop dismissal and restores its launcher. Resizing to iPad restores the inline task panel.
+- Calendar has one schedule scroller; route changes reset the workspace scroll. The landscape toolbar is condensed so the schedule retains usable height.
+- Selected tasks use restrained tint and an inset border, while outer rings remain for keyboard focus. Fixed CSS specificity that incorrectly gave repeated calendar controls elevated button hover/press effects.
+- Preserved the Sigma artwork, existing task data, Cloudflare/PWA notifications and native AlarmKit behavior. Advanced the offline cache to v14 and included both new navigation assets.
+
+Verification: all 215 Node tests pass. Chromium touch/mobile checks covered eight phone/iPad sizes and three Calendar modes, plus all seven routes at 320×568 and 844×390. Task add/edit/delete, sheet/editor focus return, keyboard wrapping, reduced motion, dark mode, Month scroll reset and return from scrolled Settings passed. The existing form remains scrollable with all options expanded at 390×430; that is reduced-height emulation, not a physical software keyboard test. No physical-device or Safari/WebKit verification was performed.
+
+Synced all 68 website files into the existing `DuckPlan-iOS/landing` copy. Its unsigned generic-iPhone build succeeded; every bundled website file matches the reviewed source, and native Swift/signing files are unchanged. Installing on the physical phone remains separate.
+
+Current screenshots: [Phone Calendar](phone-calendar-20261112.png), [expanded Tasks](phone-tasks-20261112.png), [phone Week](phone-week-20261112.png), [phone landscape](phone-landscape-20261112.png), [iPad Calendar](ipad-calendar-20261112.png).
+
+Current local preview: http://127.0.0.1:8034/?v=phone-planner-20261112#calendar.
+
+## Earlier November 11 review
+
 Reviewed locally on November 11, 2026, on `codex/mobile-layout-cleanup`, based on shared main `02289e0`. Included in the user's requested test GitHub upload on November 12 alongside the native iPhone alarm changes. This upload does not deploy the website or update shared GitHub main.
 
 ## Fixes

@@ -44,7 +44,8 @@ const notificationPermissionHelp = document.querySelector("#notification-permiss
 reminderToggle.checked = reminderSettings.enabled;
 reminderLead.value = String(reminderSettings.lead);
 let selectedDate = nowKey();
-let calendarView = window.matchMedia("(max-width: 760px)").matches ? "day" : "week";
+const phonePlannerQuery = window.matchMedia("(max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse)");
+let calendarView = phonePlannerQuery.matches ? "day" : "week";
 let currentFilter = "all";
 let searchTerm = "";
 let selectedTaskId = null;
@@ -69,6 +70,11 @@ const els = {
   allList: document.querySelector("#all-task-list"), taskEmpty: document.querySelector("#task-empty"),
   classGrid: document.querySelector("#class-grid"), calendar: document.querySelector("#planner-calendar"),
   calendarRange: document.querySelector("#calendar-range"), modal: document.querySelector("#task-modal"),
+  phoneWeekStrip: document.querySelector("#phone-week-strip"),
+  phoneTaskSummary: document.querySelector("#phone-task-summary"),
+  phoneTaskSummaryCopy: document.querySelector("#phone-task-summary-copy"),
+  calendarPanel: document.querySelector(".calendar-main-panel"),
+  phoneNavigation: document.querySelector(".phone-bottom-nav"),
   form: document.querySelector("#task-form"), modalTitle: document.querySelector("#modal-title"),
   modalKicker: document.querySelector("#modal-kicker"), deleteTask: document.querySelector("#delete-task"),
   saveTask: document.querySelector("#save-task"), toast: document.querySelector("#toast"),
@@ -96,6 +102,7 @@ const sidebarScrim = document.querySelector(".sidebar-scrim");
 const sidebar = document.querySelector(".sidebar");
 const workspace = document.querySelector(".workspace");
 const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
+let taskPanelLauncher = null;
 
 function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
@@ -119,12 +126,25 @@ function setSidebar(open) {
 }
 
 
-function setTaskPanel(open, moveFocus = true) {
-  const compact = compactPlannerQuery.matches && !document.body.classList.contains("motion-preview");
+function setTaskPanel(open, moveFocus = true, source = null) {
+  const phone = phonePlannerQuery.matches;
+  const compact = phone || (compactPlannerQuery.matches && !document.body.classList.contains("motion-preview"));
+  const wasOpen = document.body.classList.contains("task-panel-open");
   const nextOpen = compact && open;
+  if (nextOpen && !wasOpen) taskPanelLauncher = source || document.activeElement;
   document.body.classList.toggle("task-panel-open", nextOpen);
   els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
+  els.phoneTaskSummary?.setAttribute("aria-expanded", String(nextOpen));
   els.taskPanelScrim.hidden = !nextOpen;
+  if (els.calendarPanel) els.calendarPanel.inert = phone && nextOpen;
+  if (els.phoneNavigation) els.phoneNavigation.inert = phone && nextOpen;
+  if (phone) {
+    els.taskPanel.setAttribute("role", "dialog");
+    els.taskPanel.setAttribute("aria-modal", "true");
+  } else {
+    els.taskPanel.removeAttribute("role");
+    els.taskPanel.removeAttribute("aria-modal");
+  }
   if (compact) {
     els.taskPanel.inert = !nextOpen;
     els.taskPanel.setAttribute("aria-hidden", String(!nextOpen));
@@ -133,7 +153,11 @@ function setTaskPanel(open, moveFocus = true) {
     els.taskPanel.removeAttribute("aria-hidden");
   }
   if (moveFocus && compact && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
-  else if (moveFocus && compact && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
+  else if (moveFocus && compact && !nextOpen && wasOpen) {
+    const fallback = phone ? els.phoneTaskSummary : els.taskPanelToggle;
+    const target = taskPanelLauncher?.isConnected ? taskPanelLauncher : fallback;
+    target?.focus({ preventScroll: true });
+  }
 }
 
 function loadReminderSettings() {
@@ -368,10 +392,15 @@ function renderDailyPlan() {
   const completed = todayItems.filter((task) => task.completed).length;
   const percent = todayItems.length ? Math.round((completed / todayItems.length) * 100) : 0;
   els.selectedDayLabel.textContent = dayRelationship(selectedDate);
+  document.querySelector("#daily-plan-heading").textContent = dayRelationship(selectedDate);
   els.selectedDateHeading.textContent = formatLongDate(selectedDate);
   els.dailyProgressCopy.textContent = todayItems.length ? `${completed} of ${todayItems.length} tasks completed` : "No tasks planned yet";
   els.dailyPanelDate.textContent = formatLongDate(selectedDate);
   els.dailyPanelProgress.textContent = todayItems.length ? `${completed} of ${todayItems.length} completed` : "No tasks planned yet";
+  const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled].map((task) => task.id)).size;
+  if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${groups.overdue.length ? ` · ${groups.overdue.length} overdue` : ""}`;
+  if (els.phoneTaskSummary) els.phoneTaskSummary.setAttribute("aria-label", `Open tasks for ${formatLongDate(selectedDate)}, ${remaining} remaining`);
+  els.taskPanelToggle.textContent = phonePlannerQuery.matches ? `Tasks (${remaining})` : "Tasks";
   els.completionPercent.textContent = `${percent}%`;
   els.completionRing.style.setProperty("--completion", `${percent * 3.6}deg`);
   for (const name of Object.keys(els.lists)) {
@@ -619,22 +648,48 @@ function scrollCalendarToRelevant(dates) {
   });
 }
 
+function renderPhoneWeekStrip(dates) {
+  const strip = els.phoneWeekStrip;
+  if (!strip) return;
+  strip.hidden = !phonePlannerQuery.matches || calendarView !== "week";
+  if (strip.hidden) return;
+  const week = dates.join(",");
+  if (strip.dataset.week !== week) {
+    strip.innerHTML = dates.map((date) => `<button type="button" class="phone-week-day" data-date="${date}" aria-label="${formatLongDate(date)}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
+    strip.dataset.week = week;
+  }
+  strip.querySelectorAll("button").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.date === selectedDate));
+    if (button.dataset.date === nowKey()) button.setAttribute("aria-current", "date");
+    else button.removeAttribute("aria-current");
+  });
+}
+
 function renderCalendar({ autoScroll = false } = {}) {
   const dates = Model.datesForView(calendarView, selectedDate);
-  els.calendarRange.textContent = rangeLabel(dates);
-  els.calendar.className = `planner-calendar ${calendarView}-view`;
-  els.calendar.innerHTML = calendarView === "month" ? renderMonth(dates) : renderTimeline(dates);
+  const singleDayWeek = phonePlannerQuery.matches && calendarView === "week";
+  const visibleDates = singleDayWeek ? [selectedDate] : dates;
+  els.calendarRange.textContent = phonePlannerQuery.matches && calendarView === "day"
+    ? new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(dateObject(selectedDate))
+    : rangeLabel(dates);
+  els.calendar.className = `planner-calendar ${calendarView}-view${singleDayWeek ? " phone-single-day" : ""}`;
+  els.calendar.innerHTML = calendarView === "month" ? renderMonth(dates) : renderTimeline(visibleDates);
+  renderPhoneWeekStrip(dates);
   document.querySelectorAll("[data-calendar-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.calendarView === calendarView)));
   els.calendarStatus.textContent = `${calendarView[0].toUpperCase()}${calendarView.slice(1)} view, ${els.calendarRange.textContent}`;
   if (autoScroll) {
     calendarUserScrolled = false;
-    scrollCalendarToRelevant(dates);
+    if (calendarView === "month") {
+      els.calendar.scrollTop = 0;
+      els.calendar.scrollLeft = 0;
+    }
+    scrollCalendarToRelevant(visibleDates);
   }
 }
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
 function setupButtonMaterial(root = document) {
-  const contentControls = ".sidebar-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.task-select,.task-section-heading";
+  const contentControls = ".sidebar-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.phone-week-day,.task-select,.task-section-heading";
   root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
@@ -653,6 +708,7 @@ function setView(name, preserveDrawer = false) {
   history.replaceState(null, "", `#${normalized}`);
   if (normalized !== "calendar") setTaskPanel(false, false);
   if (!preserveDrawer) setSidebar(false);
+  workspace.scrollTo({ top: 0, left: 0, behavior: "instant" });
   window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupButtonMaterial());
 }
@@ -910,11 +966,29 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
 }));
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar({ autoScroll: true }); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); const nextOpen = !document.body.classList.contains("sidebar-open"); setTaskPanel(false, false); setSidebar(nextOpen); }));
-els.taskPanelToggle.addEventListener("click", () => setTaskPanel(!document.body.classList.contains("task-panel-open")));
+els.taskPanelToggle.addEventListener("click", (event) => setTaskPanel(!document.body.classList.contains("task-panel-open"), true, event.currentTarget));
+els.phoneTaskSummary?.addEventListener("click", (event) => setTaskPanel(!document.body.classList.contains("task-panel-open"), true, event.currentTarget));
 document.querySelectorAll("[data-close-task-panel]").forEach((button) => button.addEventListener("click", () => setTaskPanel(false)));
 compactPlannerQuery.addEventListener("change", () => setTaskPanel(false, false));
+phonePlannerQuery.addEventListener("change", () => {
+  const wasOpen = document.body.classList.contains("task-panel-open");
+  setTaskPanel(false, false);
+  if (wasOpen && !phonePlannerQuery.matches) document.querySelector("#plan-selected-date").focus({ preventScroll: true });
+  renderDailyPlan();
+  renderCalendar({ autoScroll: true });
+  setupButtonMaterial();
+});
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape" || els.modal.open) return;
+  if (els.modal.open) return;
+  if (event.key === "Tab" && phonePlannerQuery.matches && document.body.classList.contains("task-panel-open")) {
+    const controls = [...els.taskPanel.querySelectorAll("button,input,select,textarea,a[href],[tabindex='0']")]
+      .filter((control) => !control.disabled && control.getClientRects().length);
+    const first = controls[0];
+    const last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
+  if (event.key !== "Escape") return;
   if (calendarDrag?.started) cancelCalendarDrag({ announce: true });
   else if (document.body.classList.contains("task-panel-open")) setTaskPanel(false);
   else if (document.body.classList.contains("sidebar-open")) setSidebar(false);
@@ -927,6 +1001,7 @@ els.calendar.addEventListener("scroll", () => { if (!calendarProgrammaticScroll)
 els.calendar.addEventListener("pointerdown", (event) => {
   const source = event.target.closest("[data-calendar-drag-task]");
   if (!source || event.button !== 0 || event.isPrimary === false || calendarView === "month") return;
+  if (phonePlannerQuery.matches && event.pointerType === "touch") return;
   const task = tasks.find((item) => item.id === source.dataset.calendarDragTask);
   if (!task) return;
   const sourceRect = source.getBoundingClientRect();
@@ -991,7 +1066,7 @@ els.calendar.addEventListener("keydown", (event) => {
   const slot = event.target.closest(".calendar-slot");
   if (!slot || !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
   event.preventDefault();
-  const dates = Model.datesForView(calendarView, selectedDate);
+  const dates = phonePlannerQuery.matches && calendarView === "week" ? [selectedDate] : Model.datesForView(calendarView, selectedDate);
   const next = PlannerUI.nextSlot({ date: slot.dataset.slotDate, time: slot.dataset.slotTime }, event.key, dates);
   const target = els.calendar.querySelector(`[data-slot-date="${next.date}"][data-slot-time="${next.time}"]`);
   if (!target) return;
@@ -1002,6 +1077,7 @@ els.calendar.addEventListener("keydown", (event) => {
   target.scrollIntoView({ block: "nearest", inline: "nearest" });
 });
 document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
+document.querySelector("#phone-add-task")?.addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
 document.querySelector("#open-task-modal").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: document.body.dataset.view === "calendar" ? selectedDate : nowKey() }));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);

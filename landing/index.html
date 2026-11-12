@@ -6,11 +6,12 @@
     <meta name="description" content="DuckPlan is a calm, task-first student planner that keeps deadlines and study time together." />
     <meta name="theme-color" content="#FFD93D" />
     <link rel="icon" type="image/png" href="./assets/duckplan-sigma-icon-v3-192.png" />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./planner-ui.css" />
+    <link rel="stylesheet" href="./styles.css?v=phone-planner-20261112" />
+    <link rel="stylesheet" href="./planner-ui.css?v=phone-planner-20261112" />
     <link rel="stylesheet" href="./duck-theme.css?v=sigma-front-view-20261111" />
     <link rel="stylesheet" href="./planner-clarity.css" />
-    <link rel="stylesheet" href="./planner-motion.css?v=mobile-layout-20261111" />
+    <link rel="stylesheet" href="./planner-motion.css?v=phone-planner-20261112" />
+    <link rel="stylesheet" href="./phone-navigation.css?v=phone-navigation-20261112" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -102,11 +103,14 @@
                   <div class="calendar-title-copy"><h2 id="calendar-heading">Calendar</h2><p class="calendar-range" id="calendar-range"></p></div>
                 </div>
                 <div class="calendar-toolbar-actions"><button class="secondary-button task-panel-toggle" type="button" id="toggle-task-panel" aria-controls="daily-task-panel" aria-expanded="false">Tasks</button>
+                  <button class="primary-button phone-calendar-add" type="button" id="phone-add-task" aria-label="Add task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
                   <div class="view-switcher" role="group" aria-label="Calendar view"><button type="button" data-calendar-view="day" aria-pressed="false">Day</button><button type="button" data-calendar-view="week" aria-pressed="true">Week</button><button type="button" data-calendar-view="month" aria-pressed="false">Month</button></div>
                 </div>
               </div>
+              <div class="phone-week-strip" id="phone-week-strip" role="group" aria-label="Choose a day" hidden></div>
               <p class="sr-only" id="calendar-status" role="status" aria-live="polite"></p><p class="sr-only" id="calendar-drag-instructions">Drag scheduled work to another day or time. Keyboard users can hold Alt and use the arrow keys to reschedule in 15-minute steps.</p>
               <div id="planner-calendar" class="planner-calendar" tabindex="0" role="region" aria-label="Calendar schedule"></div>
+              <button class="phone-task-summary" id="phone-task-summary" type="button" aria-controls="daily-task-panel" aria-expanded="false"><span>Tasks for this day</span><small id="phone-task-summary-copy"></small><span aria-hidden="true">⌃</span></button>
             </section>
           </div>
         <button class="task-panel-scrim" type="button" data-close-task-panel aria-label="Close tasks" hidden></button>
@@ -171,6 +175,22 @@
       </main>
     </div>
 
+    <nav class="phone-bottom-nav" aria-label="Phone planner navigation">
+      <button class="nav-item phone-nav-button active" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true"></span><span>Calendar</span></button>
+      <button class="nav-item phone-nav-button" type="button" data-view="home"><span class="nav-icon" aria-hidden="true"></span><span>Home</span></button>
+      <button class="nav-item phone-nav-button" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true"></span><span>Tasks</span></button>
+      <button class="nav-item phone-nav-button" type="button" data-view="classes"><span class="nav-icon" aria-hidden="true"></span><span>Classes</span></button>
+      <button class="phone-nav-button phone-more-button" type="button" id="phone-more-button" aria-haspopup="dialog" aria-controls="phone-more-dialog" aria-expanded="false"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg></span><span>More</span></button>
+    </nav>
+    <dialog class="phone-more-dialog" id="phone-more-dialog" tabindex="-1" aria-labelledby="phone-more-heading">
+      <div class="phone-more-heading"><h2 id="phone-more-heading">More</h2><button class="close-button" id="phone-more-close" type="button" aria-label="Close more navigation">×</button></div>
+      <nav class="phone-more-links" aria-label="More planner sections">
+        <button class="nav-item" type="button" data-view="goals"><span class="nav-icon" aria-hidden="true"></span><span>Goals &amp; habits</span><span class="phone-more-preview">Preview</span></button>
+        <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true"></span><span>Notes</span><span class="phone-more-preview">Preview</span></button>
+        <button class="nav-item" type="button" data-view="settings"><span class="nav-icon" aria-hidden="true"></span><span>Settings</span></button>
+      </nav>
+    </dialog>
+
     <dialog class="task-modal" id="task-modal" data-popup-width="580" tabindex="-1" aria-labelledby="modal-title"><form method="dialog" id="task-form" novalidate>
       <div class="modal-heading"><div class="modal-duck" data-duck-state="focused" aria-hidden="true"></div><div><p class="section-kicker" id="modal-kicker">Plan your work</p><h2 id="modal-title">New task</h2></div><button class="close-button" type="button" id="close-task-modal" aria-label="Close">×</button></div>
       <p id="task-form-error" class="form-error" role="alert" hidden></p>
@@ -208,10 +228,11 @@
     <script src="./popup-motion.js"></script>
     <script src="./page-navigation-feedback.js?v=two-button-rules-1"></script>
     <script src="./button-interactions.js?v=local-buttons-1"></script>
+    <script src="./phone-navigation.js?v=phone-navigation-20261112"></script>
     <script src="./app-install.js?v=app-1"></script>
     <script src="./task-alarms.js?v=native-alarms-1"></script>
     <script src="./native-task-alarms.js?v=1"></script>
-    <script src="./app.js?v=original-layout-20261111"></script>
+    <script src="./app.js?v=phone-planner-20261112"></script>
     <script src="./duck-mascot.js?v=sigma-side-swim-20261111"></script>
     <script src="./planner-presentation.js?v=ui-integration-20261110"></script>
     <script src="./duck-interactions.js"></script>
