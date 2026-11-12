@@ -91,6 +91,11 @@
   overflow-y: auto; scrollbar-gutter: stable; overscroll-behavior: contain;
   transform: none; transition: none;
 }
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace,
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { background: var(--card); border-color: var(--line); }
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace > .daily-panel { background: linear-gradient(180deg,var(--card) 0%,var(--canvas) 58%,var(--accent-soft) 100%); }
+:root[data-theme="dark"] .motion-preview #daily-task-panel .task-section-heading strong { background: var(--surface); color: var(--muted); }
+:root[data-theme="dark"] .motion-preview #view-calendar .time-axis { background: var(--card); }
 .motion-preview #daily-task-panel > .panel-heading { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 12px; }
 .motion-preview #daily-task-panel .section-kicker { font-size: 12px; font-weight: 760; letter-spacing: .08em; text-transform: uppercase; }
 .motion-preview #daily-plan-heading { font-size: 17.28px; font-weight: 700; }
@@ -143,7 +148,15 @@
   .dashboard-layout > .panel { min-width: 0; }
 }
 @container workspace (max-width: 340px) {
+  .motion-preview #daily-task-panel > .panel-heading { gap: 2px 8px; }
+  .motion-preview #daily-task-panel :is(.task-sidebar-heading,.task-sidebar-heading > div) { display: contents; }
+  .motion-preview #daily-task-panel .section-kicker { grid-column: 1; grid-row: 1; }
+  .motion-preview #daily-plan-heading { grid-column: 1; grid-row: 2; }
+  .motion-preview #plan-selected-date { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+  .motion-preview #daily-task-panel :is(.panel-date,.panel-progress) { grid-column: 1 / -1; }
+  .motion-preview #daily-task-panel .daily-task-card { grid-template-columns: 32px minmax(0,1fr) 36px; }
   .motion-preview #view-calendar .calendar-toolbar-primary { flex-wrap: wrap; }
+  .motion-preview #view-calendar .calendar-title-copy { flex: 1 0 100%; margin-left: 0; }
   .motion-preview #view-calendar .calendar-toolbar-actions { min-width: 0; }
   .motion-preview #view-calendar .view-switcher { flex-wrap: wrap; max-width: 100%; }
   .compact-topbar .topbar-title > div { display: block; }
@@ -157,19 +170,70 @@
   .dashboard-panel-footer,.panel-heading { flex-wrap: wrap; }
   .week-preview-day { min-width: 0; }
   .week-preview-day > small { display: none; }
+  .dashboard-week-strip { grid-template-columns: repeat(7,minmax(44px,1fr)); overflow-x: auto; padding: 2px 2px 6px; scroll-snap-type: x proximity; }
+  .week-preview-day { scroll-snap-align: start; }
   .dashboard-week { padding-inline: 6px; }
   .settings-row,.settings-actions { min-width: 0; max-width: 100%; }
   .settings-actions { flex-direction: column; align-items: stretch; width: 100%; }
   .settings-actions button { white-space: normal; overflow-wrap: anywhere; }
+  .settings-panel .reminder-options { width: 100%; min-width: 0; }
+  .settings-panel :is(.secondary-button,.theme-field,.theme-field select) { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
   .all-task-row { grid-template-columns: 28px minmax(0,1fr) 28px; }
   .all-task-row .task-due { grid-column: 2; grid-row: 2; }
   .all-task-row .task-edit { grid-column: 3; grid-row: 1; }
 }
 @container workspace (max-width: 240px) {
   .motion-preview #daily-task-panel > .panel-heading { grid-template-columns: minmax(0,1fr); }
+  .motion-preview #plan-selected-date { grid-column: 1; grid-row: auto; margin-top: 8px; }
   .motion-preview #daily-task-panel .daily-task-card { grid-template-columns: 24px minmax(0,1fr); gap: 4px; }
   .motion-preview #daily-task-panel .task-edit { grid-column: 2; justify-self: end; }
   .motion-preview #daily-task-panel .category-tag { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .dashboard-layout { overflow-wrap: anywhere; }
+  .dashboard-layout .daily-task-card { grid-template-columns: 24px minmax(0,1fr); }
+  .dashboard-layout .daily-task-card .task-edit { grid-column: 2; grid-row: 2; justify-self: end; }
+  .dashboard-layout .focus-open { grid-column: 1 / -1; max-width: 100%; white-space: normal; }
+  .dashboard-layout :is(.category-tag,.priority-tag) { max-width: 100%; white-space: normal; }
+  .dashboard-layout .overdue-notice { flex-wrap: wrap; gap: 8px; }
+  .dashboard-layout :is(.upcoming-item,.schedule-item) { grid-template-columns: minmax(0,1fr) 18px; gap: 8px; }
+  .dashboard-layout .upcoming-date { grid-column: 1; justify-self: start; }
+  .dashboard-layout .upcoming-copy { grid-column: 1; grid-row: 2; }
+  .dashboard-layout .schedule-time { grid-column: 1 / -1; }
+  .dashboard-layout .schedule-title { grid-column: 1; }
+  .dashboard-layout :is(.upcoming-copy strong,.upcoming-copy small,.schedule-title small) { white-space: normal; }
+}
+/* Keep controls comfortable to tap without changing the desktop proportions. */
+@media (pointer: coarse) {
+  .motion-preview #view-calendar .compact-button { min-height: 44px; font-size: 14px; }
+  .motion-preview #view-calendar .calendar-stepper button { width: 44px; height: 44px; min-height: 44px; }
+  .motion-preview #view-calendar .view-switcher button { min-height: 44px; font-size: 14px; padding-inline: 10px; }
+  .motion-preview #view-calendar .calendar-date-button span { font-size: 11px; }
+  .motion-preview #view-calendar .calendar-date-button strong { font-size: 16px; }
+  .motion-preview #view-calendar .time-axis span { font-size: 11px; }
+}
+/* Short viewports need room for actual tasks, rather than only their heading. */
+@media (max-height: 600px) {
+  .motion-preview[data-view="calendar"] .unified-workspace { overflow-y: auto; }
+  @container workspace (max-width: 780px) {
+    .motion-preview #view-calendar { height: auto; min-height: 100%; }
+    .motion-preview #view-calendar .planner-workspace,
+    .motion-preview #view-calendar .planner-workspace:has(.day-view) {
+      height: auto; min-height: calc(100dvh - 32px);
+      grid-template-rows: minmax(260px,36dvh) 360px;
+    }
+  }
+  @container workspace (max-width: 340px) {
+    .motion-preview #view-calendar .planner-workspace,
+    .motion-preview #view-calendar .planner-workspace:has(.day-view) { grid-template-rows: 350px 360px; }
+  }
+  @container workspace (min-width: 620px) and (max-width: 780px) {
+    .motion-preview #view-calendar { height: 100%; }
+    .motion-preview #view-calendar .planner-workspace,
+    .motion-preview #view-calendar .planner-workspace:has(.day-view) {
+      height: 100%; min-height: 0; grid-template-columns: minmax(240px,.65fr) minmax(0,1fr); grid-template-rows: minmax(0,1fr);
+    }
+    .motion-preview #view-calendar .planner-workspace > .daily-panel { grid-column: 1; grid-row: 1; border-bottom: 0; border-right: 1px solid var(--line); }
+    .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { grid-column: 2; grid-row: 1; }
+  }
 }
 @media (max-width: 700px) {
   .motion-preview .unified-shell,.motion-preview[data-view="calendar"] .unified-shell { --sidebar-width: 152px; --sidebar-rail-width: 52px; }
