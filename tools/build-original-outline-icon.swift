@@ -84,14 +84,15 @@ func components(_ image: Raster, roi: (Int, Int, Int, Int)? = nil) -> [Component
   return result.sorted { $0.points.count > $1.points.count }
 }
 let root = CommandLine.arguments.dropFirst().first { !$0.hasPrefix("--") } ?? FileManager.default.currentDirectoryPath
+let restoredFace = CommandLine.arguments.contains("--restore-sigma-face")
 let referenceEyeProportions = CommandLine.arguments.contains("--reference-eye-proportions")
 let duckEyes = referenceEyeProportions || CommandLine.arguments.contains("--duck-eyes")
-let compactExpression = duckEyes || CommandLine.arguments.contains("--compact-expression")
+let compactExpression = restoredFace || duckEyes || CommandLine.arguments.contains("--compact-expression")
 let raisedBrow = compactExpression || CommandLine.arguments.contains("--raised-brow")
-let version = referenceEyeProportions ? "v10" : (duckEyes ? "v9" : (compactExpression ? "v8" : (raisedBrow ? "v7" : "v6")))
+let version = restoredFace ? "v11" : (referenceEyeProportions ? "v10" : (duckEyes ? "v9" : (compactExpression ? "v8" : (raisedBrow ? "v7" : "v6"))))
 let originalPath = root + "/docs/sigma-mascot/source/original-duck-reference.png"
 let original = try Raster(originalPath)
-let expressionSource = duckEyes ? "docs/sigma-mascot/source/duck-eye-features-v9.png" : (compactExpression ? "docs/sigma-mascot/source/narrow-expression-features-v8.png" : (raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png"))
+let expressionSource = restoredFace ? "landing/assets/duckplan-sigma-head-v3.png" : (duckEyes ? "docs/sigma-mascot/source/duck-eye-features-v9.png" : (compactExpression ? "docs/sigma-mascot/source/narrow-expression-features-v8.png" : (raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png")))
 let expression = try Raster(root + "/" + expressionSource)
 let parts = components(original)
 require(parts.count >= 4, "Missing original artwork components")
@@ -186,6 +187,58 @@ for y in 0..<size { for x in 0..<size {
   }
 } }
 try baseline.save(proof + "rotated-original.png")
+let eyeWidth = duckEyes ? 42.0 : (compactExpression ? 35.0 : 43.0)
+let browWidth = duckEyes ? 49.0 : (compactExpression ? 39.0 : 45.0)
+let faceCrop = (x: 366, y: 377, width: 515, height: 488)
+let faceWidth = 520.0, faceLeft = 252.0, faceTop = 295.0
+let faceScale = faceWidth / Double(faceCrop.width)
+if restoredFace {
+  // Restore the user's earlier expression as one group. All five features use
+  // exactly the same scale/translation; none is stretched or normalized alone.
+  let faceParts = components(expression, roi: (faceCrop.x, faceCrop.y,
+    faceCrop.x + faceCrop.width, faceCrop.y + faceCrop.height))
+  require(faceParts.count == 5, "Expected two brows, two eyes and one bill in original face")
+  var featureMask = [Bool](repeating: false, count: expression.width * expression.height)
+  for part in faceParts { for i in part.points { featureMask[i] = true } }
+  for y in faceCrop.y..<(faceCrop.y + faceCrop.height) {
+    for x in faceCrop.x..<(faceCrop.x + faceCrop.width) {
+      let i = y * expression.width + x
+      let r = Int(expression.rgb[i * 3]), g = Int(expression.rgb[i * 3 + 1]), b = Int(expression.rgb[i * 3 + 2])
+      if r > 180 && r - g > 8 && r - b > 20 { featureMask[i] = true }
+    }
+  }
+  var featherMask = featureMask
+  for i in featureMask.indices where featureMask[i] {
+    let x = i % expression.width, y = i / expression.width
+    for dy in -3...3 { for dx in -3...3 {
+      let nx = x + dx, ny = y + dy
+      if nx >= faceCrop.x && nx < faceCrop.x + faceCrop.width && ny >= faceCrop.y && ny < faceCrop.y + faceCrop.height {
+        featherMask[ny * expression.width + nx] = true
+      }
+    } }
+  }
+  for y in 0..<size { for x in 0..<size {
+    let sx = Double(faceCrop.x) + (Double(x) + 0.5 - faceLeft) / faceScale - 0.5
+    let sy = Double(faceCrop.y) + (Double(y) + 0.5 - faceTop) / faceScale - 0.5
+    let x0 = Int(floor(sx)), y0 = Int(floor(sy)), fx = sx - Double(x0), fy = sy - Double(y0)
+    var opacity = 0.0, color = [Double](repeating: 0, count: 3)
+    for (px,py,weight) in [(x0,y0,(1-fx)*(1-fy)),(x0+1,y0,fx*(1-fy)),(x0,y0+1,(1-fx)*fy),(x0+1,y0+1,fx*fy)] {
+      if px < faceCrop.x || py < faceCrop.y || px >= faceCrop.x + faceCrop.width || py >= faceCrop.y + faceCrop.height { continue }
+      let source = py * expression.width + px
+      if !featherMask[source] { continue }
+      opacity += weight
+      for channel in 0..<3 { color[channel] += Double(expression.rgb[source * 3 + channel]) * weight }
+    }
+    if opacity < 0.001 { continue }
+    let i = y * size + x
+    require(!protectedOutline[i], "Restored face touches original outer outline")
+    editMask[i] = true
+    for channel in 0..<3 {
+      final.rgb[i * 3 + channel] = UInt8(max(0, min(255,
+        (Double(final.rgb[i * 3 + channel]) * (1 - opacity) + color[channel]).rounded())))
+    }
+  } }
+} else {
 var newBeakMask = [Bool](repeating: false, count: size * size)
 if compactExpression {
   let pixels = protectedBeak.indices.filter { protectedBeak[$0] }
@@ -265,8 +318,6 @@ func composite(_ feature: Component, center: (Double, Double), width: Double, he
     for channel in 0..<3 { final.rgb[i * 3 + channel] = UInt8((Double(final.rgb[i * 3 + channel]) * (1 - min(1, opacity))).rounded()) }
   } }
 }
-let eyeWidth = duckEyes ? 42.0 : (compactExpression ? 35.0 : 43.0)
-let browWidth = duckEyes ? 49.0 : (compactExpression ? 39.0 : 45.0)
 for side in 0..<2 {
   let eye = rotate(eyes[side].centerX, eyes[side].centerY)
   let inwardAmount = compactExpression ? 17.0 : 4.0
@@ -280,6 +331,7 @@ for side in 0..<2 {
   let browInset = side == 0 ? inset : -inset
   let browLift = duckEyes ? (side == 0 ? 49.0 : 36.0) : (compactExpression ? (side == 0 ? 43.0 : 32.0) : (raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0))
   composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - browLift), width: browWidth)
+}
 }
 var changes = 0, outsideEdits = 0, outlineChanges = 0, beakChanges = 0
 for i in 0..<(size * size) {
@@ -296,7 +348,7 @@ var mask = Raster(width: size, height: size, color: [0,0,0])
 for i in editMask.indices where editMask[i] { for channel in 0..<3 { mask.rgb[i * 3 + channel] = 255 } }
 try mask.save(proof + "facial-edit-mask.png")
 try final.save(root + "/landing/assets/duckplan-sigma-head-" + version + ".png")
-let report: [String: Any] = [
+var report: [String: Any] = [
   "source": "docs/sigma-mascot/source/original-duck-reference.png",
   "expressionSource": expressionSource,
   "clockwiseDegrees": angle * 180 / Double.pi,
@@ -313,6 +365,16 @@ let report: [String: Any] = [
   "eyeStyle": duckEyes ? "solid black oval duck eyes, one half-lidded" : "earlier expression",
   "method": "Original raster copied with one rotation/scale/crop; \(referenceEyeProportions ? "existing v9 eyes fitted to moderate reference-inspired opening proportions; same v9 brows and v8 bill" : (duckEyes ? "larger solid oval duck eyes and eyebrows with v8 bill transform" : (compactExpression ? "narrower, closer eyes and a smaller, lower original bill" : (raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing")))) expression components composited inside. No generated or reconstructed contour."
 ]
+if restoredFace {
+  for key in ["beakScale", "beakShiftOutputPixels", "eyeWidthOriginalPlane", "eyebrowWidthOriginalPlane", "eyeTargetSizesOriginalPlane"] { report.removeValue(forKey: key) }
+  report["eyeStyle"] = "restored v3 half-lidded eyes, curved brows and rounded orange bill"
+  report["restoredEarlierFace"] = true
+  report["sourceFaceCrop"] = [faceCrop.x, faceCrop.y, faceCrop.width, faceCrop.height]
+  report["faceTargetOriginOutputPixels"] = [faceLeft, faceTop]
+  report["faceTargetWidthOutputPixels"] = faceWidth
+  report["uniformFaceScale"] = [faceScale, faceScale]
+  report["method"] = "Original outline copied with one rotation/scale/crop. Existing v3 brows, eyes and bill restored together with one uniform scale/translation. No individual feature stretching, generated artwork or reconstructed contour."
+}
 let data = try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted,.sortedKeys])
 try data.write(to: URL(fileURLWithPath: proof + "preservation-report.json"))
 print(String(data: data, encoding: .utf8)!)

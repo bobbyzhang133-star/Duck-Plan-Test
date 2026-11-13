@@ -4,9 +4,17 @@ The current outline uses the user's original duck pixels, copied and rotated wit
 the deterministic Swift compositor. Facial features are composited inside that
 protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v10.png. Current app exports:
-duckplan-sigma-icon-v10-192.png and duckplan-sigma-icon-v10-512.png.
+Current master: duckplan-sigma-head-v11.png. Current app exports:
+duckplan-sigma-icon-v11-192.png and duckplan-sigma-icon-v11-512.png.
 Earlier icons are retained for comparison.
+
+## Earlier Sigma facial group restored together (v11, November 12, 2026)
+
+The user's latest screenshot selects the earlier face found in `landing/assets/duckplan-sigma-head-v3.png`: both curved eyebrows, half-lidded eyes and the rounded orange bill. V11 copies that complete group together using one uniform affine scale, preserving the relationships between all facial features. There is no individual feature stretching, new feature raster or new image generation. This latest choice supersedes the human-photo and enlarged oval-eye directions from v7–v10.
+
+`tools/build-original-outline-icon.swift --restore-sigma-face` uses the existing v3 facial crop `[366, 377, 515, 488]`. Its output target starts at `[252, 295]`, with width 520 and proportional height approximately 492.74, from the common scale `520 / 515`. The approved original outer contour keeps the v6 rotation, scale and crop. Evidence is written to `docs/sigma-mascot/v11-preservation/`; original-outline pixels and all pixels outside the permitted facial mask must remain unchanged. Original-bill pixels intentionally differ because the restored group includes its own rounded bill. Exports remain opaque 1024px native and 192/512px web icons.
+
+Use `--reference-eye-proportions` for v10, `--duck-eyes` for v9, `--compact-expression` for v8, `--raised-brow` for v7 or no expression flag for v6. Their methods, sources, prompts and proofs remain below as history.
 
 ## Reference-photo eye proportion correction (v10, November 12, 2026)
 

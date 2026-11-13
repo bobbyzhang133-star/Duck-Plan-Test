@@ -13,13 +13,13 @@
   "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "/assets/duckplan-sigma-icon-v10-192.png",
+      "src": "/assets/duckplan-sigma-icon-v11-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/duckplan-sigma-icon-v10-512.png",
+      "src": "/assets/duckplan-sigma-icon-v11-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -30,13 +30,13 @@
       "name": "Today",
       "short_name": "Today",
       "url": "/#calendar",
-      "icons": [{ "src": "/assets/duckplan-sigma-icon-v10-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [{ "src": "/assets/duckplan-sigma-icon-v11-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "All tasks",
       "short_name": "Tasks",
       "url": "/#tasks",
-      "icons": [{ "src": "/assets/duckplan-sigma-icon-v10-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [{ "src": "/assets/duckplan-sigma-icon-v11-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }
