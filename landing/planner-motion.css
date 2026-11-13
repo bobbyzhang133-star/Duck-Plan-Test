@@ -214,3 +214,37 @@
   .motion-preview .unified-shell,.motion-preview .unified-shell .sidebar,.motion-preview .sidebar * { transition: none; }
   .motion-preview .task-modal::backdrop { animation: none !important; }
 }
+
+/* Dark theme for the calendar workspace. The surfaces above (and the legacy
+   timeline rules in styles.css) are hardcoded light, which left light ink on a
+   cream panel in dark mode. Keep these after the light rules so they win. */
+:root[data-theme="dark"] {
+  --calendar-grid-line: rgba(247,243,232,.09);
+  --calendar-grid-line-strong: rgba(247,243,232,.14);
+}
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace,
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace:has(.day-view) {
+  border-color: var(--line); background: var(--card); box-shadow: 0 22px 60px rgba(0,0,0,.35);
+}
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace > .daily-panel {
+  background: linear-gradient(180deg,var(--card) 0%,color-mix(in srgb,var(--card) 82%,var(--accent-soft)) 100%);
+}
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { background: var(--card); }
+:root[data-theme="dark"] .planner-calendar,
+:root[data-theme="dark"] .view-switcher,
+:root[data-theme="dark"] .calendar-today-button { border-color: var(--calendar-grid-line-strong); }
+:root[data-theme="dark"] .time-axis { background: var(--card); border-right-color: var(--calendar-grid-line-strong); }
+:root[data-theme="dark"] .time-axis span { color: var(--muted); }
+:root[data-theme="dark"] :is(.timeline-corner,.timeline-deadline-label,.timeline-deadlines,.timeline-days) { border-color: var(--calendar-grid-line-strong); }
+:root[data-theme="dark"] .deadline-cell { border-color: var(--calendar-grid-line); }
+:root[data-theme="dark"] .timeline-column {
+  border-left-color: var(--calendar-grid-line);
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--hour-height) - 1px), var(--calendar-grid-line) calc(var(--hour-height) - 1px), var(--calendar-grid-line) var(--hour-height));
+}
+:root[data-theme="dark"] .calendar-event-block { color: var(--ink-deep); background: color-mix(in srgb,var(--course-color) 26%,var(--card)); }
+:root[data-theme="dark"] .calendar-event-block small { color: color-mix(in srgb,var(--ink) 82%,var(--course-color)); }
+:root[data-theme="dark"] .calendar-drag-ghost { box-shadow: 0 12px 26px rgba(0,0,0,.45), 0 0 0 2px color-mix(in srgb,var(--course-color) 40%,var(--card)) !important; }
+:root[data-theme="dark"] .month-day { border-color: var(--calendar-grid-line); }
+:root[data-theme="dark"] .month-day.outside { color: color-mix(in srgb,var(--muted) 70%,transparent); background: rgba(0,0,0,.14); }
+:root[data-theme="dark"] .month-day.selected { background: var(--accent-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent); }
+:root[data-theme="dark"] .month-day.today strong { color: #352c0b; }
