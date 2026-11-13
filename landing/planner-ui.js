@@ -72,5 +72,31 @@
     return { date, minutes, time: `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}` };
   }
 
-  return { accountIdentity, nextSlot, restoreDeletedTask, snapCalendarDrop, timelineScrollTop };
+  function snapTemplateDrop(options = {}) {
+    if (!options || typeof options !== "object") return null;
+    const { date, pointerY, columnTop, hourHeight = 62, startHour = 7, endHour = 22, snapMinutes = 15, durationMinutes = 45 } = options;
+    if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+    const [year, month, day] = date.split("-").map(Number);
+    const calendarDate = new Date(0);
+    calendarDate.setUTCHours(0, 0, 0, 0); calendarDate.setUTCFullYear(year, month - 1, day);
+    if (year < 1 || calendarDate.getUTCFullYear() !== year || calendarDate.getUTCMonth() !== month - 1 || calendarDate.getUTCDate() !== day) return null;
+    if (![pointerY, columnTop, hourHeight, startHour, endHour].every(Number.isFinite) || hourHeight <= 0) return null;
+    const startMinutes = startHour * 60, endMinutes = endHour * 60;
+    if (!Number.isInteger(startMinutes) || !Number.isInteger(endMinutes) || startMinutes < 0 || endMinutes > 1440 || endMinutes <= startMinutes) return null;
+    if (!Number.isInteger(snapMinutes) || snapMinutes < 1 || snapMinutes > endMinutes - startMinutes) return null;
+    if (!Number.isInteger(durationMinutes) || durationMinutes < 5 || durationMinutes > 900 || durationMinutes > endMinutes - startMinutes) return null;
+    if (!Number.isFinite(startMinutes + ((pointerY - columnTop) / hourHeight) * 60)) return null;
+    const earliest = Math.ceil(startMinutes / snapMinutes) * snapMinutes;
+    const latest = Math.floor((endMinutes - durationMinutes) / snapMinutes) * snapMinutes;
+    if (latest < earliest) return null;
+    const snapped = snapCalendarDrop({ date, pointerY, columnTop, hourHeight, startHour, endHour, snapMinutes, durationMinutes });
+    // The existing drag helper can clamp to an off-grid last start. Template copies must
+    // fit their entire actual duration and retain the grid even at the bottom boundary.
+    const oldLastStart = endMinutes - Math.max(snapMinutes, durationMinutes);
+    const candidate = snapped.minutes >= oldLastStart ? latest : Math.round(snapped.minutes / snapMinutes) * snapMinutes;
+    const minutes = Math.max(earliest, Math.min(latest, candidate));
+    return { date, minutes, time: `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}` };
+  }
+
+  return { accountIdentity, nextSlot, restoreDeletedTask, snapCalendarDrop, snapTemplateDrop, timelineScrollTop };
 });
