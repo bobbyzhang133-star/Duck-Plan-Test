@@ -4,6 +4,8 @@ Implemented November 13, 2026 in the local website checkout.
 
 The user later clarified a different whole-page stack behavior. The implementation and evidence below document the earlier incoming-only interpretation; see the [completed clarification and Chat Check](../reviews/page-stack-transitions-2026-11-13.md) for the superseding requirements and recommended replacement.
 
+The user subsequently approved implementation. The [local whole-page stack](../page-stack/README.md) now supersedes this incoming-only entrance; this file and its old QA script remain historical evidence.
+
 Sidebar navigation follows its actual visible order: Calendar, Dashboard, Tasks, Classes, Goals & habits, Notes, Settings. A destination below the current section slides downward into place from 48px above; a destination above slides upward from 48px below. Incoming content also fades in using the shared 480ms layout response. The sidebar stays still. Phone navigation uses the same section order.
 
 Routes, selected navigation state, controls and scroll reset commit immediately. Initial/deep-link loading, same-section clicks, search and notification routing do not play an entrance animation. Reduced motion switches immediately and changing that preference stops any active slide. The two older CSS entrances are disabled so they cannot compete or retain a transform.

@@ -136,11 +136,13 @@ const workspace = document.querySelector(".workspace");
 const viewTransitions = window.DuckViewTransitions.create({
   window, workspace,
   order: [...sidebar.querySelectorAll(".nav-item[data-view]")].map((item) => item.dataset.view),
+  getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
 });
 const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 let taskPanelLauncher = null;
 
 function setSidebar(open) {
+  viewTransitions.settle();
   const wasOpen = document.body.classList.contains("sidebar-open");
   document.body.classList.toggle("sidebar-open", open);
   sidebar.inert = false;
@@ -787,6 +789,7 @@ function openPrimaryAction(source) {
 }
 
 function openClassEditor(source) {
+  viewTransitions.settle();
   if (classEditor) { classEditor.querySelector("input")?.focus(); return; }
   const dialog = document.createElement("dialog");
   dialog.className = "personal-note-dialog";
@@ -850,8 +853,7 @@ function openClassEditor(source) {
   DuckPopupMotion.open(dialog, anchor, () => { if (current() && !closing) dialog.querySelector("input").focus(); });
 }
 
-function setView(name, preserveDrawer = false) {
-  viewTransitions.cancel();
+function applyView(name, preserveDrawer = false) {
   const requested = name === "today" ? "home" : name;
   const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
   const normalized = next.id.replace("view-", "");
@@ -869,13 +871,21 @@ function setView(name, preserveDrawer = false) {
   requestAnimationFrame(() => setupButtonMaterial());
 }
 
-function navigateView(name, preserveDrawer = false) {
+function setView(name, preserveDrawer = false) {
+  viewTransitions.cancel();
+  applyView(name, preserveDrawer);
+}
+
+function navigateView(name, preserveDrawer = false, source = null) {
   const previous = document.body.dataset.view;
   const moveFocus = els.views.find((view) => view.id === `view-${previous}`)?.contains(document.activeElement);
-  setView(name, preserveDrawer);
-  const current = document.body.dataset.view;
-  if (previous !== current && moveFocus) workspace.focus({ preventScroll: true });
-  viewTransitions.enter(previous, current, els.views.find((view) => view.id === `view-${current}`));
+  const requested = name === "today" ? "home" : name;
+  const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
+  const current = next.id.replace("view-", "");
+  viewTransitions.navigate({ from: previous, to: current, source, update: () => {
+    applyView(current, preserveDrawer);
+    if (previous !== current && moveFocus) workspace.focus({ preventScroll: true });
+  } });
 }
 function hideToast() {
   clearTimeout(toastTimer);
@@ -1031,6 +1041,7 @@ function cancelCalendarDrag({ announce = false } = {}) {
 let modalAnchor = null;
 let modalClosing = false;
 function openModal(prefill = {}) {
+  viewTransitions.settle();
   const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
     ? document.activeElement : document.querySelector("#open-task-modal"));
   modalAnchor = DuckPopupMotion.capture(source);
@@ -1130,8 +1141,8 @@ document.addEventListener("click", (event) => {
     return;
   }
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>navigateView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
-  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>navigateView(goButton.dataset.go,sidebar.contains(goButton)),event); }
+  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>navigateView(viewButton.dataset.view,sidebar.contains(viewButton),viewButton),event);
+  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>navigateView(goButton.dataset.go,sidebar.contains(goButton),goButton),event); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
@@ -1553,6 +1564,7 @@ updateNotificationPermission();
 store.subscribe(({ reason }) => {
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
+    viewTransitions.cancel();
     renderedPlannerOwner = owner;
     clearTemplateDrag();
     plannerOwnerVersion += 1;

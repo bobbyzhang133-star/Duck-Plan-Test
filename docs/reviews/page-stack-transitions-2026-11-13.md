@@ -2,6 +2,8 @@
 
 Status: completed review, returned before implementation in keeping with the user's earlier Chat Check preference. This record clarifies the desired behavior; application source still implements the prior incoming-only entrance. No website deployment or native app update is included.
 
+Later follow-up: the user approved implementing this plan. See the [local implementation and verification](../page-stack/README.md). The findings below describe the exact earlier reviewed commit, not the replacement.
+
 ## Reviewed source and destination
 
 - TEST repository: `bobbyzhang133-star/Duck-Plan-Test`

@@ -3,91 +3,98 @@
   else root.DuckViewTransitions = factory();
 })(typeof window !== "undefined" ? window : globalThis, function () {
   "use strict";
-
   function direction(order, from, to) {
-    const previous = order.indexOf(from);
-    const next = order.indexOf(to);
+    const previous = order.indexOf(from), next = order.indexOf(to);
     return previous < 0 || next < 0 ? 0 : Math.sign(next - previous);
   }
-
-  function create({ window: win, workspace, order }) {
-    const reducedMotion = win.matchMedia("(prefers-reduced-motion: reduce)");
-    let running = null;
-    let pointerHeld = false;
-    let releaseTimer = null;
-
-    function cancel() {
-      win.clearTimeout(releaseTimer);
-      releaseTimer = null;
-      pointerHeld = false;
-      if (!running) return;
-      const current = running;
+  function create({ window: win, workspace, order, getOwner = () => "local" }) {
+    const doc = win.document, root = doc.documentElement;
+    const reduced = win.matchMedia("(prefers-reduced-motion: reduce)");
+    const touch = win.matchMedia("(any-pointer: coarse)");
+    let running = null, sequence = 0, pointer = null, committing = false;
+    function cleanup(current) {
+      if (running !== current) return;
       running = null;
-      delete current.view.dataset.viewMotion;
-      current.animation.cancel();
+      delete root.dataset.pageTransition;
+      delete root.dataset.pageTransitionPhase;
+      root.style.removeProperty("--page-height");
+      current.transition?.skipTransition();
     }
-
-    function enter(from, to, view) {
-      cancel();
-      const movement = direction(order, from, to);
-      if (!movement || reducedMotion.matches || typeof view.animate !== "function") return;
-
-      // Lower navigation items travel down into place; upper items travel up.
-      // Only the incoming live view moves, so hidden forms/IDs are never duplicated.
-      const animation = view.animate([
-        { transform: `translateY(${-movement * 48}px)`, opacity: 0 },
-        { transform: "translateY(0)", opacity: 1 },
-      ], {
-        duration: win.DuckMotion?.duration.layout || 480,
-        easing: win.DuckMotion?.easing || "cubic-bezier(.2,.8,.2,1)",
-        fill: "both",
-      });
-      const current = { view, animation };
-      running = current;
-      view.dataset.viewMotion = movement > 0 ? "down" : "up";
-      const finish = () => { if (running === current) cancel(); };
-      animation.finished.then(finish, finish);
+    function cancel() {
+      sequence += 1;
+      if (running) cleanup(running);
     }
-
-    // Hold the touched target still through pointer-up. Settling on pointer-down
-    // could move it away from the release point and swallow a fast phone tap.
-    function holdPointer() {
-      if (!running) return;
-      pointerHeld = true;
-      running.animation.pause();
+    function commit(current) {
+      if (running !== current || current.sequence !== sequence || current.owner !== getOwner() || current.committed) return;
+      current.committed = true;
+      committing = true;
+      try { current.update(); } finally { committing = false; }
     }
-    function releasePointer() {
-      if (!pointerHeld) return;
-      win.clearTimeout(releaseTimer);
+    function settle() {
+      if (!running || committing) return;
       const current = running;
-      releaseTimer = win.setTimeout(() => { if (running === current) cancel(); }, 0);
+      try { commit(current); } finally {
+        cleanup(current);
+        if (sequence === current.sequence) sequence += 1;
+      }
     }
-    function focusContent() { if (!pointerHeld) cancel(); }
-    // Click capture settles before the popup's own anchor measurements. Keyboard
-    // focus and scroll gestures also settle immediately, without a navigation wait.
-    const contentEvents = { pointerdown: holdPointer, focusin: focusContent, click: cancel, wheel: cancel, touchmove: cancel, keydown: cancel };
-    Object.entries(contentEvents).forEach(([type, handler]) => workspace.addEventListener(type, handler, { capture: true, passive: true }));
-    reducedMotion.addEventListener("change", cancel);
-    win.addEventListener("pointerup", releasePointer, true);
-    win.addEventListener("pointercancel", cancel, true);
-    win.addEventListener("blur", cancel);
-    win.addEventListener("resize", cancel);
-    win.addEventListener("pagehide", cancel);
-
-    return Object.freeze({
-      enter, cancel,
-      destroy() {
-        cancel();
-        Object.entries(contentEvents).forEach(([type, handler]) => workspace.removeEventListener(type, handler, true));
-        reducedMotion.removeEventListener("change", cancel);
-        win.removeEventListener("pointerup", releasePointer, true);
-        win.removeEventListener("pointercancel", cancel, true);
-        win.removeEventListener("blur", cancel);
-        win.removeEventListener("resize", cancel);
-        win.removeEventListener("pagehide", cancel);
-      },
+    function inside(point) {
+      if (!point) return false;
+      const box = workspace.getBoundingClientRect();
+      return point.x >= box.left && point.x < box.right && point.y >= box.top && point.y < box.bottom;
+    }
+    function navigate({ from, to, source, update }) {
+      cancel();
+      const movement = direction(order, from, to), box = workspace.getBoundingClientRect();
+      const shellMoving = workspace.parentElement?.getAnimations?.().some((animation) => animation.playState === "running");
+      // Captured snapshots cannot hit-test like live controls. Touch and content
+      // shortcuts stay immediate; desktop mouse entry settles before a click.
+      if (!movement || reduced.matches || touch.matches || inside(pointer) || !source || workspace.contains(source)
+        || doc.hidden || doc.body.classList.contains("task-panel-open") || doc.querySelector("dialog[open]") || shellMoving || !box.width || !box.height
+        || typeof doc.startViewTransition !== "function") { update(); return; }
+      const current = { sequence, owner: getOwner(), update, committed: false, transition: null };
+      running = current;
+      root.dataset.pageTransition = movement > 0 ? "forward" : "back";
+      root.dataset.pageTransitionPhase = "capture";
+      root.style.setProperty("--page-height", `${box.height}px`);
+      try {
+        const transition = doc.startViewTransition(() => commit(current));
+        current.transition = transition;
+        transition.ready.then(() => {
+          if (running === current) root.dataset.pageTransitionPhase = "animate";
+        }, () => { if (running === current) settle(); });
+        // Failure is a visual fallback; stale callbacks cannot commit old routes.
+        transition.finished.then(() => {
+          if (running === current) { commit(current); cleanup(current); }
+        }, () => { if (running === current) settle(); });
+        transition.updateCallbackDone.catch(() => { if (running === current) cleanup(current); });
+      } catch { try { commit(current); } finally { cleanup(current); } }
+    }
+    function pointerMove(event) {
+      pointer = { x: event.clientX, y: event.clientY };
+      if (inside(pointer)) settle();
+    }
+    function pointerDown(event) {
+      pointer = { x: event.clientX, y: event.clientY };
+      if (inside(pointer) || event.pointerType === "touch") settle();
+    }
+    function focusContent(event) { if (workspace.contains(event.target)) settle(); }
+    const documentEvents = { pointermove: pointerMove, pointerdown: pointerDown, focusin: focusContent, keydown: focusContent, wheel: settle, touchstart: settle };
+    Object.entries(documentEvents).forEach(([name, handler]) => doc.addEventListener(name, handler, { capture: true, passive: true }));
+    const windowEvents = ["resize", "pagehide", "blur"];
+    windowEvents.forEach((name) => win.addEventListener(name, settle));
+    reduced.addEventListener("change", settle);
+    touch.addEventListener("change", settle);
+    const popups = new win.MutationObserver(() => {
+      if (running && (doc.querySelector("dialog[open]") || doc.querySelector("#template-management-menu"))) settle();
     });
+    popups.observe(doc.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["open"] });
+    return Object.freeze({ navigate, cancel, settle, destroy() {
+      cancel(); popups.disconnect();
+      Object.entries(documentEvents).forEach(([name, handler]) => doc.removeEventListener(name, handler, true));
+      windowEvents.forEach((name) => win.removeEventListener(name, settle));
+      reduced.removeEventListener("change", settle); touch.removeEventListener("change", settle);
+    } });
   }
-
   return Object.freeze({ create, direction });
 });

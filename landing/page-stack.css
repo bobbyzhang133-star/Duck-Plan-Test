@@ -1,0 +1,27 @@
+/* One fixed workspace surface; sections retain their internal layouts. */
+body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
+/* Preserve the existing reading width inside the wider snapshot viewport. */
+.motion-preview .unified-workspace > :is(.view:not(#view-calendar),.compact-topbar) {
+  max-width: calc(1600px - 2 * var(--space-page)); margin-inline: auto;
+}
+:root[data-page-transition] { view-transition-name: none; }
+:root[data-page-transition] .unified-workspace { view-transition-name: duck-workspace; background: var(--canvas); }
+:root[data-page-transition]::view-transition { pointer-events: none; }
+:root[data-page-transition]::view-transition-group(duck-workspace),
+:root[data-page-transition]::view-transition-image-pair(duck-workspace) { animation: none; overflow: hidden; isolation: isolate; }
+:root[data-page-transition]::view-transition-old(duck-workspace),
+:root[data-page-transition]::view-transition-new(duck-workspace) {
+  width: 100%; height: 100%; object-fit: fill; opacity: 1; mix-blend-mode: normal;
+  animation-duration: var(--motion-layout); animation-timing-function: var(--motion-ease); animation-fill-mode: both;
+}
+:root[data-page-transition="forward"]::view-transition-old(duck-workspace) { animation-name: duck-page-out-up; }
+:root[data-page-transition="forward"]::view-transition-new(duck-workspace) { animation-name: duck-page-in-below; }
+:root[data-page-transition="back"]::view-transition-old(duck-workspace) { animation-name: duck-page-out-down; }
+:root[data-page-transition="back"]::view-transition-new(duck-workspace) { animation-name: duck-page-in-above; }
+@keyframes duck-page-out-up { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--page-height))); } }
+@keyframes duck-page-in-below { from { transform: translateY(var(--page-height)); } to { transform: translateY(0); } }
+@keyframes duck-page-out-down { from { transform: translateY(0); } to { transform: translateY(var(--page-height)); } }
+@keyframes duck-page-in-above { from { transform: translateY(calc(-1 * var(--page-height))); } to { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  :root::view-transition-group(duck-workspace), :root::view-transition-old(duck-workspace), :root::view-transition-new(duck-workspace) { animation: none !important; }
+}

@@ -5,6 +5,7 @@ const vm = require("node:vm");
 
 test("Calendar is the default while explicit section links and the Dashboard remain available", () => {
   const source = fs.readFileSync("landing/app.js", "utf8");
+  const applyView = source.match(/^function applyView\(name, preserveDrawer = false\) \{[\s\S]*?^\}/m)?.[0];
   const setView = source.match(/^function setView\(name, preserveDrawer = false\) \{[\s\S]*?^\}/m)?.[0];
   assert.ok(setView);
   const names = ["calendar", "home", "tasks", "classes", "goals", "notes", "settings"];
@@ -26,7 +27,7 @@ test("Calendar is the default while explicit section links and the Dashboard rem
     updatePrimaryAction() {},
     viewTransitions: { cancel() {} },
   });
-  vm.runInContext(setView, context);
+  vm.runInContext(`${applyView}\n${setView}`, context);
   for (const name of ["", "unknown", "broken[route"]) {
     context.name = name;
     vm.runInContext("setView(name)", context);
