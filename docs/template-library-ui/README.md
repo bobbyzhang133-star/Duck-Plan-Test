@@ -25,6 +25,8 @@ Layout verification covers 24 desktop/iPad combinations (1280/1024/820/768px, fo
 
 A fresh service-worker context activates cache v31 with both new tab assets and the updated library. Offline reload, Templates selection and opening New template pass without page errors.
 
+Color follow-up: all five class palettes plus No class match the actual saved calendar blocks in light and dark modes, including an archived class. A real native drag exposed the placement ghost's inherited `saturate(1.08)` and `.97` opacity; the template-specific preview now keeps filter `none` and opacity `1`, preserving the saved fill and accent while retaining its drag outline/shadow. Native drops for Calculus and No class verify exact template → preview → saved-block equality with no page errors. Six focused PWA/cache tests and syntax/diff checks pass. Cache v32 and the stylesheet version deliver this correction. [Color comparison](template-color-parity.png).
+
 ## Screenshots
 
 - [Desktop Templates](templates-desktop.png)

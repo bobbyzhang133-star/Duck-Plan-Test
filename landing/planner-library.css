@@ -6,6 +6,8 @@
   background: var(--calendar-event-fill); color: var(--calendar-event-title);
 }
 .calendar-event-block small { color: var(--calendar-event-secondary); }
+/* Placement uses the saved event's colors without a saturation or opacity shift. */
+.calendar-drag-ghost.template-drop-preview { filter: none; opacity: 1; }
 #assignment-templates, #calendar-assignment-templates, #class-library, #task-class-resources { min-width: 0; max-width: 100%; }
 .library-section { margin-top: 24px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); color: var(--ink-deep); }
 .library-heading, .library-subheading, .library-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-width: 0; }
