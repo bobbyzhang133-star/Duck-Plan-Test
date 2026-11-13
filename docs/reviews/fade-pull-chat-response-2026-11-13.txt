@@ -13,102 +13,49 @@ The current implementation correctly followed your previous request. The problem
 
 Priority
 
-	
-
 Finding
-
-	
 
 Exact cause
 
-
-
-
 High — visual
-
-	
 
 Both pages travel the entire workspace height
 
-	
-
 page-stack.css:21–24 uses translateY(±var(--page-height))
 
-
-
-
 High — visual
-
-	
 
 There is no fading or resolving effect
 
-	
-
 page-stack.css:12–15 forces opacity to 1 for both snapshots
-
-
-
 
 High — visual
 
-	
-
 Motion resembles a literal page conveyor
-
-	
 
 page-stack.css:17–24 uses opposing full-height transforms with a shared boundary
 
-
-
-
 Medium — design
-
-	
 
 Route transitions inherit sidebar timing
 
-	
-
 page-stack.css:15 uses the global --motion-layout, currently 480ms
-
-
-
 
 Medium — visual risk
 
-	
-
 Fading an entire workspace snapshot may expose an empty or changing background
-
-	
 
 page-stack.css:8–11 captures the workspace, including its background
 
-
-
-
 Medium — scope
-
-	
 
 Phones with coarse-pointer input receive no animation
 
-	
-
 view-transitions.js:52–54 deliberately bypasses snapshots when touch.matches
-
-
-
 
 Low — operational
 
-	
-
 Some overlapping fades may make text look doubled or soft
-
-	
 
 Not a confirmed defect; depends on the replacement opacity curves
 
@@ -156,7 +103,7 @@ Conceptual direction illustrations, not measured Apple animations or browser cap
 
 The sidebar, navigation controls and outer workspace frame should remain entirely stationary.
 
-Apple's published motion guidance emphasizes purposeful, brief animation, a stable frame of reference and the ability to interrupt motion rather than wait for it to finish. That supports a restrained transition, but does not establish any exact iPhone unlock timing or CSS transform values. 
+Apple's published motion guidance emphasizes purposeful, brief animation, a stable frame of reference and the ability to interrupt motion rather than wait for it to finish. That supports a restrained transition, but does not establish any exact iPhone unlock timing or CSS transform values.
 developer.apple.com
 +1
 
@@ -166,79 +113,37 @@ I would test the following as initial design hypotheses, not approved settings o
 
 Parameter
 
-	
-
 Recommended first prototype
-
-
-
 
 Outgoing displacement
 
-	
-
 20px
-
-
-
 
 Incoming displacement
 
-	
-
 32px
-
-
-
 
 Duration
 
-	
-
 360ms
-
-
-
 
 Direction
 
-	
-
 Determined by sidebar order
-
-
-
 
 Outgoing opacity
 
-	
-
 1 → 0, mostly gone by ~50%
-
-
-
 
 Incoming opacity
 
-	
-
 0 → 1, nearly opaque by ~70%
-
-
-
 
 Easing
 
-	
-
 cubic-bezier(.2,.8,.2,1) initially
 
-
-
-
 Scale or blur
-
-	
 
 None initially
 
@@ -284,66 +189,33 @@ Alternative variants worth comparing
 
 Variant
 
-	
-
 Outgoing / incoming travel
-
-	
 
 Duration
 
-	
-
 Purpose
-
-
-
 
 Subtle
 
-	
-
 12px / 24px
-
-	
 
 320ms
 
-	
-
 More restrained, less distracting
-
-
-
 
 Balanced
 
-	
-
 20px / 32px
-
-	
 
 360ms
 
-	
-
 My preferred starting point
-
-
-
 
 Expressive
 
-	
-
 24px / 40px
 
-	
-
 400ms
-
-	
 
 Stronger direction, potentially too theatrical
 
@@ -389,124 +261,57 @@ Popup and button interactions keep their existing timing.
 
 Category
 
-	
-
 Required result
-
-
-
 
 Forward: Calendar → Tasks
 
-	
-
 Old content lifts and fades; new content rises slightly and resolves
-
-
-
 
 Reverse: Tasks → Calendar
 
-	
-
 Old content moves down and fades; new content descends slightly into place
-
-
-
 
 Distant jumps
 
-	
-
 Same bounded travel, regardless of how many sidebar items are skipped
-
-
-
 
 Stationary UI
 
-	
-
 Sidebar, navigation, bottom bar and outer workspace frame do not move
-
-
-
 
 Background
 
-	
-
 No bright flashes, empty bands or visible whole-frame pulsing
-
-
-
 
 Text
 
-	
-
 No prolonged double text; final text is fully sharp
-
-
-
 
 Scroll
 
-	
-
 Existing Calendar scroll state and destination scroll rules remain correct
-
-
-
 
 Rapid navigation
 
-	
-
 Latest route wins; no stale snapshots or reversed animation
-
-
-
 
 Early input
 
-	
-
 Mouse entry settles before click/popup anchoring; keyboard actions remain responsive
-
-
-
 
 Touch
 
-	
-
 Still navigates instantly in this iteration; no claim of phone animation
-
-
-
 
 Reduced motion
 
-	
-
 Immediate, fully functional navigation
-
-
-
 
 Fallback
 
-	
-
 Unsupported, failed or interrupted snapshot capture still commits the correct route
 
-
-
-
 Privacy
-
-	
 
 Account switching cancels captured private content; no stale visual content persists
 
@@ -805,9 +610,6 @@ Review status: Exact-source access confirmed. The new fading motion has not been
 
 ChatGPT can make mistakes. Check important info.
 Latest response
-
-
-
 
 Thinking effort
 High
