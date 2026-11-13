@@ -556,9 +556,14 @@ async function refreshAccountState() {
   renderAccount(); renderAxis();
 }
 async function runAction(button, action) {
+  const ownerVersion = plannerOwnerVersion;
+  const authForm = button.closest("#sign-in-form, #recover-form");
+  const signingInAs = authForm?.elements.email.value.trim().toLowerCase();
   button.disabled = true;
   try { await action(); }
-  catch (error) { reportError(error); }
+  catch (error) {
+    if (ownerVersion === plannerOwnerVersion || (signingInAs && store.user?.email?.toLowerCase() === signingInAs)) reportError(error);
+  }
   finally { if (button.isConnected) button.disabled = false; }
 }
 async function syncAxisNow() {
@@ -947,6 +952,11 @@ function openModal(prefill = {}) {
   alarmInput.disabled=!window.DuckTaskAlarms.canSave();
   alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
   document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
+  const alarmAccount = document.querySelector("#task-alarm-account");
+  alarmAccount.hidden = !alarmInput.disabled || Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
+  document.querySelector("#task-alarm-signup").href = store.configured
+    ? new URL("#settings", location.href).href
+    : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
   if (window.DuckTaskAlarms.native) {
     document.querySelector('#task-alarm-help').textContent='Rings on this iPhone even while DuckPlan is closed. Clear the time to cancel. Changing scheduled work time does not move this alarm automatically.';
     els.form.elements.alarmSound.value=alarm?.sound || 'system';

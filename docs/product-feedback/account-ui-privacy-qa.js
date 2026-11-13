@@ -105,13 +105,25 @@ async (page) => {
     });
     const newerRefreshWins = await testPage.evaluate(() => !axisStatus.connected && localImportCount === 0 && !document.querySelector("#import-local"));
     check(newerRefreshWins, "Older same-owner refresh replaced newer account state");
+    await testPage.locator("#show-recovery-code").click();
+    await testPage.locator('#recovery-code-form [name="password"]').evaluate(input => { input.value = crypto.randomUUID(); });
+    await testPage.evaluate(() => { store.newRecoveryCode = () => new Promise((resolve, reject) => { __accountUIQA.rejectRecovery = reject; }); });
+    await testPage.locator('#recovery-code-form button[type="submit"]').click();
+    await testPage.evaluate(async () => {
+      const q = __accountUIQA;
+      await q.changeOwner("E"); q.finishCurrent();
+      q.rejectRecovery(new Error("Synthetic previous-owner request failure"));
+    });
+    await testPage.waitForTimeout(30);
+    const oldFailureSuppressed = await testPage.locator("#toast-message").evaluate(element => !element.textContent.includes("Synthetic previous-owner request failure"));
+    check(oldFailureSuppressed, "A delayed old-account failure appeared in the next owner's toast");
     await testPage.evaluate(() => __accountUIQA.changeOwner(null));
     await testPage.waitForSelector("#sign-in-form");
     const localReset = await testPage.evaluate(() => accountMode === "sign-in" && !shownRecoveryCode && !axisStatus.connected && localImportCount === 0 && !document.querySelector("#recovery-row"));
     check(localReset, "Cloud-to-local switch retained old account UI");
     check(blocked.length === 0, "Harness attempted a nonlocal or API request");
     check(pageErrors.length === 0, "Page errors occurred during account privacy regression");
-    return { syntheticOnly: true, immediateClear, oldRefreshIgnored, lateRecoveryIgnored, returnedOwnerGuarded, newerRefreshWins, localReset, realAuthRequests: 0, pageErrors };
+    return { syntheticOnly: true, immediateClear, oldRefreshIgnored, lateRecoveryIgnored, returnedOwnerGuarded, newerRefreshWins, oldFailureSuppressed, localReset, realAuthRequests: 0, pageErrors };
   } finally {
     await context.close();
   }
