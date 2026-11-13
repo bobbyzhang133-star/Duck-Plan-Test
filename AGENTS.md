@@ -28,7 +28,7 @@ Automated tests live in `tests/`. `netlify.toml` publishes `landing/` and config
 ## Build, Test, and Development Commands
 
 - `python3 -m http.server 8000 --directory landing`: serve the site locally at `http://localhost:8000`; open `/fur-lab.html` to inspect the material lab.
-- `node --test tests/*.test.cjs`: run all automated tests using Node’s built-in test runner.
+- `node --test tests/`: run all automated tests using Node’s built-in test runner.
 - `node --test tests/planner-model.test.cjs`: run planner model tests independently.
 
 There is no package manifest, dependency installation step, or build pipeline; Netlify serves the static files directly.
@@ -39,7 +39,9 @@ Follow the existing two-space indentation, double-quoted JavaScript strings, and
 
 ## Testing Guidelines
 
-Tests use `node:test` with `node:assert/strict`. Name files `*.test.cjs` and give tests descriptive behavior-based names. Add regression tests for changes to date handling, task migration, grouping, or material calculations. No coverage threshold is configured. For interface changes, also check desktop and narrow-screen layouts, task editing, calendar navigation, and affected button interactions in a browser.
+Tests use `node:test` with `node:assert/strict`. Name files `*.test.cjs` or `*.test.mjs` and give tests descriptive behavior-based names. Add regression tests for changes to date handling, task migration, grouping, or material calculations. No coverage threshold is configured. For interface changes, also check desktop and narrow-screen layouts, task editing, calendar navigation, and affected button interactions in a browser.
+
+Follow `.cursor/rules/platform-functional-testing.mdc` and `docs/platform-testing/README.md` for feature fixes, app synchronization and releases. Verify affected user actions and persistence in the actual intended browser/PWA/WKWebView runtime and account mode, including its real backend/schema dependencies. A build, screenshot or mocked transport alone is not an app feature pass. Record platform/mode/version evidence and PASS, FAIL, BLOCKED or NOT RUN results; do not claim all-platform parity from partial coverage. Keep small presentation checks proportionate, and use the full feature baseline for releases or shared storage/API/native-bridge changes.
 
 ## Commit & Pull Request Guidelines
 

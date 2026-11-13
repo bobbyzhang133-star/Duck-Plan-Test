@@ -1,0 +1,139 @@
+{
+  "audit": "scripted WKWebView functional",
+  "recordedAtUTC": "2026-11-13T22:56:07.418980+00:00",
+  "appSourceCommit": "4973cb72eeb310cdae243e9b9eaafd29d246f0fb",
+  "comparedWebsiteCommit": "5c6134f",
+  "runtime": {
+    "device": "iPhone 18 Pro",
+    "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+    "simulatorUDID": "29D8E8C4-A7F6-49C2-B8EA-0D1546E570F0",
+    "iOS": "27.2",
+    "runtimeBuild": "24B8117",
+    "configuration": "Debug",
+    "codeSigningAllowed": false
+  },
+  "app": {
+    "bundleIdentifier": "com.duckplan.app",
+    "bundleVersion": "1",
+    "shortVersion": "1.0",
+    "originalBuildFiles": 119,
+    "originalBuildUnchanged": true,
+    "originalBuildManifestSHA256": "0fe5ca158e5d5327e7ef638c43d56b6b0826fbb8cf4fbb4963ecdd16cb455053",
+    "executableSHA256": "4c2724612e3a3e6d3c133811056d7d48690825277595eadbe2a9c6f106f83373",
+    "debugLibrarySHA256": "ff1999ebcb74154e5259503aad38189d7af649df416bac5072d3a8f166772924",
+    "nativeBridgeSwiftSHA256": "27cff768a2cd9e87450f250fb2a23dd25ba453070dffd47785b5f381ed758616",
+    "approvedIconMasterSHA256": "7714bd8afc68d05399841291712d57cfcb62ad729eec3cd58e570670156501f5"
+  },
+  "instrumentation": {
+    "temporaryOnly": true,
+    "changed": [
+      "landing/index.html"
+    ],
+    "added": [
+      "landing/native-template-ui-qa.js"
+    ],
+    "businessModulesAndNativeBridgeUnchanged": true,
+    "capabilitiesOrRequestsMocked": false
+  },
+  "fixtures": {
+    "old": {
+      "origin": "http://127.0.0.1:8793",
+      "migrations": [
+        1,
+        2,
+        3
+      ],
+      "plannerFields": [
+        "classes",
+        "items"
+      ]
+    },
+    "current": {
+      "origin": "http://127.0.0.1:8794",
+      "migrations": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "organizationAvailable": true,
+      "personalAvailable": true
+    }
+  },
+  "results": [
+    {
+      "stage": "old-blocked",
+      "mode": "old",
+      "disabled": true,
+      "notice": "Templates and resources are not available on this server yet. Your saved local library stays safe on this device.",
+      "organization": false,
+      "personal": false
+    },
+    {
+      "stage": "local-saved",
+      "template": "c4713795-7c71-46a2-9dc3-d177f57b365f",
+      "task": "1b927b24-655e-494f-b8ba-ccf3602a3d81",
+      "title": "Native QA local template",
+      "scheduledStart": "2026-11-13T09:00"
+    },
+    {
+      "stage": "local-relaunch-pass",
+      "ids": {
+        "template": "c4713795-7c71-46a2-9dc3-d177f57b365f",
+        "task": "1b927b24-655e-494f-b8ba-ccf3602a3d81"
+      }
+    },
+    {
+      "stage": "cloud-pass",
+      "template": "0ddb4115-c282-41fb-ae6d-8099310dcac9",
+      "task": "94aa7f8d-50a2-4cae-b957-babf04224b59",
+      "notes": 1,
+      "goals": 1,
+      "habits": 1,
+      "templateCrud": true,
+      "schedule": true,
+      "independentCopies": 2
+    },
+    {
+      "stage": "cloud-relaunch-pass",
+      "ids": {
+        "template": "0ddb4115-c282-41fb-ae6d-8099310dcac9",
+        "task": "94aa7f8d-50a2-4cae-b957-babf04224b59",
+        "habit": "f280c580-3aeb-456e-95f3-953a7558daa9",
+        "date": "2026-11-13"
+      },
+      "identityRestored": true
+    }
+  ],
+  "serverReadback": {
+    "status": 200,
+    "retainedTemplates": 1,
+    "independentTemplateTaskIDs": 3,
+    "scheduledCopies": 1,
+    "unscheduledCopies": 2,
+    "durationAndNotesMatch": true,
+    "notes": 1,
+    "goals": 1,
+    "habits": 1,
+    "completedHabitCheckins": 1
+  },
+  "trustedTouch": {
+    "status": "BLOCKED",
+    "reason": "CUA Device Hub click returned noWindowsAvailable; AX empty, screenshot available",
+    "syntheticDOMEventsUsed": true
+  },
+  "physicalDevice": "NOT TESTED",
+  "audibleAlarmKitDelivery": "NOT TESTED",
+  "productionRequestsOrMutations": false,
+  "cleanup": {
+    "qaSimulatorRemoved": true,
+    "existingUserSimulatorPreservedBooted": true,
+    "localFixtureServersStopped": [
+      8793,
+      8794,
+      8795
+    ],
+    "sourceBackendUnchanged": true
+  }
+}

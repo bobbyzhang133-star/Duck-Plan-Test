@@ -44,7 +44,7 @@ async function cloudHarness({ storage = memoryStorage(), legacyPlanner = false }
     await ctx.settle();
     const cookie = response.headers.get("set-cookie");
     if (cookie?.startsWith("duckplan_session=")) jar.value = cookie.includes("Max-Age=0") ? null : cookie.split(";")[0];
-    if (legacyPlanner && target.pathname === "/api/planner" && response.ok) {
+    if ((typeof legacyPlanner === "function" ? legacyPlanner() : legacyPlanner) && target.pathname === "/api/planner" && response.ok) {
       const { classes, items } = await response.json();
       return new Response(JSON.stringify({ classes, items }), { headers: { "Content-Type": "application/json" } });
     }
@@ -503,4 +503,34 @@ test("old-server capability detection blocks organization writes and local impor
     if (kind === "metadata") assert.equal(store.listItems()[0].importance, "important");
     if (kind === "preferences") assert.equal(store.organizationPreferences().urgencyDays, 9);
   }
+});
+
+test("refresh after a server upgrade enables saved features without losing existing tasks or local data", async () => {
+  let legacyPlanner = true;
+  const app = await cloudHarness({ legacyPlanner: () => legacyPlanner }), { store } = app;
+  const localTemplate = await store.upsertTemplate({ title: "Keep local template", durationMinutes: 25 });
+  await store.signUp("upgrade@store.test", "planner test password");
+  const task = await store.upsertItem({ title: "Existing cloud task" });
+  assert.equal(store.supportsOrganization, false);
+  assert.equal(store.supportsPersonal, false);
+  const before = app.requests.length;
+  await assert.rejects(store.upsertTemplate({ title: "Unavailable" }), /available/);
+  await assert.rejects(store.upsertNote({ title: "Unavailable" }), /available/);
+  assert.equal(app.requests.length, before, "unsupported writes do not reach the server");
+
+  legacyPlanner = false;
+  await store.refresh();
+  assert.equal(store.supportsOrganization, true);
+  assert.equal(store.supportsPersonal, true);
+  assert.deepEqual(store.listItems().map(({ id, title }) => [id, title]), [[task.id, "Existing cloud task"]]);
+  const template = await store.upsertTemplate({ title: "Now supported", durationMinutes: 45 });
+  const note = await store.upsertNote({ title: "Now supported", body: "Saved after upgrade" });
+  const reloaded = app.makeStore();
+  await reloaded.init();
+  assert.equal(reloaded.listTemplates()[0].id, template.id);
+  assert.equal(reloaded.listNotes()[0].id, note.id);
+  assert.equal(reloaded.listNotes()[0].body, "Saved after upgrade");
+  assert.equal(reloaded.listItems()[0].id, task.id);
+  await reloaded.signOut();
+  assert.equal(reloaded.listTemplates()[0].id, localTemplate.id, "cloud upgrade preserves the separate local library");
 });

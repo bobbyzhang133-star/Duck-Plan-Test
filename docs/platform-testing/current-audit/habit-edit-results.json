@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "runtime": "157.0.8103.78",
+  "mode": "local signed-in current Worker8794",
+  "touchEmulated": true,
+  "viewport": [
+    390,
+    844
+  ],
+  "habitEditScheduleAndNotesReload": true,
+  "repeatDays": [
+    1,
+    3,
+    5
+  ],
+  "pageErrors": [],
+  "syntheticContextClosed": true,
+  "productionWrites": false
+}

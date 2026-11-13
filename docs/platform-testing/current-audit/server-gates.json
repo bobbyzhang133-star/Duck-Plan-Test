@@ -1,0 +1,48 @@
+[
+  {
+    "fixture": "old-fixture",
+    "origin": "http://127.0.0.1:8793",
+    "method": "GET",
+    "checkedPath": "/api/planner",
+    "ok": false,
+    "reason": "incompatible-planner",
+    "status": 200,
+    "features": {
+      "tasks": true,
+      "templates": false,
+      "resources": false,
+      "organization": false,
+      "goals": false,
+      "habits": false,
+      "notes": false
+    },
+    "missing": [
+      "templates",
+      "resources",
+      "goals",
+      "habits",
+      "habit_checkins",
+      "notes",
+      "organization"
+    ]
+  },
+  {
+    "fixture": "current-fixture",
+    "origin": "http://127.0.0.1:8794",
+    "method": "GET",
+    "checkedPath": "/api/planner",
+    "ok": true,
+    "reason": "compatible",
+    "status": 200,
+    "features": {
+      "tasks": true,
+      "templates": true,
+      "resources": true,
+      "organization": true,
+      "goals": true,
+      "habits": true,
+      "notes": true
+    },
+    "missing": []
+  }
+]

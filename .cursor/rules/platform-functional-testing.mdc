@@ -1,0 +1,23 @@
+---
+description: Verify DuckPlan features in their real website and native app runtimes before claiming platform parity.
+alwaysApply: true
+---
+
+# Platform Functional Testing
+
+- Follow `docs/platform-testing/README.md` for feature fixes, app synchronization and releases.
+- Identify the intended web commit, built native bundle, runtime/browser version, account mode and backend/schema version before testing.
+- Reproduce the reported action in its affected runtime. A build, screenshot, responsive viewport or mocked bridge test alone does not prove that feature works in the iPhone app.
+- Test affected create/edit/delete, Schedule/drag, reload/relaunch persistence and failure feedback. Keep unrelated data unchanged.
+- Cover local mode and signed-in mode when supported; verify the real target API contract and required migrations, not only a synthetic transport response.
+- For Templates, exercise desktop drag and touch/keyboard Schedule, saved settings, independent task copies, source-template retention and reload.
+- App updates require actual WKWebView functional checks in an isolated iPhone/iPad simulator or device, native transport tests, preserved signing/native customizations and built-web-file parity.
+- Treat web, installed PWA and bundled native app as separate runtimes. Browser viewport emulation is layout/input evidence, not native or physical Safari verification.
+- Check phone/iPad layouts, touch targets, keyboard/focus, reduced motion and supported offline behavior where affected.
+- Check account/owner isolation and pending/error states for persistence or authentication changes.
+- Use isolated fixtures and dedicated authorized test accounts. Never use real production records as disposable test data or expose credentials in evidence.
+- Run proportionate affected-feature checks for small changes; use the full feature/platform baseline for releases, web-bundle syncs and shared storage/API/native-bridge changes.
+- Record each required case as PASS, FAIL, BLOCKED or NOT RUN, with runtime/mode/version and evidence. An unavailable runtime or untested physical-device capability is not a pass.
+- Distinguish intentionally unsupported capabilities from broken supported features; keep their UI honest. Native alarms and browser notifications have different acceptance checks.
+- Resolve failures or state exact remaining limits before claiming completion. Never infer “all platforms work” from one browser or a successful compile.
+- Preserve the existing local-first release rule: verification and source preparation do not authorize public deployment or remote migrations.

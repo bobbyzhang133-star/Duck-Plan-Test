@@ -1,0 +1,45 @@
+{
+  "runtime": "Chromium 157.0.8103.78",
+  "source": "5c6134f application tree plus guidance/compatibility-tool changes",
+  "origin": "http://127.0.0.1:8794",
+  "mode": "dedicated disposable local signed-in account; real Worker/D1/WebSocket",
+  "compatibility": {
+    "current8794": { "status": 200, "compatible": true, "missing": [] },
+    "legacy8793": { "status": 200, "compatible": false, "missing": ["templates", "resources", "goals", "habits", "habit_checkins", "notes", "organization"] }
+  },
+  "cases": [
+    { "name": "desktop", "viewport": [1280, 900], "touchEmulated": false, "passed": true, "desktopNativeDrag": true, "finalTaskCopies": 3 },
+    { "name": "phone", "viewport": [390, 844], "touchEmulated": true, "passed": true, "phoneSheetAndBottomMoreNavigation": true, "liveDesktopPeerReceivedNote": true, "cumulativeTaskCopies": 5 },
+    { "name": "ipad", "viewport": [835, 1112], "touchEmulated": true, "passed": true, "sideBySideTaskAndCalendar": true, "liveDesktopPeerReceivedNote": true, "cumulativeTaskCopies": 7 }
+  ],
+  "checksPassedOnAllThree": [
+    "Cloud mode restores signed fixture and reports organization/personal compatibility",
+    "Class creation through contextual Add; saved class selected by template/resource",
+    "Resource create/edit; allowed local link opens separate page; delete persists",
+    "Template create/edit through visible controls",
+    "Schedule creates exactly one distinct task at 10:00 for 60 minutes with class/priority/notes/reminder retained and no deadline",
+    "Add to tasks creates one separate unscheduled copy; source template retained",
+    "Template and copies survive reload; deleting source leaves copies",
+    "Task invalid save remains open; deliberate503 rolls back optimistic task; retry succeeds",
+    "Task create/title edit/complete/reopen/delete",
+    "Note create/body edit/search/reload/delete",
+    "Goal create/progress edit to reached target/reload/delete",
+    "Habit create/today check/uncheck/recheck/reload/delete with check-in cascade",
+    "Personal actions do not change task count",
+    "No page-level horizontal overflow at checked Calendar/Templates/Goals surfaces"
+  ],
+  "browserErrors": [],
+  "unexpectedApiResponses": [],
+  "blockedExternalRequests": [],
+  "expectedFault": "One local PUT /api/items request fulfilled503 per viewport to verify failure feedback and rollback",
+  "allSyntheticContextsClosed": true,
+  "productionWrites": false,
+  "limits": [
+    "Chromium only; touch is emulation, not physical iPhone/iPad Safari",
+    "Desktop drag uses native HTML5 dragTo; phone/iPad use visible Schedule",
+    "Functional run uses reduced motion; native page-stack motion has separate evidence",
+    "No claim for installed PWA launch, physical notification/alarm delivery, hosted signed-in backend, class edit UI or OAuth redirects"
+  ],
+  "screenshots": ["templates-desktop.png", "templates-phone.png", "templates-ipad.png", "personal-desktop.png", "personal-phone.png", "personal-ipad.png"],
+  "passed": true
+}

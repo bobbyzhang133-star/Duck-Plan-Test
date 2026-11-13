@@ -1,0 +1,216 @@
+{
+  "readAtUtc": "Fri, 13 Nov 2026 22:35:04 GMT",
+  "method": "Anonymous GET, no cookies or auth, no production writes",
+  "production": {
+    "origin": "https://duckplan.duckplan-cloudflare.workers.dev",
+    "sampledAssetsMatchCommit": "71a730d",
+    "cache": "duckplan-app-motion-preview-v13",
+    "workerVersionRecordedInPlans": "5619fdf3-1dad-42d1-8603-a659e34f8f99",
+    "providerCurrentVersionIndependentlyVerified": false,
+    "records": [
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/",
+        "status": 200,
+        "bytes": 30840,
+        "sha256": "54ef908e85e48cf6f7347436f3d8e2efa9416ebca16fcee72e22f6daa0fee0f5",
+        "type": "text/html",
+        "etag": null,
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/service-worker.js",
+        "status": 200,
+        "bytes": 5215,
+        "sha256": "3ebcb3dca3b443846317b6cf928f8724b5e33b3962daa60f590c8044e406c232",
+        "type": "text/javascript",
+        "etag": "\"85007da9439918296fdb29db3fc1a999\"",
+        "cache": "no-cache",
+        "cache_line": "const CACHE_VERSION = \"duckplan-app-motion-preview-v13\";"
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/planner-store.js",
+        "status": 200,
+        "bytes": 21556,
+        "sha256": "277181e7082e5bcc0a58215d3f28cd45a4c9297cfcf29b5f890e0d0534050abd",
+        "type": "text/javascript",
+        "etag": "\"fefff99e538f197fec56dc8a65d0e60f\"",
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/planner-library.js",
+        "status": 404,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "type": null,
+        "etag": null,
+        "cache": null
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/personal-goals.js",
+        "status": 404,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "type": null,
+        "etag": null,
+        "cache": null
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/personal-notes.js",
+        "status": 404,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "type": null,
+        "etag": null,
+        "cache": null
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/cloud-config.js",
+        "status": 200,
+        "bytes": 116,
+        "sha256": "ab30158120cc4b9cd42ea3ebec9c33e79f17e303d08cb0fecfb03ecc93ea8239",
+        "type": "text/javascript; charset=utf-8",
+        "etag": null,
+        "cache": "no-cache",
+        "body": "// Served by the DuckPlan Worker: cloud sync uses this site's own /api.\nwindow.DUCKPLAN_CLOUD = { apiUrl: \"/api\" };\n"
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/api/session",
+        "status": 200,
+        "bytes": 58,
+        "sha256": "11c84c618b902ba28323477a71e5e67b183c06f173835e6b2b0515af7690981a",
+        "type": "application/json; charset=utf-8",
+        "etag": null,
+        "cache": "no-store",
+        "body": "{\"user\":null,\"providers\":{\"password\":true,\"google\":false}}"
+      },
+      {
+        "host": "https://duckplan.duckplan-cloudflare.workers.dev",
+        "path": "/api/planner",
+        "status": 401,
+        "bytes": 26,
+        "sha256": "ccf20ee26484a5d62b07ca4f74057662f3cb62f3066d9f082962eee6405b24f1",
+        "type": "application/json; charset=utf-8",
+        "etag": null,
+        "cache": "no-store",
+        "body": "{\"error\":\"Sign in first.\"}"
+      }
+    ]
+  },
+  "development": {
+    "origin": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+    "sampledAssetsMatchCommit": "ad784be",
+    "cache": "duckplan-app-motion-preview-v36",
+    "records": [
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/",
+        "status": 200,
+        "bytes": 33832,
+        "sha256": "b958da884a2d9c42c96a647f4f17b5edba827cd04df2b3ff7166609decff3d2b",
+        "type": "text/html",
+        "etag": null,
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/service-worker.js",
+        "status": 200,
+        "bytes": 5594,
+        "sha256": "cf242b9d07b763a4f9cb6e61570d81435c53ff3d310438b0c4a9f9a90a8383da",
+        "type": "text/javascript",
+        "etag": "\"dcc38f334b60cf5b4712d073fdf421d1\"",
+        "cache": "no-cache",
+        "cache_line": "const CACHE_VERSION = \"duckplan-app-motion-preview-v36\";"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/planner-store.js",
+        "status": 200,
+        "bytes": 52828,
+        "sha256": "4c73763888e8a088f97c976dcfb5f8d336bac5b8db72086240892c4e9f7b63af",
+        "type": "text/javascript",
+        "etag": "\"652ef2a37ab13b4cc09613f344f9cc55\"",
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/planner-library.js",
+        "status": 200,
+        "bytes": 40539,
+        "sha256": "9a193537828f112a985846420b8a15f26dad59350b2347ce3b2299cd8f455a76",
+        "type": "text/javascript",
+        "etag": "\"957b75d840809c703385e27094c798dc\"",
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/personal-goals.js",
+        "status": 200,
+        "bytes": 26103,
+        "sha256": "114b07f77834c3ab0f32e6083811f9fda4bf82bbed142666caa5f7f04962935e",
+        "type": "text/javascript",
+        "etag": "\"1be8c2a27549a86a5a73b027988ca255\"",
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/personal-notes.js",
+        "status": 200,
+        "bytes": 12788,
+        "sha256": "fdb22c35e7706e12d96b0b8ced1ec63d0dfe60867ce626a4a9470b12912b313d",
+        "type": "text/javascript",
+        "etag": "\"c5d591f1e855c36231afeae15a2492f9\"",
+        "cache": "public, max-age=0, must-revalidate"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/cloud-config.js",
+        "status": 200,
+        "bytes": 116,
+        "sha256": "ab30158120cc4b9cd42ea3ebec9c33e79f17e303d08cb0fecfb03ecc93ea8239",
+        "type": "text/javascript; charset=utf-8",
+        "etag": null,
+        "cache": "no-cache",
+        "body": "// Served by the DuckPlan Worker: cloud sync uses this site's own /api.\nwindow.DUCKPLAN_CLOUD = { apiUrl: \"/api\" };\n"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/api/session",
+        "status": 200,
+        "bytes": 58,
+        "sha256": "11c84c618b902ba28323477a71e5e67b183c06f173835e6b2b0515af7690981a",
+        "type": "application/json; charset=utf-8",
+        "etag": null,
+        "cache": "no-store",
+        "body": "{\"user\":null,\"providers\":{\"password\":true,\"google\":false}}"
+      },
+      {
+        "host": "https://duckplan-dev.duckplan-cloudflare.workers.dev",
+        "path": "/api/planner",
+        "status": 401,
+        "bytes": 26,
+        "sha256": "ccf20ee26484a5d62b07ca4f74057662f3cb62f3066d9f082962eee6405b24f1",
+        "type": "application/json; charset=utf-8",
+        "etag": null,
+        "cache": "no-store",
+        "body": "{\"error\":\"Sign in first.\"}"
+      }
+    ]
+  },
+  "providerReadOnlyLimits": {
+    "existingWranglerAccountDoesNotOwnTargetResources": true,
+    "productionDeploymentList": [],
+    "devDeploymentError": 10007,
+    "prodAndDevMigrationListError": 7404,
+    "remote0004And0005PendingStatusVerified": false
+  },
+  "interpretation": "Anonymous401 runs before feature route matching and cannot prove schema compatibility. Static asset hashes prove versions of sampled files, not deployed Worker bundle identity. Native source targets production /api. Current source requires tracked0004+0005 before deploying new Worker."
+}

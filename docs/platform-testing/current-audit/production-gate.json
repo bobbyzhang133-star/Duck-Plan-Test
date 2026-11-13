@@ -1,0 +1,8 @@
+{
+  "origin": "https://duckplan.duckplan-cloudflare.workers.dev",
+  "method": "GET",
+  "checkedPath": "/api/planner",
+  "ok": false,
+  "reason": "authentication-required",
+  "status": 401
+}

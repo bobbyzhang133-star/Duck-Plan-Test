@@ -1,0 +1,25 @@
+{
+  "runtime": "157.0.8103.78",
+  "cache": {
+    "name": "duckplan-app-motion-preview-v38",
+    "allAssets": true,
+    "guardedStore": true
+  },
+  "offlineCrudAndReload": true,
+  "saved": {
+    "mode": "local",
+    "counts": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "goalProgress": 1,
+    "noteBody": "Saved locally while the network is unavailable.",
+    "tasks": 7,
+    "overflow": false
+  },
+  "pageErrors": [],
+  "surface": "fresh Chromium browser tab with service worker and touch emulation; not installed PWA",
+  "productionWrites": false
+}
