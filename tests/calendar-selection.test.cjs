@@ -40,14 +40,16 @@ test("template calendar drops use the target day, including the deadline band, w
   const source = fs.readFileSync("landing/app.js", "utf8");
   const renderTimeline = source.match(/^function renderTimeline\(dates\) \{[\s\S]*?^\}/m)?.[0];
   const dropHandler = source.match(/^document\.addEventListener\("drop", \(event\) => \{[\s\S]*?^\}\);/m)?.[0];
+  const placement = source.match(/^function templateCalendarPlacement\(event, template\) \{[\s\S]*?^\}/m)?.[0];
   assert.ok(renderTimeline);
   assert.ok(dropHandler);
+  assert.ok(placement);
   let onDrop;
   let scheduled;
   const calendar = {};
   const context = vm.createContext({
     selectedDate: "2026-11-12", calendarFocusSlot: { date: "2026-11-12", time: "09:00" },
-    selectedTaskId: null, tasks: [], PlannerUI,
+    selectedTaskId: null, tasks: [], PlannerUI, clearTemplateDrag() {}, showToast() {},
     dateObject: (date) => new Date(`${date}T12:00:00`),
     nowKey: () => "2026-11-12", formatTime: (time) => time, formatLongDate: (date) => date,
     deadlineChips: () => "", layoutEvents: () => [], Model: { scheduledParts: () => null },
@@ -62,6 +64,7 @@ test("template calendar drops use the target day, including the deadline band, w
     },
   });
   vm.runInContext(renderTimeline, context);
+  vm.runInContext(placement, context);
   vm.runInContext(dropHandler, context);
   const html = vm.runInContext('renderTimeline(["2026-11-09", "2026-11-12"])', context);
   const deadlineCells = [...html.matchAll(/<div class="deadline-cell"([^>]*)>/g)];
@@ -103,4 +106,7 @@ test("template calendar drops use the target day, including the deadline band, w
     assert.equal(scheduled.time, time);
     assert.equal(context.selectedDate, "2026-11-12");
   }
+  scheduled = null;
+  onDrop({ target: targetFor({}), dataTransfer: {}, clientY: 110, preventDefault() {} });
+  assert.equal(scheduled, null, "An undated gutter cannot silently schedule on the selected day");
 });

@@ -95,6 +95,16 @@
     };
   }
 
+  function instantiateScheduledTemplate(item, { date, time, makeId } = {}) {
+    const template = normalizeTemplate(item);
+    const day = typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T00:00:00Z`) : null;
+    if (!day || !Number.isFinite(day.getTime()) || Number(date.slice(0, 4)) < 1 || day.toISOString().slice(0, 10) !== date) throw invalid("scheduledDate", "Drop onto a calendar day.");
+    if (typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) throw invalid("scheduledTime", "Choose a valid work time.");
+    const [hour, minute] = time.split(":").map(Number);
+    if (hour * 60 + minute < 7 * 60 || hour * 60 + minute + template.durationMinutes > 22 * 60) throw invalid("durationMinutes", "This template does not fit the visible day. Choose Schedule to set a work time.");
+    return { ...instantiateTemplate(template, { makeId }), scheduledStart: `${date}T${time}` };
+  }
+
   function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
   }
@@ -112,6 +122,7 @@
     let ownerKey = currentOwnerKey();
     let ownerGeneration = 0;
     let destroyed = false;
+    let activeDrag = null;
     const pending = new Map();
     const find = selector => doc.querySelector(selector);
     const classes = () => store.listClasses({ includeArchived: true });
@@ -172,13 +183,21 @@
 
     function templateCards(items, context) {
       if (!items.length) return '<p class="library-empty">No templates yet. Save a repeatable assignment to use it again.</p>';
-      return `<div class="library-template-grid">${items.map(item => `<article class="library-template-card" draggable="${available()}" data-library-template="${escapeHtml(item.id)}">
-        <div class="library-card-heading"><h3>${escapeHtml(item.title)}</h3><span class="library-drag-hint" aria-hidden="true" title="Drag onto a calendar time">⠿</span></div>
-        <p class="library-meta">${escapeHtml(className(item.classId))} · ${Number(item.durationMinutes)} min · ${escapeHtml(item.priority)} priority</p>
-        ${item.notes ? `<p class="library-card-notes">${escapeHtml(item.notes)}</p>` : ""}
-        <div class="library-actions">${button("add-template", item.id, "Add to tasks", { primary: true, context })}${button("schedule-template", item.id, "Schedule", { context })}</div>
-        <div class="library-card-tools">${button("edit-template", item.id, "Edit", { context })}${button("delete-template", item.id, "Delete", { context })}</div>
-      </article>`).join("")}</div>`;
+      return `<div class="library-template-grid">${items.map(item => {
+        const info = classes().find(value => value.id === item.classId);
+        const color = /^#[0-9a-f]{6}$/i.test(info?.color || "") ? info.color : "#8f8a7d";
+        const minutes = Number.isFinite(Number(item.durationMinutes)) && Number(item.durationMinutes) > 0 ? Number(item.durationMinutes) : 45;
+        const height = Math.min(156, Math.max(44, Math.round(minutes * 62 / 60)));
+        const label = className(item.classId);
+        return `<article class="library-template-card">
+          <div class="library-template-block" draggable="${available()}" data-library-template="${escapeHtml(item.id)}" role="group" aria-label="${escapeHtml(item.title)}, ${minutes} minute template" style="--course-color:${color};--template-block-height:${height}px">
+            <div class="library-template-block-heading"><h3 title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h3><span class="library-drag-hint" aria-hidden="true" title="Drag onto a calendar time">⠿</span></div>
+            <p class="library-template-block-meta"><span class="library-template-duration">${minutes} min</span><span aria-hidden="true">·</span><span class="library-template-class" title="${escapeHtml(label)}">${escapeHtml(label)}</span></p>
+          </div>
+          <div class="library-actions library-template-actions">${button("schedule-template", item.id, "Schedule", { primary: true, context })}${button("add-template", item.id, "Add to tasks", { context })}</div>
+          <div class="library-template-utility"><details class="library-template-details"><summary data-library-focus="${context}:template-details:${escapeHtml(item.id)}">Details</summary><div class="library-template-details-body"><p class="library-meta">${escapeHtml(label)} · ${escapeHtml(item.priority)} priority</p>${item.notes ? `<p class="library-card-notes">${escapeHtml(item.notes)}</p>` : '<p class="library-card-notes">No notes.</p>'}</div></details><div class="library-card-tools library-template-tools">${button("edit-template", item.id, "Edit", { context })}${button("delete-template", item.id, "Delete", { context })}</div></div>
+        </article>`;
+      }).join("")}</div>`;
     }
 
     function renderTemplates() {
@@ -187,7 +206,7 @@
         if (!target) continue;
         const open = Boolean(target.querySelector("details")?.open);
         const headingId = `${id}-heading`;
-        const content = `<section class="library-section" aria-labelledby="${headingId}"><div class="library-heading"><div><h2 id="${headingId}">Assignment templates</h2><p>Each use creates a separate task.</p></div>${button("new-template", "", "New template", { primary: true, context })}</div>${unavailableNotice()}${templateCards(templates(), context)}<p class="library-footnote">Schedule a copy or drag it onto a calendar time. Your template stays here.</p></section>`;
+        const content = `<section class="library-section" aria-labelledby="${headingId}"><div class="library-heading"><div><h2 id="${headingId}">Assignment templates</h2><p>Each use creates a separate task.</p></div>${button("new-template", "", "New template", { primary: true, context })}</div>${unavailableNotice()}${templateCards(templates(), context)}<p class="library-footnote">Drag a block onto the calendar to schedule a copy. Your template stays here.</p></section>`;
         replace(target, `<details class="library-template-shelf${compact ? " library-calendar-templates" : ""}" ${open ? "open" : ""}><summary data-library-focus="${context}:summary">Assignment templates <span>${templates().length}</span></summary>${content}</details>`);
       }
     }
@@ -254,15 +273,18 @@
     }
 
     function readTemplateDrop(dataTransfer) {
-      try { return dataTransfer?.getData(TEMPLATE_MIME) || ""; } catch { return ""; }
+      try {
+        const id = dataTransfer?.getData(TEMPLATE_MIME) || "";
+        return activeDrag?.id === id && !isCurrentOwner(activeDrag.owner) ? "" : id;
+      } catch { return ""; }
     }
 
-    function handleTemplateDrop(event, { date, time, source = event.target } = {}) {
+    function handleTemplateDrop(event, { date, time } = {}) {
       const id = readTemplateDrop(event.dataTransfer);
       if (!id) return false;
       event.preventDefault();
       event.stopPropagation();
-      return scheduleTemplate(id, { date, time, source });
+      return addTemplate(id, { date, time });
     }
 
     function closeDialog() {
@@ -375,7 +397,7 @@
       (deleting ? current.querySelector("[data-library-close]") : current.querySelector("input,select"))?.focus();
     }
 
-    async function addTemplate(id) {
+    async function addTemplate(id, schedule = null) {
       if (pending.has(id) || !available()) return;
       const item = findTemplate(id);
       if (!item) { host.showToast?.("That template is no longer available."); return; }
@@ -383,8 +405,10 @@
       pending.set(id, operationOwner);
       render();
       try {
-        await store.upsertItem(instantiateTemplate(item));
-        if (isCurrentOwner(operationOwner)) host.showToast?.("Added a new task. The template is ready to use again.");
+        const task = schedule ? instantiateScheduledTemplate(item, schedule) : instantiateTemplate(item);
+        await store.upsertItem(task);
+        if (isCurrentOwner(operationOwner)) host.showToast?.(schedule ? "Task scheduled. The template is ready to use again." : "Added a new task. The template is ready to use again.");
+        return task;
       } catch (error) { if (isCurrentOwner(operationOwner)) fail(error); }
       finally {
         if (pending.get(id) === operationOwner) pending.delete(id);
@@ -434,18 +458,23 @@
     function onDragStart(event) {
       const card = event.target.closest("[data-library-template]");
       if (!card) return;
-      if (!available() || event.target.closest("button,a,input,select,textarea") || !event.dataTransfer) { event.preventDefault(); return; }
+      if (!available() || pending.has(card.dataset.libraryTemplate) || event.target.closest("button,a,input,select,textarea") || !event.dataTransfer) { event.preventDefault(); return; }
+      activeDrag = { id: card.dataset.libraryTemplate, owner: captureOwner() };
       event.dataTransfer.setData(TEMPLATE_MIME, card.dataset.libraryTemplate);
       event.dataTransfer.effectAllowed = "copy";
     }
+
+    function onDragEnd() { activeDrag = null; }
 
     doc.addEventListener("click", onClick);
     doc.addEventListener("change", onChange);
     doc.addEventListener("keydown", onKeyDown);
     doc.addEventListener("dragstart", onDragStart);
+    doc.addEventListener("dragend", onDragEnd);
     render();
     return {
       render, renderTaskResources, selectClass, scheduleTemplate, handleTemplateDrop, readTemplateDrop,
+      addToTasks: id => addTemplate(id),
       draftForTemplate(id) { const item = available() && findTemplate(id); return item ? templateDraft(item) : null; },
       destroy() {
         destroyed = true;
@@ -456,9 +485,10 @@
         doc.removeEventListener("change", onChange);
         doc.removeEventListener("keydown", onKeyDown);
         doc.removeEventListener("dragstart", onDragStart);
+        doc.removeEventListener("dragend", onDragEnd);
       },
     };
   }
 
-  return { create, TEMPLATE_MIME, normalizeTemplate, normalizeResource, safeResourceUrl, templateDraft, instantiateTemplate, escapeHtml };
+  return { create, TEMPLATE_MIME, normalizeTemplate, normalizeResource, safeResourceUrl, templateDraft, instantiateTemplate, instantiateScheduledTemplate, escapeHtml };
 });

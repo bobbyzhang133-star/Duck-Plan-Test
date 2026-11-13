@@ -65,6 +65,7 @@ let calendarFocusSlot = { date: selectedDate, time: "09:00" };
 let calendarUserScrolled = false;
 let calendarProgrammaticScroll = false;
 let calendarDrag = null;
+let templateDrag = null;
 let suppressCalendarEventClickUntil = 0;
 
 const els = {
@@ -1134,33 +1135,101 @@ document.querySelectorAll("[data-task-layout]").forEach((button) => button.addEv
 }));
 els.form.elements.classId.addEventListener("change", () => taskLibrary?.renderTaskResources(els.form.elements.classId.value));
 
+function templateCalendarPlacement(event, template) {
+  const target = event.target.closest("[data-slot-date], [data-date], [data-deadline-date]");
+  const column = event.target.closest("[data-column-date]");
+  const date = target?.dataset.slotDate || target?.dataset.date || target?.dataset.deadlineDate || column?.dataset.columnDate;
+  if (!date || !template) return null;
+  const rect = column?.getBoundingClientRect();
+  const hourHeight = rect ? rect.height / 15 : 62;
+  const drop = PlannerUI.snapTemplateDrop({ date, pointerY: rect ? event.clientY : 2 * hourHeight, columnTop: rect?.top ?? 0, hourHeight, durationMinutes: template.durationMinutes });
+  return drop ? { ...drop, column, rect, hourHeight, source: target || column } : null;
+}
+
+function hideTemplatePreview() {
+  if (!templateDrag) return;
+  templateDrag.preview.hidden = true;
+  templateDrag.column?.classList.remove("calendar-drop-target");
+  templateDrag.column = null; templateDrag.velocity = 0;
+}
+
+function clearTemplateDrag() {
+  if (!templateDrag) return;
+  hideTemplatePreview(); cancelAnimationFrame(templateDrag.raf);
+  templateDrag.preview.remove(); templateDrag = null;
+}
+
+function updateTemplatePreview(event) {
+  if (!templateDrag) return null;
+  templateDrag.pointer = { x: event.clientX, y: event.clientY };
+  const placement = event.target.closest("#planner-calendar") && templateCalendarPlacement(event, templateDrag.template);
+  hideTemplatePreview();
+  if (!placement?.column) return placement;
+  const { rect, hourHeight, column, minutes, time } = placement;
+  const preview = templateDrag.preview;
+  column.classList.add("calendar-drop-target"); templateDrag.column = column;
+  Object.assign(preview.style, { left: `${rect.left + 3}px`, top: `${rect.top + (minutes - 7 * 60) * hourHeight / 60}px`, width: `${Math.max(32, rect.width - 6)}px`, height: `${Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60)}px` });
+  preview.querySelector("small").textContent = `${formatTime(time)} · ${templateDrag.template.durationMinutes} min`;
+  preview.hidden = false;
+  const viewport = els.calendar.getBoundingClientRect();
+  templateDrag.velocity = event.clientY < viewport.top + 52 ? -12 : event.clientY > viewport.bottom - 52 ? 12 : 0;
+  return placement;
+}
+
+function scrollTemplatePreview() {
+  if (!templateDrag) return;
+  if (templateDrag.velocity) {
+    const previous = els.calendar.scrollTop;
+    els.calendar.scrollTop += templateDrag.velocity;
+    if (previous !== els.calendar.scrollTop) {
+      const { x, y } = templateDrag.pointer;
+      const target = document.elementFromPoint(x, y);
+      if (target) updateTemplatePreview({ target, clientX: x, clientY: y });
+    }
+  }
+  templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
+}
+
+document.addEventListener("dragstart", event => {
+  const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
+  const template = id && taskLibrary.draftForTemplate(id);
+  if (!template || event.defaultPrevented) return;
+  clearTemplateDrag();
+  const preview = document.createElement("div");
+  preview.className = "calendar-event-block calendar-drag-ghost template-drop-preview";
+  preview.setAttribute("aria-hidden", "true"); preview.hidden = true;
+  preview.innerHTML = `<strong>${safeText(template.title)}</strong><small></small>`;
+  const info = classInfo(template);
+  preview.style.setProperty("--course-color", /^#[0-9a-f]{6}$/i.test(info.color) ? info.color : "#8f8a7d");
+  document.body.append(preview);
+  templateDrag = { template, preview, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+});
+document.addEventListener("dragend", clearTemplateDrag);
+window.addEventListener("blur", clearTemplateDrag);
+window.addEventListener("pagehide", clearTemplateDrag);
+
 document.addEventListener("dragover", (event) => {
   if (![...(event.dataTransfer?.types || [])].includes(window.DuckPlanLibrary?.TEMPLATE_MIME)) return;
+  const placement = updateTemplatePreview(event);
   if (event.target.closest("#planner-calendar, #all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
-    event.preventDefault(); event.dataTransfer.dropEffect = "copy";
+    event.preventDefault();
+    event.dataTransfer.dropEffect = templateDrag && event.target.closest("#planner-calendar") && !placement ? "none" : "copy";
   }
 });
 document.addEventListener("drop", (event) => {
-  if (!taskLibrary?.readTemplateDrop(event.dataTransfer)) return;
-  const slot = event.target.closest("[data-slot-date], [data-date], [data-deadline-date]");
+  if (!taskLibrary?.readTemplateDrop(event.dataTransfer)) { clearTemplateDrag(); return; }
   const calendar = event.target.closest("#planner-calendar");
   if (calendar) {
     event.preventDefault();
-    const column = event.target.closest("[data-column-date]");
     const template = taskLibrary.draftForTemplate(taskLibrary.readTemplateDrop(event.dataTransfer));
-    let date = slot?.dataset.slotDate || slot?.dataset.date || slot?.dataset.deadlineDate || column?.dataset.columnDate || selectedDate;
-    let time = slot?.dataset.slotTime || "09:00";
-    if (column && template) {
-      const rect = column.getBoundingClientRect();
-      const drop = PlannerUI.snapCalendarDrop({ date, pointerY: event.clientY, columnTop: rect.top, hourHeight: rect.height / 15, startHour: 7, endHour: 22, durationMinutes: template.durationMinutes });
-      if (drop) { date = drop.date; time = drop.time; }
-    }
-    taskLibrary.handleTemplateDrop(event, { date, time, source: slot || column || document.querySelector("#plan-selected-date") });
+    const placement = templateCalendarPlacement(event, template);
+    if (placement) taskLibrary.handleTemplateDrop(event, placement);
+    else if (template) showToast(template.durationMinutes > 900 ? "This template does not fit the visible day. Choose Schedule to set a work time." : "Drop onto a calendar day or time to schedule this template.");
   } else if (event.target.closest("#all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
     event.preventDefault();
-    const template = store.listTemplates().find((item) => item.id === taskLibrary.readTemplateDrop(event.dataTransfer));
-    if (template) store.upsertItem(window.DuckPlanLibrary.instantiateTemplate(template)).then(() => showToast("Added a new task. Your template is ready to use again."), reportError);
+    taskLibrary.addToTasks(taskLibrary.readTemplateDrop(event.dataTransfer));
   }
+  clearTemplateDrag();
 });
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar({ autoScroll: true }); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); const nextOpen = !document.body.classList.contains("sidebar-open"); setTaskPanel(false, false); setSidebar(nextOpen); }));
@@ -1187,6 +1256,7 @@ document.addEventListener("keydown", (event) => {
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
   }
   if (event.key !== "Escape") return;
+  if (templateDrag) { clearTemplateDrag(); return; }
   if (calendarDrag?.started) cancelCalendarDrag({ announce: true });
   else if (document.body.classList.contains("task-panel-open")) setTaskPanel(false);
   else if (document.body.classList.contains("sidebar-open")) setSidebar(false);
@@ -1458,6 +1528,7 @@ store.subscribe(({ reason }) => {
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
     renderedPlannerOwner = owner;
+    clearTemplateDrag();
     plannerOwnerVersion += 1;
     accountStateVersion += 1;
     shownRecoveryCode = null;
