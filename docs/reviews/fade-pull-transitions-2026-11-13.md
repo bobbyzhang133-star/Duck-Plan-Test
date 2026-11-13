@@ -2,6 +2,8 @@
 
 November13,2026. Review completed and returned before implementation; application unchanged. The user now finds the whole-page slide too physically literal and asks for a fading slide/pull into place, referring to the feel of Apple's unlock transition. This supersedes the earlier full-viewport/no-fade acceptance criteria.
 
+Subsequent approval: the user asked to apply this review to the website. See the [local implementation](../fade-pull/README.md). The review below describes the pre-implementation source and proposed acceptance criteria.
+
 ## Source submitted
 
 Current application is the5c6134f tree, included unchanged in TEST reliability commitd07bb2b. `landing/view-transitions.js` captures the whole workspace and sets `--page-height` to its actual height. `landing/page-stack.css` keeps old/new opacity at1 and moves both by that full height. Thus the recorded physical page motion is expected behavior of the current code, but no longer the user's intended visual treatment. `docs/page-stack/README.md` and its recordings document that earlier implementation; they are not approval of the new direction.

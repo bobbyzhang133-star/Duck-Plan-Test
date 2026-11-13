@@ -1,0 +1,232 @@
+{
+  "runtime": "157.0.8103.78",
+  "normalPlayback": [
+    {
+      "variant": "balanced",
+      "width": 1280,
+      "height": 900,
+      "traces": [
+        {
+          "direction": "forward",
+          "frames": 24,
+          "firstElapsed": 1.2999999970197678,
+          "lastElapsed": 384.5999999970197,
+          "maxFrameGapMs": 16.80000000000001,
+          "meanFrameGapMs": 16.665217391304346,
+          "overlapAbove10PercentMs": 83.30000000000001,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 23,
+          "firstElapsed": 5.8999999970197905,
+          "lastElapsed": 372.5999999970197,
+          "maxFrameGapMs": 16.799999999999955,
+          "meanFrameGapMs": 16.668181818181814,
+          "overlapAbove10PercentMs": 83.30000000000007,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "forward",
+          "frames": 23,
+          "firstElapsed": 1.6999999940394446,
+          "lastElapsed": 368.3999999940395,
+          "maxFrameGapMs": 16.700000000000045,
+          "meanFrameGapMs": 16.66818181818182,
+          "overlapAbove10PercentMs": 83.29999999999995,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 25,
+          "firstElapsed": 13.799999999999955,
+          "lastElapsed": 413.6999999999998,
+          "maxFrameGapMs": 16.700000000000273,
+          "meanFrameGapMs": 16.662499999999994,
+          "overlapAbove10PercentMs": 83.29999999999995,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        }
+      ],
+      "maxFrameGapMs": 16.80000000000001
+    },
+    {
+      "variant": "subtle",
+      "width": 1280,
+      "height": 900,
+      "traces": [
+        {
+          "direction": "forward",
+          "frames": 22,
+          "firstElapsed": 1.2999999985098611,
+          "lastElapsed": 351.29999999850986,
+          "maxFrameGapMs": 16.799999999999955,
+          "meanFrameGapMs": 16.666666666666668,
+          "overlapAbove10PercentMs": 83.39999999999998,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 21,
+          "firstElapsed": 5.300000001490162,
+          "lastElapsed": 338.5000000014902,
+          "maxFrameGapMs": 16.700000000000045,
+          "meanFrameGapMs": 16.660000000000004,
+          "overlapAbove10PercentMs": 83.39999999999998,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "forward",
+          "frames": 21,
+          "firstElapsed": 3.4000000014900706,
+          "lastElapsed": 336.70000000149,
+          "maxFrameGapMs": 16.700000000000045,
+          "meanFrameGapMs": 16.665,
+          "overlapAbove10PercentMs": 83.40000000000009,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 22,
+          "firstElapsed": -0.4000000044702574,
+          "lastElapsed": 349.69999999552965,
+          "maxFrameGapMs": 16.799999999999955,
+          "meanFrameGapMs": 16.671428571428567,
+          "overlapAbove10PercentMs": 83.40000000000009,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        }
+      ],
+      "maxFrameGapMs": 16.799999999999955
+    },
+    {
+      "variant": "balanced",
+      "width": 835,
+      "height": 835,
+      "traces": [
+        {
+          "direction": "forward",
+          "frames": 24,
+          "firstElapsed": 5.000000001490093,
+          "lastElapsed": 388.20000000149014,
+          "maxFrameGapMs": 16.799999999999955,
+          "meanFrameGapMs": 16.660869565217393,
+          "overlapAbove10PercentMs": 83.30000000000001,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 23,
+          "firstElapsed": 6.899999998509884,
+          "lastElapsed": 373.59999999850993,
+          "maxFrameGapMs": 16.800000000000068,
+          "meanFrameGapMs": 16.66818181818182,
+          "overlapAbove10PercentMs": 83.29999999999995,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "forward",
+          "frames": 23,
+          "firstElapsed": 5.100000001490116,
+          "lastElapsed": 371.70000000149,
+          "maxFrameGapMs": 16.700000000000045,
+          "meanFrameGapMs": 16.66363636363636,
+          "overlapAbove10PercentMs": 83.30000000000018,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 24,
+          "firstElapsed": -1.3999999985098839,
+          "lastElapsed": 381.9000000014903,
+          "maxFrameGapMs": 16.700000000000273,
+          "meanFrameGapMs": 16.665217391304356,
+          "overlapAbove10PercentMs": 83.29999999999995,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        }
+      ],
+      "maxFrameGapMs": 16.800000000000068
+    },
+    {
+      "variant": "subtle",
+      "width": 835,
+      "height": 835,
+      "traces": [
+        {
+          "direction": "forward",
+          "frames": 22,
+          "firstElapsed": 4.399999998509884,
+          "lastElapsed": 354.3999999985099,
+          "maxFrameGapMs": 16.799999999999955,
+          "meanFrameGapMs": 16.666666666666668,
+          "overlapAbove10PercentMs": 83.30000000000001,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 21,
+          "firstElapsed": 9.10000000298021,
+          "lastElapsed": 342.30000000298014,
+          "maxFrameGapMs": 16.700000000000045,
+          "meanFrameGapMs": 16.659999999999997,
+          "overlapAbove10PercentMs": 83.30000000000007,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "forward",
+          "frames": 21,
+          "firstElapsed": 4.200000002980232,
+          "lastElapsed": 337.5000000029802,
+          "maxFrameGapMs": 16.799999999999955,
+          "meanFrameGapMs": 16.665,
+          "overlapAbove10PercentMs": 83.29999999999995,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        },
+        {
+          "direction": "back",
+          "frames": 21,
+          "firstElapsed": -0.09999999701972229,
+          "lastElapsed": 349.80000000298014,
+          "maxFrameGapMs": 33.5,
+          "meanFrameGapMs": 17.494999999999994,
+          "overlapAbove10PercentMs": 83.39999999999986,
+          "oldNeverRebounds": true,
+          "newNeverRebounds": true
+        }
+      ],
+      "maxFrameGapMs": 33.5
+    }
+  ],
+  "marginPixels": {
+    "light": {
+      "maxBeforeToAfterChannelDelta": 11,
+      "maxChannelExcursionOutsideEndpointRange": 1,
+      "sampleCount": 8
+    },
+    "dark": {
+      "maxBeforeToAfterChannelDelta": 5,
+      "maxChannelExcursionOutsideEndpointRange": 1,
+      "sampleCount": 8
+    }
+  },
+  "visualInspection": "Decoded comparison recordings and representative intermediate frames show brief expected old/new text overlap, without a traveling full-height seam or large blank band. Held144ms has outgoing0.16087/incoming0.617726. Subjective motion preference remains for user review; these checks do not establish zero ghosting.",
+  "tooling": "Remote Playwright video.path unavailable; saved named recordings via video.saveAs. Local Homebrew ffmpeg lacks x265 and default Python lacks Pillow; Chromium's local-file PNG/WebM decoder was used for pixel reads/filmstrips instead. No software installed or user browser used.",
+  "limitations": [
+    "Chromium only",
+    "Touch is emulation; no physical Safari/iPad/native app claim",
+    "Opaque-frame identity and overlap legibility require visual inspection of actual screenshots/recordings"
+  ]
+}

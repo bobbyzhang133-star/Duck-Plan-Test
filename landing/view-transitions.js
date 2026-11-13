@@ -17,7 +17,6 @@
       running = null;
       delete root.dataset.pageTransition;
       delete root.dataset.pageTransitionPhase;
-      root.style.removeProperty("--page-height");
       current.transition?.skipTransition();
     }
     function cancel() {
@@ -56,7 +55,6 @@
       running = current;
       root.dataset.pageTransition = movement > 0 ? "forward" : "back";
       root.dataset.pageTransitionPhase = "capture";
-      root.style.setProperty("--page-height", `${box.height}px`);
       try {
         const transition = doc.startViewTransition(() => commit(current));
         current.transition = transition;

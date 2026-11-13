@@ -1,0 +1,641 @@
+{
+  "runtime": "157.0.8103.78",
+  "marginPixels": {
+    "light": {
+      "samples": [
+        {
+          "point": [
+            80,
+            50
+          ],
+          "rgba": {
+            "before": [
+              250,
+              248,
+              239,
+              255
+            ],
+            "start": [
+              250,
+              247,
+              238,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              244,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 6
+        },
+        {
+          "point": [
+            80,
+            200
+          ],
+          "rgba": {
+            "before": [
+              247,
+              245,
+              235,
+              255
+            ],
+            "start": [
+              247,
+              244,
+              234,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              243,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 10
+        },
+        {
+          "point": [
+            80,
+            450
+          ],
+          "rgba": {
+            "before": [
+              247,
+              245,
+              235,
+              255
+            ],
+            "start": [
+              247,
+              244,
+              234,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              243,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 10
+        },
+        {
+          "point": [
+            80,
+            800
+          ],
+          "rgba": {
+            "before": [
+              247,
+              245,
+              235,
+              255
+            ],
+            "start": [
+              247,
+              244,
+              234,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              243,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 10
+        },
+        {
+          "point": [
+            84,
+            450
+          ],
+          "rgba": {
+            "before": [
+              246,
+              243,
+              234,
+              255
+            ],
+            "start": [
+              247,
+              244,
+              233,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              243,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 11
+        },
+        {
+          "point": [
+            1276,
+            50
+          ],
+          "rgba": {
+            "before": [
+              251,
+              248,
+              239,
+              255
+            ],
+            "start": [
+              251,
+              248,
+              239,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              244,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 6
+        },
+        {
+          "point": [
+            1276,
+            450
+          ],
+          "rgba": {
+            "before": [
+              248,
+              245,
+              235,
+              255
+            ],
+            "start": [
+              248,
+              245,
+              235,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              243,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 10
+        },
+        {
+          "point": [
+            1276,
+            800
+          ],
+          "rgba": {
+            "before": [
+              248,
+              245,
+              235,
+              255
+            ],
+            "start": [
+              248,
+              245,
+              235,
+              255
+            ],
+            "mid": [
+              254,
+              252,
+              243,
+              255
+            ],
+            "after": [
+              255,
+              253,
+              245,
+              255
+            ]
+          },
+          "maxChannelDelta": 10
+        }
+      ],
+      "maxChannelDelta": 11
+    },
+    "dark": {
+      "samples": [
+        {
+          "point": [
+            80,
+            50
+          ],
+          "rgba": {
+            "before": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "start": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              29,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 3
+        },
+        {
+          "point": [
+            80,
+            200
+          ],
+          "rgba": {
+            "before": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "start": [
+              30,
+              30,
+              25,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              28,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 4
+        },
+        {
+          "point": [
+            80,
+            450
+          ],
+          "rgba": {
+            "before": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "start": [
+              30,
+              30,
+              25,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              28,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 4
+        },
+        {
+          "point": [
+            80,
+            800
+          ],
+          "rgba": {
+            "before": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "start": [
+              30,
+              30,
+              25,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              28,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 4
+        },
+        {
+          "point": [
+            84,
+            450
+          ],
+          "rgba": {
+            "before": [
+              29,
+              29,
+              25,
+              255
+            ],
+            "start": [
+              29,
+              29,
+              25,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              28,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 5
+        },
+        {
+          "point": [
+            1276,
+            50
+          ],
+          "rgba": {
+            "before": [
+              32,
+              32,
+              27,
+              255
+            ],
+            "start": [
+              32,
+              32,
+              27,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              29,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 2
+        },
+        {
+          "point": [
+            1276,
+            450
+          ],
+          "rgba": {
+            "before": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "start": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              28,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 4
+        },
+        {
+          "point": [
+            1276,
+            800
+          ],
+          "rgba": {
+            "before": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "start": [
+              30,
+              30,
+              26,
+              255
+            ],
+            "mid": [
+              33,
+              33,
+              28,
+              255
+            ],
+            "after": [
+              34,
+              34,
+              29,
+              255
+            ]
+          },
+          "maxChannelDelta": 4
+        }
+      ],
+      "maxChannelDelta": 5
+    }
+  },
+  "films": [
+    {
+      "width": 1280,
+      "variant": "balanced",
+      "duration": 3,
+      "decodedWidth": 1280,
+      "decodedHeight": 900,
+      "times": [
+        0,
+        0.45,
+        0.75,
+        0.9,
+        1.05,
+        1.2,
+        1.4,
+        1.6,
+        1.8,
+        2,
+        2.3,
+        2.8
+      ],
+      "canvasWidth": 1278,
+      "canvasHeight": 1168,
+      "file": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-motion-preview/docs/fade-pull/filmstrip-1280-balanced.png"
+    },
+    {
+      "width": 1280,
+      "variant": "subtle",
+      "duration": 3.08,
+      "decodedWidth": 1280,
+      "decodedHeight": 900,
+      "times": [
+        0,
+        0.45,
+        0.75,
+        0.9,
+        1.05,
+        1.2,
+        1.4,
+        1.6,
+        1.8,
+        2,
+        2.3,
+        2.8
+      ],
+      "canvasWidth": 1278,
+      "canvasHeight": 1168,
+      "file": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-motion-preview/docs/fade-pull/filmstrip-1280-subtle.png"
+    },
+    {
+      "width": 835,
+      "variant": "balanced",
+      "duration": 2.8,
+      "decodedWidth": 834,
+      "decodedHeight": 834,
+      "times": [
+        0,
+        0.45,
+        0.75,
+        0.9,
+        1.05,
+        1.2,
+        1.4,
+        1.6,
+        1.8,
+        2,
+        2.3
+      ],
+      "canvasWidth": 1278,
+      "canvasHeight": 1168,
+      "file": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-motion-preview/docs/fade-pull/filmstrip-835-balanced.png"
+    },
+    {
+      "width": 835,
+      "variant": "subtle",
+      "duration": 2.68,
+      "decodedWidth": 834,
+      "decodedHeight": 834,
+      "times": [
+        0,
+        0.45,
+        0.75,
+        0.9,
+        1.05,
+        1.2,
+        1.4,
+        1.6,
+        1.8,
+        2,
+        2.3
+      ],
+      "canvasWidth": 1278,
+      "canvasHeight": 1168,
+      "file": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-motion-preview/docs/fade-pull/filmstrip-835-subtle.png"
+    }
+  ],
+  "productionWrites": false,
+  "allSyntheticContextsClosed": true
+}

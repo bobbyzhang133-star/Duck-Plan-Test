@@ -1,3 +1,13 @@
+/* Route motion is independent of the sidebar's 480ms layout response. */
+:root {
+  --motion-route-duration: 360ms;
+  --motion-route-out-distance: 20px;
+  --motion-route-in-distance: 32px;
+  --motion-route-ease: cubic-bezier(.2,.8,.2,1);
+  --motion-route-fade-ease: cubic-bezier(.4,0,.6,1);
+  --motion-route-out-fade: calc(var(--motion-route-duration) * .55);
+  --motion-route-in-fade: calc(var(--motion-route-duration) * .7);
+}
 /* One fixed workspace surface; sections retain their internal layouts. */
 body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
 /* Preserve the existing reading width inside the wider snapshot viewport. */
@@ -5,23 +15,30 @@ body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
   max-width: calc(1600px - 2 * var(--space-page)); margin-inline: auto;
 }
 :root[data-page-transition] { view-transition-name: none; }
-:root[data-page-transition] .unified-workspace { view-transition-name: duck-workspace; background: var(--canvas); }
+/* Transparent margins retain the stationary body/theme backing throughout.
+   Route-specific panels move with the content; navigation is never captured. */
+:root[data-page-transition] .unified-workspace { view-transition-name: duck-workspace; }
 :root[data-page-transition]::view-transition { pointer-events: none; }
 :root[data-page-transition]::view-transition-group(duck-workspace),
 :root[data-page-transition]::view-transition-image-pair(duck-workspace) { animation: none; overflow: hidden; isolation: isolate; }
 :root[data-page-transition]::view-transition-old(duck-workspace),
 :root[data-page-transition]::view-transition-new(duck-workspace) {
-  width: 100%; height: 100%; object-fit: fill; opacity: 1; mix-blend-mode: normal;
-  animation-duration: var(--motion-layout); animation-timing-function: var(--motion-ease); animation-fill-mode: both;
+  width: 100%; height: 100%; object-fit: fill; mix-blend-mode: normal;
+  animation-timing-function: var(--motion-route-ease), var(--motion-route-fade-ease);
+  animation-fill-mode: both;
 }
-:root[data-page-transition="forward"]::view-transition-old(duck-workspace) { animation-name: duck-page-out-up; }
-:root[data-page-transition="forward"]::view-transition-new(duck-workspace) { animation-name: duck-page-in-below; }
-:root[data-page-transition="back"]::view-transition-old(duck-workspace) { animation-name: duck-page-out-down; }
-:root[data-page-transition="back"]::view-transition-new(duck-workspace) { animation-name: duck-page-in-above; }
-@keyframes duck-page-out-up { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--page-height))); } }
-@keyframes duck-page-in-below { from { transform: translateY(var(--page-height)); } to { transform: translateY(0); } }
-@keyframes duck-page-out-down { from { transform: translateY(0); } to { transform: translateY(var(--page-height)); } }
-@keyframes duck-page-in-above { from { transform: translateY(calc(-1 * var(--page-height))); } to { transform: translateY(0); } }
+:root[data-page-transition]::view-transition-old(duck-workspace) { animation-duration: var(--motion-route-duration), var(--motion-route-out-fade); }
+:root[data-page-transition]::view-transition-new(duck-workspace) { animation-duration: var(--motion-route-duration), var(--motion-route-in-fade); }
+:root[data-page-transition="forward"]::view-transition-old(duck-workspace) { animation-name: duck-page-out-up, duck-page-fade-out; }
+:root[data-page-transition="forward"]::view-transition-new(duck-workspace) { animation-name: duck-page-in-below, duck-page-fade-in; }
+:root[data-page-transition="back"]::view-transition-old(duck-workspace) { animation-name: duck-page-out-down, duck-page-fade-out; }
+:root[data-page-transition="back"]::view-transition-new(duck-workspace) { animation-name: duck-page-in-above, duck-page-fade-in; }
+@keyframes duck-page-out-up { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--motion-route-out-distance))); } }
+@keyframes duck-page-in-below { from { transform: translateY(var(--motion-route-in-distance)); } to { transform: translateY(0); } }
+@keyframes duck-page-out-down { from { transform: translateY(0); } to { transform: translateY(var(--motion-route-out-distance)); } }
+@keyframes duck-page-in-above { from { transform: translateY(calc(-1 * var(--motion-route-in-distance))); } to { transform: translateY(0); } }
+@keyframes duck-page-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes duck-page-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   :root::view-transition-group(duck-workspace), :root::view-transition-old(duck-workspace), :root::view-transition-new(duck-workspace) { animation: none !important; }
 }

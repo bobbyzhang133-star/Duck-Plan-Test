@@ -2,7 +2,7 @@
 
 Implemented locally November 13, 2026, after the user approved the [Chat Check plan](../reviews/page-stack-transitions-2026-11-13.md). This replaces the earlier 48px incoming fade.
 
-Later November13: the user requested a softer fading directional pull. The [new completed Chat Check](../reviews/fade-pull-transitions-2026-11-13.md) supersedes the full-height/no-fade visual acceptance below for the next revision. This document remains evidence for the current physical slide; the replacement has not been implemented.
+Later November13: the user requested and approved a softer fading directional pull. The [completed Chat Check](../reviews/fade-pull-transitions-2026-11-13.md) supersedes the full-height/no-fade visual acceptance below. See the [local replacement and evidence](../fade-pull/README.md). This document and its QA script/recordings remain historical evidence for the previous physical slide.
 
 Selecting a lower sidebar section moves the complete old workspace up and the new workspace in from below. Selecting an upper section reverses both signs. Native painted snapshots include the page header, task panel and content; both share one clipped viewport, 480ms layout timing and the same easing, with opacity fixed at one. Navigation stays outside the snapshots.
 

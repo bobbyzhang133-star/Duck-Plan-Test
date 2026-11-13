@@ -91,7 +91,7 @@ function fixture(options = {}) {
   return { state, root, properties, reduced, coarse, source, content, workspace, doc, native, observers, win, updates, motion, navigate, clean };
 }
 
-test("sidebar order selects forward/back page stacks and uses the visible workspace height", () => {
+test("sidebar order selects forward/back motion without viewport-proportional travel state", () => {
   assert.equal(Transitions.direction(order, "calendar", "home"), 1, "Calendar precedes Dashboard even though section markup has the reverse order");
   assert.equal(Transitions.direction(order, "settings", "classes"), -1);
   assert.equal(Transitions.direction(order, "tasks", "tasks"), 0);
@@ -100,7 +100,7 @@ test("sidebar order selects forward/back page stacks and uses the visible worksp
   f.navigate("calendar", "tasks");
   assert.equal(f.root.dataset.pageTransition, "forward");
   assert.equal(f.root.dataset.pageTransitionPhase, "capture");
-  assert.equal(f.properties.get("--page-height"), "900px");
+  assert.equal(f.properties.size, 0, "Route travel is bounded by CSS tokens, rather than viewport height");
   f.navigate("tasks", "calendar");
   assert.equal(f.root.dataset.pageTransition, "back");
   assert.equal(f.native[0].transition.skips, 1);
@@ -116,7 +116,7 @@ test("route commits in the native capture callback before ready or animation com
   transition.capture();
   assert.deepEqual(f.updates, ["tasks"]);
   assert.equal(transition.ready.settled, false);
-  assert.equal(transition.finished.settled, false, "Routing must not wait for the 480ms visual transition");
+  assert.equal(transition.finished.settled, false, "Routing must not wait for the visual transition");
   transition.ready.resolve();
   await flush();
   assert.equal(f.root.dataset.pageTransitionPhase, "animate");
