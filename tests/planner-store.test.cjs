@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const Model = require("../landing/planner-model.js");
 const Store = require("../landing/planner-store.js");
+const Library = require("../landing/planner-library.js");
 
 function memoryStorage(initial = {}) {
   const data = new Map(Object.entries(initial));
@@ -62,6 +63,42 @@ test("local mode migrates legacy className tasks to class ids and persists edits
   assert.match(added.id, /^[0-9a-f-]{36}$/);
   await store.deleteItem(added.id);
   assert.equal(JSON.parse(storage.getItem("duckplan-demo-tasks-v1")).length, 1);
+});
+
+test("an explicit No class choice survives legacy name normalization", () => {
+  const tasks = Model.migrateTasks([
+    { id: "no-class", title: "No class", classId: null },
+    { id: "empty-class", title: "Empty class", classId: "", className: "Calculus" },
+    { id: "legacy", title: "Legacy", className: "Calculus" },
+    { id: "legacy-default", title: "Legacy default" },
+    { id: "assigned", title: "Assigned", classId: "calculus", className: "Personal" },
+  ]);
+  assert.deepEqual(Store.attachClassIds(tasks, defaultClasses()).map(task => [task.id, task.classId]), [
+    ["no-class", null], ["empty-class", null], ["legacy", "calculus"],
+    ["legacy-default", "personal"], ["assigned", "calculus"],
+  ]);
+});
+
+test("a scheduled No class template copy keeps its class and color across local reloads", async () => {
+  const storage = memoryStorage();
+  const store = makeStore({ storage });
+  await store.init();
+  const template = await store.upsertTemplate({ title: "BC Calculus", classId: null, durationMinutes: 45, priority: "Medium", notes: "Reusable settings", reminderChoice: "off" });
+  const copy = Library.instantiateScheduledTemplate(template, { date: "2026-11-13", time: "10:00", makeId: () => "no-class-copy" });
+  await store.upsertItem(copy);
+  for (let reload = 0; reload < 2; reload += 1) {
+    const reopened = makeStore({ storage });
+    await reopened.init();
+    const savedCopy = reopened.listItems().find(task => task.id === copy.id);
+    const savedTemplate = reopened.listTemplates().find(item => item.id === template.id);
+    assert.equal(savedCopy.classId, null);
+    assert.equal(savedTemplate.classId, null);
+    assert.equal(reopened.classById(savedCopy.classId).color, reopened.classById(savedTemplate.classId).color);
+    assert.equal(savedCopy.scheduledStart, "2026-11-13T10:00");
+    assert.equal(savedCopy.durationMinutes, 45);
+    assert.equal(savedCopy.notes, template.notes);
+    assert.equal(savedCopy.reminderChoice, "off");
+  }
 });
 
 test("without a cloud API the store stays local and account calls explain why", async () => {

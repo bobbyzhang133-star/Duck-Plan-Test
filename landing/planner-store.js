@@ -142,7 +142,9 @@
   function attachClassIds(tasks, classes) {
     const byName = new Map(classes.map((item) => [item.name.toLowerCase(), item.id]));
     return tasks.map((task) => {
-      const classId = classes.some((item) => item.id === task.classId) ? task.classId : byName.get(String(task.className || "").toLowerCase()) || null;
+      // A modern No class choice must not inherit the legacy Personal default.
+      const noClass = task.classId === null || task.classId === "";
+      const classId = noClass ? null : classes.some((item) => item.id === task.classId) ? task.classId : byName.get(String(task.className || "").toLowerCase()) || null;
       const { className, ...rest } = task;
       return { ...rest, classId };
     });

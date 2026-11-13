@@ -27,6 +27,8 @@ A fresh service-worker context activates cache v31 with both new tab assets and 
 
 Color follow-up: all five class palettes plus No class match the actual saved calendar blocks in light and dark modes, including an archived class. A real native drag exposed the placement ghost's inherited `saturate(1.08)` and `.97` opacity; the template-specific preview now keeps filter `none` and opacity `1`, preserving the saved fill and accent while retaining its drag outline/shadow. Native drops for Calculus and No class verify exact template → preview → saved-block equality with no page errors. Six focused PWA/cache tests and syntax/diff checks pass. Cache v32 and the stylesheet version deliver this correction. [Color comparison](template-color-parity.png).
 
+Reload follow-up: inspection of the user's actual open preview found a gray No class BC Calculus template beside orange Personal-class scheduled copies. `Model.migrateTasks()` supplies a legacy Personal name, and `attachClassIds()` was incorrectly using that fallback even when a modern task explicitly stored `classId: null`. The converter now preserves explicit null/empty No class choices while retaining genuine legacy class-name migration. Two regression tests failed before the fix and pass afterward, including two consecutive reloads. All 305 tests pass; a touch-sized browser check creates a No class copy through Schedule, saves, reloads, and verifies unchanged class, time and exact template/calendar fill with no page errors. The store script version and cache v33 deliver this correction. Already-saved Personal assignments are not automatically rewritten because intentional class choices cannot be distinguished from prior conversion.
+
 ## Screenshots
 
 - [Desktop Templates](templates-desktop.png)
