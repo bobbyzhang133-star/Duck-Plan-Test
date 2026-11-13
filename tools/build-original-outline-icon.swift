@@ -84,11 +84,12 @@ func components(_ image: Raster, roi: (Int, Int, Int, Int)? = nil) -> [Component
   return result.sorted { $0.points.count > $1.points.count }
 }
 let root = CommandLine.arguments.dropFirst().first { !$0.hasPrefix("--") } ?? FileManager.default.currentDirectoryPath
-let raisedBrow = CommandLine.arguments.contains("--raised-brow")
-let version = raisedBrow ? "v7" : "v6"
+let compactExpression = CommandLine.arguments.contains("--compact-expression")
+let raisedBrow = compactExpression || CommandLine.arguments.contains("--raised-brow")
+let version = compactExpression ? "v8" : (raisedBrow ? "v7" : "v6")
 let originalPath = root + "/docs/sigma-mascot/source/original-duck-reference.png"
 let original = try Raster(originalPath)
-let expressionSource = raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png"
+let expressionSource = compactExpression ? "docs/sigma-mascot/source/narrow-expression-features-v8.png" : (raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png")
 let expression = try Raster(root + "/" + expressionSource)
 let parts = components(original)
 require(parts.count >= 4, "Missing original artwork components")
@@ -137,7 +138,13 @@ for eye in eyes { for i in eye.points {
     }
   } }
 } }
-require(!eraseMask.indices.contains { eraseMask[$0] && (outlineMask[$0] || beakMask[$0]) }, "Eye erasure overlaps protected artwork")
+if compactExpression {
+  // The user now permits the bill to change. Erase its old placement before
+  // copying the same original artwork back at a smaller, lower position.
+  let oldBill = dilate(beakMask, radius: 3)
+  for i in eraseMask.indices where oldBill[i] { eraseMask[i] = true }
+}
+require(!eraseMask.indices.contains { eraseMask[$0] && (outlineMask[$0] || (!compactExpression && beakMask[$0])) }, "Face erasure overlaps protected artwork")
 let background = Array(original.rgb[0..<3])
 let fillIndex = (203 * original.width + 171) * 3
 let faceWhite = Array(original.rgb[fillIndex..<(fillIndex + 3)])
@@ -177,6 +184,35 @@ for y in 0..<size { for x in 0..<size {
   }
 } }
 try baseline.save(proof + "rotated-original.png")
+var newBeakMask = [Bool](repeating: false, count: size * size)
+if compactExpression {
+  let pixels = protectedBeak.indices.filter { protectedBeak[$0] }
+  let minX = pixels.map { $0 % size }.min()!, maxX = pixels.map { $0 % size }.max()!
+  let minY = pixels.map { $0 / size }.min()!, maxY = pixels.map { $0 / size }.max()!
+  let centerX = Double(minX + maxX) / 2, centerY = Double(minY + maxY) / 2
+  let scaleX = 0.82, scaleY = 0.85, shiftY = 20.0
+  for y in 0..<size { for x in 0..<size {
+    let sx = centerX + (Double(x) - centerX) / scaleX
+    let sy = centerY + (Double(y) - centerY - shiftY) / scaleY
+    let x0 = Int(floor(sx)), y0 = Int(floor(sy)), fx = sx - Double(x0), fy = sy - Double(y0)
+    var opacity = 0.0, color = [Double](repeating: 0, count: 3)
+    for (px,py,weight) in [(x0,y0,(1-fx)*(1-fy)),(x0+1,y0,fx*(1-fy)),(x0,y0+1,(1-fx)*fy),(x0+1,y0+1,fx*fy)] {
+      if px < 0 || py < 0 || px >= size || py >= size { continue }
+      let source = py * size + px
+      if !protectedBeak[source] { continue }
+      opacity += weight
+      for channel in 0..<3 { color[channel] += Double(baseline.rgb[source * 3 + channel]) * weight }
+    }
+    if opacity < 0.001 { continue }
+    let i = y * size + x
+    require(!protectedOutline[i], "Resized bill touches original outline")
+    editMask[i] = true; newBeakMask[i] = true
+    for channel in 0..<3 {
+      final.rgb[i * 3 + channel] = UInt8(max(0, min(255,
+        (Double(final.rgb[i * 3 + channel]) * (1 - opacity) + color[channel]).rounded())))
+    }
+  } }
+}
 func merge(_ parts: [Component]) -> Component {
   require(!parts.isEmpty, "Missing expression feature")
   let points = parts.flatMap { $0.points }
@@ -222,18 +258,20 @@ func composite(_ feature: Component, center: (Double, Double), width: Double) {
     }
     if opacity < 0.001 { continue }
     let i = y * size + x
-    require(!protectedOutline[i] && !protectedBeak[i], "Expression touches protected \(protectedOutline[i] ? "outline" : "beak") at output (\(x),\(y)), original plane (\(rx),\(ry))")
+    require(!protectedOutline[i] && !(compactExpression ? newBeakMask[i] : protectedBeak[i]), "Expression touches protected \(protectedOutline[i] ? "outline" : "beak") at output (\(x),\(y)), original plane (\(rx),\(ry))")
     editMask[i] = true
     for channel in 0..<3 { final.rgb[i * 3 + channel] = UInt8((Double(final.rgb[i * 3 + channel]) * (1 - min(1, opacity))).rounded()) }
   } }
 }
 for side in 0..<2 {
   let eye = rotate(eyes[side].centerX, eyes[side].centerY)
-  let inward = side == 0 ? 4.0 : -4.0
-  composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: 43)
-  let browInset = side == 0 ? 14.0 : -14.0
-  let browLift = raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0
-  composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - browLift), width: 45)
+  let inwardAmount = compactExpression ? 17.0 : 4.0
+  let inward = side == 0 ? inwardAmount : -inwardAmount
+  composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: compactExpression ? 35 : 43)
+  let inset = compactExpression ? 4.0 : 14.0
+  let browInset = side == 0 ? inset : -inset
+  let browLift = compactExpression ? (side == 0 ? 43.0 : 32.0) : (raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0)
+  composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - browLift), width: compactExpression ? 39 : 45)
 }
 var changes = 0, outsideEdits = 0, outlineChanges = 0, beakChanges = 0
 for i in 0..<(size * size) {
@@ -245,7 +283,7 @@ for i in 0..<(size * size) {
     if protectedBeak[i] { beakChanges += 1 }
   }
 }
-require(outsideEdits == 0 && outlineChanges == 0 && beakChanges == 0, "Protected pixels changed")
+require(outsideEdits == 0 && outlineChanges == 0 && (compactExpression || beakChanges == 0), "Protected pixels changed")
 var mask = Raster(width: size, height: size, color: [0,0,0])
 for i in editMask.indices where editMask[i] { for channel in 0..<3 { mask.rgb[i * 3 + channel] = 255 } }
 try mask.save(proof + "facial-edit-mask.png")
@@ -258,7 +296,11 @@ let report: [String: Any] = [
   "outputSize": size, "changedFacialPixels": changes,
   "changedPixelsOutsideFacialEdits": outsideEdits,
   "changedOriginalOutlinePixels": outlineChanges, "changedOriginalBeakPixels": beakChanges,
-  "method": "Original raster copied with one rotation/scale/crop; \(raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing") expression components composited inside. No generated or reconstructed contour."
+  "beakEditedWithUserAuthorization": compactExpression,
+  "beakScale": compactExpression ? [0.82, 0.85] : [1.0, 1.0],
+  "beakShiftOutputPixels": compactExpression ? [0, 20] : [0, 0],
+  "eyeWidthOriginalPlane": compactExpression ? 35 : 43,
+  "method": "Original raster copied with one rotation/scale/crop; \(compactExpression ? "narrower, closer eyes and a smaller, lower original bill" : (raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing")) expression components composited inside. No generated or reconstructed contour."
 ]
 let data = try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted,.sortedKeys])
 try data.write(to: URL(fileURLWithPath: proof + "preservation-report.json"))

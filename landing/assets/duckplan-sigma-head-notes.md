@@ -4,9 +4,17 @@ The current outline uses the user's original duck pixels, copied and rotated wit
 the deterministic Swift compositor. Facial features are composited inside that
 protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v7.png. Current app exports:
-duckplan-sigma-icon-v7-192.png and duckplan-sigma-icon-v7-512.png.
+Current master: duckplan-sigma-head-v8.png. Current app exports:
+duckplan-sigma-icon-v8-192.png and duckplan-sigma-icon-v8-512.png.
 Earlier icons are retained for comparison.
+
+## Narrower expression and permitted bill adjustment (v8, November 12, 2026)
+
+The user found v7's eyes too wide and permitted changes to the bill/nose to emphasize the expression. V8 keeps the exact approved outer contour, with narrower almond-shaped eyes, closer eye spacing and one raised viewer-left brow. The original bill is intentionally scaled down using a deterministic transform; the earlier promise to preserve every original beak pixel does not apply to this authorized facial edit.
+
+`tools/build-original-outline-icon.swift --compact-expression` uses the retained original screenshot and `docs/sigma-mascot/source/narrow-expression-features-v8.png`. Its permitted facial mask includes the eye/brow changes and the original and transformed bill areas. It writes the master and evidence to `docs/sigma-mascot/v8-preservation/`. The outline and all pixels outside the facial mask must remain unchanged; changed original-bill pixels are expected. Exports remain opaque 1024px native and 192/512px web icons. The exact [expression-feature prompt](../../docs/sigma-mascot/source/narrow-expression-features-v8-prompt.txt) is retained beside the feature source.
+
+The compositor's `--raised-brow` mode reproduces v7; running without either expression flag reproduces v6. Their sources, proofs and methods remain below for history.
 
 ## Raised-brow expression inside the approved outline (v7, November 12, 2026)
 

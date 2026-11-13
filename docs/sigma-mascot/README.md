@@ -1,19 +1,23 @@
 # Sigma mascot
 
-The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v7.png` and its 192/512px exports. The user approved v6's directly copied original outline, then requested the expression from a new photo. V7 changes only the facial features: the viewer-left eyebrow is raised above a more open eye, while the other eye is narrower, producing an asymmetric skeptical expression. The approved rotated outline and original beak remain protected. The native icon copies the opaque 1024px master directly. Previous images remain available.
+The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v8.png` and its 192/512px exports. The user approved v6's directly copied original outline, then requested a skeptical expression from a new photo. After finding v7's eyes too wide, the user requested narrower eyes and permitted bill/nose changes to emphasize the expression. V8 uses narrower almond-shaped eyes, closer eye spacing and the asymmetric raised viewer-left brow. It intentionally reduces the original bill using a deterministic transform. The approved rotated outer contour remains protected. The native icon copies the opaque 1024px master directly. Previous images remain available.
 
 The byte-identical original is [source/original-duck-reference.png](source/original-duck-reference.png). Following the user's copy-and-paste instruction, the compositor rotates its actual pixels 45.0187 degrees clockwise, then applies one uniform scale and crop. The crop stops before the screenshot's clipped contour endpoints, so no neck extension is invented.
 
-The retained [v6 rotated baseline](v6-preservation/rotated-original.png), [facial mask](v6-preservation/facial-edit-mask.png) and [preservation report](v6-preservation/preservation-report.json) document the approved outline. V7 writes its own [rotated baseline](v7-preservation/rotated-original.png), [facial edit mask](v7-preservation/facial-edit-mask.png) and [preservation report](v7-preservation/preservation-report.json). The compositor rejects any output with changed pixels outside the permitted facial mask or changes to the original outline or beak. The expression-feature source is [source/raised-brow-features-v7.png](source/raised-brow-features-v7.png).
+The retained [v6 rotated baseline](v6-preservation/rotated-original.png), [facial mask](v6-preservation/facial-edit-mask.png) and [preservation report](v6-preservation/preservation-report.json) document the approved outline. V8 writes its own [rotated baseline](v8-preservation/rotated-original.png), [facial edit mask](v8-preservation/facial-edit-mask.png) and [preservation report](v8-preservation/preservation-report.json). The compositor requires zero changed outline pixels and zero changes outside the permitted facial mask. Original-bill pixels intentionally change in this mode; they must not be described as preserved. The expression-feature source is [source/narrow-expression-features-v8.png](source/narrow-expression-features-v8.png), with its [generation prompt](source/narrow-expression-features-v8-prompt.txt) retained beside it.
+
+V7 history retains its [baseline](v7-preservation/rotated-original.png), [mask](v7-preservation/facial-edit-mask.png), [report](v7-preservation/preservation-report.json) and [raised-brow feature source](source/raised-brow-features-v7.png). That earlier mode protected both the original outline and beak.
 
 Rebuild from the repository root on macOS:
 
 ```sh
 xcrun swiftc -O -module-cache-path /private/tmp/duckplan-icon-module-cache tools/build-original-outline-icon.swift -o /private/tmp/duckplan-build-original-icon
-/private/tmp/duckplan-build-original-icon --raised-brow
+/private/tmp/duckplan-build-original-icon --compact-expression
 ```
 
-Omit `--raised-brow` to reproduce the earlier v6 expression. The source geometry, expression method and earlier generation prompts are recorded in `landing/assets/duckplan-sigma-head-notes.md`.
+Use `--raised-brow` to reproduce v7, or omit both expression flags to reproduce v6. The source geometry, expression method and earlier generation prompts are recorded in `landing/assets/duckplan-sigma-head-notes.md`.
+
+V8 verification on November 12, 2026: the compositor reports zero changed original-outline pixels and zero changes outside its facial-edit mask. The original bill intentionally changes with the authorized 82% width/85% height transform and 20px downward shift. All 215 Node tests pass; the local browser loads v8 branding without errors. The existing iPhone project builds successfully, all 83 bundled web files match source, and the native icon matches the opaque master. Eight native Swift/project/plist files remain unchanged. [profile-v8-sidebar.png](profile-v8-sidebar.png) shows the local rendering. No physical-phone installation or production deployment was performed.
 
 V7 verification on November 12, 2026: independent PNG comparison found 43,014 facial pixels changed and zero changes outside the facial-edit mask. The v7 rotated baseline is byte-identical to v6. All 215 Node tests pass; the local browser loads the v7 brand/favicon without errors. The existing iPhone project builds successfully, all 80 bundled web files match source, and its native icon matches the opaque master. Eight Swift/project/plist files remain unchanged. [profile-v7-sidebar.png](profile-v7-sidebar.png) shows the local brand rendering. No physical-phone installation or production deployment was performed.
 
