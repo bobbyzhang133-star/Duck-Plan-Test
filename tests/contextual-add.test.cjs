@@ -11,6 +11,8 @@ test("section Add actions name and open their own editors without creating tasks
   const context = vm.createContext({
     document: { body: { dataset: {} }, querySelector: () => button },
     els: { search: { closest: () => search } }, store: { supportsPersonal: true },
+    calendarLibraryTabs: { selected: "tasks" },
+    taskLibrary: { openNewTemplate: options => calls.push(["template", options.source]) },
     personalGoals: { openAddChooser: options => calls.push(["goal-habit", options.source]) },
     personalNotes: { openNote: options => calls.push(["note", options.source]) },
     openClassEditor: source => calls.push(["class", source]),
@@ -30,6 +32,14 @@ test("section Add actions name and open their own editors without creating tasks
     assert.equal(calls.at(-1)[1], button, "Editors receive the actual toolbar launcher");
     assert.equal(search.hidden, !["calendar", "tasks", "home"].includes(view));
   }
+  context.calendarLibraryTabs.selected = "templates";
+  context.document.body.dataset.view = "calendar";
+  vm.runInContext('updatePrimaryAction("calendar"); openPrimaryAction(launcher);', context);
+  assert.equal(button.textContent, "＋ New template");
+  assert.deepEqual(calls.at(-1), ["template", button], "The Calendar Templates action creates a template from the actual launcher");
+  context.store.supportsOrganization = false;
+  vm.runInContext('updatePrimaryAction("calendar")', context);
+  assert.equal(button.disabled, true, "Unavailable template storage disables the contextual action");
   context.document.body.dataset.view = "settings";
   const before = calls.length;
   vm.runInContext('updatePrimaryAction("settings"); openPrimaryAction(launcher);', context);

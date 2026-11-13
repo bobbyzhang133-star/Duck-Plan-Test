@@ -19,6 +19,7 @@ test("inline task panels stay interactive when startup, navigation or resize clo
     const context = vm.createContext({
       compactPlannerQuery: { matches: compact },
       phonePlannerQuery: { matches: false },
+      taskLibrary: { closeTemplateMenu() {} },
       document: { body: { classList: {
         contains(name) { return classes.has(name); },
         toggle(name, enabled) { enabled ? classes.add(name) : classes.delete(name); },
@@ -59,8 +60,10 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   const navigation = element();
   const scrim = { hidden: false, setAttribute() {} };
   const phoneQuery = { matches: true };
+  let menuClosures = 0;
   const context = vm.createContext({
     taskPanelLauncher: null, phonePlannerQuery: phoneQuery, compactPlannerQuery: { matches: true },
+    taskLibrary: { closeTemplateMenu() { menuClosures += 1; } },
     document: {
       activeElement: launcher,
       body: { classList: {
@@ -74,6 +77,7 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   });
   vm.runInContext(setTaskPanel, context);
   vm.runInContext("setTaskPanel(false)", context);
+  assert.equal(menuClosures, 1, "Closing the sheet dismisses any body-level template menu");
   assert.equal(panel.inert, true);
   assert.equal(panel.attributes.get("aria-hidden"), "true");
   assert.equal(scrim.hidden, false, "The transparent phone backdrop stays mounted for smooth entry");
@@ -88,6 +92,7 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   assert.equal(scrim.inert, false);
   assert.equal(focused, close);
   vm.runInContext("setTaskPanel(false)", context);
+  assert.equal(menuClosures, 2);
   assert.equal(focused, launcher);
   assert.equal(calendar.inert, false);
   assert.equal(navigation.inert, false);

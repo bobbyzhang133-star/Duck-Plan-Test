@@ -108,6 +108,13 @@ const taskLibrary = window.DuckPlanLibrary?.create({
   setupButtons: setupButtonMaterial,
   openTask: (options) => openModal({ ...options, id: options.id || options.task?.id || null }),
 });
+const calendarLibraryTabs = window.DuckCalendarLibraryTabs?.create({
+  getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
+  onChange: () => {
+    taskLibrary?.closeTemplateMenu?.();
+    updatePrimaryAction(document.body.dataset.view || "calendar");
+  },
+});
 const taskMatrix = window.DuckTaskMatrix?.create({
   store, getToday: nowKey, showToast, reportError,
   setupButtons: setupButtonMaterial, openTask: openModal,
@@ -156,6 +163,7 @@ function setTaskPanel(open, moveFocus = true, source = null) {
   const compact = phone || (compactPlannerQuery.matches && !document.body.classList.contains("motion-preview"));
   const wasOpen = document.body.classList.contains("task-panel-open");
   const nextOpen = compact && open;
+  if (!nextOpen) taskLibrary?.closeTemplateMenu?.();
   if (nextOpen && !wasOpen) taskPanelLauncher = source || document.activeElement;
   document.body.classList.toggle("task-panel-open", nextOpen);
   els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
@@ -745,6 +753,7 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
   renderCalendar({ autoScroll: autoScrollCalendar });
   taskLibrary?.render();
+  calendarLibraryTabs?.render();
   personalGoals?.render(); personalNotes?.render();
   updatePrimaryAction(document.body.dataset.view || "calendar");
   if (els.modal.open) taskLibrary?.renderTaskResources(els.form.elements.classId.value);
@@ -755,9 +764,11 @@ function renderAll({ autoScrollCalendar = false } = {}) {
 function updatePrimaryAction(view) {
   const button = document.querySelector("#open-task-modal");
   const labels = { goals: "Add goal / habit", notes: "Add note", classes: "Add class" };
+  if (view === "calendar" && calendarLibraryTabs?.selected === "templates") labels.calendar = "New template";
   button.textContent = `＋ ${labels[view] || "Add task"}`;
   button.hidden = view === "settings";
-  button.disabled = ["goals", "notes"].includes(view) && store.supportsPersonal === false;
+  button.disabled = (["goals", "notes"].includes(view) && store.supportsPersonal === false)
+    || (view === "calendar" && calendarLibraryTabs?.selected === "templates" && store.supportsOrganization === false);
   button.setAttribute("aria-haspopup", "dialog");
   els.search.closest(".search-box").hidden = !["calendar", "home", "tasks"].includes(view);
 }
@@ -765,6 +776,7 @@ function updatePrimaryAction(view) {
 function openPrimaryAction(source) {
   const view = document.body.dataset.view;
   if (view === "goals") personalGoals?.openAddChooser({ source });
+  else if (view === "calendar" && calendarLibraryTabs?.selected === "templates") taskLibrary?.openNewTemplate?.({ source });
   else if (view === "notes") personalNotes?.openNote({ source });
   else if (view === "classes") openClassEditor(source);
   else if (view !== "settings") openModal({ source, dueDate: view === "calendar" ? selectedDate : nowKey() });
@@ -1240,16 +1252,16 @@ compactPlannerQuery.addEventListener("change", () => setTaskPanel(false, false))
 phonePlannerQuery.addEventListener("change", () => {
   const wasOpen = document.body.classList.contains("task-panel-open");
   setTaskPanel(false, false);
-  if (wasOpen && !phonePlannerQuery.matches) document.querySelector("#plan-selected-date").focus({ preventScroll: true });
+  if (wasOpen && !phonePlannerQuery.matches) document.querySelector(calendarLibraryTabs?.selected === "templates" ? "#calendar-templates-tab" : "#plan-selected-date").focus({ preventScroll: true });
   renderDailyPlan();
   renderCalendar({ autoScroll: true });
   setupButtonMaterial();
 });
 document.addEventListener("keydown", (event) => {
-  if (els.modal.open) return;
+  if (els.modal.open || document.querySelector("dialog[open]")) return;
   if (event.key === "Tab" && phonePlannerQuery.matches && document.body.classList.contains("task-panel-open")) {
     const controls = [...els.taskPanel.querySelectorAll("button,input,select,textarea,a[href],[tabindex='0']")]
-      .filter((control) => !control.disabled && control.getClientRects().length);
+      .filter((control) => !control.disabled && control.tabIndex >= 0 && !control.closest("[hidden], [inert]") && control.getClientRects().length);
     const first = controls[0];
     const last = controls.at(-1);
     if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }

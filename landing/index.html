@@ -9,14 +9,15 @@
     <link rel="stylesheet" href="./styles.css?v=phone-planner-20261112" />
     <link rel="stylesheet" href="./planner-ui.css?v=phone-planner-20261112" />
     <link rel="stylesheet" href="./duck-theme.css?v=sigma-front-view-20261111" />
-    <link rel="stylesheet" href="./planner-library.css?v=template-drawer-20261113" />
+    <link rel="stylesheet" href="./planner-library.css?v=template-library-20261113" />
     <link rel="stylesheet" href="./task-matrix.css?v=product-feedback-20261112" />
     <link rel="stylesheet" href="./product-feedback.css?v=product-feedback-20261112" />
     <link rel="stylesheet" href="./personal-notes.css?v=contextual-add-20261112" />
     <link rel="stylesheet" href="./personal-goals.css?v=contextual-add-20261112" />
     <link rel="stylesheet" href="./planner-clarity.css" />
-    <link rel="stylesheet" href="./planner-motion.css?v=square-rail-20261113" />
+    <link rel="stylesheet" href="./planner-motion.css?v=template-library-20261113" />
     <link rel="stylesheet" href="./phone-navigation.css?v=phone-navigation-20261112" />
+    <link rel="stylesheet" href="./calendar-library-tabs.css?v=template-library-20261113" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -92,14 +93,17 @@
             <div class="completion-ring" id="completion-ring" aria-label="Daily completion"><strong id="completion-percent">0%</strong><span>done</span></div>
           </header>
           <div class="planner-workspace">
-            <section class="panel daily-panel task-sidebar-panel" id="daily-task-panel" aria-labelledby="daily-plan-heading">
-              <div class="panel-heading"><div class="task-sidebar-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Today</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div></div><button type="button" class="secondary-button compact-button" id="plan-selected-date">＋ Add task</button><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks">×</button></div>
+            <section class="panel daily-panel task-sidebar-panel" id="daily-task-panel" aria-label="Tasks and templates">
+              <div class="calendar-library-toolbar" id="calendar-library-toolbar"><div class="calendar-library-tablist" role="tablist" aria-label="Calendar library"><button type="button" id="calendar-tasks-tab" role="tab" data-calendar-library-tab="tasks" aria-selected="true" aria-controls="calendar-tasks-panel">Tasks</button><button type="button" id="calendar-templates-tab" role="tab" data-calendar-library-tab="templates" aria-selected="false" aria-controls="calendar-assignment-templates" tabindex="-1">Templates</button></div><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks and templates">×</button></div>
+              <div class="calendar-task-content" id="calendar-tasks-panel" role="tabpanel" aria-labelledby="calendar-tasks-tab" tabindex="0">
+              <div class="panel-heading"><div class="task-sidebar-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Today</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div></div><button type="button" class="secondary-button compact-button" id="plan-selected-date">＋ Add task</button></div>
               <div class="task-section overdue-section" id="overdue-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="overdue"><span><span class="status-dot overdue-dot"></span>Overdue</span><strong id="overdue-count">0</strong></button><div class="daily-task-list" id="overdue-task-list"></div></div>
               <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot scheduled-dot"></span>Scheduled</span><strong id="scheduled-count">0</strong></div><div class="daily-task-list" id="scheduled-task-list"></div></div>
               <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Due, not scheduled</span><strong id="unscheduled-count">0</strong></div><div class="daily-task-list" id="unscheduled-task-list"></div></div>
               <div class="task-section completed-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list"></div></div>
               <div class="daily-empty" id="daily-empty" hidden><span class="empty-duck" data-duck-state="swimming" aria-hidden="true"></span><h3>Clear day ahead.</h3><p>Click a calendar slot or plan a task when you are ready.</p></div>
-              <div id="calendar-assignment-templates"></div>
+              </div>
+              <div id="calendar-assignment-templates" role="tabpanel" aria-labelledby="calendar-templates-tab" tabindex="0" hidden inert></div>
             </section>
             <section class="panel unified-calendar-panel calendar-main-panel" aria-labelledby="calendar-heading">
               <div class="calendar-toolbar">
@@ -225,7 +229,8 @@
     <script src="./ical-parser.js"></script>
     <script src="./cloud-config.js"></script>
     <script src="./planner-store.js?v=personal-sync-20261113"></script>
-    <script src="./planner-library.js?v=template-drawer-20261113"></script>
+    <script src="./planner-library.js?v=template-library-20261113"></script>
+    <script src="./calendar-library-tabs.js?v=template-library-20261113"></script>
     <script src="./task-matrix.js?v=product-feedback-20261112"></script>
     <script src="./personal-notes.js?v=contextual-add-20261112"></script>
     <script src="./personal-goals.js?v=contextual-add-20261112"></script>
@@ -240,7 +245,7 @@
     <script src="./app-install.js?v=app-1"></script>
     <script src="./task-alarms.js?v=native-alarms-1"></script>
     <script src="./native-task-alarms.js?v=1"></script>
-    <script src="./app.js?v=template-blocks-20261113"></script>
+    <script src="./app.js?v=template-library-20261113"></script>
     <script src="./duck-mascot.js?v=restored-sigma-face-20261112"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>
     <script src="./duck-interactions.js"></script>

@@ -32,6 +32,33 @@ test("a scheduling draft retains reusable fields but no template identity, deadl
   assert.deepEqual(draft, { title: "Weekly reading", classId: "class-1", durationMinutes: 35, priority: "High", notes: "Read chapters 1–2", reminderChoice: "60", type: "assignment" });
 });
 
+test("template details include the full saved assignment and every reusable setting", () => {
+  const title = "A long assignment title that needs more room than a compact calendar preview";
+  const notes = "Read the complete instructions.\nKeep the second line and <literal text>.";
+  assert.deepEqual(Library.templateDetails({ ...template, title, notes }, "Biology (archived)"), [
+    ["Assignment", title], ["Class", "Biology (archived)"], ["Duration", "35 minutes"],
+    ["Priority", "High"], ["Deadline reminder", "1 hour before"], ["Notes", notes],
+  ]);
+  for (const [reminderChoice, label] of [["default", "Use Settings default"], ["off", "No reminder"], ["15", "15 minutes before"], ["1440", "1 day before"]]) {
+    const details = new Map(Library.templateDetails({ ...template, reminderChoice, notes: "" }));
+    assert.equal(details.get("Deadline reminder"), label);
+    assert.equal(details.get("Notes"), "No notes.");
+    assert.equal(details.get("Class"), "No class");
+  }
+  assert.equal(template.notes, "Read chapters 1–2");
+});
+
+test("the contextual New template entry point respects server capability and destroyed views", () => {
+  const document = { querySelector: () => null, addEventListener() {}, removeEventListener() {} };
+  const store = { mode: "cloud", user: { id: "test" }, supportsOrganization: false, listTemplates: () => [] };
+  const library = Library.create({ store, document });
+  assert.equal(library.openNewTemplate(), false);
+  library.closeTemplateMenu();
+  library.destroy();
+  store.supportsOrganization = true;
+  assert.equal(library.openNewTemplate(), false);
+});
+
 test("an immediately scheduled template copy preserves saved settings and adds only its new identity and work time", () => {
   const before = structuredClone(template);
   const task = Library.instantiateScheduledTemplate(template, { date: "2026-11-13", time: "10:30", makeId: () => "scheduled-copy" });

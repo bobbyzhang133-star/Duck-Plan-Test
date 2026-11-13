@@ -1,0 +1,18 @@
+/* Tasks and reusable templates share the Calendar column without sharing a list. */
+.calendar-library-toolbar { display: flex; align-items: center; gap: 10px; position: sticky; top: -1px; z-index: 6; margin-bottom: 18px; padding: 2px 0 10px; background: var(--canvas); }
+.calendar-library-tablist { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; flex: 1; min-width: 0; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.calendar-library-tablist > button { min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; box-shadow: none; }
+.calendar-library-tablist > button[aria-selected="true"] { border-color: var(--line); background: var(--card); color: var(--ink-deep); box-shadow: 0 1px 3px #3029190a; }
+.calendar-library-tablist > button:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.calendar-library-tablist > button:is(:hover,:active,.interaction-pressed) { background: var(--accent-soft); }
+.calendar-task-content { min-width: 0; }
+#calendar-assignment-templates[hidden], #calendar-tasks-panel[hidden] { display: none !important; }
+.motion-preview #daily-task-panel #calendar-assignment-templates { margin-top: 0; }
+.motion-preview #daily-task-panel .calendar-task-content > .panel-heading { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 12px; }
+.motion-preview #daily-task-panel .calendar-task-content :is(.task-sidebar-heading,.task-sidebar-heading > div) { display: block; }
+.motion-preview #daily-task-panel .calendar-task-content > .panel-heading #plan-selected-date { grid-column: 2; grid-row: 1; align-self: start; margin: 0; }
+@media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .calendar-library-toolbar { gap: 8px; margin-bottom: 16px; }
+  .motion-preview #view-calendar .calendar-library-toolbar .task-panel-close-button { flex: 0 0 44px; grid-column: auto; grid-row: auto; }
+  .motion-preview #daily-task-panel .calendar-task-content > .panel-heading { grid-template-columns: minmax(0,1fr) auto; gap: 8px; }
+}

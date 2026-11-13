@@ -2,6 +2,8 @@
 
 Status: review and recommendations only. The user explicitly requested the review before implementation. Application files, data, deployment and the native app are unchanged.
 
+Later follow-up: the user approved applying the newer recommendations. See the [dedicated template library implementation](../template-library-ui/README.md); this file preserves the original review and source corrections.
+
 ## Reviewed version and destination
 
 - Repository: `bobbyzhang133-star/Duck-Plan-Test`

@@ -8,6 +8,7 @@
   const TEMPLATE_MIME = "application/x-duckplan-template";
   const PRIORITIES = ["High", "Medium", "Low"];
   const REMINDERS = ["default", "off", "15", "60", "1440"];
+  const REMINDER_LABELS = { default: "Use Settings default", off: "No reminder", "15": "15 minutes before", "60": "1 hour before", "1440": "1 day before" };
 
   function invalid(field, message) {
     const error = new Error(message);
@@ -81,6 +82,15 @@
     return { ...fields, type: "assignment" };
   }
 
+  function templateDetails(item, classLabel = "No class") {
+    const template = normalizeTemplate(item);
+    return [
+      ["Assignment", template.title], ["Class", classLabel],
+      ["Duration", `${template.durationMinutes} minutes`], ["Priority", template.priority],
+      ["Deadline reminder", REMINDER_LABELS[template.reminderChoice]], ["Notes", template.notes || "No notes."],
+    ];
+  }
+
   function instantiateTemplate(item, { makeId = () => globalThis.crypto.randomUUID() } = {}) {
     return {
       ...templateDraft(item),
@@ -119,8 +129,7 @@
     let dialogSource = null;
     let dialogSourceKey = "";
     let taskClassId = null;
-    let calendarDrawerOpen = false;
-    let calendarDrawerAnimation = null;
+    let templateMenu = null;
     let ownerKey = currentOwnerKey();
     let ownerGeneration = 0;
     let destroyed = false;
@@ -132,7 +141,7 @@
     const resources = classId => store.listResources(classId ? { classId } : undefined);
     const className = id => classes().find(item => item.id === id)?.name || "No class";
     const available = () => store.supportsOrganization !== false;
-    const organizationAction = action => action.endsWith("template") || action.endsWith("resource");
+    const organizationAction = action => action === "template-menu" || action.endsWith("template") || action.endsWith("resource");
     const unavailableNotice = () => available() ? "" : '<p class="library-unavailable" role="status">Templates and resources are not available on this server yet. Your saved local library stays safe on this device.</p>';
     const button = (action, id, label, { primary = false, context = "", extra = "" } = {}) => `<button type="button" class="${primary ? "primary-button" : "secondary-button"} library-button" data-library-action="${action}" data-library-id="${escapeHtml(id)}" data-library-focus="${context}:${action}:${escapeHtml(id)}" ${!available() && organizationAction(action) ? "disabled" : ""} ${pending.has(id) && action === "add-template" ? 'aria-disabled="true" aria-busy="true"' : ""} ${extra}>${label}</button>`;
 
@@ -161,7 +170,7 @@
       selectedTab = "assignments";
       taskClassId = null;
       pending.clear();
-      resetCalendarTemplateDrawer();
+      closeTemplateMenu();
     }
 
     function fail(error) {
@@ -175,6 +184,7 @@
 
     function replace(target, markup) {
       if (!target) return;
+      if (templateMenu && target.contains(templateMenu.trigger)) closeTemplateMenu({ restoreFocus: templateMenu.element.contains(doc.activeElement) });
       const active = doc.activeElement;
       const key = target.contains(active) ? active?.dataset.libraryFocus : null;
       target.innerHTML = markup;
@@ -190,82 +200,108 @@
         const info = classes().find(value => value.id === item.classId);
         const color = /^#[0-9a-f]{6}$/i.test(info?.color || "") ? info.color : "#8f8a7d";
         const minutes = Number.isFinite(Number(item.durationMinutes)) && Number(item.durationMinutes) > 0 ? Number(item.durationMinutes) : 45;
-        const height = Math.min(156, Math.max(44, Math.round(minutes * 62 / 60)));
+        const height = Math.min(156, Math.max(60, Math.round(minutes * 62 / 60)));
         const label = className(item.classId);
         return `<article class="library-template-card">
           <div class="library-template-block" draggable="${available()}" data-library-template="${escapeHtml(item.id)}" role="group" aria-label="${escapeHtml(item.title)}, ${minutes} minute template" style="--course-color:${color};--template-block-height:${height}px">
             <div class="library-template-block-heading"><h3 title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h3><span class="library-drag-hint" aria-hidden="true" title="Drag onto a calendar time">⠿</span></div>
             <p class="library-template-block-meta"><span class="library-template-duration">${minutes} min</span><span aria-hidden="true">·</span><span class="library-template-class" title="${escapeHtml(label)}">${escapeHtml(label)}</span></p>
           </div>
-          <div class="library-actions library-template-actions">${button("schedule-template", item.id, "Schedule", { primary: true, context })}${button("add-template", item.id, "Add to tasks", { context })}</div>
-          <div class="library-template-utility"><details class="library-template-details"><summary data-library-focus="${context}:template-details:${escapeHtml(item.id)}">Details</summary><div class="library-template-details-body"><p class="library-meta">${escapeHtml(label)} · ${escapeHtml(item.priority)} priority</p>${item.notes ? `<p class="library-card-notes">${escapeHtml(item.notes)}</p>` : '<p class="library-card-notes">No notes.</p>'}</div></details><div class="library-card-tools library-template-tools">${button("edit-template", item.id, "Edit", { context })}${button("delete-template", item.id, "Delete", { context })}</div></div>
+          <div class="library-actions library-template-actions">${button("schedule-template", item.id, "Schedule", { context, extra: `aria-label="Schedule ${escapeHtml(item.title)}"` })}${button("add-template", item.id, "Add to tasks", { context, extra: `aria-label="Add ${escapeHtml(item.title)} to tasks"` })}${button("template-menu", item.id, '<span aria-hidden="true">⋯</span>', { context, extra: `aria-label="Manage ${escapeHtml(item.title)}" aria-haspopup="menu" aria-expanded="false" aria-controls="template-management-menu"` })}</div>
         </article>`;
       }).join("")}</div>`;
     }
 
-    function cancelCalendarDrawerMotion() {
-      const current = calendarDrawerAnimation;
-      calendarDrawerAnimation = null;
-      current?.animation.cancel();
+    function closeTemplateMenu({ restoreFocus = false } = {}) {
+      const current = templateMenu;
+      if (!current) return;
+      templateMenu = null;
+      current.animation?.cancel();
+      current.trigger.setAttribute("aria-expanded", "false");
+      current.element.remove();
+      if (restoreFocus && current.trigger.isConnected) current.trigger.focus({ preventScroll: true });
     }
 
-    function resetCalendarTemplateDrawer() {
-      calendarDrawerOpen = false;
-      cancelCalendarDrawerMotion();
-      const panel = find("#calendar-template-drawer-panel");
-      if (panel) { panel.hidden = true; panel.inert = true; panel.style.height = ""; }
-      find("#calendar-template-drawer-toggle")?.setAttribute("aria-expanded", "false");
-      find("#calendar-assignment-templates .library-calendar-drawer")?.classList.remove("is-open");
-    }
-
-    function toggleCalendarTemplateDrawer(control) {
-      const panel = find("#calendar-template-drawer-panel");
-      if (!panel || destroyed) return;
-      const startHeight = panel.hidden ? 0 : panel.getBoundingClientRect().height;
-      const focusInPanel = panel.contains(doc.activeElement);
-      cancelCalendarDrawerMotion();
-      calendarDrawerOpen = !calendarDrawerOpen;
-      const open = calendarDrawerOpen;
-      control.setAttribute("aria-expanded", String(open));
-      control.closest(".library-calendar-drawer").classList.toggle("is-open", open);
-      if (!open && focusInPanel) control.focus({ preventScroll: true });
-      panel.hidden = false;
-      panel.inert = !open;
-      panel.style.height = `${startHeight}px`;
-      const endHeight = open ? panel.scrollHeight : 0;
-      const view = doc.defaultView;
-      const styles = view?.getComputedStyle(panel);
-      const durationToken = styles?.getPropertyValue("--motion-sheet").trim() || "340ms";
-      const parsedDuration = parseFloat(durationToken) * (durationToken.endsWith("ms") ? 1 : 1000);
-      const duration = Number.isFinite(parsedDuration) ? Math.max(0, parsedDuration) : 340;
-      const reduced = view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-      const settle = () => { panel.style.height = ""; panel.hidden = !open; panel.inert = !open; };
-      if (reduced || !duration || !panel.animate || Math.abs(startHeight - endHeight) < 1) { settle(); return; }
-      const animation = panel.animate([{ height: `${startHeight}px` }, { height: `${endHeight}px` }], {
-        duration, easing: styles?.getPropertyValue("--motion-sheet-ease").trim() || "cubic-bezier(.25,0,.2,1)", fill: "both",
+    function openTemplateMenu(trigger) {
+      if (templateMenu?.trigger === trigger) { closeTemplateMenu({ restoreFocus: true }); return; }
+      closeTemplateMenu();
+      const item = findTemplate(trigger.dataset.libraryId);
+      if (!item || !available()) return;
+      const element = doc.createElement("div");
+      element.id = "template-management-menu";
+      element.className = "library-template-menu";
+      element.setAttribute("role", "menu");
+      element.setAttribute("aria-label", `Manage ${item.title}`);
+      element.innerHTML = ["Details", "Edit", "Delete"].map(label => `<button type="button" role="menuitem" tabindex="-1" data-template-menu-action="${label.toLowerCase()}" aria-label="${label} ${escapeHtml(item.title)}">${label}</button>`).join("");
+      const state = templateMenu = { element, trigger, id: item.id, owner: captureOwner() };
+      trigger.setAttribute("aria-expanded", "true");
+      doc.body.append(element);
+      positionTemplateMenu(state);
+      const controls = [...element.querySelectorAll("button")];
+      element.addEventListener("keydown", event => {
+        if (["Escape", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          if (event.key === "Escape") { closeTemplateMenu({ restoreFocus: true }); return; }
+          const index = controls.indexOf(doc.activeElement);
+          const next = event.key === "Home" ? 0 : event.key === "End" ? controls.length - 1 : (index + (event.key === "ArrowDown" ? 1 : controls.length - 1)) % controls.length;
+          controls[next].focus({ preventScroll: true });
+        } else if (event.key === "Tab") closeTemplateMenu({ restoreFocus: true });
       });
-      const state = calendarDrawerAnimation = { animation, panel, owner: captureOwner() };
-      animation.finished.then(() => {
-        if (calendarDrawerAnimation !== state) return;
-        calendarDrawerAnimation = null;
-        if (panel.isConnected && isCurrentOwner(state.owner)) settle();
-        else { panel.hidden = true; panel.inert = true; panel.style.height = ""; }
-        animation.cancel();
-      }, () => {});
+      element.addEventListener("click", event => {
+        const control = event.target.closest("[data-template-menu-action]");
+        if (!control || templateMenu !== state) return;
+        const action = control.dataset.templateMenuAction;
+        const latest = isCurrentOwner(state.owner) && findTemplate(state.id);
+        closeTemplateMenu();
+        if (latest) openDialog({ kind: "template", item: latest, source: trigger, deleting: action === "delete", viewing: action === "details" });
+      });
+      refreshButtons(element);
+      controls[0].focus({ preventScroll: true });
+      const view = doc.defaultView;
+      if (element.animate && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+        state.animation = element.animate([{ opacity: 0, transform: "scale(.92,.86)" }, { opacity: 1, transform: "scale(1)" }], {
+          duration: view?.DuckMotion?.duration.popupOpen || 240,
+          easing: view?.DuckMotion?.easing || "cubic-bezier(.2,.8,.2,1)",
+        });
+        const animation = state.animation;
+        animation.finished.then(() => { if (state.animation === animation) state.animation = null; }, () => {});
+      }
+    }
+
+    function positionTemplateMenu({ element, trigger }) {
+      const bounds = trigger.getBoundingClientRect();
+      const menuBounds = { width: element.offsetWidth, height: element.offsetHeight };
+      const view = doc.defaultView;
+      const width = view?.innerWidth || doc.documentElement.clientWidth;
+      const height = view?.innerHeight || doc.documentElement.clientHeight;
+      element.style.left = `${Math.max(8, Math.min(bounds.right - menuBounds.width, width - menuBounds.width - 8))}px`;
+      element.style.top = `${Math.max(8, Math.min(bounds.bottom + menuBounds.height + 6 <= height - 8 ? bounds.bottom + 6 : bounds.top - menuBounds.height - 6, height - menuBounds.height - 8))}px`;
+      const left = parseFloat(element.style.left);
+      const top = parseFloat(element.style.top);
+      element.style.transformOrigin = `${Math.max(0, Math.min(bounds.left + bounds.width / 2 - left, menuBounds.width))}px ${top >= bounds.bottom ? 0 : menuBounds.height}px`;
+    }
+
+    function onOutsideMenuPointer(event) {
+      if (templateMenu && !templateMenu.element.contains(event.target) && !templateMenu.trigger.contains(event.target)) closeTemplateMenu();
+    }
+
+    function onMenuViewportChange(event) {
+      if (templateMenu && !(event.target?.nodeType && templateMenu.element.contains(event.target))) positionTemplateMenu(templateMenu);
     }
 
     function renderTemplates() {
-      for (const [id, context, compact] of [["assignment-templates", "shelf", false], ["calendar-assignment-templates", "calendar-shelf", true]]) {
+      const items = templates();
+      for (const [id, context, calendar] of [["assignment-templates", "shelf", false], ["calendar-assignment-templates", "calendar-shelf", true]]) {
         const target = find(`#${id}`);
         if (!target) continue;
-        const open = compact ? calendarDrawerOpen : Boolean(target.querySelector("details")?.open);
+        const open = Boolean(target.querySelector("details")?.open);
         const headingId = `${id}-heading`;
-        const content = `<section class="library-section" aria-labelledby="${compact ? "calendar-template-drawer-toggle" : headingId}"><div class="library-heading${compact ? " library-drawer-content-heading" : ""}"><div>${compact ? "" : `<h2 id="${headingId}">Assignment templates</h2>`}<p>Each use creates a separate task.</p></div>${button("new-template", "", "New template", { primary: true, context })}</div>${unavailableNotice()}${templateCards(templates(), context)}<p class="library-footnote">Drag a block onto the calendar to schedule a copy. Your template stays here.</p></section>`;
-        if (compact) {
-          cancelCalendarDrawerMotion();
-          replace(target, `<section class="library-calendar-drawer${open ? " is-open" : ""}"><h2 class="library-template-drawer-heading"><button type="button" class="library-template-drawer-toggle" id="calendar-template-drawer-toggle" data-library-action="toggle-template-drawer" data-library-focus="calendar-shelf:drawer-toggle" aria-expanded="${open}" aria-controls="calendar-template-drawer-panel"><svg class="library-template-stack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 4h12M4 7h16"/><rect x="3" y="10" width="18" height="11" rx="2"/></svg><span class="library-template-drawer-title">Assignment templates</span><span class="library-template-drawer-count" aria-label="${templates().length} saved templates">${templates().length}</span><svg class="library-template-drawer-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h2><div class="library-template-drawer-panel" id="calendar-template-drawer-panel" role="region" aria-labelledby="calendar-template-drawer-toggle" ${open ? "" : "hidden inert"}>${content}</div></section>`);
+        const newButton = button("new-template", "", calendar ? "New" : "New template", { context, extra: 'aria-label="New assignment template"' });
+        if (calendar) {
+          replace(target, `<section class="library-calendar-template-library" aria-label="Saved assignment templates"><div class="library-template-library-header"><span class="library-template-saved-count">${items.length} saved</span>${newButton}</div>${unavailableNotice()}${items.length ? '<p class="library-template-instruction"><span class="library-template-desktop-hint">Drag a block onto the calendar.</span><span class="library-template-phone-hint">Tap Schedule to choose a time.</span></p>' : ""}${templateCards(items, context)}</section>`);
         } else {
-          replace(target, `<details class="library-template-shelf" ${open ? "open" : ""}><summary data-library-focus="${context}:summary">Assignment templates <span>${templates().length}</span></summary>${content}</details>`);
+          replace(target, `<details class="library-template-shelf" ${open ? "open" : ""}><summary data-library-focus="${context}:summary">Assignment templates <span>${items.length}</span></summary><section class="library-section" aria-labelledby="${headingId}"><div class="library-heading"><div><h2 id="${headingId}">Assignment templates</h2><p>Each use creates a separate task.</p></div>${newButton}</div>${unavailableNotice()}${templateCards(items, context)}${items.length ? '<p class="library-footnote">Drag a block onto the calendar to schedule a copy. Your template stays here.</p>' : ""}</section></details>`);
         }
       }
     }
@@ -354,7 +390,7 @@
       current.remove();
       dialog = null;
       const replacement = dialogSourceKey && [...doc.querySelectorAll("[data-library-focus]")].find(item => item.dataset.libraryFocus === dialogSourceKey);
-      const fallback = dialogSourceKey.startsWith("calendar") ? find("#calendar-template-drawer-toggle") : /^(class|resources):/.test(dialogSourceKey) ? find("#library-class-select") : find('#assignment-templates [data-library-action="new-template"]');
+      const fallback = dialogSourceKey.startsWith("calendar") ? find('#calendar-assignment-templates [data-library-action="new-template"]') || find("#calendar-templates-tab") : /^(class|resources):/.test(dialogSourceKey) ? find("#library-class-select") : find('#assignment-templates [data-library-action="new-template"]');
       const source = dialogSource?.isConnected ? dialogSource : replacement || fallback;
       source?.focus({ preventScroll: true });
       dialogSource = null;
@@ -365,12 +401,12 @@
       return `${required ? '<option value="">Choose a class</option>' : '<option value="">No class</option>'}${classes().map(item => `<option value="${escapeHtml(item.id)}" ${item.id === value ? "selected" : ""}>${escapeHtml(item.name)}${item.archived ? " (archived)" : ""}</option>`).join("")}`;
     }
 
-    function openDialog({ kind, item = {}, source, deleting = false }) {
+    function openDialog({ kind, item = {}, source, deleting = false, viewing = false }) {
       if (dialogBusy) return;
       if (dialog) closeDialog();
       const isTemplate = kind === "template";
       const noun = isTemplate ? "template" : "resource";
-      const heading = `${deleting ? "Delete" : item.id ? "Edit" : "New"} ${noun}`;
+      const heading = viewing ? "Template details" : `${deleting ? "Delete" : item.id ? "Edit" : "New"} ${noun}`;
       dialogSource = source;
       dialogSourceKey = source?.dataset.libraryFocus || "";
       dialog = doc.createElement("dialog");
@@ -379,6 +415,11 @@
       dialog.tabIndex = -1;
       dialog.setAttribute("aria-labelledby", "library-dialog-heading");
       dialog.innerHTML = `<form novalidate><div class="library-dialog-heading"><h2 id="library-dialog-heading">${heading}</h2><button type="button" class="close-button" data-library-close aria-label="Close ${noun} editor">×</button></div><p class="library-form-error" role="alert" hidden></p>${deleting ? `<p class="library-delete-copy">Delete <strong>${escapeHtml(item.title)}</strong>? ${isTemplate ? "Tasks already created from it will stay in your plan." : "This removes the saved link. It does not change the linked website."}</p>` : isTemplate ? `<label>Assignment name<input name="title" value="${escapeHtml(item.title)}" maxlength="80" required /></label><div class="library-form-grid"><label>Class<select name="classId">${classOptions(item.classId)}</select></label><label>Duration (minutes)<input name="durationMinutes" type="number" inputmode="numeric" min="5" max="1440" step="1" value="${escapeHtml(item.durationMinutes ?? 45)}" required /></label><label>Priority<select name="priority">${["Medium", "High", "Low"].map(value => `<option ${value === item.priority ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Deadline reminder<select name="reminderChoice">${[["default", "Use Settings default"], ["off", "No reminder"], ["15", "15 minutes before"], ["60", "1 hour before"], ["1440", "1 day before"]].map(([value, label]) => `<option value="${value}" ${value === (item.reminderChoice || "default") ? "selected" : ""}>${label}</option>`).join("")}</select></label></div><label>Notes <span class="library-optional">Optional</span><textarea name="notes" rows="4" maxlength="5000">${escapeHtml(item.notes)}</textarea></label><p class="library-footnote">Templates have no deadline or work date. Add or schedule a copy whenever you need one.</p>` : `<label>Resource title<input name="title" value="${escapeHtml(item.title)}" maxlength="120" required /></label><label>Link<input name="url" type="url" inputmode="url" value="${escapeHtml(item.url)}" placeholder="https://…" maxlength="2048" required /></label><div class="library-form-grid"><label>Class<select name="classId" required>${classOptions(item.classId || selectedClassId, true)}</select></label><label>Category <span class="library-optional">Optional</span><input name="category" value="${escapeHtml(item.category)}" maxlength="60" placeholder="e.g. Study guide" /></label></div><label>Description <span class="library-optional">Optional</span><textarea name="description" rows="4" maxlength="2000">${escapeHtml(item.description)}</textarea></label><p class="library-footnote">Keep a link to a handout, textbook or study guide for this class.</p>`}<div class="library-dialog-actions"><button type="button" class="secondary-button" data-library-close>Cancel</button><button type="submit" class="${deleting ? "danger-button" : "primary-button"}">${deleting ? "Delete" : "Save " + noun}</button></div></form>`;
+      if (viewing) {
+        const info = classes().find(value => value.id === item.classId);
+        const label = info ? `${info.name}${info.archived ? " (archived)" : ""}` : "No class";
+        dialog.innerHTML = `<div class="library-template-detail-content"><div class="library-dialog-heading"><h2 id="library-dialog-heading">${heading}</h2><button type="button" class="close-button" data-library-close aria-label="Close template details">×</button></div><dl class="library-template-detail-list">${templateDetails(item, label).map(([name, value]) => `<div><dt>${escapeHtml(name)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl><p class="library-footnote">Each use creates a separate task. This template stays in your library.</p><div class="library-dialog-actions"><button type="button" class="secondary-button" data-library-close>Close</button></div></div>`;
+      }
       doc.body.append(dialog);
       const current = dialog;
       const dialogOwner = captureOwner();
@@ -402,7 +443,7 @@
         const bounds = current.getBoundingClientRect();
         if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dismiss();
       });
-      current.querySelector("form").addEventListener("submit", async event => {
+      current.querySelector("form")?.addEventListener("submit", async event => {
         event.preventDefault();
         if (!isCurrentDialog(current, dialogOwner)) { render(); return; }
         if (dialogBusy) return;
@@ -453,7 +494,7 @@
       });
       refreshButtons(current);
       current.showModal();
-      (deleting ? current.querySelector("[data-library-close]") : current.querySelector("input,select"))?.focus();
+      (deleting || viewing ? current.querySelector("[data-library-close]") : current.querySelector("input,select"))?.focus();
     }
 
     async function addTemplate(id, schedule = null) {
@@ -481,7 +522,7 @@
       const control = event.target.closest("[data-library-action]");
       if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return;
       const { libraryAction: action, libraryId: id } = control.dataset;
-      if (action === "toggle-template-drawer") { toggleCalendarTemplateDrawer(control); return; }
+      if (action === "template-menu") { openTemplateMenu(control); return; }
       if (organizationAction(action) && !available()) return;
       if (action === "add-template") { addTemplate(id); return; }
       if (action === "schedule-template") { scheduleTemplate(id, { source: control }); return; }
@@ -526,6 +567,9 @@
 
     function onDragEnd() { activeDrag = null; }
 
+    doc.addEventListener("pointerdown", onOutsideMenuPointer, true);
+    doc.addEventListener("scroll", onMenuViewportChange, true);
+    doc.defaultView?.addEventListener("resize", onMenuViewportChange);
     doc.addEventListener("click", onClick);
     doc.addEventListener("change", onChange);
     doc.addEventListener("keydown", onKeyDown);
@@ -533,15 +577,23 @@
     doc.addEventListener("dragend", onDragEnd);
     render();
     return {
-      render, renderTaskResources, selectClass, scheduleTemplate, handleTemplateDrop, readTemplateDrop,
+      render, renderTaskResources, selectClass, scheduleTemplate, handleTemplateDrop, readTemplateDrop, closeTemplateMenu,
+      openNewTemplate({ source = null } = {}) {
+        if (!available() || destroyed) return false;
+        openDialog({ kind: "template", source });
+        return true;
+      },
       addToTasks: id => addTemplate(id),
       draftForTemplate(id) { const item = available() && findTemplate(id); return item ? templateDraft(item) : null; },
       destroy() {
         destroyed = true;
         ownerGeneration += 1;
         pending.clear();
-        resetCalendarTemplateDrawer();
+        closeTemplateMenu();
         detachDialog();
+        doc.removeEventListener("pointerdown", onOutsideMenuPointer, true);
+        doc.removeEventListener("scroll", onMenuViewportChange, true);
+        doc.defaultView?.removeEventListener("resize", onMenuViewportChange);
         doc.removeEventListener("click", onClick);
         doc.removeEventListener("change", onChange);
         doc.removeEventListener("keydown", onKeyDown);
@@ -551,5 +603,5 @@
     };
   }
 
-  return { create, TEMPLATE_MIME, normalizeTemplate, normalizeResource, safeResourceUrl, templateDraft, instantiateTemplate, instantiateScheduledTemplate, escapeHtml };
+  return { create, TEMPLATE_MIME, normalizeTemplate, normalizeResource, safeResourceUrl, templateDraft, templateDetails, instantiateTemplate, instantiateScheduledTemplate, escapeHtml };
 });

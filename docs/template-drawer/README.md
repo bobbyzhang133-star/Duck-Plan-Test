@@ -1,5 +1,7 @@
 # Calendar template drawer and matching colors — November 13, 2026
 
+Historical verification of `b4974c8`. The later approved [Tasks / Templates library](../template-library-ui/README.md) supersedes Calendar's inner drawer; the checks below describe the earlier version.
+
 The user confirmed that “Assignments dropdown” means **Assignment templates in the Calendar task panel**. That section now uses a full-width drawer header with a stack icon, saved-template count and rotating chevron. Its connected body expands inline using the existing 340ms sheet timing and easing. The separate Tasks page keeps its existing template disclosure.
 
 The template preview and scheduled calendar block share fill, accent, title and secondary-text colors. The existing calendar palette is preserved in both themes; the template no longer mixes its fill against the dark card background. For the Calculus class, computed browser styles match exactly in light and dark mode: fill `color(srgb 0.898823 0.934118 0.965882)`, accent `rgb(83, 143, 197)`, title `rgb(41, 50, 65)` and secondary text `rgb(77, 86, 102)`.

@@ -1,3 +1,4 @@
+// Historical regression for b4974c8; current tabs use ../template-library-ui/library-ui-qa.js.
 // Run through Playwright MCP browser_run_code_unsafe.filename with local preview8034.
 // Fresh context, local fixture only, no account/API requests or existing browser data.
 async (page) => {

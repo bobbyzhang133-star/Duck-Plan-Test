@@ -91,7 +91,8 @@
 .motion-preview #view-calendar .planner-workspace,
 .motion-preview #view-calendar .planner-workspace:has(.day-view) {
   display: grid; height: 100%; min-height: 0;
-  grid-template-columns: clamp(300px,28vw,360px) minmax(0,1fr);
+  grid-template-columns: clamp(260px,23vw,280px) minmax(0,1fr);
+  grid-template-rows: minmax(0,1fr);
   align-items: stretch; gap: 0; overflow: hidden;
   border: 1px solid rgba(158,116,31,.18); border-radius: 24px;
   background: #fffdf8; box-shadow: 0 22px 60px rgba(74,52,10,.12);
@@ -138,36 +139,41 @@
 .motion-preview #view-calendar .compact-button { min-height: 38px; padding-inline: 14px; font-size: 12.48px; }
 .motion-preview #view-calendar .calendar-stepper button { width: 34px; height: 34px; min-height: 34px; font-size: 22.4px; }
 .motion-preview #view-calendar .view-switcher button { min-height: 32px; padding-inline: 11px; font-size: 11.68px; }
-.motion-preview #view-calendar .planner-calendar { flex: 1; min-height: 0; max-height: none; overscroll-behavior: contain; }
+.motion-preview #view-calendar .planner-calendar { flex: 1; min-height: 0; max-height: none; max-width: 100%; overscroll-behavior: contain; }
 .motion-preview #view-calendar .timeline-calendar { min-width: 650px; grid-template-columns: 64px minmax(0,1fr); grid-template-rows: 66px auto auto; }
 .motion-preview #view-calendar .day-view .timeline-calendar { min-width: 0; }
 .motion-preview #view-calendar .calendar-date-button { min-height: 66px; }
 .motion-preview #view-calendar .calendar-date-button span { font-size: 9.6px; font-weight: 800; }
 .motion-preview #view-calendar .calendar-date-button strong { width: 32px; height: 32px; font-size: 14.08px; font-weight: 760; }
 .motion-preview #view-calendar .time-axis span { font-size: 8.96px; white-space: nowrap; }
-.motion-preview #view-calendar .month-calendar { min-width: 0; }
+.motion-preview #view-calendar .month-calendar { min-width: 350px; }
+.motion-preview #view-calendar :is(.time-axis,.timeline-deadline-label,.timeline-corner) { position: sticky; left: 0; background: var(--card,#fffdf8); }
+.motion-preview #view-calendar :is(.time-axis,.timeline-deadline-label) { z-index: 4; }
+.motion-preview #view-calendar .timeline-corner { top: 0; z-index: 6; }
 .motion-preview #toggle-task-panel,
 .motion-preview .task-panel-close-button,
 .motion-preview .task-panel-scrim { display: none !important; }
 
-/* Respond to the workspace width as the dock reshapes it, not just the viewport. */
+/* Compact controls with the dock; keep the iPad task column beside the calendar. */
 @container workspace (max-width: 780px) {
   .dashboard-layout,.personal-grid,.notes-layout { grid-template-columns: minmax(0,1fr); }
   .dashboard-side { grid-template-columns: minmax(0,1fr); }
-  .motion-preview #view-calendar .planner-workspace,
-  .motion-preview #view-calendar .planner-workspace:has(.day-view) {
-    grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,36%) minmax(0,1fr);
-  }
   .motion-preview #view-calendar .planner-workspace > .daily-panel {
-    grid-column: 1; grid-row: 1; padding: 16px;
-    border-right: 0; border-bottom: 1px solid var(--line);
+    padding: 16px;
   }
-  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { grid-column: 1; grid-row: 2; padding: 16px; }
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { padding: 16px 12px; }
+  .motion-preview #view-calendar .calendar-toolbar-primary { flex-wrap: wrap; }
   .compact-topbar { flex-wrap: wrap; }
   .topbar-actions { width: 100%; min-width: 0; flex-wrap: wrap; }
   .search-box { min-width: 0; flex: 1 1 140px; }
   .dashboard-welcome .welcome-content { min-width: 0; }
   .dashboard-layout > .panel { min-width: 0; }
+}
+@container workspace (max-width: 560px) {
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { padding-inline: 8px; }
+  .motion-preview #view-calendar .calendar-title-copy { flex: 1 0 100%; margin-left: 0; }
+  .motion-preview #view-calendar .calendar-toolbar-actions { max-width: 100%; }
+  .motion-preview #view-calendar .view-switcher { margin-left: 0; }
 }
 @container workspace (max-width: 340px) {
   .motion-preview #daily-task-panel > .panel-heading { gap: 2px 8px; }
@@ -231,31 +237,6 @@
   .motion-preview #view-calendar .calendar-date-button span { font-size: 11px; }
   .motion-preview #view-calendar .calendar-date-button strong { font-size: 16px; }
   .motion-preview #view-calendar .time-axis span { font-size: 11px; }
-}
-/* Short viewports need room for actual tasks, rather than only their heading. */
-@media (max-height: 600px) {
-  .motion-preview[data-view="calendar"] .unified-workspace { overflow-y: auto; }
-  @container workspace (max-width: 780px) {
-    .motion-preview #view-calendar { height: auto; min-height: 100%; }
-    .motion-preview #view-calendar .planner-workspace,
-    .motion-preview #view-calendar .planner-workspace:has(.day-view) {
-      height: auto; min-height: calc(100dvh - 32px);
-      grid-template-rows: minmax(260px,36dvh) 360px;
-    }
-  }
-  @container workspace (max-width: 340px) {
-    .motion-preview #view-calendar .planner-workspace,
-    .motion-preview #view-calendar .planner-workspace:has(.day-view) { grid-template-rows: 350px 360px; }
-  }
-  @container workspace (min-width: 620px) and (max-width: 780px) {
-    .motion-preview #view-calendar { height: 100%; }
-    .motion-preview #view-calendar .planner-workspace,
-    .motion-preview #view-calendar .planner-workspace:has(.day-view) {
-      height: 100%; min-height: 0; grid-template-columns: minmax(240px,.65fr) minmax(0,1fr); grid-template-rows: minmax(0,1fr);
-    }
-    .motion-preview #view-calendar .planner-workspace > .daily-panel { grid-column: 1; grid-row: 1; border-bottom: 0; border-right: 1px solid var(--line); }
-    .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { grid-column: 2; grid-row: 1; }
-  }
 }
 @media (max-width: 700px) {
   .motion-preview .unified-shell,.motion-preview[data-view="calendar"] .unified-shell { --sidebar-width: 152px; --sidebar-rail-width: 52px; }
@@ -342,6 +323,7 @@
   .phone-week-day:is(:active,.interaction-pressed) { transform: scale(.96); background: var(--accent-soft); }
   .motion-preview #view-calendar .planner-calendar { flex: 1 1 0; min-height: 0; overflow: auto; }
   .motion-preview #view-calendar .timeline-calendar { min-width: 0; grid-template-columns: 48px minmax(0,1fr); grid-template-rows: 48px auto auto; }
+  .motion-preview #view-calendar :is(.time-axis,.timeline-deadline-label,.timeline-corner) { position: static; z-index: auto; }
   .motion-preview #view-calendar .calendar-date-button { min-height: 48px; }
   .motion-preview #view-calendar .calendar-date-button strong { width: 28px; height: 28px; }
   .motion-preview #view-calendar .time-axis span { font-size: 10px; }
