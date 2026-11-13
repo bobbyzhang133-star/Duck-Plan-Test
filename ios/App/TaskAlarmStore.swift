@@ -19,6 +19,7 @@ final class TaskAlarmStore: ObservableObject {
     @Published private(set) var records: [TaskAlarmRecord] = []
     @Published private(set) var permission = "notDetermined"
     @Published private(set) var currentScope = "local"
+    @Published private(set) var ringingAlarms: [TaskAlarmRecord] = []
     private let manager = AlarmManager.shared
     private let storageKey = "duckplan.native.task-alarms.v1"
     private var observation: Task<Void, Never>?
@@ -33,10 +34,33 @@ final class TaskAlarmStore: ObservableObject {
             for await alarms in self.manager.alarmUpdates {
                 let ids = Set(alarms.map(\.id))
                 self.records.removeAll { !ids.contains($0.id) && !self.replacements.contains($0.id) }
+                self.updateRingingAlarms(alarms)
                 self.persist()
                 self.updatePermission()
             }
         }
+    }
+
+    private func updateRingingAlarms(_ alarms: [Alarm]) {
+        let ringingIDs = Set(alarms.filter { $0.state == .alerting }.map(\.id))
+        ringingAlarms = records.filter { ringingIDs.contains($0.id) && $0.scope == currentScope }
+            .sorted { $0.fireAt == $1.fireAt ? $0.id.uuidString < $1.id.uuidString : $0.fireAt < $1.fireAt }
+    }
+
+    func refreshRingingAlarms() {
+        updatePermission()
+        guard permission == "authorized" else { ringingAlarms = []; return }
+        if let alarms = try? manager.alarms { updateRingingAlarms(alarms) }
+    }
+
+    func stopRinging(id: UUID) throws {
+        try manager.stop(id: id)
+        refreshRingingAlarms()
+    }
+
+    func snoozeRinging(id: UUID) throws {
+        try manager.countdown(id: id)
+        refreshRingingAlarms()
     }
 
     func updatePermission() {
@@ -57,8 +81,10 @@ final class TaskAlarmStore: ObservableObject {
     func list() throws -> [TaskAlarmRecord] {
         updatePermission()
         guard permission == "authorized" else { return [] }
-        let ids = Set(try manager.alarms.map(\.id))
+        let alarms = try manager.alarms
+        let ids = Set(alarms.map(\.id))
         records.removeAll { !ids.contains($0.id) && !replacements.contains($0.id) }
+        updateRingingAlarms(alarms)
         persist()
         updatePermission()
         return records.filter { $0.scope == currentScope }.sorted { $0.fireAt < $1.fireAt }
@@ -70,6 +96,7 @@ final class TaskAlarmStore: ObservableObject {
             try cancel(id: record.id)
         }
         currentScope = scope
+        refreshRingingAlarms()
     }
 
     func save(taskID: String, title: String, fireAt: Date, sound: String, snoozeMinutes: Int) async throws -> TaskAlarmRecord {
@@ -98,13 +125,14 @@ final class TaskAlarmStore: ObservableObject {
         records.removeAll { $0.id == id }
         records.append(record)
         persist()
+        refreshRingingAlarms()
         return record
     }
 
     private func schedule(_ record: TaskAlarmRecord) async throws {
         let title = LocalizedStringResource(stringLiteral: record.title)
-        let stop = AlarmButton(text: "Stop", textColor: .white, systemImageName: "stop.fill")
-        let snooze = AlarmButton(text: "Snooze", textColor: .white, systemImageName: "zzz")
+        let stop = AlarmButton(text: "Stop alarm", textColor: .white, systemImageName: "stop.fill")
+        let snooze = AlarmButton(text: "Snooze", textColor: DuckAlarmTheme.ink, systemImageName: "zzz")
         let alert = AlarmPresentation.Alert(title: title, stopButton: stop,
             secondaryButton: record.snoozeMinutes > 0 ? snooze : nil,
             secondaryButtonBehavior: record.snoozeMinutes > 0 ? .countdown : nil)
@@ -112,7 +140,7 @@ final class TaskAlarmStore: ObservableObject {
             ? AlarmPresentation(alert: alert, countdown: .init(title: title))
             : AlarmPresentation(alert: alert)
         let attributes = AlarmAttributes(presentation: presentation,
-            metadata: TaskAlarmMetadata(taskID: record.taskID, title: record.title), tintColor: .orange)
+            metadata: TaskAlarmMetadata(taskID: record.taskID, title: record.title), tintColor: DuckAlarmTheme.yellow)
         let sound: AlertConfiguration.AlertSound = record.sound == "system" ? .default : .named(record.sound + ".wav")
         let configuration = AlarmManager.AlarmConfiguration(
             countdownDuration: record.snoozeMinutes > 0 ? Alarm.CountdownDuration(preAlert: nil, postAlert: Double(record.snoozeMinutes * 60)) : nil,
@@ -131,6 +159,7 @@ final class TaskAlarmStore: ObservableObject {
     func cancel(id: UUID) throws {
         if try manager.alarms.contains(where: { $0.id == id }) { try manager.cancel(id: id) }
         records.removeAll { $0.id == id }
+        ringingAlarms.removeAll { $0.id == id }
         persist()
     }
 

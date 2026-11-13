@@ -1,0 +1,31 @@
+{
+  "beakEditedWithUserAuthorization" : true,
+  "beakScale" : [
+    0.81999999999999995,
+    0.84999999999999998
+  ],
+  "beakShiftOutputPixels" : [
+    0,
+    20
+  ],
+  "changedFacialPixels" : 202251,
+  "changedOriginalBeakPixels" : 144900,
+  "changedOriginalOutlinePixels" : 0,
+  "changedPixelsOutsideFacialEdits" : 0,
+  "clockwiseDegrees" : 45.018669803874516,
+  "expressionSource" : "docs\/sigma-mascot\/source\/narrow-expression-features-v8.png",
+  "eyeWidthOriginalPlane" : 35,
+  "method" : "Original raster copied with one rotation\/scale\/crop; narrower, closer eyes and a smaller, lower original bill expression components composited inside. No generated or reconstructed contour.",
+  "outputSize" : 1024,
+  "pivot" : [
+    213.9386655011655,
+    186.54501364863208
+  ],
+  "rotatedCrop" : [
+    74,
+    58,
+    280,
+    280
+  ],
+  "source" : "docs\/sigma-mascot\/source\/original-duck-reference.png"
+}

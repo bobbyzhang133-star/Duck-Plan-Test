@@ -54,6 +54,35 @@ test("calendar dragging snaps to quarter hours and stays inside the visible day"
   }), { date: "2026-11-04", minutes: 1230, time: "20:30" });
 });
 
+test("template drops snap normally and keep a custom duration on-grid at the bottom", () => {
+  const options = Object.freeze({ date: "2026-11-13", pointerY: 165, columnTop: 10, hourHeight: 62, durationMinutes: 35 });
+  assert.deepEqual(UI.snapTemplateDrop(options), { date: "2026-11-13", minutes: 570, time: "09:30" });
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, pointerY: 2000 }), { date: "2026-11-13", minutes: 1275, time: "21:15" });
+  assert.equal(options.durationMinutes, 35);
+  assert.equal(UI.snapCalendarDrop({ ...options, pointerY: 2000 }).time, "21:25", "existing calendar drag behavior remains unchanged");
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, pointerY: -200 }), { date: "2026-11-13", minutes: 420, time: "07:00" });
+});
+
+test("template drops fit a full visible day and reject oversized durations without shortening them", () => {
+  const options = { date: "2026-11-13", pointerY: 2000, columnTop: 10, hourHeight: 62 };
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, durationMinutes: 900 }), { date: "2026-11-13", minutes: 420, time: "07:00" });
+  for (const durationMinutes of [4, 901, 1440, 35.5, "35", NaN, Infinity]) assert.equal(UI.snapTemplateDrop({ ...options, durationMinutes }), null);
+  assert.equal(UI.snapTemplateDrop({ ...options, startHour: 8, endHour: 17, durationMinutes: 541 }), null);
+});
+
+test("template drops honor custom visible hours and grid while retaining their real duration", () => {
+  const options = { date: "2028-02-29", pointerY: 2000, columnTop: 10, hourHeight: 62, startHour: 8, endHour: 18, snapMinutes: 30, durationMinutes: 35 };
+  assert.deepEqual(UI.snapTemplateDrop(options), { date: "2028-02-29", minutes: 1020, time: "17:00" });
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, endHour: 17.1, snapMinutes: 15, durationMinutes: 5 }), { date: "2028-02-29", minutes: 1020, time: "17:00" });
+});
+
+test("template drops reject impossible dates and invalid geometry before generating a time", () => {
+  const options = { date: "2026-11-13", pointerY: 100, columnTop: 10, hourHeight: 62, durationMinutes: 45 };
+  for (const date of ["2026-02-29", "2026-02-30", "2026-13-01", "0000-01-01", "2026-11-3", "", null]) assert.equal(UI.snapTemplateDrop({ ...options, date }), null);
+  for (const fields of [{ pointerY: NaN }, { pointerY: Infinity }, { pointerY: "100" }, { columnTop: Infinity }, { hourHeight: 0 }, { hourHeight: -1 }, { hourHeight: NaN }, { startHour: -1 }, { endHour: 25 }, { startHour: 22, endHour: 7 }, { snapMinutes: 0 }, { snapMinutes: 1.5 }, { snapMinutes: 1000 }]) assert.equal(UI.snapTemplateDrop({ ...options, ...fields }), null);
+  assert.equal(UI.snapTemplateDrop(null), null);
+});
+
 test("planner markup and styles retain the responsive accessibility contract", () => {
   const root = path.join(__dirname, "..");
   const html = fs.readFileSync(path.join(root, "landing/index.html"), "utf8");
@@ -94,7 +123,7 @@ test("planner markup and styles retain the responsive accessibility contract", (
   assert.match(css, /duckplan-page-wave 350ms/);
   assert.match(css, /clip-path: circle\(71% at 50% 50%\)/);
   assert.match(css, /a\[data-page-navigation\]\.glass-button\[data-activated="true"\]/);
-  assert.match(css, /\.calendar-slot,[\s\S]+\.task-section-heading\):not\(:disabled\):is\(:active,\.interaction-pressed\)/);
+  assert.match(css, /button:is\(\.calendar-slot,[\s\S]+\.task-section-heading\):not\(:disabled\):not\(\[aria-disabled="true"\]\):is\(:active,\.interaction-pressed\)/);
   assert.match(buttonRule, /Rule 1 — Page-changing navigation/);
   assert.match(buttonRule, /Rule 2 — Local and in-page controls/);
   assert.match(buttonRule, /Wait for the actual wave animation to finish/);

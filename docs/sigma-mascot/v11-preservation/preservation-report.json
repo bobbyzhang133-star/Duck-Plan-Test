@@ -1,0 +1,40 @@
+{
+  "beakEditedWithUserAuthorization" : true,
+  "changedFacialPixels" : 233948,
+  "changedOriginalBeakPixels" : 152924,
+  "changedOriginalOutlinePixels" : 0,
+  "changedPixelsOutsideFacialEdits" : 0,
+  "clockwiseDegrees" : 45.018669803874516,
+  "expressionSource" : "landing\/assets\/duckplan-sigma-head-v3.png",
+  "eyeStyle" : "restored v3 half-lidded eyes, curved brows and rounded orange bill",
+  "faceTargetOriginOutputPixels" : [
+    252,
+    295
+  ],
+  "faceTargetWidthOutputPixels" : 520,
+  "method" : "Original outline copied with one rotation\/scale\/crop. Existing v3 brows, eyes and bill restored together with one uniform scale\/translation. No individual feature stretching, generated artwork or reconstructed contour.",
+  "outputSize" : 1024,
+  "pivot" : [
+    213.9386655011655,
+    186.54501364863208
+  ],
+  "referenceEyeProportions" : false,
+  "restoredEarlierFace" : true,
+  "rotatedCrop" : [
+    74,
+    58,
+    280,
+    280
+  ],
+  "source" : "docs\/sigma-mascot\/source\/original-duck-reference.png",
+  "sourceFaceCrop" : [
+    366,
+    377,
+    515,
+    488
+  ],
+  "uniformFaceScale" : [
+    1.0097087378640777,
+    1.0097087378640777
+  ]
+}

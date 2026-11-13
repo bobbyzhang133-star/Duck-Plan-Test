@@ -22,7 +22,42 @@ Native alarm times are absolute instants. Changing a work session does not silen
 move an alarm; edit the alarm explicitly. Once scheduled, iOS handles the alarm
 while DuckPlan is closed or offline. The user can revoke alarm permission at any time.
 
+## Duck alarm appearance
+
+- System alerts use duck-yellow accents and a dark Snooze label for contrast.
+- Snooze Live Activities use a warm cream card with the task centered, plus yellow
+  accents in the Dynamic Island. iOS retains control of the actual system alert layout.
+- While the app is active, actual AlarmKit `alerting` updates present a centered
+  task card over a blurred planner. The card uses the bundled duck mascot and
+  provides Stop and the task's configured Snooze duration via AlarmManager.
+- Stopping an alarm does not mark its task completed. Multiple ringing tasks are
+  shown in order; handling one reveals the next. Failed actions keep controls visible.
+- The card scrolls for long titles, landscape and larger text; Reduce Transparency
+  replaces the blur with an opaque cream background.
+
+For a silent visual preview in a Debug simulator build, launch with
+`-duckplan-alarm-preview`. This never schedules an alarm or changes saved tasks.
+Use `-duckplan-alarm-no-snooze` to inspect the Stop-only layout. The optional
+`DUCKPLAN_ALARM_PREVIEW_TITLE` environment variable supplies a long sample title.
+These preview controls are excluded from physical-device and Release builds.
+Existing scheduled system alarms retain their saved appearance; edit and save an
+alarm again to apply the new tint. Rebuild and run on the iPhone to install changes.
+
+Theme verification (November 11, 2026): the app and widget compile in Debug for
+iPhone 17 Simulator and Release for generic iOS, with signing disabled. The four
+native-alarm adapter tests and project/diff checks pass. Silent simulator previews
+were inspected for the centered card, a long task title, and the Stop-only card
+at the largest accessibility text size. These previews do not
+verify real AlarmKit delivery, sound, system-alert appearance, or Stop/Snooze on a
+physical device; exercise those on the iPhone after installing this build.
+
 ## Build and run
+
+The test-repository version prepared on November 12, 2026 includes the latest
+Calendar homepage, Sigma mascot poses, sideways Daily progress duck, phone/iPad
+layout fixes and native alarm appearance changes. The Xcode project bundles this
+checkout's `landing/` folder directly. Personal development-team settings remain
+local to the existing iPhone project and are not included in the test upload.
 
 Requires macOS compatible with Xcode 26+, Xcode's iOS SDK and an iPhone/iPad on iOS 26+.
 Xcode 26–26.3 support macOS Sequoia 15.6+; consult Apple's requirements for later releases.

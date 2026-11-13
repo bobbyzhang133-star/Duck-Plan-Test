@@ -17,11 +17,14 @@ test("Calendar is the default while explicit section links and the Dashboard rem
     return views[0];
   } };
   let route;
+  const workspace = { scrollTop: 420, scrollLeft: 30, scrollTo({ top, left }) { this.scrollTop = top; this.scrollLeft = left; } };
   const context = vm.createContext({
-    document, els: { views, navItems: [], pageTitle: {}, pageEyebrow: {} },
+    document, workspace, els: { views, navItems: [], pageTitle: {}, pageEyebrow: {} },
     history: { replaceState(state, title, url) { route = url; } },
     window: { scrollTo() {} }, setTaskPanel() {}, setSidebar() {},
     requestAnimationFrame(callback) { callback(); }, setupButtonMaterial() {},
+    updatePrimaryAction() {},
+    viewTransitions: { cancel() {} },
   });
   vm.runInContext(setView, context);
   for (const name of ["", "unknown", "broken[route"]) {
@@ -35,6 +38,10 @@ test("Calendar is the default while explicit section links and the Dashboard rem
     vm.runInContext("setView(name)", context);
     assert.equal(document.body.dataset.view, name);
     assert.equal(route, `#${name}`);
+    assert.equal(workspace.scrollTop, 0, "A section's scroll position cannot hide the next screen's toolbar");
+    assert.equal(workspace.scrollLeft, 0);
+    workspace.scrollTop = 420;
+    workspace.scrollLeft = 30;
   }
   vm.runInContext('setView("today")', context);
   assert.equal(document.body.dataset.view, "home", "Existing Today deep links remain compatible");

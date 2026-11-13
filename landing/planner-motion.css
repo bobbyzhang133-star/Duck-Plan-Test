@@ -1,4 +1,10 @@
 /* Separate motion version: keep the new planner's colors, type and cards. */
+/* Section motion is owned by view-transitions.js, including reduced motion.
+   Remove the old always-up entrance so it cannot compete or retain a transform. */
+.motion-preview .view,
+.motion-preview .view.active { animation: none; }
+.motion-preview .view[data-view-motion] { will-change: transform, opacity; }
+
 .motion-preview .unified-shell {
   --sidebar-width: 232px;
   --sidebar-rail-width: 64px;
@@ -25,18 +31,60 @@
 .motion-preview .brand-mark { flex: 0 0 32px; width: 32px; height: 36px; }
 .motion-preview .drawer-close { display: none; }
 .motion-preview .topbar-nav-open-button { display: grid; flex: 0 0 40px; }
-.motion-preview .sidebar-rail-toggle {
+.motion-preview .sidebar .sidebar-rail-toggle {
   display: grid; grid-template-columns: 32px minmax(0,1fr); align-items: center;
-  gap: 9px; width: 100%; min-height: 40px; margin: 0 0 16px;
-  padding: 4px 8px; border: 0; border-radius: 9px; background: transparent;
+  gap: 9px; width: 100%; max-width: 100%; height: 50px; min-height: 50px; margin: 0 0 16px;
+  box-sizing: border-box; overflow: hidden;
+  padding: 8px; border: 1px solid var(--line); border-radius: 9px; background: var(--card);
   color: var(--ink); text-align: left; cursor: pointer;
 }
-.sidebar-rail-toggle [data-sidebar-glyph] { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; font-size: 28px; line-height: 1; }
-.rail-toggle-copy { font-size: 13px; white-space: nowrap; }
+.motion-preview .sidebar .sidebar-rail-toggle,
+.motion-preview .sidebar .sidebar-rail-toggle:not(:disabled):not([aria-disabled="true"]):is(:active,.interaction-pressed) {
+  transition: width var(--motion-layout) var(--motion-ease),
+    background-color var(--motion-control) var(--motion-ease),
+    border-color var(--motion-control) var(--motion-ease),
+    box-shadow var(--motion-control) var(--motion-ease),
+    transform var(--motion-press) var(--motion-ease), filter var(--motion-press) var(--motion-ease);
+}
+.motion-preview:not(.sidebar-open) .sidebar .sidebar-rail-toggle {
+  width: 50px; grid-template-columns: 32px; gap: 0;
+}
+.motion-preview:not(.sidebar-open) .sidebar .sidebar-rail-toggle .rail-toggle-copy {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
+}
+.motion-preview .sidebar .sidebar-rail-toggle [data-sidebar-glyph] {
+  display: grid; place-items: center; width: 32px; height: 32px;
+  font-size: 28px; line-height: 1; background: transparent; box-shadow: none;
+  outline: none; transform: none; transition: none;
+}
+.rail-toggle-copy { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 13px; white-space: nowrap; }
 .motion-preview .primary-nav { margin-top: 0; }
 .motion-preview .unified-shell .nav-item { grid-template-columns: 32px minmax(0,1fr) auto; gap: 9px; padding: 8px; min-height: 48px; }
 .motion-preview .nav-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; }
 .motion-preview .nav-icon svg { width: 20px; height: 20px; }
+.motion-preview .sidebar .primary-nav > .nav-item {
+  width: 100%; height: 50px; white-space: nowrap; overflow: hidden;
+  transition: width var(--motion-layout) var(--motion-ease), background-color var(--motion-control) var(--motion-ease), border-color var(--motion-control) var(--motion-ease), color var(--motion-control) var(--motion-ease), box-shadow var(--motion-control) var(--motion-ease), transform var(--motion-press) var(--motion-ease), filter var(--motion-press) var(--motion-ease);
+}
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item {
+  width: 50px; min-height: 50px; grid-template-columns: 32px; gap: 0;
+}
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item > :not(.nav-icon) {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
+}
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item.active {
+  color: var(--ink-deep); background: var(--accent-soft); border-color: var(--line);
+}
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item:hover {
+  background: var(--accent-soft); transform: none;
+}
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item:is(:active,.interaction-pressed) { transform: scale(.96); }
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item .nav-icon {
+  background: transparent; box-shadow: none; outline: none; color: inherit; transform: none;
+}
+.motion-preview:not(.sidebar-open) .sidebar .primary-nav > .nav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .motion-preview .nav-label,.motion-preview .nav-group-label { white-space: nowrap; }
 .motion-preview .sidebar :is(.brand > span:last-child,.nav-label,.nav-group-label,.nav-item > span:not(.nav-icon),.profile-card,.rail-toggle-copy) {
   transition: opacity 120ms ease 100ms;
@@ -46,14 +94,27 @@
 }
 .motion-preview:not(.sidebar-open) .nav-item { background: transparent; border-color: transparent; box-shadow: none; }
 .motion-preview:not(.sidebar-open) .nav-item.active .nav-icon { background: var(--accent-soft); color: var(--accent); }
-.motion-preview .sidebar-rail-toggle:hover [data-sidebar-glyph],
 .motion-preview:not(.sidebar-open) .nav-item:hover .nav-icon { background: var(--accent-soft); color: var(--ink-deep); }
-.motion-preview .sidebar-rail-toggle:is(:active,.interaction-pressed) [data-sidebar-glyph],
 .motion-preview:not(.sidebar-open) .nav-item:is(:active,.interaction-pressed) .nav-icon { background: var(--accent-soft); transform: scale(.92); }
-.motion-preview .sidebar-rail-toggle:focus-visible,
 .motion-preview:not(.sidebar-open) .nav-item:focus-visible { outline: none; }
-.motion-preview .sidebar-rail-toggle:focus-visible [data-sidebar-glyph],
 .motion-preview:not(.sidebar-open) .nav-item:focus-visible .nav-icon { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .motion-preview .sidebar .sidebar-rail-toggle:not(:disabled):not([aria-disabled="true"]):hover {
+    color: var(--ink-deep); background: var(--accent-soft); transform: none;
+    box-shadow: inset 0 0 0 1px rgba(140,91,0,.12), 0 4px 10px rgba(74,52,10,.1);
+  }
+}
+.motion-preview .sidebar .sidebar-rail-toggle:not(:disabled):not([aria-disabled="true"]):is(:active,.interaction-pressed) {
+  transform: scale(.96); background: var(--accent-soft);
+  box-shadow: inset 0 2px 5px rgba(74,52,10,.2);
+}
+.motion-preview .sidebar .sidebar-rail-toggle.interaction-released:not(:disabled):not([aria-disabled="true"]) {
+  animation: control-settle var(--motion-release) var(--motion-ease);
+}
+.motion-preview .sidebar .sidebar-rail-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .motion-preview .sidebar .sidebar-rail-toggle:is(:hover,:active,.interaction-pressed,.interaction-released) { transform: none; animation: none; }
+}
 .motion-preview .sidebar-scrim { display: none !important; }
 
 /* Reuse the original site's unified task column and full-height calendar. */
@@ -69,7 +130,8 @@
 .motion-preview #view-calendar .planner-workspace,
 .motion-preview #view-calendar .planner-workspace:has(.day-view) {
   display: grid; height: 100%; min-height: 0;
-  grid-template-columns: clamp(300px,28vw,360px) minmax(0,1fr);
+  grid-template-columns: clamp(260px,23vw,280px) minmax(0,1fr);
+  grid-template-rows: minmax(0,1fr);
   align-items: stretch; gap: 0; overflow: hidden;
   border: 1px solid rgba(158,116,31,.18); border-radius: 24px;
   background: #fffdf8; box-shadow: 0 22px 60px rgba(74,52,10,.12);
@@ -91,6 +153,11 @@
   overflow-y: auto; scrollbar-gutter: stable; overscroll-behavior: contain;
   transform: none; transition: none;
 }
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace,
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { background: var(--card); border-color: var(--line); }
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace > .daily-panel { background: linear-gradient(180deg,var(--card) 0%,var(--canvas) 58%,var(--accent-soft) 100%); }
+:root[data-theme="dark"] .motion-preview #daily-task-panel .task-section-heading strong { background: var(--surface); color: var(--muted); }
+:root[data-theme="dark"] .motion-preview #view-calendar .time-axis { background: var(--card); }
 .motion-preview #daily-task-panel > .panel-heading { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 12px; }
 .motion-preview #daily-task-panel .section-kicker { font-size: 12px; font-weight: 760; letter-spacing: .08em; text-transform: uppercase; }
 .motion-preview #daily-plan-heading { font-size: 17.28px; font-weight: 700; }
@@ -111,39 +178,52 @@
 .motion-preview #view-calendar .compact-button { min-height: 38px; padding-inline: 14px; font-size: 12.48px; }
 .motion-preview #view-calendar .calendar-stepper button { width: 34px; height: 34px; min-height: 34px; font-size: 22.4px; }
 .motion-preview #view-calendar .view-switcher button { min-height: 32px; padding-inline: 11px; font-size: 11.68px; }
-.motion-preview #view-calendar .planner-calendar { flex: 1; min-height: 0; max-height: none; overscroll-behavior: contain; }
+.motion-preview #view-calendar .planner-calendar { flex: 1; min-height: 0; max-height: none; max-width: 100%; overscroll-behavior: contain; }
 .motion-preview #view-calendar .timeline-calendar { min-width: 650px; grid-template-columns: 64px minmax(0,1fr); grid-template-rows: 66px auto auto; }
 .motion-preview #view-calendar .day-view .timeline-calendar { min-width: 0; }
 .motion-preview #view-calendar .calendar-date-button { min-height: 66px; }
 .motion-preview #view-calendar .calendar-date-button span { font-size: 9.6px; font-weight: 800; }
 .motion-preview #view-calendar .calendar-date-button strong { width: 32px; height: 32px; font-size: 14.08px; font-weight: 760; }
 .motion-preview #view-calendar .time-axis span { font-size: 8.96px; white-space: nowrap; }
-.motion-preview #view-calendar .month-calendar { min-width: 620px; }
+.motion-preview #view-calendar .month-calendar { min-width: 350px; }
+.motion-preview #view-calendar :is(.time-axis,.timeline-deadline-label,.timeline-corner) { position: sticky; left: 0; background: var(--card,#fffdf8); }
+.motion-preview #view-calendar :is(.time-axis,.timeline-deadline-label) { z-index: 4; }
+.motion-preview #view-calendar .timeline-corner { top: 0; z-index: 6; }
 .motion-preview #toggle-task-panel,
 .motion-preview .task-panel-close-button,
 .motion-preview .task-panel-scrim { display: none !important; }
 
-/* Respond to the workspace width as the dock reshapes it, not just the viewport. */
+/* Compact controls with the dock; keep the iPad task column beside the calendar. */
 @container workspace (max-width: 780px) {
   .dashboard-layout,.personal-grid,.notes-layout { grid-template-columns: minmax(0,1fr); }
   .dashboard-side { grid-template-columns: minmax(0,1fr); }
-  .motion-preview #view-calendar .planner-workspace,
-  .motion-preview #view-calendar .planner-workspace:has(.day-view) {
-    grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,36%) minmax(0,1fr);
-  }
   .motion-preview #view-calendar .planner-workspace > .daily-panel {
-    grid-column: 1; grid-row: 1; padding: 16px;
-    border-right: 0; border-bottom: 1px solid var(--line);
+    padding: 16px;
   }
-  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { grid-column: 1; grid-row: 2; padding: 16px; }
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { padding: 16px 12px; }
+  .motion-preview #view-calendar .calendar-toolbar-primary { flex-wrap: wrap; }
   .compact-topbar { flex-wrap: wrap; }
   .topbar-actions { width: 100%; min-width: 0; flex-wrap: wrap; }
   .search-box { min-width: 0; flex: 1 1 140px; }
   .dashboard-welcome .welcome-content { min-width: 0; }
   .dashboard-layout > .panel { min-width: 0; }
 }
+@container workspace (max-width: 560px) {
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { padding-inline: 8px; }
+  .motion-preview #view-calendar .calendar-title-copy { flex: 1 0 100%; margin-left: 0; }
+  .motion-preview #view-calendar .calendar-toolbar-actions { max-width: 100%; }
+  .motion-preview #view-calendar .view-switcher { margin-left: 0; }
+}
 @container workspace (max-width: 340px) {
+  .motion-preview #daily-task-panel > .panel-heading { gap: 2px 8px; }
+  .motion-preview #daily-task-panel :is(.task-sidebar-heading,.task-sidebar-heading > div) { display: contents; }
+  .motion-preview #daily-task-panel .section-kicker { grid-column: 1; grid-row: 1; }
+  .motion-preview #daily-plan-heading { grid-column: 1; grid-row: 2; }
+  .motion-preview #plan-selected-date { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+  .motion-preview #daily-task-panel :is(.panel-date,.panel-progress) { grid-column: 1 / -1; }
+  .motion-preview #daily-task-panel .daily-task-card { grid-template-columns: 32px minmax(0,1fr) 36px; }
   .motion-preview #view-calendar .calendar-toolbar-primary { flex-wrap: wrap; }
+  .motion-preview #view-calendar .calendar-title-copy { flex: 1 0 100%; margin-left: 0; }
   .motion-preview #view-calendar .calendar-toolbar-actions { min-width: 0; }
   .motion-preview #view-calendar .view-switcher { flex-wrap: wrap; max-width: 100%; }
   .compact-topbar .topbar-title > div { display: block; }
@@ -157,19 +237,45 @@
   .dashboard-panel-footer,.panel-heading { flex-wrap: wrap; }
   .week-preview-day { min-width: 0; }
   .week-preview-day > small { display: none; }
+  .dashboard-week-strip { grid-template-columns: repeat(7,minmax(44px,1fr)); overflow-x: auto; padding: 2px 2px 6px; scroll-snap-type: x proximity; }
+  .week-preview-day { scroll-snap-align: start; }
   .dashboard-week { padding-inline: 6px; }
   .settings-row,.settings-actions { min-width: 0; max-width: 100%; }
   .settings-actions { flex-direction: column; align-items: stretch; width: 100%; }
   .settings-actions button { white-space: normal; overflow-wrap: anywhere; }
+  .settings-panel .reminder-options { width: 100%; min-width: 0; }
+  .settings-panel :is(.secondary-button,.theme-field,.theme-field select) { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
   .all-task-row { grid-template-columns: 28px minmax(0,1fr) 28px; }
   .all-task-row .task-due { grid-column: 2; grid-row: 2; }
   .all-task-row .task-edit { grid-column: 3; grid-row: 1; }
 }
 @container workspace (max-width: 240px) {
   .motion-preview #daily-task-panel > .panel-heading { grid-template-columns: minmax(0,1fr); }
+  .motion-preview #plan-selected-date { grid-column: 1; grid-row: auto; margin-top: 8px; }
   .motion-preview #daily-task-panel .daily-task-card { grid-template-columns: 24px minmax(0,1fr); gap: 4px; }
   .motion-preview #daily-task-panel .task-edit { grid-column: 2; justify-self: end; }
   .motion-preview #daily-task-panel .category-tag { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .dashboard-layout { overflow-wrap: anywhere; }
+  .dashboard-layout .daily-task-card { grid-template-columns: 24px minmax(0,1fr); }
+  .dashboard-layout .daily-task-card .task-edit { grid-column: 2; grid-row: 2; justify-self: end; }
+  .dashboard-layout .focus-open { grid-column: 1 / -1; max-width: 100%; white-space: normal; }
+  .dashboard-layout :is(.category-tag,.priority-tag) { max-width: 100%; white-space: normal; }
+  .dashboard-layout .overdue-notice { flex-wrap: wrap; gap: 8px; }
+  .dashboard-layout :is(.upcoming-item,.schedule-item) { grid-template-columns: minmax(0,1fr) 18px; gap: 8px; }
+  .dashboard-layout .upcoming-date { grid-column: 1; justify-self: start; }
+  .dashboard-layout .upcoming-copy { grid-column: 1; grid-row: 2; }
+  .dashboard-layout .schedule-time { grid-column: 1 / -1; }
+  .dashboard-layout .schedule-title { grid-column: 1; }
+  .dashboard-layout :is(.upcoming-copy strong,.upcoming-copy small,.schedule-title small) { white-space: normal; }
+}
+/* Keep controls comfortable to tap without changing the desktop proportions. */
+@media (pointer: coarse) {
+  .motion-preview #view-calendar .compact-button { min-height: 44px; font-size: 14px; }
+  .motion-preview #view-calendar .calendar-stepper button { width: 44px; height: 44px; min-height: 44px; }
+  .motion-preview #view-calendar .view-switcher button { min-height: 44px; font-size: 14px; padding-inline: 10px; }
+  .motion-preview #view-calendar .calendar-date-button span { font-size: 11px; }
+  .motion-preview #view-calendar .calendar-date-button strong { font-size: 16px; }
+  .motion-preview #view-calendar .time-axis span { font-size: 11px; }
 }
 @media (max-width: 700px) {
   .motion-preview .unified-shell,.motion-preview[data-view="calendar"] .unified-shell { --sidebar-width: 152px; --sidebar-rail-width: 52px; }
@@ -212,9 +318,112 @@
 .motion-preview .task-modal[data-popup-stage="shell"][data-popup-motion="closing"]::backdrop { animation: popup-backdrop-out calc(var(--motion-popupClose) - var(--motion-popupContentOut)) var(--motion-ease) both; }
 @media (prefers-reduced-motion: reduce) {
   .motion-preview .unified-shell,.motion-preview .unified-shell .sidebar,.motion-preview .sidebar * { transition: none; }
+  .motion-preview .sidebar .primary-nav > .nav-item { transition: none; }
   .motion-preview .task-modal::backdrop { animation: none !important; }
 }
 
+/* Phones give the calendar one full-width surface and open tasks on demand. */
+.phone-week-strip[hidden] { display: none !important; }
+@media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview[data-view="calendar"] .unified-workspace { overflow: clip; }
+  .motion-preview #view-calendar { position: relative; height: 100%; min-height: 0; overflow: hidden; border-radius: 18px; }
+  .motion-preview #view-calendar .planner-workspace,
+  .motion-preview #view-calendar .planner-workspace:has(.day-view) {
+    display: block; position: static; height: 100%; min-height: 0; border-radius: 18px; box-shadow: none;
+  }
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel {
+    height: 100%; min-height: 0; padding: 12px; overflow: hidden;
+  }
+  .motion-preview #view-calendar .calendar-toolbar { display: flex; gap: 8px; padding: 0 0 8px; }
+  .motion-preview #view-calendar .calendar-toolbar-primary {
+    display: grid; grid-template-columns: minmax(0,1fr) 44px 88px;
+    flex: 1 0 100%; gap: 4px; width: 100%;
+  }
+  .motion-preview #view-calendar .calendar-title-copy { grid-column: 1; grid-row: 1; min-width: 0; margin: 0; }
+  .motion-preview #view-calendar .calendar-title-copy h2 { margin-bottom: 6px; }
+  .motion-preview #view-calendar .calendar-range { font-size: 16px; line-height: 1.25; overflow-wrap: normal; }
+  .motion-preview #view-calendar .calendar-today-button { grid-column: 2; grid-row: 1; padding-inline: 0; font-size: 12px; }
+  .motion-preview #view-calendar .calendar-stepper { grid-column: 3; grid-row: 1; display: flex; gap: 0; padding: 0; border: 0; background: transparent; }
+  .motion-preview #view-calendar .calendar-stepper button { width: 44px; height: 44px; min-height: 44px; }
+  .motion-preview #view-calendar .calendar-toolbar-actions {
+    display: grid; grid-template-columns: minmax(0,1fr) auto 44px; width: 100%; gap: 6px;
+  }
+  .motion-preview #view-calendar .view-switcher { grid-column: 1; grid-row: 1; display: flex; flex-wrap: nowrap; justify-self: start; margin: 0; padding: 2px; }
+  .motion-preview #view-calendar .view-switcher button { min-height: 40px; padding-inline: 8px; font-size: 12px; }
+  .motion-preview #view-calendar #toggle-task-panel { grid-column: 2; grid-row: 1; display: block !important; min-height: 44px; padding-inline: 9px; font-size: 12px; white-space: nowrap; }
+  .motion-preview #view-calendar .phone-calendar-add { grid-column: 3; grid-row: 1; display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; }
+  .phone-calendar-add svg { width: 22px; height: 22px; }
+  .motion-preview #view-calendar .phone-week-strip { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); flex: 0 0 auto; gap: 2px; padding-bottom: 8px; }
+  .phone-week-day { display: grid; gap: 4px; justify-items: center; align-content: center; min-width: 0; min-height: 56px; padding: 4px 0; border: 0; border-radius: 10px; color: var(--ink-deep); background: transparent; cursor: pointer; }
+  .phone-week-day > span { font-size: 10px; color: var(--muted); }
+  .phone-week-day > strong { font-size: 16px; }
+  .phone-week-day[aria-current="date"] > strong { text-decoration: underline; text-underline-offset: 4px; }
+  .phone-week-day[aria-pressed="true"] { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+  .phone-week-day:is(:active,.interaction-pressed) { transform: scale(.96); background: var(--accent-soft); }
+  .motion-preview #view-calendar .planner-calendar { flex: 1 1 0; min-height: 0; overflow: auto; }
+  .motion-preview #view-calendar .timeline-calendar { min-width: 0; grid-template-columns: 48px minmax(0,1fr); grid-template-rows: 48px auto auto; }
+  .motion-preview #view-calendar :is(.time-axis,.timeline-deadline-label,.timeline-corner) { position: static; z-index: auto; }
+  .motion-preview #view-calendar .calendar-date-button { min-height: 48px; }
+  .motion-preview #view-calendar .calendar-date-button strong { width: 28px; height: 28px; }
+  .motion-preview #view-calendar .time-axis span { font-size: 10px; }
+  .motion-preview #view-calendar .calendar-event-block { touch-action: pan-y; }
+  .motion-preview #view-calendar .month-calendar { min-width: 0; }
+  .motion-preview #view-calendar .month-day { min-width: 0; min-height: 64px; padding: 7px 3px; gap: 5px; }
+  .motion-preview #view-calendar .month-day > small { display: none; }
+  .motion-preview #view-calendar .month-dots { gap: 3px; }
+  .motion-preview #view-calendar .month-dots i { width: 5px; height: 5px; }
+  .motion-preview #view-calendar .phone-task-summary {
+    display: grid; grid-template-columns: minmax(0,1fr) auto; flex: 0 0 auto;
+    align-items: center; gap: 3px 8px; min-height: 60px; margin-top: 10px; padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: 12px; color: var(--ink-deep);
+    background: var(--surface); text-align: left; cursor: pointer;
+  }
+  .phone-task-summary > span:first-child { font-size: 14px; font-weight: 700; }
+  .phone-task-summary > small { grid-column: 1; color: var(--muted); font-size: 12px; }
+  .phone-task-summary > span:last-child { grid-column: 2; grid-row: 1 / span 2; font-size: 22px; }
+  .motion-preview #view-calendar .planner-workspace > .daily-panel {
+    position: absolute; inset: auto 0 0; z-index: 51; width: 100%;
+    height: min(76dvh,calc(100% - 12px)); max-height: calc(100% - 12px);
+    padding: 18px 16px 24px; border: 1px solid var(--line); border-radius: 22px 22px 0 0;
+    background: var(--card); box-shadow: 0 -16px 50px #211d1233;
+    overflow-y: auto; overscroll-behavior: contain;
+    transform: translate3d(0,calc(100% + 16px),0); transform-origin: center bottom;
+    transition: transform var(--motion-sheet,340ms) var(--motion-sheet-ease,cubic-bezier(.25,0,.2,1));
+    will-change: transform; pointer-events: none;
+  }
+  .motion-preview.task-panel-open #view-calendar .planner-workspace > .daily-panel { transform: translate3d(0,0,0); pointer-events: auto; }
+  .motion-preview #view-calendar #daily-task-panel > .panel-heading { grid-template-columns: minmax(0,1fr) auto auto; gap: 8px; }
+  .motion-preview #view-calendar #daily-task-panel :is(.task-sidebar-heading,.task-sidebar-heading > div) { display: block; }
+  .motion-preview #view-calendar #daily-task-panel :is(.section-kicker,.panel-date,.panel-progress) { grid-column: auto; grid-row: auto; }
+  .motion-preview #view-calendar #plan-selected-date { grid-column: 2; grid-row: 1; align-self: start; margin: 0; }
+  .motion-preview #view-calendar .task-panel-close-button { grid-column: 3; grid-row: 1; display: grid !important; place-items: center; width: 44px; min-height: 44px; padding: 0; }
+  .motion-preview #view-calendar .task-panel-scrim:not([hidden]) {
+    display: block !important; position: absolute; inset: 0; z-index: 50;
+    width: 100%; height: 100%; padding: 0; border: 0; border-radius: inherit;
+    background: #211d1260; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+    opacity: 0; pointer-events: none; will-change: opacity;
+    transform: none; filter: none; box-shadow: none; animation: none;
+    transition: opacity var(--motion-sheetBackdrop,220ms) ease;
+  }
+  .motion-preview.task-panel-open #view-calendar .task-panel-scrim:not([hidden]) { opacity: 1; pointer-events: auto; }
+}
+@media (hover: hover) {
+  .phone-week-day:hover { background: var(--accent-soft); }
+}
+@media (min-width: 560px) and (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar .planner-workspace > .unified-calendar-panel { padding: 8px; }
+  .motion-preview #view-calendar .calendar-toolbar { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px; min-height: 44px; }
+  .motion-preview #view-calendar .calendar-toolbar-primary,
+  .motion-preview #view-calendar .calendar-toolbar-actions { width: auto; }
+  .motion-preview #view-calendar .phone-week-strip { padding-bottom: 4px; }
+  .motion-preview #view-calendar .phone-week-day { min-height: 44px; gap: 2px; padding: 2px 0; }
+  .motion-preview #view-calendar .phone-task-summary { display: flex; justify-content: space-between; min-height: 44px; margin-top: 6px; padding-block: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-preview #view-calendar .planner-workspace > .daily-panel { transition: none; }
+  .motion-preview #view-calendar .task-panel-scrim:not([hidden]) { transition: none; }
+  .phone-week-day:is(:active,.interaction-pressed) { transform: none; }
+}
 /* Dark theme for the calendar workspace. The surfaces above (and the legacy
    timeline rules in styles.css) are hardcoded light, which left light ink on a
    cream panel in dark mode. Keep these after the light rules so they win. */
@@ -241,8 +450,13 @@
   border-left-color: var(--calendar-grid-line);
   background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--hour-height) - 1px), var(--calendar-grid-line) calc(var(--hour-height) - 1px), var(--calendar-grid-line) var(--hour-height));
 }
-:root[data-theme="dark"] .calendar-event-block { color: var(--ink-deep); background: color-mix(in srgb,var(--course-color) 26%,var(--card)); }
-:root[data-theme="dark"] .calendar-event-block small { color: color-mix(in srgb,var(--ink) 82%,var(--course-color)); }
+:root[data-theme="dark"] :is(.calendar-event-block,.library-template-block) {
+  --calendar-event-fill: color-mix(in srgb,var(--course-color) 26%,var(--card));
+  --calendar-event-title: var(--ink-deep);
+  --calendar-event-secondary: color-mix(in srgb,var(--ink) 82%,var(--course-color));
+  color: var(--calendar-event-title); background: var(--calendar-event-fill);
+}
+:root[data-theme="dark"] .calendar-event-block small { color: var(--calendar-event-secondary); }
 :root[data-theme="dark"] .calendar-drag-ghost { box-shadow: 0 12px 26px rgba(0,0,0,.45), 0 0 0 2px color-mix(in srgb,var(--course-color) 40%,var(--card)) !important; }
 :root[data-theme="dark"] .month-day { border-color: var(--calendar-grid-line); }
 :root[data-theme="dark"] .month-day.outside { color: color-mix(in srgb,var(--muted) 70%,transparent); background: rgba(0,0,0,.14); }

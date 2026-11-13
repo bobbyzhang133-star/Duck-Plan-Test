@@ -152,7 +152,7 @@ test("user A can't read or change user B's rows (replaces the Postgres RLS test)
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PUT", cookie: a.cookie, body: { title: "A's task", class_id: uuid(10) } })).status, 200);
 
   const bView = await app.call("/api/planner", { cookie: b.cookie });
-  assert.deepEqual(bView.data, { classes: [], items: [] });
+  assert.deepEqual(bView.data, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [] });
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PUT", cookie: b.cookie, body: { title: "hijack" } })).status, 404);
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PATCH", cookie: b.cookie, body: { completed: true } })).status, 404);
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "DELETE", cookie: b.cookie })).status, 200);
@@ -427,7 +427,7 @@ test("browser store: live messages from another device update the cache, and fai
   store.subscribe(({ reason }) => reasons.push(reason));
   await assert.rejects(store.upsertItem({ title: "" }), /Title is required/);
   assert.equal(store.listItems().length, 0);
-  assert.deepEqual(reasons, ["local", "error"]);
+  assert.deepEqual(reasons, ["local", "error", "remote"], "failed writes roll back, then revalidate through the shared cloud snapshot flow");
 
   await store.signOut();
   assert.equal(store.mode, "local");

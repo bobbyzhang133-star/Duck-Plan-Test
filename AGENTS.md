@@ -1,12 +1,16 @@
 # Repository Guidelines
 
+## Approved DuckPlan Icon
+
+The user approved v11 on November 12, 2026 as DuckPlan's profile picture and app icon. Keep this approved design unless the user requests a change; see `.cursor/rules/approved-duck-icon.mdc`.
+
 ## Clarifying Requests
 
 For all DuckPlan work, ask a concise clarification question when the intended version, page, behavior or scope has materially different plausible interpretations. Reuse confirmed answers and continue safe independent investigation while waiting. See `.cursor/rules/clarify-ambiguous-requests.mdc`. Calendar is the confirmed default opening page; retain Dashboard and the other sections.
 
-The default Calendar uses the original public site's unified task-column/calendar layout and compact toolbar. Keep the task list visible immediately, including on phones. See `plans.md` for implementation and verification records.
+The default Calendar uses the original public site's unified task-column/calendar layout and compact toolbar on iPad and desktop. Confirmed November 12, 2026: phones use a full-width calendar with tasks initially collapsed in an expandable sheet, a visible task summary, an Add Task action and bottom navigation. Phone Week view uses a seven-day selector and the selected day's schedule; preserve iPad's existing layout. See `plans.md` for implementation and verification records.
 
-Use the original white Sigma duck identity for mascot artwork, preserving the current UI's mascot placements, pose states and reactions. The approved reference is `landing/assets/duckplan-sigma-head-v3.png`.
+Use the original white Sigma duck identity for mascot artwork, preserving the current UI's mascot placements, pose states and reactions. The current profile/app-icon master is `landing/assets/duckplan-sigma-head-v11.png`. The user approved v6's copied original outline on November 12; preserve that exact rotated outer contour and do not generate or redraw it. The latest screenshot restores the earlier expression found in `landing/assets/duckplan-sigma-head-v3.png`: both curved eyebrows, half-lidded eyes and rounded orange bill. Copy that entire facial group together with one uniform affine scale; do not stretch or reposition individual features or generate a new expression. This latest selection supersedes the human-photo interpretation and larger oval-eye directions from v7–v10. The restored bill is intentionally different from the original reference bill. Keep all facial edits inside the permitted mask and leave the outer contour unchanged. The source, reproducible Swift compositor and pixel-preservation proofs are documented in `docs/sigma-mascot/README.md`. Full-body mascot drawings retain their approved proportions unless separately requested.
 Animated poses use a complete duck body and visible orange webbed feet on land. Front views have a plain body outline with no visible tail or feather/wing lines on the chest; a lifted wing appears only to wave. Keep the head-only original for the brand icon.
 The Daily progress pond uses a right-facing side-profile swimming duck; other mascot placements retain their front-facing poses.
 

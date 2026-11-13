@@ -31,6 +31,8 @@ const store = window.DuckPlannerStore.createPlannerStore({
   redirectPath: location.pathname,
 });
 let tasks = [];
+let renderedPlannerOwner = "local";
+let plannerOwnerVersion = 0;
 const REMINDER_KEY = "duckplan-deadline-reminders-v1";
 const reminderSettings = loadReminderSettings();
 const reminderLedger = ReminderLedger.createLedger({ storage: localStorage });
@@ -44,13 +46,17 @@ const notificationPermissionHelp = document.querySelector("#notification-permiss
 reminderToggle.checked = reminderSettings.enabled;
 reminderLead.value = String(reminderSettings.lead);
 let selectedDate = nowKey();
-let calendarView = window.matchMedia("(max-width: 760px)").matches ? "day" : "week";
+const phonePlannerQuery = window.matchMedia("(max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse)");
+let calendarView = phonePlannerQuery.matches ? "day" : "week";
 let currentFilter = "all";
 let searchTerm = "";
 let selectedTaskId = null;
 let editingTaskId = null;
+let pendingTaskDraft = null;
+let taskLayout = "list";
 let axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
 let localImportCount = 0;
+let accountStateVersion = 0;
 let collapsed = { overdue: false, completed: false };
 let toastTimer;
 let notificationConstructorFailed = false;
@@ -59,6 +65,7 @@ let calendarFocusSlot = { date: selectedDate, time: "09:00" };
 let calendarUserScrolled = false;
 let calendarProgrammaticScroll = false;
 let calendarDrag = null;
+let templateDrag = null;
 let suppressCalendarEventClickUntil = 0;
 
 const els = {
@@ -69,6 +76,11 @@ const els = {
   allList: document.querySelector("#all-task-list"), taskEmpty: document.querySelector("#task-empty"),
   classGrid: document.querySelector("#class-grid"), calendar: document.querySelector("#planner-calendar"),
   calendarRange: document.querySelector("#calendar-range"), modal: document.querySelector("#task-modal"),
+  phoneWeekStrip: document.querySelector("#phone-week-strip"),
+  phoneTaskSummary: document.querySelector("#phone-task-summary"),
+  phoneTaskSummaryCopy: document.querySelector("#phone-task-summary-copy"),
+  calendarPanel: document.querySelector(".calendar-main-panel"),
+  phoneNavigation: document.querySelector(".phone-bottom-nav"),
   form: document.querySelector("#task-form"), modalTitle: document.querySelector("#modal-title"),
   modalKicker: document.querySelector("#modal-kicker"), deleteTask: document.querySelector("#delete-task"),
   saveTask: document.querySelector("#save-task"), toast: document.querySelector("#toast"),
@@ -91,11 +103,42 @@ const els = {
   },
 };
 
+const taskLibrary = window.DuckPlanLibrary?.create({
+  store, getSelectedDate: () => selectedDate, showToast, reportError,
+  setupButtons: setupButtonMaterial,
+  openTask: (options) => openModal({ ...options, id: options.id || options.task?.id || null }),
+});
+const calendarLibraryTabs = window.DuckCalendarLibraryTabs?.create({
+  getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
+  onChange: () => {
+    taskLibrary?.closeTemplateMenu?.();
+    updatePrimaryAction(document.body.dataset.view || "calendar");
+  },
+});
+const taskMatrix = window.DuckTaskMatrix?.create({
+  store, getToday: nowKey, showToast, reportError,
+  setupButtons: setupButtonMaterial, openTask: openModal,
+});
+const personalGoals = window.DuckPersonalGoals?.create({
+  store, root: document.querySelector("#personal-goals-root"), getToday: nowKey,
+  showToast, reportError, setupButtons: setupButtonMaterial,
+});
+const personalNotes = window.DuckPersonalNotes?.create({
+  store, root: document.querySelector("#personal-notes-root"),
+  showToast, reportError, setupButtons: setupButtonMaterial,
+});
+let classEditor = null;
+
 const sidebarToggles = [...document.querySelectorAll("[data-open-navigation]")];
 const sidebarScrim = document.querySelector(".sidebar-scrim");
 const sidebar = document.querySelector(".sidebar");
 const workspace = document.querySelector(".workspace");
+const viewTransitions = window.DuckViewTransitions.create({
+  window, workspace,
+  order: [...sidebar.querySelectorAll(".nav-item[data-view]")].map((item) => item.dataset.view),
+});
 const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
+let taskPanelLauncher = null;
 
 function setSidebar(open) {
   const wasOpen = document.body.classList.contains("sidebar-open");
@@ -119,12 +162,30 @@ function setSidebar(open) {
 }
 
 
-function setTaskPanel(open, moveFocus = true) {
-  const compact = compactPlannerQuery.matches && !document.body.classList.contains("motion-preview");
+function setTaskPanel(open, moveFocus = true, source = null) {
+  const phone = phonePlannerQuery.matches;
+  const compact = phone || (compactPlannerQuery.matches && !document.body.classList.contains("motion-preview"));
+  const wasOpen = document.body.classList.contains("task-panel-open");
   const nextOpen = compact && open;
+  if (!nextOpen) taskLibrary?.closeTemplateMenu?.();
+  if (nextOpen && !wasOpen) taskPanelLauncher = source || document.activeElement;
   document.body.classList.toggle("task-panel-open", nextOpen);
   els.taskPanelToggle.setAttribute("aria-expanded", String(nextOpen));
-  els.taskPanelScrim.hidden = !nextOpen;
+  els.phoneTaskSummary?.setAttribute("aria-expanded", String(nextOpen));
+  // Keep the phone backdrop mounted so its opacity can animate in both directions.
+  els.taskPanelScrim.hidden = phone ? false : !nextOpen;
+  els.taskPanelScrim.inert = !nextOpen;
+  els.taskPanelScrim.tabIndex = -1;
+  els.taskPanelScrim.setAttribute("aria-hidden", "true");
+  if (els.calendarPanel) els.calendarPanel.inert = phone && nextOpen;
+  if (els.phoneNavigation) els.phoneNavigation.inert = phone && nextOpen;
+  if (phone) {
+    els.taskPanel.setAttribute("role", "dialog");
+    els.taskPanel.setAttribute("aria-modal", "true");
+  } else {
+    els.taskPanel.removeAttribute("role");
+    els.taskPanel.removeAttribute("aria-modal");
+  }
   if (compact) {
     els.taskPanel.inert = !nextOpen;
     els.taskPanel.setAttribute("aria-hidden", String(!nextOpen));
@@ -133,7 +194,11 @@ function setTaskPanel(open, moveFocus = true) {
     els.taskPanel.removeAttribute("aria-hidden");
   }
   if (moveFocus && compact && nextOpen) document.querySelector("[data-close-task-panel]")?.focus({ preventScroll: true });
-  else if (moveFocus && compact && !nextOpen) els.taskPanelToggle.focus({ preventScroll: true });
+  else if (moveFocus && compact && !nextOpen && wasOpen) {
+    const fallback = phone ? els.phoneTaskSummary : els.taskPanelToggle;
+    const target = taskPanelLauncher?.isConnected ? taskPanelLauncher : fallback;
+    target?.focus({ preventScroll: true });
+  }
 }
 
 function loadReminderSettings() {
@@ -233,7 +298,7 @@ async function displayBrowserNotification(payload, taskId = null) {
 }
 
 function notifyForTask(task, occurrence) {
-  const icon = new URL("./assets/duckplan-sigma-icon-v3-512.png", location.href).href;
+  const icon = new URL("./assets/duckplan-sigma-icon-v11-512.png", location.href).href;
   return displayBrowserNotification(
     BrowserNotifications.taskNotification({ ...task, className: classInfo(task).name }, occurrence, { icon }),
     task.id,
@@ -368,10 +433,15 @@ function renderDailyPlan() {
   const completed = todayItems.filter((task) => task.completed).length;
   const percent = todayItems.length ? Math.round((completed / todayItems.length) * 100) : 0;
   els.selectedDayLabel.textContent = dayRelationship(selectedDate);
+  document.querySelector("#daily-plan-heading").textContent = dayRelationship(selectedDate);
   els.selectedDateHeading.textContent = formatLongDate(selectedDate);
   els.dailyProgressCopy.textContent = todayItems.length ? `${completed} of ${todayItems.length} tasks completed` : "No tasks planned yet";
   els.dailyPanelDate.textContent = formatLongDate(selectedDate);
   els.dailyPanelProgress.textContent = todayItems.length ? `${completed} of ${todayItems.length} completed` : "No tasks planned yet";
+  const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled].map((task) => task.id)).size;
+  if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${groups.overdue.length ? ` · ${groups.overdue.length} overdue` : ""}`;
+  if (els.phoneTaskSummary) els.phoneTaskSummary.setAttribute("aria-label", `Open tasks for ${formatLongDate(selectedDate)}, ${remaining} remaining`);
+  els.taskPanelToggle.textContent = phonePlannerQuery.matches ? `Tasks (${remaining})` : "Tasks";
   els.completionPercent.textContent = `${percent}%`;
   els.completionRing.style.setProperty("--completion", `${percent * 3.6}deg`);
   for (const name of Object.keys(els.lists)) {
@@ -408,7 +478,12 @@ function renderAllTasks() {
     return true;
   });
   els.allList.innerHTML = filtered.map(allTaskMarkup).join("");
-  els.taskEmpty.hidden = filtered.length > 0;
+  els.allList.hidden = taskLayout !== "list";
+  els.taskEmpty.hidden = taskLayout !== "list" || filtered.length > 0;
+  const matrixRoot = document.querySelector("#task-matrix-root");
+  matrixRoot.hidden = taskLayout !== "matrix";
+  if (taskLayout === "matrix") taskMatrix?.render(filtered.filter((task) => currentFilter === "done" || !task.completed));
+  document.querySelectorAll("[data-task-layout]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.taskLayout === taskLayout)));
   els.taskCount.textContent = tasks.filter((task) => !task.completed).length;
 }
 
@@ -417,14 +492,14 @@ function renderClasses() {
     const classTasks = tasks.filter((task) => task.classId === info.id);
     const open = classTasks.filter((task) => !task.completed).length;
     const details = [info.teacher, info.period].filter(Boolean).join(" · ") || (info.axisKey ? "Imported from Axis" : "Class details");
-    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${safeText(info.code)}</span></div><h2>${safeText(info.name)}</h2><p>${safeText(details)}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div></article>`;
+    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${safeText(info.code)}</span></div><h2>${safeText(info.name)}</h2><p>${safeText(details)}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div><button class="class-resources-button" type="button" data-open-class="${info.id}">Assignments &amp; resources</button></article>`;
   }).join("");
 }
 
 function renderClassOptions() {
   const select = els.form.elements.classId;
   const current = select.value;
-  select.innerHTML = `${store.listClasses().map((info) => `<option value="${info.id}">${safeText(info.name)}</option>`).join("")}<option value="">No class</option>`;
+  select.innerHTML = `${store.listClasses({ includeArchived: true }).map((info) => `<option value="${info.id}">${safeText(info.name)}${info.archived ? " (archived)" : ""}</option>`).join("")}<option value="">No class</option>`;
   select.value = current;
 }
 
@@ -472,7 +547,7 @@ function renderAccount() {
     ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
     : user ? signedInAccount(user) : signedOutAccount();
   const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
-  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} local task${localImportCount === 1 ? "" : "s"}. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
+  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local planner</h2><p>Copy this browser's saved tasks, templates, class resources, goals, habits, notes and preferences into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import local planner</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
   replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${recovery}${offer}`);
   els.resetDemo.closest(".settings-row").hidden = store.mode === "cloud";
 }
@@ -491,14 +566,26 @@ function renderAxis() {
   els.syncInfo.setAttribute("aria-label", axisStatus.connected ? "Sync Axis now" : "Set up Axis sync");
 }
 async function refreshAccountState() {
-  try { [axisStatus, localImportCount] = await Promise.all([store.axisStatus(), store.localImportOffer()]); }
-  catch (error) { console.error(error); }
+  const version = ++accountStateVersion;
+  try {
+    const next = await Promise.all([store.axisStatus(), store.localImportOffer()]);
+    if (version !== accountStateVersion) return;
+    [axisStatus, localImportCount] = next;
+  } catch (error) {
+    if (version !== accountStateVersion) return;
+    console.error(error);
+  }
   renderAccount(); renderAxis();
 }
 async function runAction(button, action) {
+  const ownerVersion = plannerOwnerVersion;
+  const authForm = button.closest("#sign-in-form, #recover-form");
+  const signingInAs = authForm?.elements.email.value.trim().toLowerCase();
   button.disabled = true;
   try { await action(); }
-  catch (error) { reportError(error); }
+  catch (error) {
+    if (ownerVersion === plannerOwnerVersion || (signingInAs && store.user?.email?.toLowerCase() === signingInAs)) reportError(error);
+  }
   finally { if (button.isConnected) button.disabled = false; }
 }
 async function syncAxisNow() {
@@ -549,7 +636,7 @@ function renderTimeline(dates) {
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
-  const deadlineRows = dates.map((date) => `<div class="deadline-cell">${deadlineChips(date)}</div>`).join("");
+  const deadlineRows = dates.map((date) => `<div class="deadline-cell" data-deadline-date="${date}">${deadlineChips(date)}</div>`).join("");
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span>${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span>`).join("");
   const columns = dates.map((date) => {
     const current = new Date();
@@ -619,29 +706,152 @@ function scrollCalendarToRelevant(dates) {
   });
 }
 
+function renderPhoneWeekStrip(dates) {
+  const strip = els.phoneWeekStrip;
+  if (!strip) return;
+  strip.hidden = !phonePlannerQuery.matches || calendarView !== "week";
+  if (strip.hidden) return;
+  const week = dates.join(",");
+  if (strip.dataset.week !== week) {
+    strip.innerHTML = dates.map((date) => `<button type="button" class="phone-week-day" data-date="${date}" aria-label="${formatLongDate(date)}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
+    strip.dataset.week = week;
+  }
+  strip.querySelectorAll("button").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.date === selectedDate));
+    if (button.dataset.date === nowKey()) button.setAttribute("aria-current", "date");
+    else button.removeAttribute("aria-current");
+  });
+}
+
 function renderCalendar({ autoScroll = false } = {}) {
   const dates = Model.datesForView(calendarView, selectedDate);
-  els.calendarRange.textContent = rangeLabel(dates);
-  els.calendar.className = `planner-calendar ${calendarView}-view`;
-  els.calendar.innerHTML = calendarView === "month" ? renderMonth(dates) : renderTimeline(dates);
+  const singleDayWeek = phonePlannerQuery.matches && calendarView === "week";
+  const visibleDates = singleDayWeek ? [selectedDate] : dates;
+  els.calendarRange.textContent = phonePlannerQuery.matches && calendarView === "day"
+    ? new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(dateObject(selectedDate))
+    : rangeLabel(dates);
+  els.calendar.className = `planner-calendar ${calendarView}-view${singleDayWeek ? " phone-single-day" : ""}`;
+  els.calendar.innerHTML = calendarView === "month" ? renderMonth(dates) : renderTimeline(visibleDates);
+  renderPhoneWeekStrip(dates);
   document.querySelectorAll("[data-calendar-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.calendarView === calendarView)));
   els.calendarStatus.textContent = `${calendarView[0].toUpperCase()}${calendarView.slice(1)} view, ${els.calendarRange.textContent}`;
   if (autoScroll) {
     calendarUserScrolled = false;
-    scrollCalendarToRelevant(dates);
+    if (calendarView === "month") {
+      els.calendar.scrollTop = 0;
+      els.calendar.scrollLeft = 0;
+    }
+    scrollCalendarToRelevant(visibleDates);
   }
 }
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
 function setupButtonMaterial(root = document) {
-  const contentControls = ".sidebar-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.task-select,.task-section-heading";
+  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.month-day,.phone-week-day,.task-select,.task-section-heading";
   root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll({ autoScrollCalendar = false } = {}) {
+  tasks = store.listItems();
+  renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
+  renderCalendar({ autoScroll: autoScrollCalendar });
+  taskLibrary?.render();
+  calendarLibraryTabs?.render();
+  personalGoals?.render(); personalNotes?.render();
+  updatePrimaryAction(document.body.dataset.view || "calendar");
+  if (els.modal.open) taskLibrary?.renderTaskResources(els.form.elements.classId.value);
+  refreshReminders();
+  requestAnimationFrame(() => setupButtonMaterial());
+}
+
+function updatePrimaryAction(view) {
+  const button = document.querySelector("#open-task-modal");
+  const labels = { goals: "Add goal / habit", notes: "Add note", classes: "Add class" };
+  if (view === "calendar" && calendarLibraryTabs?.selected === "templates") labels.calendar = "New template";
+  button.textContent = `＋ ${labels[view] || "Add task"}`;
+  button.hidden = view === "settings";
+  button.disabled = (["goals", "notes"].includes(view) && store.supportsPersonal === false)
+    || (view === "calendar" && calendarLibraryTabs?.selected === "templates" && store.supportsOrganization === false);
+  button.setAttribute("aria-haspopup", "dialog");
+  els.search.closest(".search-box").hidden = !["calendar", "home", "tasks"].includes(view);
+}
+
+function openPrimaryAction(source) {
+  const view = document.body.dataset.view;
+  if (view === "goals") personalGoals?.openAddChooser({ source });
+  else if (view === "calendar" && calendarLibraryTabs?.selected === "templates") taskLibrary?.openNewTemplate?.({ source });
+  else if (view === "notes") personalNotes?.openNote({ source });
+  else if (view === "classes") openClassEditor(source);
+  else if (view !== "settings") openModal({ source, dueDate: view === "calendar" ? selectedDate : nowKey() });
+}
+
+function openClassEditor(source) {
+  if (classEditor) { classEditor.querySelector("input")?.focus(); return; }
+  const dialog = document.createElement("dialog");
+  dialog.className = "personal-note-dialog";
+  dialog.tabIndex = -1;
+  dialog.setAttribute("aria-labelledby", "class-editor-heading");
+  dialog.innerHTML = '<form novalidate><div class="personal-note-dialog-heading"><h2 id="class-editor-heading">New class</h2><button type="button" class="close-button" data-close-class aria-label="Close class editor">×</button></div><p class="personal-note-error" role="alert" hidden></p><label>Class name<input name="name" required maxlength="120" placeholder="e.g. Biology" /></label><label>Short code<input name="code" maxlength="4" placeholder="e.g. BIO" /></label><label>Teacher<input name="teacher" maxlength="120" /></label><label>Period<input name="period" maxlength="60" /></label><label>Color<input name="color" type="color" value="#6c9cc4" /></label><div class="personal-note-dialog-actions"><button type="button" class="secondary-button" data-close-class>Cancel</button><button type="submit" class="primary-button">Save class</button></div></form>';
+  classEditor = dialog;
+  const ownerVersion = plannerOwnerVersion;
+  const anchor = DuckPopupMotion.capture(source);
+  let busy = false, closing = false;
+  const current = () => classEditor === dialog && ownerVersion === plannerOwnerVersion;
+  const close = () => {
+    if (!current() || busy || closing) return;
+    closing = true; dialog.inert = true;
+    DuckPopupMotion.close(dialog, anchor, () => {
+      if (!current()) return;
+      dialog.close(); dialog.remove(); classEditor = null;
+      (source?.isConnected ? source : document.querySelector("#open-task-modal"))?.focus({ preventScroll: true });
+    });
+  };
+  dialog.addEventListener("cancel", event => { event.preventDefault(); close(); });
+  dialog.addEventListener("click", event => {
+    if (event.target.closest("[data-close-class]")) close();
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
+  });
+  dialog.addEventListener("keydown", event => {
+    if (event.key !== "Tab") return;
+    const controls = [...dialog.querySelectorAll("button,input")].filter(control => !control.disabled);
+    const first = controls[0], last = controls.at(-1);
+    if (!first) { event.preventDefault(); dialog.focus(); return; }
+    if (event.shiftKey && document.activeElement === first || !event.shiftKey && document.activeElement === last || !controls.includes(document.activeElement)) {
+      event.preventDefault(); (event.shiftKey ? last : first).focus();
+    }
+  });
+  dialog.querySelector("form").addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!current() || busy || closing) return;
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const errorBox = dialog.querySelector(".personal-note-error");
+    if (!data.name.trim()) { errorBox.textContent = "Give your class a name."; errorBox.hidden = false; dialog.querySelector('[name="name"]').focus(); return; }
+    busy = true; dialog.setAttribute("aria-busy", "true"); errorBox.hidden = true;
+    dialog.querySelectorAll("input,button").forEach(control => { control.disabled = true; });
+    try {
+      await store.upsertClass({ ...data, name: data.name.trim(), code: data.code.trim() || data.name.trim().slice(0, 4).toUpperCase() });
+      if (!current()) return;
+      busy = false; close(); showToast("Class saved.");
+    } catch (error) {
+      if (!current()) return;
+      errorBox.textContent = error.message || "Could not save your class. Please try again."; errorBox.hidden = false;
+    } finally {
+      if (current()) {
+        busy = false; dialog.removeAttribute("aria-busy");
+        dialog.querySelectorAll("input,button").forEach(control => { control.disabled = false; });
+        if (!closing) dialog.querySelector('button[type="submit"]').focus();
+      }
+    }
+  });
+  document.body.append(dialog); setupButtonMaterial(dialog); dialog.showModal();
+  DuckPopupMotion.open(dialog, anchor, () => { if (current() && !closing) dialog.querySelector("input").focus(); });
+}
 
 function setView(name, preserveDrawer = false) {
+  viewTransitions.cancel();
   const requested = name === "today" ? "home" : name;
   const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
   const normalized = next.id.replace("view-", "");
@@ -650,11 +860,22 @@ function setView(name, preserveDrawer = false) {
   els.navItems.forEach((item) => { const active = item.dataset.view === normalized; item.classList.toggle("active", active); active ? item.setAttribute("aria-current", "page") : item.removeAttribute("aria-current"); });
   els.pageTitle.textContent = next.dataset.pageTitle;
   els.pageEyebrow.textContent = next.dataset.eyebrow;
+  updatePrimaryAction(normalized);
   history.replaceState(null, "", `#${normalized}`);
   if (normalized !== "calendar") setTaskPanel(false, false);
   if (!preserveDrawer) setSidebar(false);
+  workspace.scrollTo({ top: 0, left: 0, behavior: "instant" });
   window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupButtonMaterial());
+}
+
+function navigateView(name, preserveDrawer = false) {
+  const previous = document.body.dataset.view;
+  const moveFocus = els.views.find((view) => view.id === `view-${previous}`)?.contains(document.activeElement);
+  setView(name, preserveDrawer);
+  const current = document.body.dataset.view;
+  if (previous !== current && moveFocus) workspace.focus({ preventScroll: true });
+  viewTransitions.enter(previous, current, els.views.find((view) => view.id === `view-${current}`));
 }
 function hideToast() {
   clearTimeout(toastTimer);
@@ -816,22 +1037,35 @@ function openModal(prefill = {}) {
   modalClosing = false;
   els.modal.inert = false;
   editingTaskId = prefill.id || null;
+  const { id: ignoredDraftId, ...draft } = prefill.draft || {};
+  pendingTaskDraft = editingTaskId ? null : draft;
   els.form.reset();
   const task = editingTaskId ? tasks.find((item) => item.id === editingTaskId) : null;
-  const scheduled = task ? Model.scheduledParts(task) : null;
+  const values = task || pendingTaskDraft || {};
+  const scheduled = Model.scheduledParts(values);
   els.modalTitle.textContent = task ? "Edit task" : "Add task";
   els.modalKicker.textContent = task ? "Task details" : "Plan your work";
   els.saveTask.textContent = task ? "Save changes" : "Add to DuckPlan";
   els.deleteTask.hidden = !task;
-  els.form.elements.title.value = task?.title || "";
-  els.form.elements.classId.value = task ? task.classId || "" : store.listClasses()[0]?.id || "";
-  els.form.elements.priority.value = task?.priority || "Medium";
-  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate || selectedDate;
-  els.form.elements.dueTime.value = task?.dueTime || prefill.dueTime || "";
+  els.form.elements.title.value = values.title || "";
+  els.form.elements.classId.value = values.classId !== undefined ? values.classId || "" : store.listClasses()[0]?.id || "";
+  els.form.elements.priority.value = values.priority || "Medium";
+  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate ?? values.dueDate ?? selectedDate;
+  els.form.elements.dueTime.value = values.dueTime || prefill.dueTime || "";
+  els.form.elements.notes.value = values.notes || "";
+  els.form.elements.importance.value = values.importance || "";
+  els.form.elements.urgency.value = values.urgency || "auto";
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
-  els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
-  const choice = task?.reminderChoice;
+  const duration = String(values.durationMinutes || prefill.durationMinutes || 45);
+  els.form.elements.durationMinutes.querySelectorAll("[data-custom-duration]").forEach((option) => option.remove());
+  if (![...els.form.elements.durationMinutes.options].some((option) => option.value === duration)) {
+    const option = new Option(`${duration} min`, duration);
+    option.dataset.customDuration = "true";
+    els.form.elements.durationMinutes.add(option);
+  }
+  els.form.elements.durationMinutes.value = duration;
+  const choice = values.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
   const alarm = window.DuckTaskAlarms.get(task?.id);
@@ -839,6 +1073,11 @@ function openModal(prefill = {}) {
   alarmInput.disabled=!window.DuckTaskAlarms.canSave();
   alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
   document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
+  const alarmAccount = document.querySelector("#task-alarm-account");
+  alarmAccount.hidden = !alarmInput.disabled || Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
+  document.querySelector("#task-alarm-signup").href = store.configured
+    ? new URL("#settings", location.href).href
+    : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
   if (window.DuckTaskAlarms.native) {
     document.querySelector('#task-alarm-help').textContent='Rings on this iPhone even while DuckPlan is closed. Clear the time to cancel. Changing scheduled work time does not move this alarm automatically.';
     els.form.elements.alarmSound.value=alarm?.sound || 'system';
@@ -848,6 +1087,7 @@ function openModal(prefill = {}) {
   document.querySelector("#task-alarm-options").open = Boolean(alarm);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
+  taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   DuckPopupMotion.mark(modalAnchor, "fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
     if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
@@ -873,6 +1113,7 @@ els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
   DuckPopupMotion.reset(els.modal);
   editingTaskId = null;
+  pendingTaskDraft = null;
 });
 DuckPopupMotion.schedulePrepare(els.modal);
 
@@ -889,12 +1130,18 @@ document.addEventListener("click", (event) => {
     return;
   }
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>setView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
-  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>setView(goButton.dataset.go,sidebar.contains(goButton)),event); }
+  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>navigateView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
+  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>navigateView(goButton.dataset.go,sidebar.contains(goButton)),event); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
   const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ source: edit, id: edit.dataset.editTask });
+  const classButton = event.target.closest("[data-open-class]");
+  if (classButton) {
+    taskLibrary?.selectClass(classButton.dataset.openClass);
+    document.querySelector("#class-library")?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    document.querySelector("#library-class-select")?.focus({ preventScroll: true });
+  }
   const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
 });
 document.addEventListener("change", (event) => {
@@ -908,13 +1155,134 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
+document.querySelectorAll("[data-task-layout]").forEach((button) => button.addEventListener("click", () => {
+  taskLayout = button.dataset.taskLayout;
+  renderAllTasks(); setupButtonMaterial();
+}));
+els.form.elements.classId.addEventListener("change", () => taskLibrary?.renderTaskResources(els.form.elements.classId.value));
+
+function templateCalendarPlacement(event, template) {
+  const target = event.target.closest("[data-slot-date], [data-date], [data-deadline-date]");
+  const column = event.target.closest("[data-column-date]");
+  const date = target?.dataset.slotDate || target?.dataset.date || target?.dataset.deadlineDate || column?.dataset.columnDate;
+  if (!date || !template) return null;
+  const rect = column?.getBoundingClientRect();
+  const hourHeight = rect ? rect.height / 15 : 62;
+  const drop = PlannerUI.snapTemplateDrop({ date, pointerY: rect ? event.clientY : 2 * hourHeight, columnTop: rect?.top ?? 0, hourHeight, durationMinutes: template.durationMinutes });
+  return drop ? { ...drop, column, rect, hourHeight, source: target || column } : null;
+}
+
+function hideTemplatePreview() {
+  if (!templateDrag) return;
+  templateDrag.preview.hidden = true;
+  templateDrag.column?.classList.remove("calendar-drop-target");
+  templateDrag.column = null; templateDrag.velocity = 0;
+}
+
+function clearTemplateDrag() {
+  if (!templateDrag) return;
+  hideTemplatePreview(); cancelAnimationFrame(templateDrag.raf);
+  templateDrag.preview.remove(); templateDrag = null;
+}
+
+function updateTemplatePreview(event) {
+  if (!templateDrag) return null;
+  templateDrag.pointer = { x: event.clientX, y: event.clientY };
+  const placement = event.target.closest("#planner-calendar") && templateCalendarPlacement(event, templateDrag.template);
+  hideTemplatePreview();
+  if (!placement?.column) return placement;
+  const { rect, hourHeight, column, minutes, time } = placement;
+  const preview = templateDrag.preview;
+  column.classList.add("calendar-drop-target"); templateDrag.column = column;
+  Object.assign(preview.style, { left: `${rect.left + 3}px`, top: `${rect.top + (minutes - 7 * 60) * hourHeight / 60}px`, width: `${Math.max(32, rect.width - 6)}px`, height: `${Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60)}px` });
+  preview.querySelector("small").textContent = `${formatTime(time)} · ${templateDrag.template.durationMinutes} min`;
+  preview.hidden = false;
+  const viewport = els.calendar.getBoundingClientRect();
+  templateDrag.velocity = event.clientY < viewport.top + 52 ? -12 : event.clientY > viewport.bottom - 52 ? 12 : 0;
+  return placement;
+}
+
+function scrollTemplatePreview() {
+  if (!templateDrag) return;
+  if (templateDrag.velocity) {
+    const previous = els.calendar.scrollTop;
+    els.calendar.scrollTop += templateDrag.velocity;
+    if (previous !== els.calendar.scrollTop) {
+      const { x, y } = templateDrag.pointer;
+      const target = document.elementFromPoint(x, y);
+      if (target) updateTemplatePreview({ target, clientX: x, clientY: y });
+    }
+  }
+  templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
+}
+
+document.addEventListener("dragstart", event => {
+  const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
+  const template = id && taskLibrary.draftForTemplate(id);
+  if (!template || event.defaultPrevented) return;
+  clearTemplateDrag();
+  const preview = document.createElement("div");
+  preview.className = "calendar-event-block calendar-drag-ghost template-drop-preview";
+  preview.setAttribute("aria-hidden", "true"); preview.hidden = true;
+  preview.innerHTML = `<strong>${safeText(template.title)}</strong><small></small>`;
+  const info = classInfo(template);
+  preview.style.setProperty("--course-color", /^#[0-9a-f]{6}$/i.test(info.color) ? info.color : "#8f8a7d");
+  document.body.append(preview);
+  templateDrag = { template, preview, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+});
+document.addEventListener("dragend", clearTemplateDrag);
+window.addEventListener("blur", clearTemplateDrag);
+window.addEventListener("pagehide", clearTemplateDrag);
+
+document.addEventListener("dragover", (event) => {
+  if (![...(event.dataTransfer?.types || [])].includes(window.DuckPlanLibrary?.TEMPLATE_MIME)) return;
+  const placement = updateTemplatePreview(event);
+  if (event.target.closest("#planner-calendar, #all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = templateDrag && event.target.closest("#planner-calendar") && !placement ? "none" : "copy";
+  }
+});
+document.addEventListener("drop", (event) => {
+  if (!taskLibrary?.readTemplateDrop(event.dataTransfer)) { clearTemplateDrag(); return; }
+  const calendar = event.target.closest("#planner-calendar");
+  if (calendar) {
+    event.preventDefault();
+    const template = taskLibrary.draftForTemplate(taskLibrary.readTemplateDrop(event.dataTransfer));
+    const placement = templateCalendarPlacement(event, template);
+    if (placement) taskLibrary.handleTemplateDrop(event, placement);
+    else if (template) showToast(template.durationMinutes > 900 ? "This template does not fit the visible day. Choose Schedule to set a work time." : "Drop onto a calendar day or time to schedule this template.");
+  } else if (event.target.closest("#all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
+    event.preventDefault();
+    taskLibrary.addToTasks(taskLibrary.readTemplateDrop(event.dataTransfer));
+  }
+  clearTemplateDrag();
+});
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar({ autoScroll: true }); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); const nextOpen = !document.body.classList.contains("sidebar-open"); setTaskPanel(false, false); setSidebar(nextOpen); }));
-els.taskPanelToggle.addEventListener("click", () => setTaskPanel(!document.body.classList.contains("task-panel-open")));
+els.taskPanelToggle.addEventListener("click", (event) => setTaskPanel(!document.body.classList.contains("task-panel-open"), true, event.currentTarget));
+els.phoneTaskSummary?.addEventListener("click", (event) => setTaskPanel(!document.body.classList.contains("task-panel-open"), true, event.currentTarget));
 document.querySelectorAll("[data-close-task-panel]").forEach((button) => button.addEventListener("click", () => setTaskPanel(false)));
 compactPlannerQuery.addEventListener("change", () => setTaskPanel(false, false));
+phonePlannerQuery.addEventListener("change", () => {
+  const wasOpen = document.body.classList.contains("task-panel-open");
+  setTaskPanel(false, false);
+  if (wasOpen && !phonePlannerQuery.matches) document.querySelector(calendarLibraryTabs?.selected === "templates" ? "#calendar-templates-tab" : "#plan-selected-date").focus({ preventScroll: true });
+  renderDailyPlan();
+  renderCalendar({ autoScroll: true });
+  setupButtonMaterial();
+});
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape" || els.modal.open) return;
+  if (els.modal.open || document.querySelector("dialog[open]")) return;
+  if (event.key === "Tab" && phonePlannerQuery.matches && document.body.classList.contains("task-panel-open")) {
+    const controls = [...els.taskPanel.querySelectorAll("button,input,select,textarea,a[href],[tabindex='0']")]
+      .filter((control) => !control.disabled && control.tabIndex >= 0 && !control.closest("[hidden], [inert]") && control.getClientRects().length);
+    const first = controls[0];
+    const last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
+  if (event.key !== "Escape") return;
+  if (templateDrag) { clearTemplateDrag(); return; }
   if (calendarDrag?.started) cancelCalendarDrag({ announce: true });
   else if (document.body.classList.contains("task-panel-open")) setTaskPanel(false);
   else if (document.body.classList.contains("sidebar-open")) setSidebar(false);
@@ -927,6 +1295,7 @@ els.calendar.addEventListener("scroll", () => { if (!calendarProgrammaticScroll)
 els.calendar.addEventListener("pointerdown", (event) => {
   const source = event.target.closest("[data-calendar-drag-task]");
   if (!source || event.button !== 0 || event.isPrimary === false || calendarView === "month") return;
+  if (phonePlannerQuery.matches && event.pointerType === "touch") return;
   const task = tasks.find((item) => item.id === source.dataset.calendarDragTask);
   if (!task) return;
   const sourceRect = source.getBoundingClientRect();
@@ -991,7 +1360,7 @@ els.calendar.addEventListener("keydown", (event) => {
   const slot = event.target.closest(".calendar-slot");
   if (!slot || !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
   event.preventDefault();
-  const dates = Model.datesForView(calendarView, selectedDate);
+  const dates = phonePlannerQuery.matches && calendarView === "week" ? [selectedDate] : Model.datesForView(calendarView, selectedDate);
   const next = PlannerUI.nextSlot({ date: slot.dataset.slotDate, time: slot.dataset.slotTime }, event.key, dates);
   const target = els.calendar.querySelector(`[data-slot-date="${next.date}"][data-slot-time="${next.time}"]`);
   if (!target) return;
@@ -1002,7 +1371,8 @@ els.calendar.addEventListener("keydown", (event) => {
   target.scrollIntoView({ block: "nearest", inline: "nearest" });
 });
 document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
-document.querySelector("#open-task-modal").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: document.body.dataset.view === "calendar" ? selectedDate : nowKey() }));
+document.querySelector("#phone-add-task")?.addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
+document.querySelector("#open-task-modal").addEventListener("click", event => openPrimaryAction(event.currentTarget));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);
 els.modal.addEventListener("click", event => {
@@ -1017,7 +1387,7 @@ els.form.addEventListener("submit", async (event) => {
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
   const existing = editingTaskId ? tasks.find((task) => task.id === editingTaskId) : null;
-  const next = { ...existing, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), schemaVersion: 2 };
+  const next = { ...pendingTaskDraft, ...existing, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), notes: String(form.get("notes") || ""), importance: form.get("importance") || null, urgency: form.get("urgency") || "auto", schemaVersion: 2 };
   const reminderChoice = form.get("reminderChoice");
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
@@ -1027,8 +1397,10 @@ els.form.addEventListener("submit", async (event) => {
     document.querySelector('#task-alarm-save-error').textContent=window.DuckTaskAlarms.native?'Choose a future alarm time.':'Choose a future notification time.'; return;
   }
   els.saveTask.disabled=true;
+  let taskWasSaved = false;
   try {
     const saved=await store.upsertItem(next);
+    taskWasSaved = true;
     editingTaskId=saved.id;
     if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt,{
       title:saved.title, sound:form.get('alarmSound') || 'system', snoozeMinutes:Number(form.get('alarmSnooze') ?? 5),
@@ -1036,7 +1408,11 @@ els.form.addEventListener("submit", async (event) => {
     closeModal();
     showToast(alarmAt?(window.DuckTaskAlarms.native?'Task and iPhone alarm saved.':'Task and notification saved.'):wasEditing?'Task updated.':'Task added to your plan.');
   } catch(error) {
-    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+    if (taskWasSaved) document.querySelector('#task-alarm-save-error').textContent=`Task saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+    else {
+      const message = document.querySelector("#task-form-error");
+      message.hidden = false; message.textContent = error.message || "Couldn't save this task. Please try again.";
+    }
   } finally { els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
@@ -1054,7 +1430,7 @@ document.querySelector("#notification-button").addEventListener("click", () => {
 notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
-    const icon = new URL("./assets/duckplan-sigma-icon-v3-512.png", location.href).href;
+    const icon = new URL("./assets/duckplan-sigma-icon-v11-512.png", location.href).href;
     const result = await displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
     showToast(result.status === "submitted"
       ? "Test submitted to your browser; device display is not confirmed."
@@ -1097,8 +1473,17 @@ els.accountSettings.addEventListener("submit", (event) => {
     else runAction(event.submitter, async () => { accountMode = null; await store.signIn(email, value("password")); showToast(`Signed in as ${email}.`); });
   }
   if (form.id === "recover-form") runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.recoverAccount(value("email").trim(), value("recoveryCode"), value("newPassword"))); showToast("Password reset. Save your new recovery code."); });
-  if (form.id === "password-form") runAction(event.submitter, async () => { const code = await store.changePassword(value("currentPassword"), value("newPassword")); setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved."); });
-  if (form.id === "recovery-code-form") runAction(event.submitter, async () => { showRecoveryCode(await store.newRecoveryCode(value("password"))); showToast("New recovery code created."); });
+  const ownerVersion = plannerOwnerVersion;
+  if (form.id === "password-form") runAction(event.submitter, async () => {
+    const code = await store.changePassword(value("currentPassword"), value("newPassword"));
+    if (ownerVersion !== plannerOwnerVersion) return;
+    setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved.");
+  });
+  if (form.id === "recovery-code-form") runAction(event.submitter, async () => {
+    const code = await store.newRecoveryCode(value("password"));
+    if (ownerVersion !== plannerOwnerVersion) return;
+    showRecoveryCode(code); showToast("New recovery code created.");
+  });
 });
 els.accountSettings.addEventListener("click", (event) => {
   const button = event.target.closest("button"); if (!button) return;
@@ -1112,7 +1497,7 @@ els.accountSettings.addEventListener("click", (event) => {
   if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
   if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await window.DuckTaskAlarms.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
-  if (button.id === "import-local") runAction(button, async () => { const count = await store.importLocalTasks(); showToast(`Imported ${count} task${count === 1 ? "" : "s"}.`); await refreshAccountState(); });
+  if (button.id === "import-local") runAction(button, async () => { await store.importLocalTasks(); showToast("Local planner data imported."); await refreshAccountState(); });
 });
 els.axisSettings.addEventListener("submit", (event) => {
   if (event.target.id !== "axis-form") return;
@@ -1166,6 +1551,23 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  const owner = store.user?.id || "local";
+  if (owner !== renderedPlannerOwner) {
+    renderedPlannerOwner = owner;
+    clearTemplateDrag();
+    plannerOwnerVersion += 1;
+    accountStateVersion += 1;
+    shownRecoveryCode = null;
+    accountMode = store.user ? null : "sign-in";
+    axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
+    localImportCount = 0;
+    if (classEditor) { DuckPopupMotion.cancel(classEditor); classEditor.close(); classEditor.remove(); classEditor = null; }
+    if (els.modal.open) els.modal.close();
+    els.form.reset();
+    editingTaskId = null; pendingTaskDraft = null;
+    renderAccount();
+    renderAxis();
+  }
   renderAll();
   if (window.DuckTaskAlarms.native && ['load','auth','remote','persisted'].includes(reason)) {
     window.DuckTaskAlarms.setContext(store.user?.id || 'local', store.listItems()).catch(reportError);

@@ -113,30 +113,4 @@
   document.addEventListener("planner:render", renderDashboard);
   renderDashboard();
 
-  const goalRange = document.querySelector("#goal-preview-range");
-  goalRange.addEventListener("input", () => {
-    document.querySelector("#goal-preview-value").textContent = goalRange.value;
-    document.querySelector("#goal-preview-bar").style.width = `${Number(goalRange.value) * 20}%`;
-  });
-  const habitNames = ["Read for 20 minutes", "Plan tomorrow"];
-  const weekdays = ["M", "T", "W", "T", "F", "S", "S"];
-  document.querySelector("#habit-preview-grid").innerHTML = '<div class="habit-grid-header"><span>Sample habit</span>' + weekdays.map((day) => `<span>${day}</span>`).join("") + '</div>' + habitNames.map((name, habit) => `<div class="habit-grid-row"><span>${name}</span>${weekdays.map((day, index) => `<label><input type="checkbox" ${index < (habit ? 1 : 2) ? "checked" : ""} aria-label="Sample ${name}: ${["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][index]}"/><span aria-hidden="true">✓</span></label>`).join("")}</div>`).join("");
-  const habitSummary = () => {
-    const count = document.querySelectorAll("#habit-preview-grid input:checked").length;
-    document.querySelector("#habit-preview-summary").textContent = `${count} of 14 sample check-ins · ${Math.round(count / 14 * 100)}%`;
-  };
-  document.querySelector("#habit-preview-grid").addEventListener("change", habitSummary);
-  habitSummary();
-
-  const noteTitle = document.querySelector("#note-preview-title");
-  const noteBody = document.querySelector("#note-preview-body");
-  const noteCategory = document.querySelector("#note-preview-category");
-  function renderNotePreview() {
-    document.querySelector("#note-preview-heading").textContent = noteTitle.value.trim() || "Your next idea";
-    document.querySelector("#note-preview-content").textContent = noteBody.value || "A preview of your note will appear here as you write.";
-    document.querySelector("#note-preview-tag").textContent = noteCategory.value;
-    const words = noteBody.value.trim() ? noteBody.value.trim().split(/\s+/).length : 0;
-    document.querySelector("#note-preview-count").textContent = `${words} ${words === 1 ? "word" : "words"}`;
-  }
-  [noteTitle, noteBody, noteCategory].forEach((field) => field.addEventListener("input", renderNotePreview));
 })();
