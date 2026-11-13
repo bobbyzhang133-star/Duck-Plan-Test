@@ -4,9 +4,17 @@ The current outline uses the user's original duck pixels, copied and rotated wit
 the deterministic Swift compositor. Facial features are composited inside that
 protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v9.png. Current app exports:
-duckplan-sigma-icon-v9-192.png and duckplan-sigma-icon-v9-512.png.
+Current master: duckplan-sigma-head-v10.png. Current app exports:
+duckplan-sigma-icon-v10-192.png and duckplan-sigma-icon-v10-512.png.
 Earlier icons are retained for comparison.
+
+## Reference-photo eye proportion correction (v10, November 12, 2026)
+
+The user clarified that the eye scaling differed compared with their reference photo. V10 corrects the exaggerated tall-left/tiny-right relationship using explicit fitting rectangles for the existing v9 raster: viewer-left width 42, height 34; viewer-right width 38, height 23, in the compositor's source plane. It keeps the large solid-black duck-eye style and close spacing. Both eyebrows' pixels must stay identical to v9, the bill identical to v8, and feature positions and the copied outer contour unchanged. This is a deterministic scaling fix, not new imagegen artwork or an exact tracing of the photo.
+
+`tools/build-original-outline-icon.swift --reference-eye-proportions` reuses `docs/sigma-mascot/source/duck-eye-features-v9.png` and its existing [feature-layer prompt](../../docs/sigma-mascot/source/duck-eye-features-v9-prompt.txt). It writes the master and preservation evidence to `docs/sigma-mascot/v10-preservation/`. The outline and pixels outside the permitted facial mask must remain unchanged. The retained v8 bill transform is 82% width, 85% height and a 20px downward shift; original-bill pixels are intentionally different from the unmodified rotated baseline. Exports remain opaque 1024px native and 192/512px web icons.
+
+Use `--duck-eyes` for v9, `--compact-expression` for v8, `--raised-brow` for v7 or no expression flag for v6. Earlier methods, sources and proofs remain below.
 
 ## Larger duck-like eyes and eyebrows (v9, November 12, 2026)
 

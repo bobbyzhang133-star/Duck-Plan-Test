@@ -84,10 +84,11 @@ func components(_ image: Raster, roi: (Int, Int, Int, Int)? = nil) -> [Component
   return result.sorted { $0.points.count > $1.points.count }
 }
 let root = CommandLine.arguments.dropFirst().first { !$0.hasPrefix("--") } ?? FileManager.default.currentDirectoryPath
-let duckEyes = CommandLine.arguments.contains("--duck-eyes")
+let referenceEyeProportions = CommandLine.arguments.contains("--reference-eye-proportions")
+let duckEyes = referenceEyeProportions || CommandLine.arguments.contains("--duck-eyes")
 let compactExpression = duckEyes || CommandLine.arguments.contains("--compact-expression")
 let raisedBrow = compactExpression || CommandLine.arguments.contains("--raised-brow")
-let version = duckEyes ? "v9" : (compactExpression ? "v8" : (raisedBrow ? "v7" : "v6"))
+let version = referenceEyeProportions ? "v10" : (duckEyes ? "v9" : (compactExpression ? "v8" : (raisedBrow ? "v7" : "v6")))
 let originalPath = root + "/docs/sigma-mascot/source/original-duck-reference.png"
 let original = try Raster(originalPath)
 let expressionSource = duckEyes ? "docs/sigma-mascot/source/duck-eye-features-v9.png" : (compactExpression ? "docs/sigma-mascot/source/narrow-expression-features-v8.png" : (raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png"))
@@ -235,10 +236,10 @@ let lids = raisedBrow ? [true, false].map { left in
   merge(eyeParts.filter { ($0.centerX < Double(expression.width) / 2) == left })
 } : eyeParts.sorted { $0.centerX < $1.centerX }
 require(brows.count == 2 && lids.count == 2, "Expected four expression components; found \(brows.count) brows and \(lids.count) eyes")
-func composite(_ feature: Component, center: (Double, Double), width: Double) {
+func composite(_ feature: Component, center: (Double, Double), width: Double, height targetHeight: Double? = nil) {
   let minX = feature.minX - 2, minY = feature.minY - 2
   let patchWidth = feature.maxX - minX + 3, patchHeight = feature.maxY - minY + 3
-  let height = width * Double(patchHeight) / Double(patchWidth)
+  let height = targetHeight ?? width * Double(patchHeight) / Double(patchWidth)
   let left = center.0 - width / 2, top = center.1 - height / 2
   let destLeft = max(0, Int(floor((left - cropX) * Double(size) / cropSize)))
   let destRight = min(size, Int(ceil((left + width - cropX) * Double(size) / cropSize)))
@@ -270,7 +271,11 @@ for side in 0..<2 {
   let eye = rotate(eyes[side].centerX, eyes[side].centerY)
   let inwardAmount = compactExpression ? 17.0 : 4.0
   let inward = side == 0 ? inwardAmount : -inwardAmount
-  composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: eyeWidth)
+  // The reference has a moderate difference in eye opening, not a tall oval
+  // beside a tiny semicircle. Fit both to intentional width/height pairs.
+  let width = referenceEyeProportions && side == 1 ? 38.0 : eyeWidth
+  let height: Double? = referenceEyeProportions ? (side == 0 ? 34.0 : 23.0) : nil
+  composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: width, height: height)
   let inset = compactExpression ? 4.0 : 14.0
   let browInset = side == 0 ? inset : -inset
   let browLift = duckEyes ? (side == 0 ? 49.0 : 36.0) : (compactExpression ? (side == 0 ? 43.0 : 32.0) : (raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0))
@@ -303,8 +308,10 @@ let report: [String: Any] = [
   "beakScale": compactExpression ? [0.82, 0.85] : [1.0, 1.0],
   "beakShiftOutputPixels": compactExpression ? [0, 20] : [0, 0],
   "eyeWidthOriginalPlane": eyeWidth, "eyebrowWidthOriginalPlane": browWidth,
+  "referenceEyeProportions": referenceEyeProportions,
+  "eyeTargetSizesOriginalPlane": referenceEyeProportions ? [[42.0,34.0],[38.0,23.0]] : [],
   "eyeStyle": duckEyes ? "solid black oval duck eyes, one half-lidded" : "earlier expression",
-  "method": "Original raster copied with one rotation/scale/crop; \(duckEyes ? "larger solid oval duck eyes and eyebrows with v8 bill transform" : (compactExpression ? "narrower, closer eyes and a smaller, lower original bill" : (raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing"))) expression components composited inside. No generated or reconstructed contour."
+  "method": "Original raster copied with one rotation/scale/crop; \(referenceEyeProportions ? "existing v9 eyes fitted to moderate reference-inspired opening proportions; same v9 brows and v8 bill" : (duckEyes ? "larger solid oval duck eyes and eyebrows with v8 bill transform" : (compactExpression ? "narrower, closer eyes and a smaller, lower original bill" : (raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing")))) expression components composited inside. No generated or reconstructed contour."
 ]
 let data = try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted,.sortedKeys])
 try data.write(to: URL(fileURLWithPath: proof + "preservation-report.json"))
