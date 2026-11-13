@@ -133,6 +133,10 @@ const sidebarToggles = [...document.querySelectorAll("[data-open-navigation]")];
 const sidebarScrim = document.querySelector(".sidebar-scrim");
 const sidebar = document.querySelector(".sidebar");
 const workspace = document.querySelector(".workspace");
+const viewTransitions = window.DuckViewTransitions.create({
+  window, workspace,
+  order: [...sidebar.querySelectorAll(".nav-item[data-view]")].map((item) => item.dataset.view),
+});
 const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 let taskPanelLauncher = null;
 
@@ -847,6 +851,7 @@ function openClassEditor(source) {
 }
 
 function setView(name, preserveDrawer = false) {
+  viewTransitions.cancel();
   const requested = name === "today" ? "home" : name;
   const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
   const normalized = next.id.replace("view-", "");
@@ -862,6 +867,15 @@ function setView(name, preserveDrawer = false) {
   workspace.scrollTo({ top: 0, left: 0, behavior: "instant" });
   window.scrollTo({ top: 0, behavior: "instant" });
   requestAnimationFrame(() => setupButtonMaterial());
+}
+
+function navigateView(name, preserveDrawer = false) {
+  const previous = document.body.dataset.view;
+  const moveFocus = els.views.find((view) => view.id === `view-${previous}`)?.contains(document.activeElement);
+  setView(name, preserveDrawer);
+  const current = document.body.dataset.view;
+  if (previous !== current && moveFocus) workspace.focus({ preventScroll: true });
+  viewTransitions.enter(previous, current, els.views.find((view) => view.id === `view-${current}`));
 }
 function hideToast() {
   clearTimeout(toastTimer);
@@ -1116,8 +1130,8 @@ document.addEventListener("click", (event) => {
     return;
   }
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>setView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
-  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>setView(goButton.dataset.go,sidebar.contains(goButton)),event); }
+  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>navigateView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
+  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>navigateView(goButton.dataset.go,sidebar.contains(goButton)),event); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);

@@ -1,4 +1,10 @@
 /* Separate motion version: keep the new planner's colors, type and cards. */
+/* Section motion is owned by view-transitions.js, including reduced motion.
+   Remove the old always-up entrance so it cannot compete or retain a transform. */
+.motion-preview .view,
+.motion-preview .view.active { animation: none; }
+.motion-preview .view[data-view-motion] { will-change: transform, opacity; }
+
 .motion-preview .unified-shell {
   --sidebar-width: 232px;
   --sidebar-rail-width: 64px;

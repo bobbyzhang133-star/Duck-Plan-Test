@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-motion-preview-v34";
+const CACHE_VERSION = "duckplan-app-motion-preview-v35";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -38,6 +38,7 @@ const APP_SHELL = [
   "./reminder-ledger.js",
   "./browser-notifications.js",
   "./motion-tokens.js",
+  "./view-transitions.js",
   "./button-interactions.js",
   "./page-navigation-feedback.js",
   "./popup-motion.js",
