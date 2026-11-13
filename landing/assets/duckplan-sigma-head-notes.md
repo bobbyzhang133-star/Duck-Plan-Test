@@ -4,9 +4,17 @@ The current outline uses the user's original duck pixels, copied and rotated wit
 the deterministic Swift compositor. Facial features are composited inside that
 protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v8.png. Current app exports:
-duckplan-sigma-icon-v8-192.png and duckplan-sigma-icon-v8-512.png.
+Current master: duckplan-sigma-head-v9.png. Current app exports:
+duckplan-sigma-icon-v9-192.png and duckplan-sigma-icon-v9-512.png.
 Earlier icons are retained for comparison.
+
+## Larger duck-like eyes and eyebrows (v9, November 12, 2026)
+
+The user requested more duck-like eyes and larger eyes/eyebrows. V9 uses simple solid-black oval eyes, one half-lidded, retaining the raised viewer-left brow and the closer eye spacing from v8. In compositor coordinates, eye placement width is 42 instead of 35 (20% larger), and brow placement width is 49 instead of 39 (about 26% larger). The exact approved copied outer contour stays locked.
+
+`tools/build-original-outline-icon.swift --duck-eyes` composites `docs/sigma-mascot/source/duck-eye-features-v9.png` inside the permitted face area. It retains v8's authorized original-bill transform: 82% width, 85% height and a 20px downward shift. Evidence is written to `docs/sigma-mascot/v9-preservation/`; the outline and pixels outside the facial mask must remain unchanged. Original-bill pixels intentionally differ from the rotated original, as authorized for v8. The exact [feature-layer prompt](../../docs/sigma-mascot/source/duck-eye-features-v9-prompt.txt) is saved beside the source. Exports remain opaque 1024px native and 192/512px web icons.
+
+Use `--compact-expression` for v8, `--raised-brow` for v7 or no expression flag for v6. Their sources, proofs and methods remain below.
 
 ## Narrower expression and permitted bill adjustment (v8, November 12, 2026)
 

@@ -84,12 +84,13 @@ func components(_ image: Raster, roi: (Int, Int, Int, Int)? = nil) -> [Component
   return result.sorted { $0.points.count > $1.points.count }
 }
 let root = CommandLine.arguments.dropFirst().first { !$0.hasPrefix("--") } ?? FileManager.default.currentDirectoryPath
-let compactExpression = CommandLine.arguments.contains("--compact-expression")
+let duckEyes = CommandLine.arguments.contains("--duck-eyes")
+let compactExpression = duckEyes || CommandLine.arguments.contains("--compact-expression")
 let raisedBrow = compactExpression || CommandLine.arguments.contains("--raised-brow")
-let version = compactExpression ? "v8" : (raisedBrow ? "v7" : "v6")
+let version = duckEyes ? "v9" : (compactExpression ? "v8" : (raisedBrow ? "v7" : "v6"))
 let originalPath = root + "/docs/sigma-mascot/source/original-duck-reference.png"
 let original = try Raster(originalPath)
-let expressionSource = compactExpression ? "docs/sigma-mascot/source/narrow-expression-features-v8.png" : (raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png")
+let expressionSource = duckEyes ? "docs/sigma-mascot/source/duck-eye-features-v9.png" : (compactExpression ? "docs/sigma-mascot/source/narrow-expression-features-v8.png" : (raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png"))
 let expression = try Raster(root + "/" + expressionSource)
 let parts = components(original)
 require(parts.count >= 4, "Missing original artwork components")
@@ -263,15 +264,17 @@ func composite(_ feature: Component, center: (Double, Double), width: Double) {
     for channel in 0..<3 { final.rgb[i * 3 + channel] = UInt8((Double(final.rgb[i * 3 + channel]) * (1 - min(1, opacity))).rounded()) }
   } }
 }
+let eyeWidth = duckEyes ? 42.0 : (compactExpression ? 35.0 : 43.0)
+let browWidth = duckEyes ? 49.0 : (compactExpression ? 39.0 : 45.0)
 for side in 0..<2 {
   let eye = rotate(eyes[side].centerX, eyes[side].centerY)
   let inwardAmount = compactExpression ? 17.0 : 4.0
   let inward = side == 0 ? inwardAmount : -inwardAmount
-  composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: compactExpression ? 35 : 43)
+  composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: eyeWidth)
   let inset = compactExpression ? 4.0 : 14.0
   let browInset = side == 0 ? inset : -inset
-  let browLift = compactExpression ? (side == 0 ? 43.0 : 32.0) : (raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0)
-  composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - browLift), width: compactExpression ? 39 : 45)
+  let browLift = duckEyes ? (side == 0 ? 49.0 : 36.0) : (compactExpression ? (side == 0 ? 43.0 : 32.0) : (raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0))
+  composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - browLift), width: browWidth)
 }
 var changes = 0, outsideEdits = 0, outlineChanges = 0, beakChanges = 0
 for i in 0..<(size * size) {
@@ -299,8 +302,9 @@ let report: [String: Any] = [
   "beakEditedWithUserAuthorization": compactExpression,
   "beakScale": compactExpression ? [0.82, 0.85] : [1.0, 1.0],
   "beakShiftOutputPixels": compactExpression ? [0, 20] : [0, 0],
-  "eyeWidthOriginalPlane": compactExpression ? 35 : 43,
-  "method": "Original raster copied with one rotation/scale/crop; \(compactExpression ? "narrower, closer eyes and a smaller, lower original bill" : (raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing")) expression components composited inside. No generated or reconstructed contour."
+  "eyeWidthOriginalPlane": eyeWidth, "eyebrowWidthOriginalPlane": browWidth,
+  "eyeStyle": duckEyes ? "solid black oval duck eyes, one half-lidded" : "earlier expression",
+  "method": "Original raster copied with one rotation/scale/crop; \(duckEyes ? "larger solid oval duck eyes and eyebrows with v8 bill transform" : (compactExpression ? "narrower, closer eyes and a smaller, lower original bill" : (raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing"))) expression components composited inside. No generated or reconstructed contour."
 ]
 let data = try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted,.sortedKeys])
 try data.write(to: URL(fileURLWithPath: proof + "preservation-report.json"))
