@@ -1,5 +1,7 @@
 # Sigma mascot
 
+**Approved profile picture and app icon:** the user selected v11 on November 12, 2026. Keep this design as DuckPlan's default icon unless a change is requested. The website and existing Xcode project use the same approved artwork.
+
 The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v11.png` and its 192/512px exports. The user's latest screenshot restores the earlier Sigma face found in [the existing v3 image](../../landing/assets/duckplan-sigma-head-v3.png): both curved eyebrows, half-lidded eyes and the rounded orange bill. V11 copies the entire facial group together under one uniform affine scale, preserving the relative proportions and placement of its features. It does not stretch individual eyes/brows/bill or generate new facial artwork. This selection supersedes the human-photo and larger oval-eye interpretations from v7–v10. The approved copied original outer contour remains protected. The native icon copies the opaque 1024px master directly. Previous images remain available.
 
 The byte-identical original is [source/original-duck-reference.png](source/original-duck-reference.png). Following the user's copy-and-paste instruction, the compositor rotates its actual pixels 45.0187 degrees clockwise, then applies one uniform scale and crop. The crop stops before the screenshot's clipped contour endpoints, so no neck extension is invented.

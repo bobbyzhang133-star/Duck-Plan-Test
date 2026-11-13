@@ -1,5 +1,9 @@
 # Repository Guidelines
 
+## Approved DuckPlan Icon
+
+The user approved v11 on November 12, 2026 as DuckPlan's profile picture and app icon. Keep this approved design unless the user requests a change; see `.cursor/rules/approved-duck-icon.mdc`.
+
 ## Clarifying Requests
 
 For all DuckPlan work, ask a concise clarification question when the intended version, page, behavior or scope has materially different plausible interpretations. Reuse confirmed answers and continue safe independent investigation while waiting. See `.cursor/rules/clarify-ambiguous-requests.mdc`. Calendar is the confirmed default opening page; retain Dashboard and the other sections.

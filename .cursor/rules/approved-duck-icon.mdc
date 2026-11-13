@@ -1,0 +1,14 @@
+---
+description: Preserve DuckPlan's approved profile picture and app icon
+alwaysApply: true
+---
+
+# Approved DuckPlan Icon
+
+- The user approved v11 on November 12, 2026 as DuckPlan's profile picture and app icon.
+- Use `landing/assets/duckplan-sigma-head-v11.png` as the canonical master, with its existing `duckplan-sigma-icon-v11-192.png` and `duckplan-sigma-icon-v11-512.png` web exports.
+- Preserve the approved copied outline, curved eyebrows, half-lidded eyes and rounded orange bill. Do not redesign or regenerate this artwork unless the user requests a change.
+- Keep the complete facial group under one uniform scale. Do not independently stretch or reposition the eyes, eyebrows or bill.
+- Website branding, favicon, Apple touch icon, PWA and notification icons use these exports. The native `AppIcon.png` uses the opaque 1024px master.
+- Keep the existing Xcode project's bundled assets consistent with this approved version while preserving native code and signing.
+- The source and reproduction method are documented in `docs/sigma-mascot/README.md`.
