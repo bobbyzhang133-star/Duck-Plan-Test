@@ -9,6 +9,9 @@
   const CLASSES_KEY = "duckplan-demo-classes-v1";
   const IMPORTED_KEY = "duckplan-local-import-v1";
   const DEVICE_EXTRAS_KEY = "duckplan-device-task-extras-v1";
+  const TEMPLATES_KEY = "duckplan-demo-templates-v1";
+  const RESOURCES_KEY = "duckplan-demo-resources-v1";
+  const ORGANIZATION_KEY = "duckplan-demo-organization-v1";
   const NO_CLASS = { id: null, name: "No class", color: "#8f8a7d", soft: "#efede7", code: "•", teacher: "", period: "", archived: false };
 
   function newId() { return globalThis.crypto.randomUUID(); }
@@ -34,6 +37,7 @@
       scheduledStart: row.scheduled_start ? row.scheduled_start.slice(0, 16) : null, scheduledEnd: null,
       durationMinutes: Number(row.duration_minutes || 45), completed: Boolean(row.completed), source: row.source || "manual",
       axisMissing: Boolean(row.axis_missing), schemaVersion: 2,
+      importance: row.importance || null, urgency: row.urgency || "auto",
     };
   }
   function taskToRow(task) {
@@ -41,7 +45,48 @@
       id: task.id, class_id: task.classId || null, type: task.type || "task", title: task.title, notes: task.notes || "",
       priority: String(task.priority || "Medium").toLowerCase(), due_date: task.dueDate || null, due_time: task.dueTime || null,
       scheduled_start: task.scheduledStart || null, duration_minutes: Number(task.durationMinutes || 45), completed: Boolean(task.completed),
+      importance: task.importance || null, urgency: task.urgency || "auto",
     };
+  }
+  function rowToTemplate(row) {
+    return { id: row.id, classId: row.class_id || null, title: row.title, durationMinutes: Number(row.duration_minutes || 45), priority: capitalize(row.priority) || "Medium", notes: row.notes || "", reminderChoice: String(row.reminder_choice || "default") };
+  }
+  function templateToRow(item) {
+    return { id: item.id, class_id: item.classId || null, title: item.title, duration_minutes: Number(item.durationMinutes || 45), priority: String(item.priority || "Medium").toLowerCase(), notes: item.notes || "", reminder_choice: item.reminderChoice || "default" };
+  }
+  function rowToResource(row) {
+    return { id: row.id, classId: row.class_id, title: row.title, url: row.url, description: row.description || "", category: row.category || "", sortOrder: Number(row.sort_order || 0) };
+  }
+  function resourceToRow(item) {
+    return { id: item.id, class_id: item.classId, title: item.title, url: item.url, description: item.description || "", category: item.category || "", sort_order: Number(item.sortOrder || 0) };
+  }
+  function organizationPreferences(value = {}) {
+    const days = Number(value.urgencyDays ?? value.urgency_days ?? 2);
+    if (!Number.isInteger(days) || days < 0 || days > 30) throw new Error("Choose an urgency window from 0 to 30 days.");
+    return { urgencyDays: days };
+  }
+  function limitedText(value, max, label, required = false) {
+    const text = String(value ?? "").trim();
+    if (required && !text) throw new Error(`${label} is required.`);
+    if (text.length > max) throw new Error(`${label} must be ${max} characters or fewer.`);
+    return text;
+  }
+  function normalizeTemplate(item) {
+    const durationMinutes = Number(item.durationMinutes ?? 45);
+    if (!Number.isInteger(durationMinutes) || durationMinutes < 5 || durationMinutes > 1440) throw new Error("Duration must be between 5 minutes and 24 hours.");
+    const priority = item.priority || "Medium";
+    if (!["High", "Medium", "Low"].includes(priority)) throw new Error("Choose a valid priority.");
+    const reminderChoice = String(item.reminderChoice ?? "default");
+    if (!["default", "off", "15", "60", "1440"].includes(reminderChoice)) throw new Error("Choose a valid reminder.");
+    return { id: item.id || newId(), classId: item.classId || null, title: limitedText(item.title, 80, "Template name", true), durationMinutes, priority, notes: limitedText(item.notes, 5000, "Notes"), reminderChoice };
+  }
+  function normalizeResource(item) {
+    let url;
+    try { url = new URL(String(item.url || "").trim()); } catch { throw new Error("Enter a full http:// or https:// resource link."); }
+    if (!["https:", "http:"].includes(url.protocol) || url.username || url.password || url.href.length > 2048) throw new Error("Use an http:// or https:// link without a username or password.");
+    const sortOrder = Number(item.sortOrder ?? 0);
+    if (!Number.isInteger(sortOrder) || sortOrder < 0 || sortOrder > 10000) throw new Error("Resource order must be between 0 and 10000.");
+    return { id: item.id || newId(), classId: item.classId || null, title: limitedText(item.title, 120, "Resource title", true), url: url.href, description: limitedText(item.description, 2000, "Description"), category: limitedText(item.category, 60, "Category"), sortOrder };
   }
   function taskInRange(task, range = {}) {
     if (!range.from && !range.to) return true;
@@ -61,7 +106,7 @@
 
   // Maps local classes onto the account's classes (matching by name) and gives every local task a fresh
   // UUID. Tasks keep their own scheduledStart; nothing is scheduled from a due time.
-  function planLocalImport({ localTasks, localClasses, cloudClasses, makeId = newId }) {
+  function planLocalImport({ localTasks, localClasses, cloudClasses, localTemplates = [], localResources = [], localOrganization, makeId = newId }) {
     const cloudByName = new Map(cloudClasses.map((item) => [item.name.toLowerCase(), item.id]));
     const classIdMap = new Map();
     const classRows = [];
@@ -74,32 +119,59 @@
       classRows.push(classToRow({ ...item, id }));
     });
     const itemRows = localTasks.map((task) => taskToRow({ ...task, id: makeId(), classId: classIdMap.get(task.classId) || null }));
-    return { classRows, itemRows };
+    const templateRows = localTemplates.map((item) => templateToRow({ ...item, id: makeId(), classId: classIdMap.get(item.classId) || null }));
+    const resourceRows = localResources.map((item) => resourceToRow({ ...item, id: makeId(), classId: classIdMap.get(item.classId) || null }));
+    const organization = localOrganization ? { urgency_days: organizationPreferences(localOrganization).urgencyDays } : undefined;
+    return { classRows, itemRows, templateRows, resourceRows, ...(organization ? { organization } : {}) };
+  }
+
+  async function localImportFingerprint(localState) {
+    const byId = (items) => [...items].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    const ordered = (value) => Array.isArray(value) ? value.map(ordered) : value && typeof value === "object"
+      ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, ordered(value[key])])) : value;
+    const snapshot = ordered({
+      classes: byId(localState.classes), tasks: byId(localState.tasks),
+      templates: byId(localState.templates), resources: byId(localState.resources),
+      organization: localState.organizationConfigured ? localState.organization : null,
+    });
+    const digest = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(snapshot)));
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
   }
 
   function createLocalBackend({ storage, model, defaultClasses, defaultTasks }) {
     function read(key) { try { return JSON.parse(storage.getItem(key)); } catch { return null; } }
-    function write(key, value) { try { storage.setItem(key, JSON.stringify(value)); } catch { /* storage full or blocked */ } }
+    function write(key, value, required = false) {
+      try { storage.setItem(key, JSON.stringify(value)); }
+      catch { if (required) throw new Error("Couldn't save your changes in this browser. Check available storage and try again."); }
+    }
     function load() {
       const storedClasses = read(CLASSES_KEY);
-      const classes = Array.isArray(storedClasses) && storedClasses.length ? storedClasses : structuredClone(defaultClasses());
+      const classes = Array.isArray(storedClasses) ? storedClasses : structuredClone(defaultClasses());
       const storedTasks = read(TASKS_KEY);
-      const source = Array.isArray(storedTasks) && storedTasks.length ? storedTasks : structuredClone(defaultTasks());
+      const source = Array.isArray(storedTasks) ? storedTasks : structuredClone(defaultTasks());
       const tasks = attachClassIds(model.migrateTasks(source), classes);
       write(CLASSES_KEY, classes); write(TASKS_KEY, tasks);
-      return { classes: classes.map((item) => ({ ...item, soft: softColor(item.color) })), tasks };
+      const templates = read(TEMPLATES_KEY), resources = read(RESOURCES_KEY), preferences = read(ORGANIZATION_KEY);
+      let organization;
+      try { organization = organizationPreferences(preferences || {}); } catch { organization = { urgencyDays: 2 }; }
+      return { classes: classes.map((item) => ({ ...item, soft: softColor(item.color) })), tasks, templates: Array.isArray(templates) ? templates : [], resources: Array.isArray(resources) ? resources : [], organization, organizationConfigured: Boolean(preferences), organizationAvailable: true };
     }
     return {
       mode: "local",
       load: async () => load(),
-      saveTask: async (task, state) => write(TASKS_KEY, state.tasks),
-      setCompleted: async (id, completed, state) => write(TASKS_KEY, state.tasks),
-      deleteTask: async (id, state) => write(TASKS_KEY, state.tasks),
-      saveClass: async (item, state) => write(CLASSES_KEY, state.classes.map(({ soft, ...rest }) => rest)),
-      reset() { storage.removeItem(TASKS_KEY); storage.removeItem(CLASSES_KEY); return load(); },
+      saveTask: async (task, state) => write(TASKS_KEY, state.tasks, true),
+      setCompleted: async (id, completed, state) => write(TASKS_KEY, state.tasks, true),
+      deleteTask: async (id, state) => write(TASKS_KEY, state.tasks, true),
+      saveClass: async (item, state) => write(CLASSES_KEY, state.classes.map(({ soft, ...rest }) => rest), true),
+      saveTemplate: async (item, state) => write(TEMPLATES_KEY, state.templates, true),
+      deleteTemplate: async (id, state) => write(TEMPLATES_KEY, state.templates, true),
+      saveResource: async (item, state) => write(RESOURCES_KEY, state.resources, true),
+      deleteResource: async (id, state) => write(RESOURCES_KEY, state.resources, true),
+      saveOrganization: async (value) => write(ORGANIZATION_KEY, value, true),
+      reset() { [TASKS_KEY, CLASSES_KEY, TEMPLATES_KEY, RESOURCES_KEY, ORGANIZATION_KEY].forEach((key) => storage.removeItem(key)); return load(); },
       watch(onRemoteChange) {
         if (typeof window === "undefined") return () => {};
-        const listener = (event) => { if (event.key === TASKS_KEY || event.key === CLASSES_KEY) onRemoteChange(load()); };
+        const listener = (event) => { if ([TASKS_KEY, CLASSES_KEY, TEMPLATES_KEY, RESOURCES_KEY, ORGANIZATION_KEY].includes(event.key)) onRemoteChange(load()); };
         window.addEventListener("storage", listener);
         return () => window.removeEventListener("storage", listener);
       },
@@ -140,12 +212,13 @@
     function connect() {
       socket = new WebSocketImpl(url);
       socket.onopen = () => {
+        if (closed) { socket.close(1000); return; }
         if (attempts > 0) onReconnect();
         attempts = 0;
         pingTimer = timers.setInterval(() => { try { socket.send("ping"); } catch { /* reconnecting */ } }, 30_000);
       };
       socket.onmessage = (event) => {
-        if (event.data === "pong") return;
+        if (closed || event.data === "pong") return;
         try { onMessage(JSON.parse(event.data)); } catch { /* ignore malformed messages */ }
       };
       socket.onclose = () => {
@@ -164,14 +237,19 @@
       mode: "cloud",
       user,
       async load() {
-        const { classes, items } = await api("GET", "/planner");
-        return { classes: classes.map(rowToClass), tasks: items.map(rowToTask) };
+        const { classes, items, templates, resources, organization } = await api("GET", "/planner");
+        return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization) };
       },
       saveTask: (task) => api("PUT", `/items/${encodeURIComponent(task.id)}`, taskToRow(task)),
       setCompleted: (id, completed) => api("PATCH", `/items/${encodeURIComponent(id)}`, { completed }),
       // Soft delete on the server, so the deletion reaches every device.
       deleteTask: (id) => api("DELETE", `/items/${encodeURIComponent(id)}`),
       saveClass: (item) => api("PUT", `/classes/${encodeURIComponent(item.id)}`, classToRow(item)),
+      saveTemplate: (item) => api("PUT", `/task-templates/${encodeURIComponent(item.id)}`, templateToRow(item)),
+      deleteTemplate: (id) => api("DELETE", `/task-templates/${encodeURIComponent(id)}`),
+      saveResource: (item) => api("PUT", `/class-resources/${encodeURIComponent(item.id)}`, resourceToRow(item)),
+      deleteResource: (id) => api("DELETE", `/class-resources/${encodeURIComponent(id)}`),
+      saveOrganization: (value) => api("PUT", "/organization-preferences", { urgency_days: value.urgencyDays }),
       watch({ onRow, onReload }) {
         return openLiveSocket({
           url: liveUrl, WebSocketImpl,
@@ -201,10 +279,20 @@
     const configured = Boolean(apiUrl);
     const api = configured ? createApi({ apiUrl, fetchImpl }) : null;
     let backend = local;
-    let state = { classes: [], tasks: [] };
+    let backendGeneration = 0;
+    let state = { classes: [], tasks: [], templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true };
     let unwatch = () => {};
     let authError = null;
     let providers = { password: true, google: false };
+    const importedAccounts = new Set();
+    function hasImportMarker(userId) {
+      if (importedAccounts.has(userId)) return true;
+      try { return Boolean(storage.getItem(`${IMPORTED_KEY}:${userId}`)); } catch { return false; }
+    }
+    function rememberImport(userId, value) {
+      importedAccounts.add(userId);
+      try { storage.setItem(`${IMPORTED_KEY}:${userId}`, value); } catch { /* Server receipt and this session still prevent duplicate imports. */ }
+    }
 
     function readDeviceExtras() {
       try { return JSON.parse(storage.getItem(DEVICE_EXTRAS_KEY)) || {}; }
@@ -224,22 +312,32 @@
     }
 
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
-    function replaceState(next) { state = next; }
+    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, ...next }; }
     function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
 
     async function activate(nextBackend) {
+      const generation = ++backendGeneration;
       unwatch();
       backend = nextBackend;
-      replaceState(hydrateDeviceExtras(await backend.load()));
-      unwatch = backend.mode === "local"
-        ? backend.watch((next) => { replaceState(next); notify("remote"); })
-        : backend.watch({ onRow: applyRowChange, onReload: reloadCloud });
+      replaceState({ classes: [], tasks: [], organizationAvailable: nextBackend.mode === "local" });
+      notify("context");
+      const next = await nextBackend.load();
+      if (generation !== backendGeneration) return;
+      replaceState(hydrateDeviceExtras(next));
+      unwatch = nextBackend.mode === "local"
+        ? nextBackend.watch((value) => { if (generation === backendGeneration) { replaceState(value); notify("remote"); } })
+        : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) applyRowChange(table, row); }, onReload: () => { if (generation === backendGeneration) reloadCloud(); } });
       notify("load");
     }
     async function reloadCloud() {
       if (backend.mode !== "cloud") return;
-      try { replaceState(hydrateDeviceExtras(await backend.load())); notify("remote"); } catch (error) {
-        if (error.status === 401) { await activate(local); notify("auth"); }
+      const activeBackend = backend, generation = backendGeneration;
+      try {
+        const next = await activeBackend.load();
+        if (generation !== backendGeneration) return;
+        replaceState(hydrateDeviceExtras(next)); notify("remote");
+      } catch (error) {
+        if (generation === backendGeneration && error.status === 401) { await activate(local); notify("auth"); }
       }
     }
     function applyRowChange(table, row) {
@@ -249,20 +347,33 @@
       } else if (table === "classes") {
         const others = state.classes.filter((item) => item.id !== row.id);
         state = { ...state, classes: [...others, rowToClass(row)] };
+      } else if (table === "task_templates" || table === "class_resources") {
+        const key = table === "task_templates" ? "templates" : "resources";
+        const convert = table === "task_templates" ? rowToTemplate : rowToResource;
+        const others = state[key].filter((item) => item.id !== row.id);
+        state = { ...state, [key]: row.deleted_at ? others : [...others, convert(row)] };
+      } else if (table === "planner_preferences") {
+        state = { ...state, organization: organizationPreferences(row) };
       }
       notify("remote");
     }
     async function mutate(apply, persist) {
+      const activeBackend = backend, generation = backendGeneration;
       const previous = state;
       state = apply(state);
       notify("local");
-      try { await persist(state); } catch (error) {
+      try { await persist(state, activeBackend); } catch (error) {
+        if (generation !== backendGeneration) throw error;
         state = previous;
-        if (backend.mode === "cloud") replaceState(await backend.load().catch(() => previous));
+        if (activeBackend.mode === "cloud") {
+          const next = await activeBackend.load().catch(() => previous);
+          if (generation !== backendGeneration) throw error;
+          replaceState(hydrateDeviceExtras(next));
+        }
         notify("error");
         throw error;
       }
-      notify("persisted");
+      if (generation === backendGeneration) notify("persisted");
     }
 
     // A failed Google sign-in comes back with ?sign_in_error=…, read once and removed from the address bar.
@@ -275,9 +386,9 @@
       historyRef?.replaceState?.(historyRef.state, "", `${url.pathname}${url.search}${url.hash}`);
       authError = error.slice(0, 200);
     }
-    async function sessionUser() {
+    async function sessionUser(generation = backendGeneration) {
       const session = await api("GET", "/session");
-      providers = { password: true, google: Boolean(session.providers?.google) };
+      if (generation === backendGeneration) providers = { password: true, google: Boolean(session.providers?.google) };
       return session.user || null;
     }
 
@@ -285,17 +396,28 @@
       if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
       return api("POST", path, body);
     }
-    async function signedIn(user) {
-      await activate(cloudFor(user));
+    async function signedIn(user, expectedGeneration) {
+      if (expectedGeneration !== backendGeneration) throw new Error("Your account changed. Please try again.");
+      const activeBackend = cloudFor(user);
+      const activation = activate(activeBackend), generation = backendGeneration;
+      await activation;
+      if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
       notify("auth");
     }
 
     // Another tab may have signed in or out, and a sleeping laptop may have missed live updates.
     async function refreshOnFocus() {
       if (!configured || documentRef?.hidden) return;
+      let generation = backendGeneration;
       try {
-        const user = await sessionUser();
-        if ((user?.id || null) !== (backend.user?.id || null)) { await activate(user ? cloudFor(user) : local); notify("auth"); }
+        const user = await sessionUser(generation);
+        if (generation !== backendGeneration) return;
+        if ((user?.id || null) !== (backend.user?.id || null)) {
+          const activation = activate(user ? cloudFor(user) : local);
+          generation = backendGeneration;
+          await activation;
+          if (generation === backendGeneration) notify("auth");
+        }
         else if (backend.mode === "cloud") await reloadCloud();
       } catch { /* offline: keep what we have */ }
     }
@@ -305,23 +427,31 @@
       get mode() { return backend.mode; },
       get configured() { return configured; },
       get user() { return backend.user || null; },
+      get supportsOrganization() { return state.organizationAvailable !== false; },
       // Which sign-in methods the Worker has set up (Google needs its client id and secret).
       get providers() { return providers; },
       // A sign-in problem from the last redirect (a cancelled Google sign-in), shown once.
       takeAuthError() { const message = authError; authError = null; return message; },
 
       async init() {
+        let generation = backendGeneration;
         if (configured) {
           try {
             consumeSignInParams();
-            const user = await sessionUser();
-            await activate(user ? cloudFor(user) : local);
+            const user = await sessionUser(generation);
+            if (generation !== backendGeneration) return;
+            const activation = activate(user ? cloudFor(user) : local);
+            generation = backendGeneration;
+            await activation;
+            if (generation !== backendGeneration) return;
             documentRef?.addEventListener?.("visibilitychange", refreshOnFocus);
             return;
           } catch (error) {
+            if (generation !== backendGeneration) return;
             console.warn("DuckPlan is using local data:", error.message);
           }
         }
+        if (generation !== backendGeneration) return;
         await activate(local);
       },
       subscribe(onChange) { listeners.add(onChange); return () => listeners.delete(onChange); },
@@ -330,17 +460,51 @@
       listItems(range) { return state.tasks.filter((task) => taskInRange(task, range)); },
       listClasses({ includeArchived = false } = {}) { return state.classes.filter((item) => includeArchived || !item.archived); },
       classById(id) { return state.classes.find((item) => item.id === id) || NO_CLASS; },
+      listTemplates() { return [...state.templates]; },
+      listResources({ classId } = {}) { return state.resources.filter((item) => !classId || item.classId === classId); },
+      organizationPreferences() { return { ...state.organization }; },
 
-      upsertItem(task) {
-        const next = { completed: false, ...task, id: task.id || newId(), schemaVersion: 2 };
+      async upsertTemplate(item) {
+        if (!this.supportsOrganization) throw new Error("Templates aren't available on this server yet. Your local templates are safe.");
+        const next = normalizeTemplate(item);
+        if (next.classId && !state.classes.some((info) => info.id === next.classId)) throw new Error("Choose a class from your planner.");
+        await mutate((current) => ({ ...current, templates: [...current.templates.filter((value) => value.id !== next.id), next] }), (current, target) => target.saveTemplate(next, current));
+        return next;
+      },
+      async deleteTemplate(id) {
+        if (!this.supportsOrganization) throw new Error("Templates aren't available on this server yet.");
+        return mutate((current) => ({ ...current, templates: current.templates.filter((item) => item.id !== id) }), (current, target) => target.deleteTemplate(id, current));
+      },
+      async upsertResource(item) {
+        if (!this.supportsOrganization) throw new Error("Class resources aren't available on this server yet. Your local resources are safe.");
+        const next = normalizeResource(item);
+        if (!state.classes.some((info) => info.id === next.classId)) throw new Error("Choose a class from your planner.");
+        await mutate((current) => ({ ...current, resources: [...current.resources.filter((value) => value.id !== next.id), next] }), (current, target) => target.saveResource(next, current));
+        return next;
+      },
+      async deleteResource(id) {
+        if (!this.supportsOrganization) throw new Error("Class resources aren't available on this server yet.");
+        return mutate((current) => ({ ...current, resources: current.resources.filter((item) => item.id !== id) }), (current, target) => target.deleteResource(id, current));
+      },
+      async saveOrganizationPreferences(value) {
+        if (!this.supportsOrganization) throw new Error("Matrix settings aren't available on this server yet.");
+        const next = organizationPreferences(value);
+        await mutate((current) => ({ ...current, organization: next }), (current, target) => target.saveOrganization(next));
+        return next;
+      },
+
+      async upsertItem(task) {
+        const next = { completed: false, importance: null, urgency: "auto", ...task, id: task.id || newId(), schemaVersion: 2 };
+        if (![null, "important", "not_important"].includes(next.importance) || !["auto", "urgent", "not_urgent"].includes(next.urgency)) throw new Error("Choose valid importance and urgency settings.");
+        if (!this.supportsOrganization && (next.importance || next.urgency !== "auto")) throw new Error("Task organization isn't available on this server yet.");
         writeDeviceExtras(next);
-        return mutate((current) => ({ ...current, tasks: [...current.tasks.filter((item) => item.id !== next.id), next] }), (current) => backend.saveTask(next, current)).then(() => next);
+        return mutate((current) => ({ ...current, tasks: [...current.tasks.filter((item) => item.id !== next.id), next] }), (current, target) => target.saveTask(next, current)).then(() => next);
       },
       toggleComplete(id, completed) {
-        return mutate((current) => ({ ...current, tasks: current.tasks.map((task) => (task.id === id ? { ...task, completed } : task)) }), (current) => backend.setCompleted(id, completed, current));
+        return mutate((current) => ({ ...current, tasks: current.tasks.map((task) => (task.id === id ? { ...task, completed } : task)) }), (current, target) => target.setCompleted(id, completed, current));
       },
       deleteItem(id) {
-        return mutate((current) => ({ ...current, tasks: current.tasks.filter((task) => task.id !== id) }), (current) => backend.deleteTask(id, current));
+        return mutate((current) => ({ ...current, tasks: current.tasks.filter((task) => task.id !== id) }), (current, target) => target.deleteTask(id, current));
       },
       upsertClass(item) {
         const next = { archived: false, ...item, id: item.id || newId() };
@@ -348,7 +512,7 @@
         return mutate((current) => {
           const exists = current.classes.some((existing) => existing.id === next.id);
           return { ...current, classes: exists ? current.classes.map((existing) => (existing.id === next.id ? next : existing)) : [...current.classes, next] };
-        }, (current) => backend.saveClass(next, current)).then(() => next);
+        }, (current, target) => target.saveClass(next, current)).then(() => next);
       },
       async resetLocalDemo() {
         if (backend.mode !== "local") return;
@@ -360,26 +524,34 @@
       // Email + password. Nothing is ever emailed: the email is just the login name. Sign-up and
       // recovery return a one-time recovery code that the person must save to reset a forgotten password.
       async signUp(email, password) {
+        const generation = backendGeneration;
         const { user, recoveryCode } = await accountCall("/auth/sign-up", { email, password });
-        await signedIn(user);
+        await signedIn(user, generation);
         return recoveryCode;
       },
       async signIn(email, password) {
-        await signedIn((await accountCall("/auth/sign-in", { email, password })).user);
+        const generation = backendGeneration;
+        await signedIn((await accountCall("/auth/sign-in", { email, password })).user, generation);
       },
       async recoverAccount(email, recoveryCode, newPassword) {
+        const generation = backendGeneration;
         const { user, recoveryCode: nextCode } = await accountCall("/auth/recover", { email, recoveryCode, newPassword });
-        await signedIn(user);
+        await signedIn(user, generation);
         return nextCode;
       },
       // Returns a recovery code only when the account didn't have one yet (a Google account's first password).
       async changePassword(currentPassword, newPassword) {
+        const activeBackend = backend, generation = backendGeneration;
         const { recoveryCode } = await accountCall("/auth/password", { currentPassword, newPassword });
-        if (backend.user) backend.user.hasPassword = true;
+        if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
+        if (activeBackend.user) activeBackend.user.hasPassword = true;
         return recoveryCode || null;
       },
       async newRecoveryCode(password) {
-        return (await accountCall("/auth/recovery-code", { password })).recoveryCode;
+        const activeBackend = backend, generation = backendGeneration;
+        const { recoveryCode } = await accountCall("/auth/recovery-code", { password });
+        if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
+        return recoveryCode;
       },
       async signInWithGoogle() {
         if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
@@ -394,18 +566,28 @@
 
       // First sign-in: offer to copy this browser's local tasks into the account.
       async localImportOffer() {
-        if (backend.mode !== "cloud" || storage.getItem(`${IMPORTED_KEY}:${backend.user.id}`)) return 0;
-        return (await local.load()).tasks.length;
+        if (backend.mode !== "cloud" || hasImportMarker(backend.user.id)) return 0;
+        const localState = await local.load();
+        return localState.tasks.length + localState.templates.length + localState.resources.length + Number(localState.organizationConfigured);
       },
-      dismissLocalImport() { if (backend.user) storage.setItem(`${IMPORTED_KEY}:${backend.user.id}`, "dismissed"); },
+      dismissLocalImport() { if (backend.user) rememberImport(backend.user.id, "dismissed"); },
       async importLocalTasks() {
         if (backend.mode !== "cloud") throw new Error("Sign in first.");
+        const activeBackend = backend, generation = backendGeneration;
         const localState = await local.load();
-        const plan = planLocalImport({ localTasks: localState.tasks, localClasses: localState.classes, cloudClasses: state.classes });
-        await backend.importRows(plan);
-        storage.setItem(`${IMPORTED_KEY}:${backend.user.id}`, new Date().toISOString());
-        replaceState(await backend.load());
-        notify("load");
+        if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
+        const organizationTasks = localState.tasks.some((task) => task.importance || (task.urgency && task.urgency !== "auto"));
+        if (!this.supportsOrganization && (localState.templates.length || localState.resources.length || organizationTasks || localState.organizationConfigured)) throw new Error("This server can't import your organization data yet. It will stay safely in this browser.");
+        const plan = planLocalImport({ localTasks: localState.tasks, localClasses: localState.classes, cloudClasses: state.classes, localTemplates: localState.templates, localResources: localState.resources, localOrganization: localState.organizationConfigured ? localState.organization : undefined });
+        const userId = activeBackend.user.id;
+        const idempotencyKey = await localImportFingerprint(localState);
+        if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
+        await activeBackend.importRows({ ...plan, idempotencyKey });
+        rememberImport(userId, new Date().toISOString());
+        if (generation === backendGeneration) {
+          const next = await activeBackend.load();
+          if (generation === backendGeneration) { replaceState(hydrateDeviceExtras(next)); notify("load"); }
+        }
         return plan.itemRows.length;
       },
 
@@ -419,8 +601,12 @@
       async syncAxisNow() { return this.invokeAxis({ mode: "sync" }); },
       async invokeAxis(body) {
         if (backend.mode !== "cloud") throw new Error("Sign in to connect Axis.");
+        const activeBackend = backend, generation = backendGeneration;
         const result = await api("POST", "/axis", body);
-        replaceState(await backend.load());
+        if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
+        const next = await activeBackend.load();
+        if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
+        replaceState(hydrateDeviceExtras(next));
         notify("load");
         return result;
       },
@@ -431,5 +617,5 @@
     };
   }
 
-  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, rowToClass, rowToTask, softColor, taskInRange, taskToRow };
+  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences };
 });

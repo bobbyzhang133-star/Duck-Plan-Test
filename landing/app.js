@@ -31,6 +31,8 @@ const store = window.DuckPlannerStore.createPlannerStore({
   redirectPath: location.pathname,
 });
 let tasks = [];
+let renderedPlannerOwner = "local";
+let plannerOwnerVersion = 0;
 const REMINDER_KEY = "duckplan-deadline-reminders-v1";
 const reminderSettings = loadReminderSettings();
 const reminderLedger = ReminderLedger.createLedger({ storage: localStorage });
@@ -50,8 +52,11 @@ let currentFilter = "all";
 let searchTerm = "";
 let selectedTaskId = null;
 let editingTaskId = null;
+let pendingTaskDraft = null;
+let taskLayout = "list";
 let axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
 let localImportCount = 0;
+let accountStateVersion = 0;
 let collapsed = { overdue: false, completed: false };
 let toastTimer;
 let notificationConstructorFailed = false;
@@ -96,6 +101,16 @@ const els = {
     unscheduled: document.querySelector("#unscheduled-count"), completed: document.querySelector("#completed-count"),
   },
 };
+
+const taskLibrary = window.DuckPlanLibrary?.create({
+  store, getSelectedDate: () => selectedDate, showToast, reportError,
+  setupButtons: setupButtonMaterial,
+  openTask: (options) => openModal({ ...options, id: options.id || options.task?.id || null }),
+});
+const taskMatrix = window.DuckTaskMatrix?.create({
+  store, getToday: nowKey, showToast, reportError,
+  setupButtons: setupButtonMaterial, openTask: openModal,
+});
 
 const sidebarToggles = [...document.querySelectorAll("[data-open-navigation]")];
 const sidebarScrim = document.querySelector(".sidebar-scrim");
@@ -441,7 +456,12 @@ function renderAllTasks() {
     return true;
   });
   els.allList.innerHTML = filtered.map(allTaskMarkup).join("");
-  els.taskEmpty.hidden = filtered.length > 0;
+  els.allList.hidden = taskLayout !== "list";
+  els.taskEmpty.hidden = taskLayout !== "list" || filtered.length > 0;
+  const matrixRoot = document.querySelector("#task-matrix-root");
+  matrixRoot.hidden = taskLayout !== "matrix";
+  if (taskLayout === "matrix") taskMatrix?.render(filtered.filter((task) => currentFilter === "done" || !task.completed));
+  document.querySelectorAll("[data-task-layout]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.taskLayout === taskLayout)));
   els.taskCount.textContent = tasks.filter((task) => !task.completed).length;
 }
 
@@ -450,14 +470,14 @@ function renderClasses() {
     const classTasks = tasks.filter((task) => task.classId === info.id);
     const open = classTasks.filter((task) => !task.completed).length;
     const details = [info.teacher, info.period].filter(Boolean).join(" · ") || (info.axisKey ? "Imported from Axis" : "Class details");
-    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${safeText(info.code)}</span></div><h2>${safeText(info.name)}</h2><p>${safeText(details)}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div></article>`;
+    return `<article class="class-card" style="--course-color:${info.color};--course-soft:${info.soft}"><div class="class-card-head"><span class="class-card-icon">${safeText(info.code)}</span></div><h2>${safeText(info.name)}</h2><p>${safeText(details)}</p><div class="class-stats"><div><strong>${open}</strong><span>Open tasks</span></div><div><strong>${classTasks.length}</strong><span>Total items</span></div></div><button class="class-resources-button" type="button" data-open-class="${info.id}">Assignments &amp; resources</button></article>`;
   }).join("");
 }
 
 function renderClassOptions() {
   const select = els.form.elements.classId;
   const current = select.value;
-  select.innerHTML = `${store.listClasses().map((info) => `<option value="${info.id}">${safeText(info.name)}</option>`).join("")}<option value="">No class</option>`;
+  select.innerHTML = `${store.listClasses({ includeArchived: true }).map((info) => `<option value="${info.id}">${safeText(info.name)}${info.archived ? " (archived)" : ""}</option>`).join("")}<option value="">No class</option>`;
   select.value = current;
 }
 
@@ -505,7 +525,7 @@ function renderAccount() {
     ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
     : user ? signedInAccount(user) : signedOutAccount();
   const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
-  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local tasks</h2><p>This browser has ${localImportCount} local task${localImportCount === 1 ? "" : "s"}. Copy them into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import tasks</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
+  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local planner</h2><p>Copy this browser's saved tasks, templates, class resources and organization preferences into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import local planner</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
   replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${recovery}${offer}`);
   els.resetDemo.closest(".settings-row").hidden = store.mode === "cloud";
 }
@@ -524,8 +544,15 @@ function renderAxis() {
   els.syncInfo.setAttribute("aria-label", axisStatus.connected ? "Sync Axis now" : "Set up Axis sync");
 }
 async function refreshAccountState() {
-  try { [axisStatus, localImportCount] = await Promise.all([store.axisStatus(), store.localImportOffer()]); }
-  catch (error) { console.error(error); }
+  const version = ++accountStateVersion;
+  try {
+    const next = await Promise.all([store.axisStatus(), store.localImportOffer()]);
+    if (version !== accountStateVersion) return;
+    [axisStatus, localImportCount] = next;
+  } catch (error) {
+    if (version !== accountStateVersion) return;
+    console.error(error);
+  }
   renderAccount(); renderAxis();
 }
 async function runAction(button, action) {
@@ -582,7 +609,7 @@ function renderTimeline(dates) {
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
-  const deadlineRows = dates.map((date) => `<div class="deadline-cell">${deadlineChips(date)}</div>`).join("");
+  const deadlineRows = dates.map((date) => `<div class="deadline-cell" data-deadline-date="${date}">${deadlineChips(date)}</div>`).join("");
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span>${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span>`).join("");
   const columns = dates.map((date) => {
     const current = new Date();
@@ -698,7 +725,15 @@ function setupButtonMaterial(root = document) {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
 }
-function renderAll({ autoScrollCalendar = false } = {}) { tasks = store.listItems(); renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions(); renderCalendar({ autoScroll: autoScrollCalendar }); refreshReminders(); requestAnimationFrame(() => setupButtonMaterial()); }
+function renderAll({ autoScrollCalendar = false } = {}) {
+  tasks = store.listItems();
+  renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
+  renderCalendar({ autoScroll: autoScrollCalendar });
+  taskLibrary?.render();
+  if (els.modal.open) taskLibrary?.renderTaskResources(els.form.elements.classId.value);
+  refreshReminders();
+  requestAnimationFrame(() => setupButtonMaterial());
+}
 
 function setView(name, preserveDrawer = false) {
   const requested = name === "today" ? "home" : name;
@@ -876,22 +911,35 @@ function openModal(prefill = {}) {
   modalClosing = false;
   els.modal.inert = false;
   editingTaskId = prefill.id || null;
+  const { id: ignoredDraftId, ...draft } = prefill.draft || {};
+  pendingTaskDraft = editingTaskId ? null : draft;
   els.form.reset();
   const task = editingTaskId ? tasks.find((item) => item.id === editingTaskId) : null;
-  const scheduled = task ? Model.scheduledParts(task) : null;
+  const values = task || pendingTaskDraft || {};
+  const scheduled = Model.scheduledParts(values);
   els.modalTitle.textContent = task ? "Edit task" : "Add task";
   els.modalKicker.textContent = task ? "Task details" : "Plan your work";
   els.saveTask.textContent = task ? "Save changes" : "Add to DuckPlan";
   els.deleteTask.hidden = !task;
-  els.form.elements.title.value = task?.title || "";
-  els.form.elements.classId.value = task ? task.classId || "" : store.listClasses()[0]?.id || "";
-  els.form.elements.priority.value = task?.priority || "Medium";
-  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate || selectedDate;
-  els.form.elements.dueTime.value = task?.dueTime || prefill.dueTime || "";
+  els.form.elements.title.value = values.title || "";
+  els.form.elements.classId.value = values.classId !== undefined ? values.classId || "" : store.listClasses()[0]?.id || "";
+  els.form.elements.priority.value = values.priority || "Medium";
+  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate ?? values.dueDate ?? selectedDate;
+  els.form.elements.dueTime.value = values.dueTime || prefill.dueTime || "";
+  els.form.elements.notes.value = values.notes || "";
+  els.form.elements.importance.value = values.importance || "";
+  els.form.elements.urgency.value = values.urgency || "auto";
   els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
   els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
-  els.form.elements.durationMinutes.value = String(task?.durationMinutes || prefill.durationMinutes || 45);
-  const choice = task?.reminderChoice;
+  const duration = String(values.durationMinutes || prefill.durationMinutes || 45);
+  els.form.elements.durationMinutes.querySelectorAll("[data-custom-duration]").forEach((option) => option.remove());
+  if (![...els.form.elements.durationMinutes.options].some((option) => option.value === duration)) {
+    const option = new Option(`${duration} min`, duration);
+    option.dataset.customDuration = "true";
+    els.form.elements.durationMinutes.add(option);
+  }
+  els.form.elements.durationMinutes.value = duration;
+  const choice = values.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
   const alarm = window.DuckTaskAlarms.get(task?.id);
@@ -908,6 +956,7 @@ function openModal(prefill = {}) {
   document.querySelector("#task-alarm-options").open = Boolean(alarm);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
+  taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   DuckPopupMotion.mark(modalAnchor, "fields");
   DuckPopupMotion.open(els.modal, modalAnchor, () => {
     if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal)) {
@@ -933,6 +982,7 @@ els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
   DuckPopupMotion.reset(els.modal);
   editingTaskId = null;
+  pendingTaskDraft = null;
 });
 DuckPopupMotion.schedulePrepare(els.modal);
 
@@ -955,6 +1005,12 @@ document.addEventListener("click", (event) => {
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
   const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ source: edit, id: edit.dataset.editTask });
+  const classButton = event.target.closest("[data-open-class]");
+  if (classButton) {
+    taskLibrary?.selectClass(classButton.dataset.openClass);
+    document.querySelector("#class-library")?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    document.querySelector("#library-class-select")?.focus({ preventScroll: true });
+  }
   const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
 });
 document.addEventListener("change", (event) => {
@@ -968,6 +1024,40 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
+document.querySelectorAll("[data-task-layout]").forEach((button) => button.addEventListener("click", () => {
+  taskLayout = button.dataset.taskLayout;
+  renderAllTasks(); setupButtonMaterial();
+}));
+els.form.elements.classId.addEventListener("change", () => taskLibrary?.renderTaskResources(els.form.elements.classId.value));
+
+document.addEventListener("dragover", (event) => {
+  if (![...(event.dataTransfer?.types || [])].includes(window.DuckPlanLibrary?.TEMPLATE_MIME)) return;
+  if (event.target.closest("#planner-calendar, #all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
+    event.preventDefault(); event.dataTransfer.dropEffect = "copy";
+  }
+});
+document.addEventListener("drop", (event) => {
+  if (!taskLibrary?.readTemplateDrop(event.dataTransfer)) return;
+  const slot = event.target.closest("[data-slot-date], [data-date], [data-deadline-date]");
+  const calendar = event.target.closest("#planner-calendar");
+  if (calendar) {
+    event.preventDefault();
+    const column = event.target.closest("[data-column-date]");
+    const template = taskLibrary.draftForTemplate(taskLibrary.readTemplateDrop(event.dataTransfer));
+    let date = slot?.dataset.slotDate || slot?.dataset.date || slot?.dataset.deadlineDate || column?.dataset.columnDate || selectedDate;
+    let time = slot?.dataset.slotTime || "09:00";
+    if (column && template) {
+      const rect = column.getBoundingClientRect();
+      const drop = PlannerUI.snapCalendarDrop({ date, pointerY: event.clientY, columnTop: rect.top, hourHeight: rect.height / 15, startHour: 7, endHour: 22, durationMinutes: template.durationMinutes });
+      if (drop) { date = drop.date; time = drop.time; }
+    }
+    taskLibrary.handleTemplateDrop(event, { date, time, source: slot || column || document.querySelector("#plan-selected-date") });
+  } else if (event.target.closest("#all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
+    event.preventDefault();
+    const template = store.listTemplates().find((item) => item.id === taskLibrary.readTemplateDrop(event.dataTransfer));
+    if (template) store.upsertItem(window.DuckPlanLibrary.instantiateTemplate(template)).then(() => showToast("Added a new task. Your template is ready to use again."), reportError);
+  }
+});
 document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", (event) => commitMaterialAction(button,() => { calendarView = button.dataset.calendarView; renderCalendar({ autoScroll: true }); },event)));
 sidebarToggles.forEach((toggle) => toggle.addEventListener("click", event => { event.preventDefault(); const nextOpen = !document.body.classList.contains("sidebar-open"); setTaskPanel(false, false); setSidebar(nextOpen); }));
 els.taskPanelToggle.addEventListener("click", (event) => setTaskPanel(!document.body.classList.contains("task-panel-open"), true, event.currentTarget));
@@ -1097,7 +1187,7 @@ els.form.addEventListener("submit", async (event) => {
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
   const existing = editingTaskId ? tasks.find((task) => task.id === editingTaskId) : null;
-  const next = { ...existing, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), schemaVersion: 2 };
+  const next = { ...pendingTaskDraft, ...existing, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), notes: String(form.get("notes") || ""), importance: form.get("importance") || null, urgency: form.get("urgency") || "auto", schemaVersion: 2 };
   const reminderChoice = form.get("reminderChoice");
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
@@ -1107,8 +1197,10 @@ els.form.addEventListener("submit", async (event) => {
     document.querySelector('#task-alarm-save-error').textContent=window.DuckTaskAlarms.native?'Choose a future alarm time.':'Choose a future notification time.'; return;
   }
   els.saveTask.disabled=true;
+  let taskWasSaved = false;
   try {
     const saved=await store.upsertItem(next);
+    taskWasSaved = true;
     editingTaskId=saved.id;
     if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt,{
       title:saved.title, sound:form.get('alarmSound') || 'system', snoozeMinutes:Number(form.get('alarmSnooze') ?? 5),
@@ -1116,7 +1208,11 @@ els.form.addEventListener("submit", async (event) => {
     closeModal();
     showToast(alarmAt?(window.DuckTaskAlarms.native?'Task and iPhone alarm saved.':'Task and notification saved.'):wasEditing?'Task updated.':'Task added to your plan.');
   } catch(error) {
-    document.querySelector('#task-alarm-save-error').textContent=`Task may be saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+    if (taskWasSaved) document.querySelector('#task-alarm-save-error').textContent=`Task saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+    else {
+      const message = document.querySelector("#task-form-error");
+      message.hidden = false; message.textContent = error.message || "Couldn't save this task. Please try again.";
+    }
   } finally { els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
@@ -1177,8 +1273,17 @@ els.accountSettings.addEventListener("submit", (event) => {
     else runAction(event.submitter, async () => { accountMode = null; await store.signIn(email, value("password")); showToast(`Signed in as ${email}.`); });
   }
   if (form.id === "recover-form") runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.recoverAccount(value("email").trim(), value("recoveryCode"), value("newPassword"))); showToast("Password reset. Save your new recovery code."); });
-  if (form.id === "password-form") runAction(event.submitter, async () => { const code = await store.changePassword(value("currentPassword"), value("newPassword")); setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved."); });
-  if (form.id === "recovery-code-form") runAction(event.submitter, async () => { showRecoveryCode(await store.newRecoveryCode(value("password"))); showToast("New recovery code created."); });
+  const ownerVersion = plannerOwnerVersion;
+  if (form.id === "password-form") runAction(event.submitter, async () => {
+    const code = await store.changePassword(value("currentPassword"), value("newPassword"));
+    if (ownerVersion !== plannerOwnerVersion) return;
+    setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved.");
+  });
+  if (form.id === "recovery-code-form") runAction(event.submitter, async () => {
+    const code = await store.newRecoveryCode(value("password"));
+    if (ownerVersion !== plannerOwnerVersion) return;
+    showRecoveryCode(code); showToast("New recovery code created.");
+  });
 });
 els.accountSettings.addEventListener("click", (event) => {
   const button = event.target.closest("button"); if (!button) return;
@@ -1192,7 +1297,7 @@ els.accountSettings.addEventListener("click", (event) => {
   if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
   if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await window.DuckTaskAlarms.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
-  if (button.id === "import-local") runAction(button, async () => { const count = await store.importLocalTasks(); showToast(`Imported ${count} task${count === 1 ? "" : "s"}.`); await refreshAccountState(); });
+  if (button.id === "import-local") runAction(button, async () => { await store.importLocalTasks(); showToast("Local planner data imported."); await refreshAccountState(); });
 });
 els.axisSettings.addEventListener("submit", (event) => {
   if (event.target.id !== "axis-form") return;
@@ -1246,6 +1351,21 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  const owner = store.user?.id || "local";
+  if (owner !== renderedPlannerOwner) {
+    renderedPlannerOwner = owner;
+    plannerOwnerVersion += 1;
+    accountStateVersion += 1;
+    shownRecoveryCode = null;
+    accountMode = store.user ? null : "sign-in";
+    axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
+    localImportCount = 0;
+    if (els.modal.open) els.modal.close();
+    els.form.reset();
+    editingTaskId = null; pendingTaskDraft = null;
+    renderAccount();
+    renderAxis();
+  }
   renderAll();
   if (window.DuckTaskAlarms.native && ['load','auth','remote','persisted'].includes(reason)) {
     window.DuckTaskAlarms.setContext(store.user?.id || 'local', store.listItems()).catch(reportError);

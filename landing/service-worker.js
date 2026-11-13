@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-motion-preview-v23";
+const CACHE_VERSION = "duckplan-app-motion-preview-v24";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -23,6 +23,11 @@ const APP_SHELL = [
   "./ical-parser.js",
   "./cloud-config.js",
   "./planner-store.js",
+  "./planner-library.js",
+  "./planner-library.css",
+  "./task-matrix.js",
+  "./task-matrix.css",
+  "./product-feedback.css",
   "./reminder-domain.js",
   "./reminder-ledger.js",
   "./browser-notifications.js",

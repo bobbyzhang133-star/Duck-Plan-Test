@@ -5,6 +5,7 @@ import { handlePlanner } from "./planner.js";
 import { handleAxis, syncDueConnections } from "./axis.js";
 import { PlannerLive, liveStub } from "./live.js";
 import { handleAlarms, dispatchAlarms } from "./alarms.js";
+import { handleOrganization } from "./organization.js";
 
 export { PlannerLive };
 
@@ -37,7 +38,7 @@ export async function handleRequest(request, env, ctx, options = {}) {
     }
 
     const user = await requireUser(request, env);
-    const response = (await handleAlarms(request, env, path, user)) || (await handlePlanner(request, env, ctx, path, user)) || (await handleAxis(request, env, path, user, options));
+    const response = (await handleAlarms(request, env, path, user)) || (await handleOrganization(request, env, ctx, path, user)) || (await handlePlanner(request, env, ctx, path, user)) || (await handleAxis(request, env, path, user, options));
     if (response) return response;
     throw new HttpError(404, "Not found.");
   } catch (error) {

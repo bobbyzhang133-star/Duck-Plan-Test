@@ -3,9 +3,12 @@
 // browser with the snake_case column names that planner-store.js's rowToTask/rowToClass expect.
 import { HttpError, json, nowIso, readJson } from "./http.js";
 import { broadcast } from "./live.js";
+import { loadOrganization, organizationImportStatements } from "./organization.js";
 
 const ITEM_TYPES = new Set(["assignment", "test", "task", "event"]);
 const PRIORITIES = new Set(["low", "medium", "high"]);
+const IMPORTANCE = new Set(["important", "not_important"]);
+const URGENCY = new Set(["auto", "urgent", "not_urgent"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
@@ -13,6 +16,7 @@ const DATETIME = /^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
 const COLOR = /^#[0-9a-f]{6}$/i;
 const MAX_IMPORT_CLASSES = 200;
 const MAX_IMPORT_ITEMS = 2000;
+const IMPORT_KEY = /^[0-9a-f]{64}$/i;
 
 const bit = (value) => (value ? 1 : 0);
 function text(value, { max, field, required = false }) {
@@ -45,6 +49,10 @@ export function cleanItem(row, id = row?.id) {
   if (!PRIORITIES.has(priority)) throw new HttpError(400, "Priority isn't valid.");
   const duration = Number(row.duration_minutes ?? 45);
   if (!Number.isInteger(duration) || duration < 5 || duration > 1440) throw new HttpError(400, "Duration must be between 5 minutes and 24 hours.");
+  const importance = row.importance ?? null;
+  const urgency = row.urgency === undefined ? "auto" : row.urgency;
+  if (importance !== null && !IMPORTANCE.has(importance)) throw new HttpError(400, "Task importance isn't valid.");
+  if (!URGENCY.has(urgency)) throw new HttpError(400, "Task urgency isn't valid.");
   return {
     id: assertId(id, "task id"),
     class_id: row.class_id ? assertId(row.class_id, "class id") : null,
@@ -52,6 +60,8 @@ export function cleanItem(row, id = row?.id) {
     title: text(row.title, { max: 300, field: "Title", required: true }),
     notes: text(row.notes, { max: 20_000, field: "Notes" }) || "",
     priority,
+    importance,
+    urgency,
     due_date: matching(row.due_date, DATE, "Due date"),
     due_time: matching(row.due_time, TIME, "Due time")?.slice(0, 5) ?? null,
     scheduled_start: matching(row.scheduled_start, DATETIME, "Scheduled start")?.slice(0, 16) ?? null,
@@ -78,7 +88,7 @@ export function cleanClass(row, id = row?.id) {
 export async function runDb(work) {
   try { return await work(); } catch (error) {
     const message = String(error?.message || error);
-    if (message.includes("item class belongs to another user") || message.includes("FOREIGN KEY")) throw new HttpError(400, "That class isn't in your planner.");
+    if (message.includes("class belongs to another user") || message.includes("FOREIGN KEY")) throw new HttpError(400, "That class isn't in your planner.");
     if (message.includes("CHECK constraint") || message.includes("NOT NULL constraint")) throw new HttpError(400, "Some of those details aren't valid.");
     if (message.includes("UNIQUE constraint")) throw new HttpError(409, "That already exists.");
     throw error;
@@ -96,12 +106,14 @@ export function jsonInsert(db, table, userId, rows, conflict = "") {
 }
 
 const ITEM_UPSERT = `
-INSERT INTO items (id, user_id, class_id, type, title, notes, priority, due_date, due_time, scheduled_start, duration_minutes, completed, completed_at, updated_at)
-VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, CASE WHEN ?12 = 1 THEN ?13 END, ?13)
+INSERT INTO items (id, user_id, class_id, type, title, notes, priority, due_date, due_time, scheduled_start, duration_minutes, completed, completed_at, updated_at, importance, urgency)
+VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, CASE WHEN ?12 = 1 THEN ?13 END, ?13, ?14, ?15)
 ON CONFLICT (id) DO UPDATE SET
   class_id = excluded.class_id, type = excluded.type, title = excluded.title, notes = excluded.notes,
   priority = excluded.priority, due_date = excluded.due_date, due_time = excluded.due_time,
   scheduled_start = excluded.scheduled_start, duration_minutes = excluded.duration_minutes, completed = excluded.completed,
+  importance = CASE WHEN ?16 THEN excluded.importance ELSE items.importance END,
+  urgency = CASE WHEN ?17 THEN excluded.urgency ELSE items.urgency END,
   completed_at = CASE WHEN excluded.completed = 0 THEN NULL WHEN items.completed = 1 THEN items.completed_at ELSE excluded.completed_at END,
   updated_at = excluded.updated_at
 WHERE items.user_id = excluded.user_id AND items.deleted_at IS NULL
@@ -117,11 +129,19 @@ WHERE classes.user_id = excluded.user_id
 RETURNING *`;
 
 export async function loadPlanner(env, userId) {
-  const [classes, items] = await env.DB.batch([
-    env.DB.prepare("SELECT * FROM classes WHERE user_id = ? ORDER BY created_at, id").bind(userId),
-    env.DB.prepare("SELECT * FROM items WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id").bind(userId),
+  const [[classes, items], organization] = await Promise.all([
+    env.DB.batch([
+      env.DB.prepare("SELECT * FROM classes WHERE user_id = ? ORDER BY created_at, id").bind(userId),
+      env.DB.prepare("SELECT * FROM items WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id").bind(userId),
+    ]),
+    loadOrganization(env, userId),
   ]);
-  return { classes: classes.results, items: items.results };
+  return { classes: classes.results, items: items.results, ...organization };
+}
+
+function loadImportReceipt(db, userId, key) {
+  return db.prepare("SELECT imported, classes_added AS classesAdded, templates_added AS templatesAdded, resources_added AS resourcesAdded FROM planner_imports WHERE user_id = ? AND import_key = ?")
+    .bind(userId, key).first();
 }
 
 export async function handlePlanner(request, env, ctx, path, user) {
@@ -135,8 +155,9 @@ export async function handlePlanner(request, env, ctx, path, user) {
   if (itemMatch) {
     const id = assertId(decodeURIComponent(itemMatch[1]), "task id");
     if (method === "PUT") {
-      const row = cleanItem(await readJson(request), id);
-      const saved = await runDb(() => db.prepare(ITEM_UPSERT).bind(row.id, user.id, row.class_id, row.type, row.title, row.notes, row.priority, row.due_date, row.due_time, row.scheduled_start, row.duration_minutes, row.completed, nowIso()).first());
+      const body = await readJson(request);
+      const row = cleanItem(body, id);
+      const saved = await runDb(() => db.prepare(ITEM_UPSERT).bind(row.id, user.id, row.class_id, row.type, row.title, row.notes, row.priority, row.due_date, row.due_time, row.scheduled_start, row.duration_minutes, row.completed, nowIso(), row.importance, row.urgency, bit(Object.hasOwn(body, "importance")), bit(Object.hasOwn(body, "urgency"))).first());
       if (!saved) throw new HttpError(404, "That task isn't in your planner.");
       notify({ table: "items", row: saved });
       return json({ item: saved });
@@ -172,6 +193,14 @@ export async function handlePlanner(request, env, ctx, path, user) {
   // First sign-in: copy this browser's local tasks into the account in one transaction.
   if (path === "/api/import" && method === "POST") {
     const body = await readJson(request, 5_000_000);
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new HttpError(400, "Send planner data to import.");
+    let importKey = null;
+    if (body.idempotencyKey !== undefined) {
+      if (typeof body.idempotencyKey !== "string" || !IMPORT_KEY.test(body.idempotencyKey)) throw new HttpError(400, "Import key must be a 64-character hexadecimal value.");
+      importKey = body.idempotencyKey.toLowerCase();
+      const previous = await loadImportReceipt(db, user.id, importKey);
+      if (previous) return json(previous);
+    }
     const classRows = Array.isArray(body.classRows) ? body.classRows : [];
     const itemRows = Array.isArray(body.itemRows) ? body.itemRows : [];
     if (classRows.length > MAX_IMPORT_CLASSES || itemRows.length > MAX_IMPORT_ITEMS) throw new HttpError(413, "That's too many tasks to import at once.");
@@ -180,9 +209,21 @@ export async function handlePlanner(request, env, ctx, path, user) {
     const statements = [];
     if (classes.length) statements.push(jsonInsert(db, "classes", user.id, classes));
     if (items.length) statements.push(jsonInsert(db, "items", user.id, items.map((row) => ({ ...row, completed_at: row.completed ? nowIso() : null }))));
-    if (statements.length) await runDb(() => db.batch(statements));
+    statements.push(...organizationImportStatements(db, user.id, body));
+    const receipt = { imported: items.length, classesAdded: classes.length, templatesAdded: body.templateRows?.length || 0, resourcesAdded: body.resourceRows?.length || 0 };
+    if (importKey) statements.unshift(db.prepare("INSERT INTO planner_imports (user_id, import_key, imported, classes_added, templates_added, resources_added) VALUES (?, ?, ?, ?, ?, ?)")
+      .bind(user.id, importKey, receipt.imported, receipt.classesAdded, receipt.templatesAdded, receipt.resourcesAdded));
+    try {
+      if (statements.length) await runDb(() => db.batch(statements));
+    } catch (error) {
+      // Concurrent requests can both miss the first read. A duplicate receipt aborts the
+      // second transaction before dependent rows are inserted; return the committed result.
+      const previous = importKey && await loadImportReceipt(db, user.id, importKey);
+      if (previous) return json(previous);
+      throw error;
+    }
     notify({ reload: true });
-    return json({ imported: items.length, classesAdded: classes.length });
+    return json(receipt);
   }
 
   return null;

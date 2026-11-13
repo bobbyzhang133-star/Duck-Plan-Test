@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="./styles.css?v=phone-planner-20261112" />
     <link rel="stylesheet" href="./planner-ui.css?v=phone-planner-20261112" />
     <link rel="stylesheet" href="./duck-theme.css?v=sigma-front-view-20261111" />
+    <link rel="stylesheet" href="./planner-library.css?v=product-feedback-20261112" />
+    <link rel="stylesheet" href="./task-matrix.css?v=product-feedback-20261112" />
+    <link rel="stylesheet" href="./product-feedback.css?v=product-feedback-20261112" />
     <link rel="stylesheet" href="./planner-clarity.css" />
     <link rel="stylesheet" href="./planner-motion.css?v=drawer-polish-20261112" />
     <link rel="stylesheet" href="./phone-navigation.css?v=phone-navigation-20261112" />
@@ -94,6 +97,7 @@
               <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Due, not scheduled</span><strong id="unscheduled-count">0</strong></div><div class="daily-task-list" id="unscheduled-task-list"></div></div>
               <div class="task-section completed-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list"></div></div>
               <div class="daily-empty" id="daily-empty" hidden><span class="empty-duck" data-duck-state="swimming" aria-hidden="true"></span><h3>Clear day ahead.</h3><p>Click a calendar slot or plan a task when you are ready.</p></div>
+              <div id="calendar-assignment-templates"></div>
             </section>
             <section class="panel unified-calendar-panel calendar-main-panel" aria-labelledby="calendar-heading">
               <div class="calendar-toolbar">
@@ -117,10 +121,13 @@
         </section>
 
         <section class="view" id="view-tasks" data-page-title="Tasks" data-eyebrow="A clear view of everything"><section class="panel tasks-panel">
+          <div id="assignment-templates"></div>
+          <div class="task-layout-switch" role="group" aria-label="Task display"><button type="button" data-task-layout="list" aria-pressed="true">List</button><button type="button" data-task-layout="matrix" aria-pressed="false">Priority matrix</button></div>
           <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>All tasks</h2></div><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All</button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today</button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done</button></div></div>
           <div class="task-list expanded" id="all-task-list"></div><div class="empty-state" id="task-empty" hidden><span class="empty-duck" data-duck-state="encouraging" aria-hidden="true"></span><h3>A little room to plan.</h3><p>Try another filter or add a new task.</p></div>
+          <div id="task-matrix-root" hidden></div>
         </section></section>
-        <section class="view" id="view-classes" data-page-title="Classes" data-eyebrow="Keep every class sorted"><div class="class-grid" id="class-grid"></div></section>
+        <section class="view" id="view-classes" data-page-title="Classes" data-eyebrow="Keep every class sorted"><div class="class-grid" id="class-grid"></div><div id="class-library"></div></section>
         <section class="view prototype-view" id="view-goals" data-page-title="Goals &amp; habits" data-eyebrow="Interactive design preview">
           <header class="page-intro"><p class="section-kicker">Build a rhythm</p><h2>Little actions. Meaningful progress.</h2><p>Keep the bigger picture in sight, one week at a time.</p></header>
           <p class="prototype-banner"><strong>Frontend preview</strong> The examples below are sample data. Try the controls to explore the design; changes reset when you reload. No tracking or storage is connected.</p>
@@ -196,13 +203,13 @@
       <p id="task-form-error" class="form-error" role="alert" hidden></p>
       <label>Task name <span class="required-label">Required</span><input name="title" required maxlength="80" placeholder="e.g. Finish the biology worksheet" /></label>
       <label class="quick-due-date">Due date<input name="dueDate" type="date" /><span class="field-help">Today by default. Change the date or leave it blank for no deadline.</span></label>
-      <details class="plain-disclosure task-extra-options" id="task-detail-options"><summary>Class, priority &amp; due time</summary><div class="form-grid"><label>Class<select name="classId"></select></label><label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label><label>Due time<input name="dueTime" type="time" /></label><label>Deadline reminder<select name="reminderChoice">
+      <details class="plain-disclosure task-extra-options" id="task-detail-options"><summary>Class, priority &amp; details</summary><div class="form-grid"><label>Class<select name="classId"></select></label><label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label><label>Due time<input name="dueTime" type="time" /></label><label>Deadline reminder<select name="reminderChoice">
             <option value="default">Use Settings default</option>
             <option value="off">No reminder</option>
             <option value="15">15 minutes before</option>
             <option value="60">1 hour before</option>
             <option value="1440">1 day before</option>
-          </select></label></div></details>
+          </select></label><label>Importance<select name="importance"><option value="">Not classified</option><option value="important">Important</option><option value="not_important">Less important</option></select></label><label>Urgency<select name="urgency"><option value="auto">Suggest from deadline</option><option value="urgent">Urgent</option><option value="not_urgent">Not urgent</option></select></label></div><label>Notes<textarea name="notes" rows="3" maxlength="20000" placeholder="Optional task details"></textarea></label><div id="task-class-resources"></div></details>
       <details class="schedule-disclosure" id="task-schedule-options"><summary>Schedule time to work <span>Optional</span></summary><fieldset class="form-section"><legend>Scheduled work</legend><p>When you plan to work on it. This is independent from the deadline.</p><div class="form-grid schedule-grid"><label>Work date<input name="scheduledDate" type="date" /></label><label>Start time<input name="scheduledTime" type="time" /></label><label>Duration<select name="durationMinutes"><option value="30">30 min</option><option value="45" selected>45 min</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option></select></label></div></fieldset></details>
       <details class="plain-disclosure" id="actual-time-options"><summary>Log time spent</summary><fieldset class="form-section">
         <legend>Actual time spent</legend>
@@ -220,7 +227,9 @@
     <script src="./planner-ui.js?v=ui-integration-20261110"></script>
     <script src="./ical-parser.js"></script>
     <script src="./cloud-config.js"></script>
-    <script src="./planner-store.js?v=ui-integration-20261110"></script>
+    <script src="./planner-store.js?v=product-feedback-20261112"></script>
+    <script src="./planner-library.js?v=product-feedback-20261112"></script>
+    <script src="./task-matrix.js?v=product-feedback-20261112"></script>
     <script src="./reminder-domain.js?v=2"></script>
     <script src="./reminder-ledger.js?v=2"></script>
     <script src="./browser-notifications.js?v=app-1"></script>
@@ -232,7 +241,7 @@
     <script src="./app-install.js?v=app-1"></script>
     <script src="./task-alarms.js?v=native-alarms-1"></script>
     <script src="./native-task-alarms.js?v=1"></script>
-    <script src="./app.js?v=restored-sigma-face-20261112"></script>
+    <script src="./app.js?v=product-feedback-20261112"></script>
     <script src="./duck-mascot.js?v=restored-sigma-face-20261112"></script>
     <script src="./planner-presentation.js?v=ui-integration-20261110"></script>
     <script src="./duck-interactions.js"></script>
