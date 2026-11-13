@@ -1,0 +1,813 @@
+DuckPlan Chat Check — Fading Directional Page Transitions
+Motion redesign recommended
+
+Exact TEST commit ad6f21a · Review only
+
+I successfully accessed ad6f21aedd8c0d12ee521ca83f3a9de23ade2ec2 and reviewed the requested source, tests, page-stack documentation, latest plans.md entry and new fading-pull review brief.
+
+My recommendation is to retain the existing whole-workspace snapshot controller, but replace the full-height slide with a short directional movement and coordinated fade.
+
+The current implementation correctly followed your previous request. The problem is that the visual result now feels too much like two physical pages passing each other. That is a design acceptance mismatch, not evidence that the underlying transition controller is broken.
+
+1. Source-confirmed findings
+
+Priority
+
+	
+
+Finding
+
+	
+
+Exact cause
+
+
+
+
+High — visual
+
+	
+
+Both pages travel the entire workspace height
+
+	
+
+page-stack.css:21–24 uses translateY(±var(--page-height))
+
+
+
+
+High — visual
+
+	
+
+There is no fading or resolving effect
+
+	
+
+page-stack.css:12–15 forces opacity to 1 for both snapshots
+
+
+
+
+High — visual
+
+	
+
+Motion resembles a literal page conveyor
+
+	
+
+page-stack.css:17–24 uses opposing full-height transforms with a shared boundary
+
+
+
+
+Medium — design
+
+	
+
+Route transitions inherit sidebar timing
+
+	
+
+page-stack.css:15 uses the global --motion-layout, currently 480ms
+
+
+
+
+Medium — visual risk
+
+	
+
+Fading an entire workspace snapshot may expose an empty or changing background
+
+	
+
+page-stack.css:8–11 captures the workspace, including its background
+
+
+
+
+Medium — scope
+
+	
+
+Phones with coarse-pointer input receive no animation
+
+	
+
+view-transitions.js:52–54 deliberately bypasses snapshots when touch.matches
+
+
+
+
+Low — operational
+
+	
+
+Some overlapping fades may make text look doubled or soft
+
+	
+
+Not a confirmed defect; depends on the replacement opacity curves
+
+The source confirms the geometry and timing. The older page-stack/README.md reports successful opaque full-height motion, including browser recordings and frame measurements. Those results validate the earlier behavior, not the proposed fading transition.
+
+I did not independently play the current recording or observe the proposed motion in a live browser.
+
+2. What should remain unchanged
+
+The current view-transitions.js is a good foundation.
+
+It already provides:
+
+Correct sidebar-order direction with direction().
+
+One native View Transitions API controller for outgoing and incoming snapshots.
+
+A single guarded route commit during snapshot capture.
+
+Sequence and account-owner protection against stale navigation.
+
+Cancellation on content interaction, popup opening, resize and interruption.
+
+Immediate navigation for reduced motion, touch, unsupported browsers and unsafe contexts.
+
+Cleanup of temporary page-transition state.
+
+In app.js:855–889, applyView() continues to own the actual route, selected navigation, URL and scroll behavior. navigateView() delegates visual transitions to the controller.
+
+Do not replace these mechanisms with manual DOM cloning or a new animation engine. The smallest safe change is primarily in the page-transition CSS, with a small amount of configuration and test work.
+
+3. Recommended motion direction
+
+The new effect should communicate navigation direction without making the user perceive the pages as stacked physical slabs.
+
+Calendar → Tasks
+
+Old content lifts and fades; new content rises slightly into place.
+
+Tasks → Calendar
+
+Old content settles down and fades; new content arrives slightly from above.
+
+Conceptual direction illustrations, not measured Apple animations or browser captures.
+
+The sidebar, navigation controls and outer workspace frame should remain entirely stationary.
+
+Apple's published motion guidance emphasizes purposeful, brief animation, a stable frame of reference and the ability to interrupt motion rather than wait for it to finish. That supports a restrained transition, but does not establish any exact iPhone unlock timing or CSS transform values. 
+developer.apple.com
++1
+
+4. Suggested starting motion settings
+
+I would test the following as initial design hypotheses, not approved settings or measured Apple values.
+
+Parameter
+
+	
+
+Recommended first prototype
+
+
+
+
+Outgoing displacement
+
+	
+
+20px
+
+
+
+
+Incoming displacement
+
+	
+
+32px
+
+
+
+
+Duration
+
+	
+
+360ms
+
+
+
+
+Direction
+
+	
+
+Determined by sidebar order
+
+
+
+
+Outgoing opacity
+
+	
+
+1 → 0, mostly gone by ~50%
+
+
+
+
+Incoming opacity
+
+	
+
+0 → 1, nearly opaque by ~70%
+
+
+
+
+Easing
+
+	
+
+cubic-bezier(.2,.8,.2,1) initially
+
+
+
+
+Scale or blur
+
+	
+
+None initially
+
+Why I prefer this combination
+
+The outgoing page should move less than the incoming page. It is leaving, so it only needs to suggest the direction of travel. The incoming page should feel like it is pulling into the foreground and settling into position.
+
+The opacity curves should overlap briefly, without leaving two readable layers of text on top of each other for most of the animation.
+
+Proposed fade choreography
+
+Outgoing opacity
+Incoming opacity
+0
+0.25
+0.5
+0.75
+1
+0%
+20%
+40%
+55%
+70%
+100%
+0%: Outgoing opacity 1, Incoming opacity 0
+20%: Outgoing opacity 0.7, Incoming opacity 0.2
+40%: Outgoing opacity 0.2, Incoming opacity 0.7
+55%: Outgoing opacity 0, Incoming opacity 0.9
+70%: Outgoing opacity 0, Incoming opacity 1
+100%: Outgoing opacity 0, Incoming opacity 1
+
+Illustrative opacity curves, not recorded frames.
+
+This deliberately avoids the previous full-height meeting edge. But there are two things to watch:
+
+Ghosting: If both page snapshots retain substantial opacity, titles and task cards may briefly double.
+
+Blank bands: If both snapshots fade too much before the destination becomes visible, the background may appear empty.
+
+Keep a stationary, matching workspace backing beneath the snapshots. The fade must not make the outer frame, sidebar or entire application background pulse in brightness.
+
+Alternative variants worth comparing
+
+Variant
+
+	
+
+Outgoing / incoming travel
+
+	
+
+Duration
+
+	
+
+Purpose
+
+
+
+
+Subtle
+
+	
+
+12px / 24px
+
+	
+
+320ms
+
+	
+
+More restrained, less distracting
+
+
+
+
+Balanced
+
+	
+
+20px / 32px
+
+	
+
+360ms
+
+	
+
+My preferred starting point
+
+
+
+
+Expressive
+
+	
+
+24px / 40px
+
+	
+
+400ms
+
+	
+
+Stronger direction, potentially too theatrical
+
+I would test the balanced version against the subtle version before introducing scaling.
+
+A very small incoming scale adjustment, such as 0.99 → 1, could be evaluated afterward, but it may cause unnecessary text softening and edge movement. I would not add blur or refraction.
+
+5. Minimal implementation plan
+
+The three files that matter most are:
+
+landing/page-stack.css
+
+Replace the four full-height keyframes with short, directionally correct transform-and-opacity sequences. Give route motion its own tokens, such as --motion-route-duration, --motion-route-out-distance, --motion-route-in-distance and --motion-route-ease.
+
+Keep the existing fixed snapshot dimensions, clipped group and stationary outer workspace. Preserve dark-theme backing.
+
+landing/view-transitions.js
+
+Keep the existing controller, guards, snapshot lifecycle and capture-time route update. Since CSS no longer needs --page-height to calculate movement, remove that dependency only after confirming it is unused elsewhere.
+
+Preserve immediate touch/coarse navigation for this iteration. Note that any-pointer: coarse can also match hybrid devices, so the scope should be documented accurately.
+
+landing/app.js
+
+Avoid changing application state, task logic or layouts. Retain applyView() and navigateView() unless a narrow integration adjustment is necessary.
+
+The existing setView() bypass for search, notifications and direct navigation should remain.
+
+Separate timing tokens
+
+This is important. Changing --motion-layout from 480ms to 360ms would also affect the sidebar and other layout interactions.
+
+Instead:
+
+Sidebar fold/expand remains 480ms.
+
+Page fade/pull receives its own approximately 360ms prototype duration.
+
+Popup and button interactions keep their existing timing.
+
+6. Acceptance checks
+
+Category
+
+	
+
+Required result
+
+
+
+
+Forward: Calendar → Tasks
+
+	
+
+Old content lifts and fades; new content rises slightly and resolves
+
+
+
+
+Reverse: Tasks → Calendar
+
+	
+
+Old content moves down and fades; new content descends slightly into place
+
+
+
+
+Distant jumps
+
+	
+
+Same bounded travel, regardless of how many sidebar items are skipped
+
+
+
+
+Stationary UI
+
+	
+
+Sidebar, navigation, bottom bar and outer workspace frame do not move
+
+
+
+
+Background
+
+	
+
+No bright flashes, empty bands or visible whole-frame pulsing
+
+
+
+
+Text
+
+	
+
+No prolonged double text; final text is fully sharp
+
+
+
+
+Scroll
+
+	
+
+Existing Calendar scroll state and destination scroll rules remain correct
+
+
+
+
+Rapid navigation
+
+	
+
+Latest route wins; no stale snapshots or reversed animation
+
+
+
+
+Early input
+
+	
+
+Mouse entry settles before click/popup anchoring; keyboard actions remain responsive
+
+
+
+
+Touch
+
+	
+
+Still navigates instantly in this iteration; no claim of phone animation
+
+
+
+
+Reduced motion
+
+	
+
+Immediate, fully functional navigation
+
+
+
+
+Fallback
+
+	
+
+Unsupported, failed or interrupted snapshot capture still commits the correct route
+
+
+
+
+Privacy
+
+	
+
+Account switching cancels captured private content; no stale visual content persists
+
+For visual evaluation, capture normal-speed forward and reverse recordings, rather than relying only on held frames. Compare both motion variants at 1280px desktop and 835px iPad, plus a 390px fine-pointer test. Verify the 390px/320px coarse-touch fallback separately.
+
+Also measure frame intervals, completed-frame sharpness and cleanup. Do not claim the new motion feels right until it has been observed.
+
+There is no new source-confirmed operational defect requiring a controller rewrite. The main open questions are perceptual: whether the fade looks natural, whether overlap causes ghosting, and whether the shorter travel provides enough directional feedback.
+
+7. Ready-to-use Codex implementation prompt
+Writing
+DuckPlan — Replace Literal Page Stack With Fading Directional Pull
+Repository
+
+TEST: https://github.com/bobbyzhang133-star/Duck-Plan-Test
+
+Branch: codex/fade-pull-chat-check-20261113
+
+Reviewed commit: ad6f21aedd8c0d12ee521ca83f3a9de23ade2ec2
+
+Read current plans.md, project rules, landing/page-stack.css, landing/view-transitions.js, relevant app.js integration, tests/view-transitions.test.cjs, docs/page-stack/README.md, and docs/reviews/fade-pull-transitions-2026-11-13.md.
+
+Implement locally in TEST only. Do not deploy, migrate, change shared main or synchronize the native application.
+
+User's revised intent
+
+The current full-height, opaque page-stack transition feels too literal.
+
+Replace it with a softer directional fade-and-pull transition, qualitatively referencing the lightness of Apple's iPhone unlock motion.
+
+The user does not want two physical pages moving past each other.
+
+Lower sidebar destinations:
+
+Outgoing workspace content moves slightly upward and fades out.
+
+Incoming workspace content starts slightly below, rises into position and fades in.
+
+Upper sidebar destinations:
+
+Outgoing content moves slightly downward and fades out.
+
+Incoming content starts slightly above, descends into position and fades in.
+
+Sidebar ordering still defines direction.
+
+The sidebar, navigation controls and outer workspace frame remain stationary.
+
+1. Preserve the existing controller
+
+Keep the current native same-document View Transitions API architecture.
+
+Preserve:
+
+One captured whole-workspace representation
+
+Matching outgoing and incoming snapshot bounds
+
+Sidebar-order direction logic
+
+Single capture-time route commit
+
+Sequence and owner guards
+
+Rapid interruption and reversal behavior
+
+Existing focus and popup settlement
+
+Existing scroll rules
+
+Reduced-motion and unsupported-browser fallback
+
+Immediate coarse/touch navigation
+
+Complete temporary-state cleanup
+
+Do not return to the older incoming-only 48px animation.
+
+Do not clone live forms, recreate app state or introduce a separate animation engine.
+
+2. Introduce dedicated route motion tokens
+
+In landing/page-stack.css, separate page motion from the global layout duration.
+
+Create scoped tokens for:
+
+Route duration
+
+Outgoing travel distance
+
+Incoming travel distance
+
+Route easing
+
+Outgoing fade progression
+
+Incoming fade progression
+
+Initial candidate:
+
+Outgoing: approximately 20px
+
+Incoming: approximately 32px
+
+Duration: approximately 360ms
+
+Easing: cubic-bezier(.2,.8,.2,1)
+
+These are hypotheses, not approved values.
+
+Keep the existing 480ms sidebar layout motion unchanged.
+
+3. Replace full-height movement
+
+Remove the full-viewport translation from the page snapshot animations.
+
+Use bounded, directional transforms and opacity.
+
+Do not animate the outer workspace frame.
+
+Do not change page sizes or move the sidebar.
+
+The outgoing and incoming snapshots should resolve smoothly without a traveling full-height seam.
+
+Start without scale, blur or refraction.
+
+Only test an extremely subtle optional scale variant if the transform/opacity version fails to produce sufficient depth.
+
+4. Coordinate the two opacity curves
+
+Avoid:
+
+Prolonged overlapping text
+
+Both snapshots becoming nearly invisible at once
+
+Visible empty background bands
+
+Background brightness pulses
+
+A hard final disappearance
+
+Text remaining blurry at completion
+
+Keep the matching workspace background stationary and visually stable.
+
+Aim for the outgoing content to disappear relatively early and the incoming content to become nearly opaque before the motion finishes.
+
+Inspect actual compositing in light and dark themes.
+
+5. Preserve application integration
+
+Do not change task/calendar data or the backend.
+
+Retain the current applyView() and navigateView() responsibilities.
+
+Direct navigation for startup, search, notification routing and deep links stays immediate.
+
+Preserve all seven sidebar sections, Calendar layout, task column, templates, phone task sheet, dialogs, accessibility and button states.
+
+6. Touch and reduced-motion scope
+
+The current coarse/touch route intentionally navigates immediately because snapshots do not behave like live interactive targets.
+
+Do not silently enable the new animation on phones.
+
+Document that the animation initially applies to safe fine-pointer navigation.
+
+If future touch animation is proposed, require separate hit-target, early-tap, cancellation and physical-device testing.
+
+Reduced-motion preference must skip directional movement and fading.
+
+7. Visual comparison
+
+Create two local variants:
+
+A. Subtle:
+
+Outgoing 12px
+
+Incoming 24px
+
+Duration 320ms
+
+B. Balanced:
+
+Outgoing 20px
+
+Incoming 32px
+
+Duration 360ms
+
+Use the same fade choreography as a starting point, adjusting it if ghosting or blank bands appear.
+
+Compare against the previous full-height implementation.
+
+Record:
+
+Calendar → Tasks
+
+Tasks → Calendar
+
+Calendar → Settings
+
+Settings → Dashboard
+
+Rapid alternating navigation
+
+A long/scrolled Calendar
+
+Light/dark themes
+
+Inspect normal-speed recordings and adjacent frames, not only held screenshots.
+
+8. Automated and browser tests
+
+Update assertions that require full-height opaque travel.
+
+Preserve the existing controller lifecycle tests.
+
+Add checks that:
+
+Forward and reverse transforms have correct signs.
+
+Travel distances are bounded, not workspace-height based.
+
+Both snapshots finish with the correct opacity.
+
+Snapshot dimensions remain registered.
+
+Background/frame remains stationary.
+
+Global sidebar motion tokens are unchanged.
+
+Rapid clicks cannot commit stale routes.
+
+Owner changes invalidate pending snapshots.
+
+Content focus and popup anchors settle safely.
+
+Reduced motion is immediate.
+
+Touch/coarse is still immediate.
+
+Unsupported/failing APIs do not block navigation.
+
+No private previous-account content persists after cancellation.
+
+Cleanup removes all temporary attributes and animations.
+
+Test desktop 1280px, iPad 835px, phone 390px and small phone 320px.
+
+Do not treat passing tests as visual approval.
+
+9. Deliverables
+
+Provide:
+
+Exact files changed
+
+Before/after animation curves and settings
+
+Subtle versus balanced normal-speed recordings
+
+Forward and reverse visual comparison
+
+Browser test results
+
+Frame-time and text-sharpness observations
+
+Touch/reduced-motion/fallback verification
+
+Remaining limitations
+
+Updated plans.md and review documentation
+
+Local preview instructions
+
+Do not deploy or modify shared main.
+
+Final acceptance
+
+DuckPlan's navigation should feel light, responsive and spatially understandable.
+
+The outgoing content gently moves and fades away while the incoming content pulls into place from the correct direction, without making the interface feel like physical pages sliding across the screen.
+
+Maintain a stationary frame, sharp content, correct interactions and complete cleanup.
+
+Final recommendation
+
+Start with the balanced 20px / 32px, 360ms variant, compare it with a subtler 12px / 24px, 320ms version, and choose based on actual normal-speed playback.
+
+The current transition controller is worth retaining. The main change should be how its snapshots look while moving, not how navigation works.
+
+Review status: Exact-source access confirmed. The new fading motion has not been implemented or visually observed. The previous full-height recordings do not constitute approval of it. No repository or deployment changes were made.
+
+ChatGPT can make mistakes. Check important info.
+Latest response
+
+
+
+
+Thinking effort
+High

@@ -2,6 +2,8 @@
 
 Implemented locally November 13, 2026, after the user approved the [Chat Check plan](../reviews/page-stack-transitions-2026-11-13.md). This replaces the earlier 48px incoming fade.
 
+Later November13: the user requested a softer fading directional pull. The [new completed Chat Check](../reviews/fade-pull-transitions-2026-11-13.md) supersedes the full-height/no-fade visual acceptance below for the next revision. This document remains evidence for the current physical slide; the replacement has not been implemented.
+
 Selecting a lower sidebar section moves the complete old workspace up and the new workspace in from below. Selecting an upper section reverses both signs. Native painted snapshots include the page header, task panel and content; both share one clipped viewport, 480ms layout timing and the same easing, with opacity fixed at one. Navigation stays outside the snapshots.
 
 All desktop sections now share Calendar's existing 76px rail / 268px expanded navigation geometry. The outer workspace occupies one stable viewport, while non-Calendar content keeps its existing 1600px reading-width limit and page-specific scrolling/padding. Phone Calendar, bottom navigation and task-sheet layouts remain intact.

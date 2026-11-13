@@ -1,6 +1,6 @@
-# Fading directional pull — Chat Check request
+# Fading directional pull — Chat Check
 
-November13,2026. Review requested; application unchanged. The user now finds the whole-page slide too physically literal and asks for a fading slide/pull into place, referring to the feel of Apple's unlock transition. This supersedes the earlier full-viewport/no-fade acceptance criteria. Return the review before implementing a replacement, following the established Chat Check workflow.
+November13,2026. Review completed and returned before implementation; application unchanged. The user now finds the whole-page slide too physically literal and asks for a fading slide/pull into place, referring to the feel of Apple's unlock transition. This supersedes the earlier full-viewport/no-fade acceptance criteria.
 
 ## Source submitted
 
@@ -30,4 +30,22 @@ No exact iOS27 unlock transform/duration/easing specification or direct measured
 
 ## Result
 
-Pending the external review in the established Duck Plan **Repository Overview** conversation. No implementation, public deployment, migration or native app synchronization is included.
+Sent to and completed in the established [Duck Plan — Repository Overview](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c) conversation. Exact reviewed TEST commit: [`ad6f21aedd8c0d12ee521ca83f3a9de23ade2ec2`](https://github.com/bobbyzhang133-star/Duck-Plan-Test/tree/ad6f21aedd8c0d12ee521ca83f3a9de23ade2ec2), verified against the remote branch before submission. The reviewer reports exact-source access, including the current controller/CSS/tests and revised brief. It did not independently play the previous recording or observe a replacement animation.
+
+The review agrees that full-height travel, fixed opacity1 and shared480ms sidebar timing explain the perceived physical page slide. It treats this as a revised design acceptance mismatch; no new operational defect requiring a controller rewrite was confirmed. Keep the existing capture/lifecycle architecture and change its visual choreography primarily in `page-stack.css`.
+
+Recommended first comparison:
+
+- Balanced: outgoing20px, incoming32px,360ms; lower destination exits up/enters from below, upper destination reverses both signs.
+- Subtle: outgoing12px, incoming24px,320ms, with the same directional meaning.
+- Use dedicated route motion tokens and retain the sidebar's480ms layout token and existing popup/button timings.
+- Fade the outgoing content mostly away by about the first half and bring the incoming content nearly opaque before motion ends. Example opacity samples were illustrative design curves, not observed frames or approved constants.
+- Start with translation and opacity. Evaluate optional incoming.99→1 scale only afterward if needed; text softening and moving edges may make it worse. No initial blur/refraction.
+
+The principal visual risks are overlapping readable text, background brightness pulses and exposed bands. The fixed, matching backing and intended stationary frame must be verified in actual snapshot paint; a fixed underlying live DOM alone does not establish that captured frame edges remain stationary. Keep complete snapshot registration while preserving layouts. The current `any-pointer: coarse` fallback also includes hybrid devices and remains instant in this recommended first iteration; no phone animation is implied.
+
+Retain single capture-time route commit, sequence/owner guards, rapid/reversed navigation, keyboard/focus and popup settlement, scroll state, reduced motion, unsupported/failure fallback and cleanup. Replace full-height shared-edge visual assertions with bounded travel, fade legibility and final sharpness. Compare normal-speed forward/reverse playback in light/dark themes, including desktop1280, tablet-sized835,390fine-pointer plus390/320coarse input, expanded sidebar, long/scrolled content, early controls, account changes and failed snapshots. Touch/browser emulation must be labeled accurately.
+
+The reviewer supplied a concrete implementation prompt; [full response](fade-pull-chat-response-2026-11-13.txt) is retained as evidence. Local code inspection independently confirms the key current-source findings. Motion tuning still requires local playback and user review; neither historical full-height evidence nor passing lifecycle tests approves the proposed fade.
+
+Only review documentation and the project work record changed. No new application tests were necessary for this documentation-only review. No implementation, public deployment, migration or native app synchronization is included.
