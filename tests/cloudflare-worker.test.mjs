@@ -427,7 +427,7 @@ test("browser store: live messages from another device update the cache, and fai
   store.subscribe(({ reason }) => reasons.push(reason));
   await assert.rejects(store.upsertItem({ title: "" }), /Title is required/);
   assert.equal(store.listItems().length, 0);
-  assert.deepEqual(reasons, ["local", "error"]);
+  assert.deepEqual(reasons, ["local", "error", "remote"], "failed writes roll back, then revalidate through the shared cloud snapshot flow");
 
   await store.signOut();
   assert.equal(store.mode, "local");
