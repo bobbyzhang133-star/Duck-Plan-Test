@@ -4,6 +4,7 @@
 import { HttpError, json, nowIso, readJson } from "./http.js";
 import { broadcast } from "./live.js";
 import { loadOrganization, organizationImportStatements } from "./organization.js";
+import { loadPersonal, personalImportPlan } from "./personal.js";
 
 const ITEM_TYPES = new Set(["assignment", "test", "task", "event"]);
 const PRIORITIES = new Set(["low", "medium", "high"]);
@@ -88,6 +89,7 @@ export function cleanClass(row, id = row?.id) {
 export async function runDb(work) {
   try { return await work(); } catch (error) {
     const message = String(error?.message || error);
+    if (message.includes("checkin habit")) throw new HttpError(400, "That habit isn't in your planner.");
     if (message.includes("class belongs to another user") || message.includes("FOREIGN KEY")) throw new HttpError(400, "That class isn't in your planner.");
     if (message.includes("CHECK constraint") || message.includes("NOT NULL constraint")) throw new HttpError(400, "Some of those details aren't valid.");
     if (message.includes("UNIQUE constraint")) throw new HttpError(409, "That already exists.");
@@ -129,19 +131,23 @@ WHERE classes.user_id = excluded.user_id
 RETURNING *`;
 
 export async function loadPlanner(env, userId) {
-  const [[classes, items], organization] = await Promise.all([
+  const [[classes, items], organization, personal] = await Promise.all([
     env.DB.batch([
       env.DB.prepare("SELECT * FROM classes WHERE user_id = ? ORDER BY created_at, id").bind(userId),
       env.DB.prepare("SELECT * FROM items WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id").bind(userId),
     ]),
     loadOrganization(env, userId),
+    loadPersonal(env, userId),
   ]);
-  return { classes: classes.results, items: items.results, ...organization };
+  return { classes: classes.results, items: items.results, ...organization, ...personal };
 }
 
-function loadImportReceipt(db, userId, key) {
-  return db.prepare("SELECT imported, classes_added AS classesAdded, templates_added AS templatesAdded, resources_added AS resourcesAdded FROM planner_imports WHERE user_id = ? AND import_key = ?")
+async function loadImportReceipt(db, userId, key) {
+  const row = await db.prepare("SELECT imported, classes_added AS classesAdded, templates_added AS templatesAdded, resources_added AS resourcesAdded, goals_added AS goalsAdded, habits_added AS habitsAdded, habit_checkins_added AS habitCheckinsAdded, notes_added AS notesAdded, personal_present FROM planner_imports WHERE user_id = ? AND import_key = ?")
     .bind(userId, key).first();
+  if (!row) return null;
+  const { personal_present, goalsAdded, habitsAdded, habitCheckinsAdded, notesAdded, ...existing } = row;
+  return personal_present ? { ...existing, goalsAdded, habitsAdded, habitCheckinsAdded, notesAdded } : existing;
 }
 
 export async function handlePlanner(request, env, ctx, path, user) {
@@ -210,9 +216,11 @@ export async function handlePlanner(request, env, ctx, path, user) {
     if (classes.length) statements.push(jsonInsert(db, "classes", user.id, classes));
     if (items.length) statements.push(jsonInsert(db, "items", user.id, items.map((row) => ({ ...row, completed_at: row.completed ? nowIso() : null }))));
     statements.push(...organizationImportStatements(db, user.id, body));
-    const receipt = { imported: items.length, classesAdded: classes.length, templatesAdded: body.templateRows?.length || 0, resourcesAdded: body.resourceRows?.length || 0 };
-    if (importKey) statements.unshift(db.prepare("INSERT INTO planner_imports (user_id, import_key, imported, classes_added, templates_added, resources_added) VALUES (?, ?, ?, ?, ?, ?)")
-      .bind(user.id, importKey, receipt.imported, receipt.classesAdded, receipt.templatesAdded, receipt.resourcesAdded));
+    const personal = personalImportPlan(db, user.id, body);
+    statements.push(...personal.statements);
+    const receipt = { imported: items.length, classesAdded: classes.length, templatesAdded: body.templateRows?.length || 0, resourcesAdded: body.resourceRows?.length || 0, ...(personal.present ? personal.counts : {}) };
+    if (importKey) statements.unshift(db.prepare("INSERT INTO planner_imports (user_id, import_key, imported, classes_added, templates_added, resources_added, goals_added, habits_added, habit_checkins_added, notes_added, personal_present) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+      .bind(user.id, importKey, receipt.imported, receipt.classesAdded, receipt.templatesAdded, receipt.resourcesAdded, personal.counts.goalsAdded, personal.counts.habitsAdded, personal.counts.habitCheckinsAdded, personal.counts.notesAdded, personal.present ? 1 : 0));
     try {
       if (statements.length) await runDb(() => db.batch(statements));
     } catch (error) {

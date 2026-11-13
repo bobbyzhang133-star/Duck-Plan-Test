@@ -191,7 +191,7 @@ test("imports atomically add classes before templates/resources and retain task 
     templateRows: [{ id: uuid(10), title: "ID collision", class_id: uuid(2) }], organization: { urgency_days: 10 },
   } });
   assert.equal(collision.status, 409);
-  assert.deepEqual((await app.call("/api/planner", { cookie: b.cookie })).data, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 } });
+  assert.deepEqual((await app.call("/api/planner", { cookie: b.cookie })).data, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [] });
   const foreignClass = await app.call("/api/import", { method: "POST", cookie: b.cookie, body: {
     classRows: [{ id: uuid(2), name: "New", color: "#ffcc44" }], resourceRows: [{ id: uuid(21), title: "Foreign class", class_id: uuid(1), url: "https://school.test" }],
   } });

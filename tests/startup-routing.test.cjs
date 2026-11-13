@@ -23,6 +23,7 @@ test("Calendar is the default while explicit section links and the Dashboard rem
     history: { replaceState(state, title, url) { route = url; } },
     window: { scrollTo() {} }, setTaskPanel() {}, setSidebar() {},
     requestAnimationFrame(callback) { callback(); }, setupButtonMaterial() {},
+    updatePrimaryAction() {},
   });
   vm.runInContext(setView, context);
   for (const name of ["", "unknown", "broken[route"]) {

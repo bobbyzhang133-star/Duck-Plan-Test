@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="./planner-library.css?v=product-feedback-20261112" />
     <link rel="stylesheet" href="./task-matrix.css?v=product-feedback-20261112" />
     <link rel="stylesheet" href="./product-feedback.css?v=product-feedback-20261112" />
+    <link rel="stylesheet" href="./personal-notes.css?v=contextual-add-20261112" />
+    <link rel="stylesheet" href="./personal-goals.css?v=contextual-add-20261112" />
     <link rel="stylesheet" href="./planner-clarity.css" />
     <link rel="stylesheet" href="./planner-motion.css?v=drawer-polish-20261112" />
     <link rel="stylesheet" href="./phone-navigation.css?v=phone-navigation-20261112" />
@@ -36,8 +38,8 @@
           <button class="nav-item" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true">✓</span><span>Tasks</span><span class="nav-count" id="task-count">0</span></button>
           <button class="nav-item" type="button" data-view="classes"><span class="nav-icon" aria-hidden="true">◫</span><span>Classes</span></button>
           <span class="nav-label nav-group-label">Explore</span>
-          <button class="nav-item" type="button" data-view="goals"><span class="nav-icon" aria-hidden="true"></span><span>Goals &amp; habits</span><span class="preview-nav-tag">Preview</span></button>
-          <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true"></span><span>Notes</span><span class="preview-nav-tag">Preview</span></button>
+          <button class="nav-item" type="button" data-view="goals"><span class="nav-icon" aria-hidden="true"></span><span>Goals &amp; habits</span></button>
+          <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true"></span><span>Notes</span></button>
           <span class="nav-label nav-group-label">Personal</span>
           <button class="nav-item" type="button" data-view="settings"><span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span></button>
         </nav>
@@ -128,18 +130,13 @@
           <div id="task-matrix-root" hidden></div>
         </section></section>
         <section class="view" id="view-classes" data-page-title="Classes" data-eyebrow="Keep every class sorted"><div class="class-grid" id="class-grid"></div><div id="class-library"></div></section>
-        <section class="view prototype-view" id="view-goals" data-page-title="Goals &amp; habits" data-eyebrow="Interactive design preview">
+        <section class="view" id="view-goals" data-page-title="Goals &amp; habits" data-eyebrow="Build a rhythm">
           <header class="page-intro"><p class="section-kicker">Build a rhythm</p><h2>Little actions. Meaningful progress.</h2><p>Keep the bigger picture in sight, one week at a time.</p></header>
-          <p class="prototype-banner"><strong>Frontend preview</strong> The examples below are sample data. Try the controls to explore the design; changes reset when you reload. No tracking or storage is connected.</p>
-          <div class="personal-grid">
-            <section class="panel goal-preview"><div class="panel-heading"><h2>Weekly goal</h2><span class="quiet-badge">Sample</span></div><span class="category-badge">Study routine</span><h3>Make time for focused work</h3><p class="section-helper">A sample goal for five focused sessions this week.</p><div class="goal-preview-total"><strong id="goal-preview-value">3</strong><span>of 5 sessions</span></div><label class="preview-range-label">Preview progress<input id="goal-preview-range" type="range" min="0" max="5" value="3" /></label><div class="goal-progress" aria-hidden="true"><span id="goal-preview-bar" style="width:60%"></span></div><p class="section-helper">Illustrative progress, not your activity.</p></section>
-            <section class="panel habit-preview"><div class="panel-heading"><h2>Weekly habits</h2><span class="quiet-badge">Sample</span></div><p class="section-helper">Try a check-in below. This is a UI demo, not a saved habit log.</p><div id="habit-preview-grid"></div><p class="habit-preview-summary" id="habit-preview-summary" role="status"></p><p class="section-helper">Streaks will appear when real tracking is connected.</p></section>
-          </div>
+          <div id="personal-goals-root"></div>
         </section>
-        <section class="view prototype-view" id="view-notes" data-page-title="Notes" data-eyebrow="Interactive design preview">
+        <section class="view" id="view-notes" data-page-title="Notes" data-eyebrow="Ideas worth keeping">
           <header class="page-intro"><p class="section-kicker">A place to think</p><h2>Clear your mind. Capture an idea.</h2><p>A quiet space for class notes and everyday thoughts.</p></header>
-          <p class="prototype-banner"><strong>Frontend preview</strong> Try writing a note below. Drafts exist only on this page and disappear on reload. Saving, search, and synced notes are not connected.</p>
-          <div class="notes-layout"><section class="panel note-editor" aria-labelledby="note-editor-heading"><div class="panel-heading"><h2 id="note-editor-heading">Draft a note</h2><span class="quiet-badge">Unsaved preview</span></div><label for="note-preview-title">Title</label><input id="note-preview-title" maxlength="100" placeholder="Give your thought a title" /><label for="note-preview-category">Category</label><select id="note-preview-category"><option>Personal</option><option>Class notes</option><option>Ideas</option></select><label for="note-preview-body">Your note</label><textarea id="note-preview-body" rows="10" maxlength="5000" placeholder="Start writing here…"></textarea><p class="section-helper">Your writing stays here while you explore other sections. Reloading clears it.</p></section><section class="panel note-card" aria-labelledby="note-preview-heading"><div class="panel-heading"><p class="section-kicker">Live preview</p><span id="note-preview-count" class="quiet-badge">0 words</span></div><span class="category-badge" id="note-preview-tag">Personal</span><h2 id="note-preview-heading">Your next idea</h2><p id="note-preview-content" class="note-preview-content">A preview of your note will appear here as you write.</p><span class="note-preview-footer">Draft · Not saved</span></section></div>
+          <div id="personal-notes-root"></div>
         </section>
         <section class="view" id="view-settings" data-page-title="Settings" data-eyebrow="Make DuckPlan yours"><section class="panel settings-panel">
           <section class="sync-card" aria-label="Axis connection status"><div class="sync-icon" aria-hidden="true">↻</div><div><p class="sync-title">Axis sync</p><p class="sync-copy">Prototype mode</p></div><button type="button" id="sync-info" aria-label="Learn about Axis sync">i</button></section>
@@ -192,8 +189,8 @@
     <dialog class="phone-more-dialog" id="phone-more-dialog" tabindex="-1" aria-labelledby="phone-more-heading">
       <div class="phone-more-heading"><h2 id="phone-more-heading">More</h2><button class="close-button" id="phone-more-close" type="button" aria-label="Close more navigation">×</button></div>
       <nav class="phone-more-links" aria-label="More planner sections">
-        <button class="nav-item" type="button" data-view="goals"><span class="nav-icon" aria-hidden="true"></span><span>Goals &amp; habits</span><span class="phone-more-preview">Preview</span></button>
-        <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true"></span><span>Notes</span><span class="phone-more-preview">Preview</span></button>
+        <button class="nav-item" type="button" data-view="goals"><span class="nav-icon" aria-hidden="true"></span><span>Goals &amp; habits</span></button>
+        <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true"></span><span>Notes</span></button>
         <button class="nav-item" type="button" data-view="settings"><span class="nav-icon" aria-hidden="true"></span><span>Settings</span></button>
       </nav>
     </dialog>
@@ -227,9 +224,11 @@
     <script src="./planner-ui.js?v=ui-integration-20261110"></script>
     <script src="./ical-parser.js"></script>
     <script src="./cloud-config.js"></script>
-    <script src="./planner-store.js?v=product-feedback-20261112"></script>
+    <script src="./planner-store.js?v=contextual-add-20261112"></script>
     <script src="./planner-library.js?v=product-feedback-20261112"></script>
     <script src="./task-matrix.js?v=product-feedback-20261112"></script>
+    <script src="./personal-notes.js?v=contextual-add-20261112"></script>
+    <script src="./personal-goals.js?v=contextual-add-20261112"></script>
     <script src="./reminder-domain.js?v=2"></script>
     <script src="./reminder-ledger.js?v=2"></script>
     <script src="./browser-notifications.js?v=app-1"></script>
@@ -241,9 +240,9 @@
     <script src="./app-install.js?v=app-1"></script>
     <script src="./task-alarms.js?v=native-alarms-1"></script>
     <script src="./native-task-alarms.js?v=1"></script>
-    <script src="./app.js?v=alarm-signup-shortcut-20261112"></script>
+    <script src="./app.js?v=contextual-add-20261112"></script>
     <script src="./duck-mascot.js?v=restored-sigma-face-20261112"></script>
-    <script src="./planner-presentation.js?v=ui-integration-20261110"></script>
+    <script src="./planner-presentation.js?v=contextual-add-20261112"></script>
     <script src="./duck-interactions.js"></script>
     <script src="./planner-clarity.js"></script>
   </body>

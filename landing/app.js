@@ -111,6 +111,15 @@ const taskMatrix = window.DuckTaskMatrix?.create({
   store, getToday: nowKey, showToast, reportError,
   setupButtons: setupButtonMaterial, openTask: openModal,
 });
+const personalGoals = window.DuckPersonalGoals?.create({
+  store, root: document.querySelector("#personal-goals-root"), getToday: nowKey,
+  showToast, reportError, setupButtons: setupButtonMaterial,
+});
+const personalNotes = window.DuckPersonalNotes?.create({
+  store, root: document.querySelector("#personal-notes-root"),
+  showToast, reportError, setupButtons: setupButtonMaterial,
+});
+let classEditor = null;
 
 const sidebarToggles = [...document.querySelectorAll("[data-open-navigation]")];
 const sidebarScrim = document.querySelector(".sidebar-scrim");
@@ -525,7 +534,7 @@ function renderAccount() {
     ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
     : user ? signedInAccount(user) : signedOutAccount();
   const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery">I saved it</button></div></div>` : "";
-  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local planner</h2><p>Copy this browser's saved tasks, templates, class resources and organization preferences into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import local planner</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
+  const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local planner</h2><p>Copy this browser's saved tasks, templates, class resources, goals, habits, notes and preferences into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local">Import local planner</button><button type="button" class="secondary-button" id="dismiss-import">Not now</button></div></div>` : "";
   replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${recovery}${offer}`);
   els.resetDemo.closest(".settings-row").hidden = store.mode === "cloud";
 }
@@ -735,9 +744,93 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
   renderCalendar({ autoScroll: autoScrollCalendar });
   taskLibrary?.render();
+  personalGoals?.render(); personalNotes?.render();
+  updatePrimaryAction(document.body.dataset.view || "calendar");
   if (els.modal.open) taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   refreshReminders();
   requestAnimationFrame(() => setupButtonMaterial());
+}
+
+function updatePrimaryAction(view) {
+  const button = document.querySelector("#open-task-modal");
+  const labels = { goals: "Add goal / habit", notes: "Add note", classes: "Add class" };
+  button.textContent = `＋ ${labels[view] || "Add task"}`;
+  button.hidden = view === "settings";
+  button.disabled = ["goals", "notes"].includes(view) && store.supportsPersonal === false;
+  button.setAttribute("aria-haspopup", "dialog");
+  els.search.closest(".search-box").hidden = !["calendar", "home", "tasks"].includes(view);
+}
+
+function openPrimaryAction(source) {
+  const view = document.body.dataset.view;
+  if (view === "goals") personalGoals?.openAddChooser({ source });
+  else if (view === "notes") personalNotes?.openNote({ source });
+  else if (view === "classes") openClassEditor(source);
+  else if (view !== "settings") openModal({ source, dueDate: view === "calendar" ? selectedDate : nowKey() });
+}
+
+function openClassEditor(source) {
+  if (classEditor) { classEditor.querySelector("input")?.focus(); return; }
+  const dialog = document.createElement("dialog");
+  dialog.className = "personal-note-dialog";
+  dialog.tabIndex = -1;
+  dialog.setAttribute("aria-labelledby", "class-editor-heading");
+  dialog.innerHTML = '<form novalidate><div class="personal-note-dialog-heading"><h2 id="class-editor-heading">New class</h2><button type="button" class="close-button" data-close-class aria-label="Close class editor">×</button></div><p class="personal-note-error" role="alert" hidden></p><label>Class name<input name="name" required maxlength="120" placeholder="e.g. Biology" /></label><label>Short code<input name="code" maxlength="4" placeholder="e.g. BIO" /></label><label>Teacher<input name="teacher" maxlength="120" /></label><label>Period<input name="period" maxlength="60" /></label><label>Color<input name="color" type="color" value="#6c9cc4" /></label><div class="personal-note-dialog-actions"><button type="button" class="secondary-button" data-close-class>Cancel</button><button type="submit" class="primary-button">Save class</button></div></form>';
+  classEditor = dialog;
+  const ownerVersion = plannerOwnerVersion;
+  const anchor = DuckPopupMotion.capture(source);
+  let busy = false, closing = false;
+  const current = () => classEditor === dialog && ownerVersion === plannerOwnerVersion;
+  const close = () => {
+    if (!current() || busy || closing) return;
+    closing = true; dialog.inert = true;
+    DuckPopupMotion.close(dialog, anchor, () => {
+      if (!current()) return;
+      dialog.close(); dialog.remove(); classEditor = null;
+      (source?.isConnected ? source : document.querySelector("#open-task-modal"))?.focus({ preventScroll: true });
+    });
+  };
+  dialog.addEventListener("cancel", event => { event.preventDefault(); close(); });
+  dialog.addEventListener("click", event => {
+    if (event.target.closest("[data-close-class]")) close();
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
+  });
+  dialog.addEventListener("keydown", event => {
+    if (event.key !== "Tab") return;
+    const controls = [...dialog.querySelectorAll("button,input")].filter(control => !control.disabled);
+    const first = controls[0], last = controls.at(-1);
+    if (!first) { event.preventDefault(); dialog.focus(); return; }
+    if (event.shiftKey && document.activeElement === first || !event.shiftKey && document.activeElement === last || !controls.includes(document.activeElement)) {
+      event.preventDefault(); (event.shiftKey ? last : first).focus();
+    }
+  });
+  dialog.querySelector("form").addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!current() || busy || closing) return;
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const errorBox = dialog.querySelector(".personal-note-error");
+    if (!data.name.trim()) { errorBox.textContent = "Give your class a name."; errorBox.hidden = false; dialog.querySelector('[name="name"]').focus(); return; }
+    busy = true; dialog.setAttribute("aria-busy", "true"); errorBox.hidden = true;
+    dialog.querySelectorAll("input,button").forEach(control => { control.disabled = true; });
+    try {
+      await store.upsertClass({ ...data, name: data.name.trim(), code: data.code.trim() || data.name.trim().slice(0, 4).toUpperCase() });
+      if (!current()) return;
+      busy = false; close(); showToast("Class saved.");
+    } catch (error) {
+      if (!current()) return;
+      errorBox.textContent = error.message || "Could not save your class. Please try again."; errorBox.hidden = false;
+    } finally {
+      if (current()) {
+        busy = false; dialog.removeAttribute("aria-busy");
+        dialog.querySelectorAll("input,button").forEach(control => { control.disabled = false; });
+        if (!closing) dialog.querySelector('button[type="submit"]').focus();
+      }
+    }
+  });
+  document.body.append(dialog); setupButtonMaterial(dialog); dialog.showModal();
+  DuckPopupMotion.open(dialog, anchor, () => { if (current() && !closing) dialog.querySelector("input").focus(); });
 }
 
 function setView(name, preserveDrawer = false) {
@@ -749,6 +842,7 @@ function setView(name, preserveDrawer = false) {
   els.navItems.forEach((item) => { const active = item.dataset.view === normalized; item.classList.toggle("active", active); active ? item.setAttribute("aria-current", "page") : item.removeAttribute("aria-current"); });
   els.pageTitle.textContent = next.dataset.pageTitle;
   els.pageEyebrow.textContent = next.dataset.eyebrow;
+  updatePrimaryAction(normalized);
   history.replaceState(null, "", `#${normalized}`);
   if (normalized !== "calendar") setTaskPanel(false, false);
   if (!preserveDrawer) setSidebar(false);
@@ -1182,7 +1276,7 @@ els.calendar.addEventListener("keydown", (event) => {
 });
 document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
 document.querySelector("#phone-add-task")?.addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
-document.querySelector("#open-task-modal").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: document.body.dataset.view === "calendar" ? selectedDate : nowKey() }));
+document.querySelector("#open-task-modal").addEventListener("click", event => openPrimaryAction(event.currentTarget));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);
 els.modal.addEventListener("click", event => {
@@ -1370,6 +1464,7 @@ store.subscribe(({ reason }) => {
     accountMode = store.user ? null : "sign-in";
     axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
     localImportCount = 0;
+    if (classEditor) { DuckPopupMotion.cancel(classEditor); classEditor.close(); classEditor.remove(); classEditor = null; }
     if (els.modal.open) els.modal.close();
     els.form.reset();
     editingTaskId = null; pendingTaskDraft = null;

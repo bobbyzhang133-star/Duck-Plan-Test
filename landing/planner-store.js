@@ -12,6 +12,7 @@
   const TEMPLATES_KEY = "duckplan-demo-templates-v1";
   const RESOURCES_KEY = "duckplan-demo-resources-v1";
   const ORGANIZATION_KEY = "duckplan-demo-organization-v1";
+  const PERSONAL_KEY = "duckplan-demo-personal-v1";
   const NO_CLASS = { id: null, name: "No class", color: "#8f8a7d", soft: "#efede7", code: "•", teacher: "", period: "", archived: false };
 
   function newId() { return globalThis.crypto.randomUUID(); }
@@ -60,6 +61,49 @@
   function resourceToRow(item) {
     return { id: item.id, class_id: item.classId, title: item.title, url: item.url, description: item.description || "", category: item.category || "", sort_order: Number(item.sortOrder || 0) };
   }
+  function rowToGoal(row) {
+    return { id: row.id, title: row.title, notes: row.notes || "", targetCount: Number(row.target_count ?? 5), currentCount: Number(row.current_count ?? 0), unit: row.unit || "sessions", deadlineDate: row.deadline_date || "" };
+  }
+  function goalToRow(item) {
+    return { id: item.id, title: item.title, notes: item.notes || "", target_count: item.targetCount ?? 5, current_count: item.currentCount ?? 0, unit: item.unit || "sessions", deadline_date: item.deadlineDate || null };
+  }
+  function rowToHabit(row) {
+    let repeatDays;
+    try { repeatDays = typeof row.repeat_days === "string" ? JSON.parse(row.repeat_days) : row.repeat_days; } catch { repeatDays = []; }
+    return { id: row.id, title: row.title, notes: row.notes || "", repeatDays: Array.isArray(repeatDays) ? [...repeatDays] : [0, 1, 2, 3, 4, 5, 6] };
+  }
+  function habitToRow(item) { return { id: item.id, title: item.title, notes: item.notes || "", repeat_days: [...(item.repeatDays || [0, 1, 2, 3, 4, 5, 6])] }; }
+  function rowToHabitCheckin(row) { return { habitId: row.habit_id, date: row.date, completed: Boolean(row.completed) }; }
+  function habitCheckinToRow(item) { return { habit_id: item.habitId, date: item.date, completed: Boolean(item.completed) }; }
+  function rowToNote(row) { return { id: row.id, title: row.title, category: row.category || "Personal", body: row.body || "", createdAt: row.created_at, updatedAt: row.updated_at }; }
+  function noteToRow(item) { return { id: item.id, title: item.title, category: item.category || "Personal", body: item.body || "" }; }
+  function validDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return false;
+    const [year, month, day] = value.split("-").map(Number);
+    if (year < 1 || month < 1 || month > 12 || day < 1 || day > 31) return false;
+    const date = new Date(0);
+    date.setUTCHours(0, 0, 0, 0); date.setUTCFullYear(year, month - 1, day);
+    return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+  }
+  function normalizeGoal(item) {
+    const targetCount = Number(item.targetCount ?? 5), currentCount = Number(item.currentCount ?? 0);
+    if (!Number.isInteger(targetCount) || targetCount < 1 || targetCount > 100000) throw new Error("Goal target must be a whole number from 1 to 100000.");
+    if (!Number.isInteger(currentCount) || currentCount < 0 || currentCount > 100000) throw new Error("Goal progress must be a whole number from 0 to 100000.");
+    const deadlineDate = item.deadlineDate || "";
+    if (deadlineDate && !validDate(deadlineDate)) throw new Error("Choose a valid goal deadline.");
+    return { id: item.id || newId(), title: limitedText(item.title, 100, "Goal title", true), notes: limitedText(item.notes, 5000, "Notes"), targetCount, currentCount, unit: limitedText(item.unit ?? "sessions", 30, "Unit", true), deadlineDate };
+  }
+  function normalizeHabit(item) {
+    const repeatDays = item.repeatDays ?? [0, 1, 2, 3, 4, 5, 6];
+    if (!Array.isArray(repeatDays) || !repeatDays.length || !repeatDays.every((day) => Number.isInteger(day) && day >= 0 && day <= 6) || new Set(repeatDays).size !== repeatDays.length) throw new Error("Choose one or more different days of the week.");
+    return { id: item.id || newId(), title: limitedText(item.title, 100, "Habit title", true), notes: limitedText(item.notes, 2000, "Notes"), repeatDays: [...repeatDays].sort((a, b) => a - b) };
+  }
+  function normalizeNote(item, previous) {
+    const body = String(item.body ?? "");
+    if (body.length > 5000) throw new Error("Note body must be 5000 characters or fewer.");
+    const now = new Date().toISOString();
+    return { id: item.id || newId(), title: limitedText(item.title, 100, "Note title", true), category: limitedText(item.category, 60, "Category") || "Personal", body, createdAt: previous?.createdAt || now, updatedAt: now };
+  }
   function organizationPreferences(value = {}) {
     const days = Number(value.urgencyDays ?? value.urgency_days ?? 2);
     if (!Number.isInteger(days) || days < 0 || days > 30) throw new Error("Choose an urgency window from 0 to 30 days.");
@@ -106,7 +150,7 @@
 
   // Maps local classes onto the account's classes (matching by name) and gives every local task a fresh
   // UUID. Tasks keep their own scheduledStart; nothing is scheduled from a due time.
-  function planLocalImport({ localTasks, localClasses, cloudClasses, localTemplates = [], localResources = [], localOrganization, makeId = newId }) {
+  function planLocalImport({ localTasks, localClasses, cloudClasses, localTemplates = [], localResources = [], localOrganization, localGoals = [], localHabits = [], localHabitCheckins = [], localNotes = [], makeId = newId }) {
     const cloudByName = new Map(cloudClasses.map((item) => [item.name.toLowerCase(), item.id]));
     const classIdMap = new Map();
     const classRows = [];
@@ -122,7 +166,16 @@
     const templateRows = localTemplates.map((item) => templateToRow({ ...item, id: makeId(), classId: classIdMap.get(item.classId) || null }));
     const resourceRows = localResources.map((item) => resourceToRow({ ...item, id: makeId(), classId: classIdMap.get(item.classId) || null }));
     const organization = localOrganization ? { urgency_days: organizationPreferences(localOrganization).urgencyDays } : undefined;
-    return { classRows, itemRows, templateRows, resourceRows, ...(organization ? { organization } : {}) };
+    const goalRows = localGoals.map((item) => goalToRow({ ...item, id: makeId() }));
+    const habitIds = new Map();
+    const habitRows = localHabits.map((item) => { const id = makeId(); habitIds.set(item.id, id); return habitToRow({ ...item, id }); });
+    const habitCheckinRows = localHabitCheckins.filter((item) => item.completed).map((item) => {
+      const habitId = habitIds.get(item.habitId);
+      if (!habitId) throw new Error("A saved habit check-in has no matching habit. Review your local habits before importing.");
+      return habitCheckinToRow({ ...item, habitId });
+    });
+    const noteRows = localNotes.map((item) => noteToRow({ ...item, id: makeId() }));
+    return { classRows, itemRows, templateRows, resourceRows, goalRows, habitRows, habitCheckinRows, noteRows, ...(organization ? { organization } : {}) };
   }
 
   async function localImportFingerprint(localState) {
@@ -132,6 +185,10 @@
     const snapshot = ordered({
       classes: byId(localState.classes), tasks: byId(localState.tasks),
       templates: byId(localState.templates), resources: byId(localState.resources),
+      ...([localState.goals, localState.habits, localState.habitCheckins, localState.notes].some((items) => items?.length) ? {
+        goals: byId(localState.goals || []), habits: byId(localState.habits || []),
+        habitCheckins: [...(localState.habitCheckins || [])].sort((a, b) => `${a.habitId}:${a.date}`.localeCompare(`${b.habitId}:${b.date}`)), notes: byId(localState.notes || []),
+      } : {}),
       organization: localState.organizationConfigured ? localState.organization : null,
     });
     const digest = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(snapshot)));
@@ -152,10 +209,13 @@
       const tasks = attachClassIds(model.migrateTasks(source), classes);
       write(CLASSES_KEY, classes); write(TASKS_KEY, tasks);
       const templates = read(TEMPLATES_KEY), resources = read(RESOURCES_KEY), preferences = read(ORGANIZATION_KEY);
+      const personal = read(PERSONAL_KEY) || {};
       let organization;
       try { organization = organizationPreferences(preferences || {}); } catch { organization = { urgencyDays: 2 }; }
-      return { classes: classes.map((item) => ({ ...item, soft: softColor(item.color) })), tasks, templates: Array.isArray(templates) ? templates : [], resources: Array.isArray(resources) ? resources : [], organization, organizationConfigured: Boolean(preferences), organizationAvailable: true };
+      return { classes: classes.map((item) => ({ ...item, soft: softColor(item.color) })), tasks, templates: Array.isArray(templates) ? templates : [], resources: Array.isArray(resources) ? resources : [], organization, organizationConfigured: Boolean(preferences), organizationAvailable: true,
+        goals: Array.isArray(personal.goals) ? personal.goals : [], habits: Array.isArray(personal.habits) ? personal.habits : [], habitCheckins: Array.isArray(personal.habitCheckins) ? personal.habitCheckins : [], notes: Array.isArray(personal.notes) ? personal.notes : [], personalAvailable: true };
     }
+    function savePersonal(state) { write(PERSONAL_KEY, { goals: state.goals, habits: state.habits, habitCheckins: state.habitCheckins, notes: state.notes }, true); }
     return {
       mode: "local",
       load: async () => load(),
@@ -168,10 +228,14 @@
       saveResource: async (item, state) => write(RESOURCES_KEY, state.resources, true),
       deleteResource: async (id, state) => write(RESOURCES_KEY, state.resources, true),
       saveOrganization: async (value) => write(ORGANIZATION_KEY, value, true),
+      saveGoal: async (item, state) => savePersonal(state), deleteGoal: async (id, state) => savePersonal(state),
+      saveHabit: async (item, state) => savePersonal(state), deleteHabit: async (id, state) => savePersonal(state),
+      saveHabitCheckin: async (habitId, date, completed, state) => savePersonal(state),
+      saveNote: async (item, state) => savePersonal(state), deleteNote: async (id, state) => savePersonal(state),
       reset() { [TASKS_KEY, CLASSES_KEY, TEMPLATES_KEY, RESOURCES_KEY, ORGANIZATION_KEY].forEach((key) => storage.removeItem(key)); return load(); },
       watch(onRemoteChange) {
         if (typeof window === "undefined") return () => {};
-        const listener = (event) => { if ([TASKS_KEY, CLASSES_KEY, TEMPLATES_KEY, RESOURCES_KEY, ORGANIZATION_KEY].includes(event.key)) onRemoteChange(load()); };
+        const listener = (event) => { if ([TASKS_KEY, CLASSES_KEY, TEMPLATES_KEY, RESOURCES_KEY, ORGANIZATION_KEY, PERSONAL_KEY].includes(event.key)) onRemoteChange(load()); };
         window.addEventListener("storage", listener);
         return () => window.removeEventListener("storage", listener);
       },
@@ -237,8 +301,9 @@
       mode: "cloud",
       user,
       async load() {
-        const { classes, items, templates, resources, organization } = await api("GET", "/planner");
-        return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization) };
+        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes } = await api("GET", "/planner");
+        return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization),
+          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray) };
       },
       saveTask: (task) => api("PUT", `/items/${encodeURIComponent(task.id)}`, taskToRow(task)),
       setCompleted: (id, completed) => api("PATCH", `/items/${encodeURIComponent(id)}`, { completed }),
@@ -250,6 +315,13 @@
       saveResource: (item) => api("PUT", `/class-resources/${encodeURIComponent(item.id)}`, resourceToRow(item)),
       deleteResource: (id) => api("DELETE", `/class-resources/${encodeURIComponent(id)}`),
       saveOrganization: (value) => api("PUT", "/organization-preferences", { urgency_days: value.urgencyDays }),
+      saveGoal: (item) => api("PUT", `/goals/${encodeURIComponent(item.id)}`, goalToRow(item)),
+      deleteGoal: (id) => api("DELETE", `/goals/${encodeURIComponent(id)}`),
+      saveHabit: (item) => api("PUT", `/habits/${encodeURIComponent(item.id)}`, habitToRow(item)),
+      deleteHabit: (id) => api("DELETE", `/habits/${encodeURIComponent(id)}`),
+      saveHabitCheckin: (habitId, date, completed) => api("PUT", `/habit-checkins/${encodeURIComponent(habitId)}/${encodeURIComponent(date)}`, { completed }),
+      saveNote: (item) => api("PUT", `/notes/${encodeURIComponent(item.id)}`, noteToRow(item)),
+      deleteNote: (id) => api("DELETE", `/notes/${encodeURIComponent(id)}`),
       watch({ onRow, onReload }) {
         return openLiveSocket({
           url: liveUrl, WebSocketImpl,
@@ -280,7 +352,7 @@
     const api = configured ? createApi({ apiUrl, fetchImpl }) : null;
     let backend = local;
     let backendGeneration = 0;
-    let state = { classes: [], tasks: [], templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true };
+    let state = { classes: [], tasks: [], templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true };
     let unwatch = () => {};
     let authError = null;
     let providers = { password: true, google: false };
@@ -312,14 +384,14 @@
     }
 
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
-    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, ...next }; }
+    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, ...next }; }
     function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
 
     async function activate(nextBackend) {
       const generation = ++backendGeneration;
       unwatch();
       backend = nextBackend;
-      replaceState({ classes: [], tasks: [], organizationAvailable: nextBackend.mode === "local" });
+      replaceState({ classes: [], tasks: [], organizationAvailable: nextBackend.mode === "local", personalAvailable: nextBackend.mode === "local" });
       notify("context");
       const next = await nextBackend.load();
       if (generation !== backendGeneration) return;
@@ -354,6 +426,14 @@
         state = { ...state, [key]: row.deleted_at ? others : [...others, convert(row)] };
       } else if (table === "planner_preferences") {
         state = { ...state, organization: organizationPreferences(row) };
+      } else if (["goals", "habits", "notes"].includes(table)) {
+        const convert = { goals: rowToGoal, habits: rowToHabit, notes: rowToNote }[table];
+        const others = state[table].filter((item) => item.id !== row.id);
+        state = { ...state, [table]: row.deleted_at ? others : [...others, convert(row)] };
+        if (table === "habits" && row.deleted_at) state = { ...state, habitCheckins: state.habitCheckins.filter((item) => item.habitId !== row.id) };
+      } else if (table === "habit_checkins") {
+        const others = state.habitCheckins.filter((item) => item.habitId !== row.habit_id || item.date !== row.date);
+        state = { ...state, habitCheckins: row.deleted_at || !row.completed ? others : [...others, rowToHabitCheckin(row)] };
       }
       notify("remote");
     }
@@ -428,6 +508,7 @@
       get configured() { return configured; },
       get user() { return backend.user || null; },
       get supportsOrganization() { return state.organizationAvailable !== false; },
+      get supportsPersonal() { return state.personalAvailable !== false; },
       // Which sign-in methods the Worker has set up (Google needs its client id and secret).
       get providers() { return providers; },
       // A sign-in problem from the last redirect (a cancelled Google sign-in), shown once.
@@ -463,6 +544,49 @@
       listTemplates() { return [...state.templates]; },
       listResources({ classId } = {}) { return state.resources.filter((item) => !classId || item.classId === classId); },
       organizationPreferences() { return { ...state.organization }; },
+      listGoals() { return [...state.goals]; },
+      listHabits() { return state.habits.map((item) => ({ ...item, repeatDays: [...item.repeatDays] })); },
+      listHabitCheckins({ habitId } = {}) { return state.habitCheckins.filter((item) => !habitId || item.habitId === habitId); },
+      listNotes() { return [...state.notes]; },
+      async upsertGoal(item) {
+        if (!this.supportsPersonal) throw new Error("Saved goals aren't available on this server yet.");
+        const next = normalizeGoal(item);
+        await mutate((current) => ({ ...current, goals: [...current.goals.filter((value) => value.id !== next.id), next] }), (current, target) => target.saveGoal(next, current));
+        return next;
+      },
+      async deleteGoal(id) {
+        if (!this.supportsPersonal) throw new Error("Saved goals aren't available on this server yet.");
+        return mutate((current) => ({ ...current, goals: current.goals.filter((item) => item.id !== id) }), (current, target) => target.deleteGoal(id, current));
+      },
+      async upsertHabit(item) {
+        if (!this.supportsPersonal) throw new Error("Saved habits aren't available on this server yet.");
+        const next = normalizeHabit(item);
+        await mutate((current) => ({ ...current, habits: [...current.habits.filter((value) => value.id !== next.id), next] }), (current, target) => target.saveHabit(next, current));
+        return next;
+      },
+      async deleteHabit(id) {
+        if (!this.supportsPersonal) throw new Error("Saved habits aren't available on this server yet.");
+        return mutate((current) => ({ ...current, habits: current.habits.filter((item) => item.id !== id), habitCheckins: current.habitCheckins.filter((item) => item.habitId !== id) }), (current, target) => target.deleteHabit(id, current));
+      },
+      async setHabitCheckin(habitId, date, completed) {
+        if (!this.supportsPersonal) throw new Error("Habit check-ins aren't available on this server yet.");
+        if (!state.habits.some((item) => item.id === habitId)) throw new Error("Choose a habit from your planner.");
+        if (!validDate(date)) throw new Error("Choose a valid check-in date.");
+        if (typeof completed !== "boolean") throw new Error("Choose whether the habit is completed.");
+        const next = { habitId, date, completed };
+        await mutate((current) => ({ ...current, habitCheckins: [...current.habitCheckins.filter((item) => item.habitId !== habitId || item.date !== date), ...(completed ? [next] : [])] }), (current, target) => target.saveHabitCheckin(habitId, date, completed, current));
+        return next;
+      },
+      async upsertNote(item) {
+        if (!this.supportsPersonal) throw new Error("Saved notes aren't available on this server yet.");
+        const next = normalizeNote(item, state.notes.find((value) => value.id === item.id));
+        await mutate((current) => ({ ...current, notes: [...current.notes.filter((value) => value.id !== next.id), next] }), (current, target) => target.saveNote(next, current));
+        return next;
+      },
+      async deleteNote(id) {
+        if (!this.supportsPersonal) throw new Error("Saved notes aren't available on this server yet.");
+        return mutate((current) => ({ ...current, notes: current.notes.filter((item) => item.id !== id) }), (current, target) => target.deleteNote(id, current));
+      },
 
       async upsertTemplate(item) {
         if (!this.supportsOrganization) throw new Error("Templates aren't available on this server yet. Your local templates are safe.");
@@ -568,7 +692,7 @@
       async localImportOffer() {
         if (backend.mode !== "cloud" || hasImportMarker(backend.user.id)) return 0;
         const localState = await local.load();
-        return localState.tasks.length + localState.templates.length + localState.resources.length + Number(localState.organizationConfigured);
+        return localState.tasks.length + localState.templates.length + localState.resources.length + Number(localState.organizationConfigured) + localState.goals.length + localState.habits.length + localState.habitCheckins.length + localState.notes.length;
       },
       dismissLocalImport() { if (backend.user) rememberImport(backend.user.id, "dismissed"); },
       async importLocalTasks() {
@@ -577,8 +701,9 @@
         const localState = await local.load();
         if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
         const organizationTasks = localState.tasks.some((task) => task.importance || (task.urgency && task.urgency !== "auto"));
+        if (!this.supportsPersonal && (localState.goals.length || localState.habits.length || localState.habitCheckins.length || localState.notes.length)) throw new Error("This server can't import your saved goals, habits and notes yet. They will stay safely in this browser.");
         if (!this.supportsOrganization && (localState.templates.length || localState.resources.length || organizationTasks || localState.organizationConfigured)) throw new Error("This server can't import your organization data yet. It will stay safely in this browser.");
-        const plan = planLocalImport({ localTasks: localState.tasks, localClasses: localState.classes, cloudClasses: state.classes, localTemplates: localState.templates, localResources: localState.resources, localOrganization: localState.organizationConfigured ? localState.organization : undefined });
+        const plan = planLocalImport({ localTasks: localState.tasks, localClasses: localState.classes, cloudClasses: state.classes, localTemplates: localState.templates, localResources: localState.resources, localOrganization: localState.organizationConfigured ? localState.organization : undefined, localGoals: localState.goals, localHabits: localState.habits, localHabitCheckins: localState.habitCheckins, localNotes: localState.notes });
         const userId = activeBackend.user.id;
         const idempotencyKey = await localImportFingerprint(localState);
         if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
@@ -617,5 +742,5 @@
     };
   }
 
-  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences };
+  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote };
 });
