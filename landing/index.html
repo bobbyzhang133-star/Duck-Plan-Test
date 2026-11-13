@@ -5,28 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="DuckPlan is a calm, task-first student planner that keeps deadlines and study time together." />
     <meta name="theme-color" content="#FFD93D" />
-    <link rel="icon" type="image/svg+xml" href="./assets/duckplan-mark.svg" />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./planner-ui.css" />
-    <link rel="stylesheet" href="./duck-theme.css" />
+    <link rel="icon" type="image/png" href="./assets/duckplan-sigma-icon-v11-192.png" />
+    <link rel="stylesheet" href="./styles.css?v=phone-planner-20261112" />
+    <link rel="stylesheet" href="./planner-ui.css?v=phone-planner-20261112" />
+    <link rel="stylesheet" href="./duck-theme.css?v=sigma-front-view-20261111" />
     <link rel="stylesheet" href="./planner-clarity.css" />
+    <link rel="stylesheet" href="./planner-motion.css?v=drawer-polish-20261112" />
+    <link rel="stylesheet" href="./phone-navigation.css?v=phone-navigation-20261112" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="DuckPlan" />
     <link rel="manifest" href="./app.webmanifest" />
-    <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-v3-512.png" />
+    <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-v11-512.png" />
     <title>DuckPlan | Tasks and time together</title>
   </head>
-  <body>
+  <body class="motion-preview">
     <a class="skip-link" href="#main-content">Skip to planner</a>
     <div class="app-shell unified-shell">
       <aside class="sidebar" id="planner-sidebar">
-        <a class="brand" href="#home" data-go="home" aria-label="DuckPlan home"><span class="brand-mark" data-duck-state="happy" aria-hidden="true"></span><span>DuckPlan</span></a>
+        <a class="brand" href="#calendar" data-go="calendar" aria-label="DuckPlan home"><span class="brand-mark" data-duck-state="happy" aria-hidden="true"></span><span>DuckPlan</span></a>
         <button class="drawer-close" type="button" aria-label="Close navigation">×</button>
+        <button class="sidebar-rail-toggle" type="button" data-open-navigation aria-label="Open navigation" aria-controls="planner-sidebar" aria-expanded="false" title="Expand navigation"><span data-sidebar-glyph aria-hidden="true">›</span><span class="rail-toggle-copy">Fold navigation</span></button>
         <p class="nav-label">Planning</p><nav class="primary-nav" aria-label="Planner navigation">
-          <button class="nav-item active" type="button" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></button>
-          <button class="nav-item" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true"></span><span>Calendar</span></button>
+          <button class="nav-item active" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true"></span><span>Calendar</span></button>
+          <button class="nav-item" type="button" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></button>
           <button class="nav-item" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true">✓</span><span>Tasks</span><span class="nav-count" id="task-count">0</span></button>
           <button class="nav-item" type="button" data-view="classes"><span class="nav-icon" aria-hidden="true">◫</span><span>Classes</span></button>
           <span class="nav-label nav-group-label">Explore</span>
@@ -43,7 +46,7 @@
 
       <main class="workspace unified-workspace" id="main-content" tabindex="-1">
         <header class="topbar compact-topbar">
-          <div class="topbar-title"><button class="nav-open-button topbar-nav-open-button" type="button" data-open-navigation aria-label="Open navigation" aria-controls="planner-sidebar">☰</button><div><p class="eyebrow" id="page-eyebrow">Your personal workspace</p><h1 id="page-title">Dashboard</h1></div></div>
+          <div class="topbar-title"><button class="nav-open-button topbar-nav-open-button" type="button" data-open-navigation aria-label="Open navigation" aria-controls="planner-sidebar">☰</button><div><p class="eyebrow" id="page-eyebrow">Your time, thoughtfully planned</p><h1 id="page-title">Calendar</h1></div></div>
           <div class="topbar-actions">
             <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">Search tasks</span><input id="global-search" type="search" placeholder="Search tasks" autocomplete="off" /></label>
 
@@ -52,7 +55,7 @@
           </div>
         </header>
 
-        <section class="view active dashboard-view" id="view-home" data-page-title="Dashboard" data-eyebrow="Your planning overview">
+        <section class="view dashboard-view" id="view-home" data-page-title="Dashboard" data-eyebrow="Your planning overview">
           <header class="dashboard-welcome"><div class="welcome-content"><p class="section-kicker" id="dashboard-date"></p><h2 id="dashboard-greeting">Make room for a good day.</h2><p class="welcome-copy" id="dashboard-overview"></p></div><div class="welcome-companion"><div class="mascot-halo" aria-hidden="true"></div><div id="welcome-duck" class="welcome-duck" data-duck-state="happy" aria-hidden="true"></div><p id="duck-companion-caption">A little planning. A lighter day.</p></div></header>
           <div class="dashboard-layout">
             <section class="panel dashboard-today" aria-labelledby="dashboard-tasks-heading">
@@ -78,31 +81,36 @@
           </div>
         </section>
 
-        <section class="view" id="view-calendar" data-page-title="Calendar" data-eyebrow="Your time, thoughtfully planned">
+        <section class="view active" id="view-calendar" data-page-title="Calendar" data-eyebrow="Your time, thoughtfully planned">
           <header class="home-heading">
             <div><p class="section-kicker" id="selected-day-label">Today</p><h2 id="selected-date-heading">Your day</h2><p id="daily-progress-copy" class="home-subtitle"></p></div>
             <div class="completion-ring" id="completion-ring" aria-label="Daily completion"><strong id="completion-percent">0%</strong><span>done</span></div>
           </header>
           <div class="planner-workspace">
             <section class="panel daily-panel task-sidebar-panel" id="daily-task-panel" aria-labelledby="daily-plan-heading">
-              <div class="panel-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Daily plan</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div><button type="button" class="secondary-button compact-button" id="plan-selected-date">＋ Add task</button><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks">×</button></div>
+              <div class="panel-heading"><div class="task-sidebar-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Today</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div></div><button type="button" class="secondary-button compact-button" id="plan-selected-date">＋ Add task</button><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks">×</button></div>
               <div class="task-section overdue-section" id="overdue-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="overdue"><span><span class="status-dot overdue-dot"></span>Overdue</span><strong id="overdue-count">0</strong></button><div class="daily-task-list" id="overdue-task-list"></div></div>
               <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot scheduled-dot"></span>Scheduled</span><strong id="scheduled-count">0</strong></div><div class="daily-task-list" id="scheduled-task-list"></div></div>
-              <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Deadlines</span><strong id="unscheduled-count">0</strong></div><div class="daily-task-list" id="unscheduled-task-list"></div></div>
+              <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Due, not scheduled</span><strong id="unscheduled-count">0</strong></div><div class="daily-task-list" id="unscheduled-task-list"></div></div>
               <div class="task-section completed-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list"></div></div>
               <div class="daily-empty" id="daily-empty" hidden><span class="empty-duck" data-duck-state="swimming" aria-hidden="true"></span><h3>Clear day ahead.</h3><p>Click a calendar slot or plan a task when you are ready.</p></div>
             </section>
-            <section class="panel unified-calendar-panel" aria-labelledby="calendar-heading">
+            <section class="panel unified-calendar-panel calendar-main-panel" aria-labelledby="calendar-heading">
               <div class="calendar-toolbar">
-                <div class="calendar-toolbar-primary"><p class="section-kicker">Schedule</p><h2 id="calendar-heading">Calendar</h2><p class="calendar-range" id="calendar-range"></p></div>
+                <div class="calendar-toolbar-primary">
+                  <button type="button" class="secondary-button compact-button calendar-today-button" id="calendar-today">Today</button>
+                  <div class="calendar-stepper" aria-label="Move calendar"><button type="button" id="calendar-previous" aria-label="Previous period">‹</button><button type="button" id="calendar-next" aria-label="Next period">›</button></div>
+                  <div class="calendar-title-copy"><h2 id="calendar-heading">Calendar</h2><p class="calendar-range" id="calendar-range"></p></div>
+                </div>
                 <div class="calendar-toolbar-actions"><button class="secondary-button task-panel-toggle" type="button" id="toggle-task-panel" aria-controls="daily-task-panel" aria-expanded="false">Tasks</button>
-                  <button type="button" class="secondary-button compact-button" id="calendar-today">Today</button>
-                  <div class="calendar-stepper" aria-label="Move calendar"><button type="button" id="calendar-previous" aria-label="Previous period">←</button><button type="button" id="calendar-next" aria-label="Next period">→</button></div>
+                  <button class="primary-button phone-calendar-add" type="button" id="phone-add-task" aria-label="Add task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
                   <div class="view-switcher" role="group" aria-label="Calendar view"><button type="button" data-calendar-view="day" aria-pressed="false">Day</button><button type="button" data-calendar-view="week" aria-pressed="true">Week</button><button type="button" data-calendar-view="month" aria-pressed="false">Month</button></div>
                 </div>
               </div>
+              <div class="phone-week-strip" id="phone-week-strip" role="group" aria-label="Choose a day" hidden></div>
               <p class="sr-only" id="calendar-status" role="status" aria-live="polite"></p><p class="sr-only" id="calendar-drag-instructions">Drag scheduled work to another day or time. Keyboard users can hold Alt and use the arrow keys to reschedule in 15-minute steps.</p>
               <div id="planner-calendar" class="planner-calendar" tabindex="0" role="region" aria-label="Calendar schedule"></div>
+              <button class="phone-task-summary" id="phone-task-summary" type="button" aria-controls="daily-task-panel" aria-expanded="false"><span>Tasks for this day</span><small id="phone-task-summary-copy"></small><span aria-hidden="true">⌃</span></button>
             </section>
           </div>
         <button class="task-panel-scrim" type="button" data-close-task-panel aria-label="Close tasks" hidden></button>
@@ -167,7 +175,23 @@
       </main>
     </div>
 
-    <dialog class="task-modal" id="task-modal" aria-labelledby="modal-title"><form method="dialog" id="task-form" novalidate>
+    <nav class="phone-bottom-nav" aria-label="Phone planner navigation">
+      <button class="nav-item phone-nav-button active" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true"></span><span>Calendar</span></button>
+      <button class="nav-item phone-nav-button" type="button" data-view="home"><span class="nav-icon" aria-hidden="true"></span><span>Home</span></button>
+      <button class="nav-item phone-nav-button" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true"></span><span>Tasks</span></button>
+      <button class="nav-item phone-nav-button" type="button" data-view="classes"><span class="nav-icon" aria-hidden="true"></span><span>Classes</span></button>
+      <button class="phone-nav-button phone-more-button" type="button" id="phone-more-button" aria-haspopup="dialog" aria-controls="phone-more-dialog" aria-expanded="false"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg></span><span>More</span></button>
+    </nav>
+    <dialog class="phone-more-dialog" id="phone-more-dialog" tabindex="-1" aria-labelledby="phone-more-heading">
+      <div class="phone-more-heading"><h2 id="phone-more-heading">More</h2><button class="close-button" id="phone-more-close" type="button" aria-label="Close more navigation">×</button></div>
+      <nav class="phone-more-links" aria-label="More planner sections">
+        <button class="nav-item" type="button" data-view="goals"><span class="nav-icon" aria-hidden="true"></span><span>Goals &amp; habits</span><span class="phone-more-preview">Preview</span></button>
+        <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true"></span><span>Notes</span><span class="phone-more-preview">Preview</span></button>
+        <button class="nav-item" type="button" data-view="settings"><span class="nav-icon" aria-hidden="true"></span><span>Settings</span></button>
+      </nav>
+    </dialog>
+
+    <dialog class="task-modal" id="task-modal" data-popup-width="580" tabindex="-1" aria-labelledby="modal-title"><form method="dialog" id="task-form" novalidate>
       <div class="modal-heading"><div class="modal-duck" data-duck-state="focused" aria-hidden="true"></div><div><p class="section-kicker" id="modal-kicker">Plan your work</p><h2 id="modal-title">New task</h2></div><button class="close-button" type="button" id="close-task-modal" aria-label="Close">×</button></div>
       <p id="task-form-error" class="form-error" role="alert" hidden></p>
       <label>Task name <span class="required-label">Required</span><input name="title" required maxlength="80" placeholder="e.g. Finish the biology worksheet" /></label>
@@ -192,8 +216,25 @@
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
     <aside class="completion-note" id="completion-note" role="status" aria-live="polite" hidden><div class="completion-note-duck" data-duck-state="celebrating" aria-hidden="true"></div><div><strong>Today’s plan is complete!</strong><p id="completion-note-copy"></p></div><button type="button" id="dismiss-celebration" aria-label="Dismiss celebration">×</button></aside>
     <div class="completion-effects" id="completion-effects" aria-hidden="true"></div>
-    <script src="./planner-model.js"></script><script src="./planner-ui.js?v=ui-integration-20261110"></script><script src="./ical-parser.js"></script><script src="./cloud-config.js"></script><script src="./planner-store.js?v=ui-integration-20261110"></script><script src="./reminder-domain.js?v=2"></script><script src="./reminder-ledger.js?v=2"></script><script src="./browser-notifications.js?v=app-1"></script><script src="./motion-tokens.js"></script><script src="./page-navigation-feedback.js?v=two-button-rules-1"></script><script src="./button-interactions.js?v=local-buttons-1"></script><script src="./app-install.js?v=app-1"></script><script src="./task-alarms.js?v=native-alarms-1"></script><script src="./native-task-alarms.js?v=1"></script><script src="./app.js?v=ui-integration-20261110"></script>
-    <script src="./duck-mascot.js"></script>
+    <script src="./planner-model.js"></script>
+    <script src="./planner-ui.js?v=ui-integration-20261110"></script>
+    <script src="./ical-parser.js"></script>
+    <script src="./native-cloud.js"></script>
+    <script src="./cloud-config.js"></script>
+    <script src="./planner-store.js?v=ui-integration-20261110"></script>
+    <script src="./reminder-domain.js?v=2"></script>
+    <script src="./reminder-ledger.js?v=2"></script>
+    <script src="./browser-notifications.js?v=app-1"></script>
+    <script src="./motion-tokens.js?v=drawer-polish-20261112"></script>
+    <script src="./popup-motion.js"></script>
+    <script src="./page-navigation-feedback.js?v=two-button-rules-1"></script>
+    <script src="./button-interactions.js?v=local-buttons-1"></script>
+    <script src="./phone-navigation.js?v=phone-navigation-20261112"></script>
+    <script src="./app-install.js?v=app-1"></script>
+    <script src="./task-alarms.js?v=native-alarms-1"></script>
+    <script src="./native-task-alarms.js?v=1"></script>
+    <script src="./app.js?v=restored-sigma-face-20261112"></script>
+    <script src="./duck-mascot.js?v=restored-sigma-face-20261112"></script>
     <script src="./planner-presentation.js?v=ui-integration-20261110"></script>
     <script src="./duck-interactions.js"></script>
     <script src="./planner-clarity.js"></script>

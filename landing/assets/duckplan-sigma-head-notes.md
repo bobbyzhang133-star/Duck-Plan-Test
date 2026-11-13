@@ -1,12 +1,80 @@
 # Upright sigma duck profile
 
-Created with the built-in image-generation tool by editing the user's supplied
-duck screenshot. Online expression references: https://knowyourmeme.com/memes/sigma-face
-and https://www.kapwing.com/explore/sigma-face-argenby-video-meme .
+The current outline uses the user's original duck pixels, copied and rotated with
+the deterministic Swift compositor. Facial features are composited inside that
+protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v3.png. Current app exports:
-duckplan-sigma-icon-v3-192.png and duckplan-sigma-icon-v3-512.png.
+Current master: duckplan-sigma-head-v11.png. Current app exports:
+duckplan-sigma-icon-v11-192.png and duckplan-sigma-icon-v11-512.png.
 Earlier icons are retained for comparison.
+
+## Earlier Sigma facial group restored together (v11, November 12, 2026)
+
+The user's latest screenshot selects the earlier face found in `landing/assets/duckplan-sigma-head-v3.png`: both curved eyebrows, half-lidded eyes and the rounded orange bill. V11 copies that complete group together using one uniform affine scale, preserving the relationships between all facial features. There is no individual feature stretching, new feature raster or new image generation. This latest choice supersedes the human-photo and enlarged oval-eye directions from v7–v10.
+
+`tools/build-original-outline-icon.swift --restore-sigma-face` uses the existing v3 facial crop `[366, 377, 515, 488]`. Its output target starts at `[252, 295]`, with width 520 and proportional height approximately 492.74, from the common scale `520 / 515`. The approved original outer contour keeps the v6 rotation, scale and crop. Evidence is written to `docs/sigma-mascot/v11-preservation/`; original-outline pixels and all pixels outside the permitted facial mask must remain unchanged. Original-bill pixels intentionally differ because the restored group includes its own rounded bill. Exports remain opaque 1024px native and 192/512px web icons.
+
+Use `--reference-eye-proportions` for v10, `--duck-eyes` for v9, `--compact-expression` for v8, `--raised-brow` for v7 or no expression flag for v6. Their methods, sources, prompts and proofs remain below as history.
+
+## Reference-photo eye proportion correction (v10, November 12, 2026)
+
+The user clarified that the eye scaling differed compared with their reference photo. V10 corrects the exaggerated tall-left/tiny-right relationship using explicit fitting rectangles for the existing v9 raster: viewer-left width 42, height 34; viewer-right width 38, height 23, in the compositor's source plane. It keeps the large solid-black duck-eye style and close spacing. Both eyebrows' pixels must stay identical to v9, the bill identical to v8, and feature positions and the copied outer contour unchanged. This is a deterministic scaling fix, not new imagegen artwork or an exact tracing of the photo.
+
+`tools/build-original-outline-icon.swift --reference-eye-proportions` reuses `docs/sigma-mascot/source/duck-eye-features-v9.png` and its existing [feature-layer prompt](../../docs/sigma-mascot/source/duck-eye-features-v9-prompt.txt). It writes the master and preservation evidence to `docs/sigma-mascot/v10-preservation/`. The outline and pixels outside the permitted facial mask must remain unchanged. The retained v8 bill transform is 82% width, 85% height and a 20px downward shift; original-bill pixels are intentionally different from the unmodified rotated baseline. Exports remain opaque 1024px native and 192/512px web icons.
+
+Use `--duck-eyes` for v9, `--compact-expression` for v8, `--raised-brow` for v7 or no expression flag for v6. Earlier methods, sources and proofs remain below.
+
+## Larger duck-like eyes and eyebrows (v9, November 12, 2026)
+
+The user requested more duck-like eyes and larger eyes/eyebrows. V9 uses simple solid-black oval eyes, one half-lidded, retaining the raised viewer-left brow and the closer eye spacing from v8. In compositor coordinates, eye placement width is 42 instead of 35 (20% larger), and brow placement width is 49 instead of 39 (about 26% larger). The exact approved copied outer contour stays locked.
+
+`tools/build-original-outline-icon.swift --duck-eyes` composites `docs/sigma-mascot/source/duck-eye-features-v9.png` inside the permitted face area. It retains v8's authorized original-bill transform: 82% width, 85% height and a 20px downward shift. Evidence is written to `docs/sigma-mascot/v9-preservation/`; the outline and pixels outside the facial mask must remain unchanged. Original-bill pixels intentionally differ from the rotated original, as authorized for v8. The exact [feature-layer prompt](../../docs/sigma-mascot/source/duck-eye-features-v9-prompt.txt) is saved beside the source. Exports remain opaque 1024px native and 192/512px web icons.
+
+Use `--compact-expression` for v8, `--raised-brow` for v7 or no expression flag for v6. Their sources, proofs and methods remain below.
+
+## Narrower expression and permitted bill adjustment (v8, November 12, 2026)
+
+The user found v7's eyes too wide and permitted changes to the bill/nose to emphasize the expression. V8 keeps the exact approved outer contour, with narrower almond-shaped eyes, closer eye spacing and one raised viewer-left brow. The original bill is intentionally scaled down using a deterministic transform; the earlier promise to preserve every original beak pixel does not apply to this authorized facial edit.
+
+`tools/build-original-outline-icon.swift --compact-expression` uses the retained original screenshot and `docs/sigma-mascot/source/narrow-expression-features-v8.png`. Its permitted facial mask includes the eye/brow changes and the original and transformed bill areas. It writes the master and evidence to `docs/sigma-mascot/v8-preservation/`. The outline and all pixels outside the facial mask must remain unchanged; changed original-bill pixels are expected. Exports remain opaque 1024px native and 192/512px web icons. The exact [expression-feature prompt](../../docs/sigma-mascot/source/narrow-expression-features-v8-prompt.txt) is retained beside the feature source.
+
+The compositor's `--raised-brow` mode reproduces v7; running without either expression flag reproduces v6. Their sources, proofs and methods remain below for history.
+
+## Raised-brow expression inside the approved outline (v7, November 12, 2026)
+
+The user approved v6's copied outline, then supplied a new photo as the facial-expression reference. V7 preserves the exact original rotated contour and beak. Only the facial expression changes: viewer-left eyebrow raised, viewer-left eye more open and the other eye narrower for an asymmetric skeptical look. The reference photo does not supply a new head shape or outline.
+
+`tools/build-original-outline-icon.swift --raised-brow` uses the retained original screenshot and `docs/sigma-mascot/source/raised-brow-features-v7.png`, compositing the expression components only inside the permitted face area. It writes the master and separate preservation evidence to `docs/sigma-mascot/v7-preservation/`, while retaining the v6 source and proof. Guards reject changes to the outline, beak or pixels outside the facial mask. Exports remain opaque 1024px native and 192/512px web icons.
+
+The built-in imagegen tool produced only a transparent eye/brow layer from the user-supplied November 12 expression photo and v6's line-art style. The compositor keeps its generated alpha source intact and composites the black features into the original face. No generated contour is used. The exact [expression-feature prompt](../../docs/sigma-mascot/source/raised-brow-features-v7-prompt.txt) is saved beside that layer.
+
+## Original pixels copied and rotated (v6, November 12, 2026)
+
+The user explicitly requested copying/pasting the actual original outline, straightening it and adding the facial expression inside. This version uses deterministic raster compositing, not image generation. The original screenshot is copied unchanged to `docs/sigma-mascot/source/original-duck-reference.png`; its SHA-256 is `ce8a703ac230a5e754f5178a9f1cdeac2e25d7dcf1c776d8eedcc288949d66a4`.
+
+`tools/build-original-outline-icon.swift` rotates the source 45.0186698039 degrees clockwise around the original eye midpoint, then applies one uniform scale and crop. The 280px square crop ends before either screenshot-clipped neck contour, so no missing outline is reconstructed. The original beak stays intact. Only the old eye components are erased; existing Sigma eyes/brows are composited inside the face, with guards protecting the outline and bill.
+
+The saved rotated-source baseline, facial edit mask and preservation report are in `docs/sigma-mascot/v6-preservation/`. Independent raw-PNG comparison confirms zero changed pixels outside the facial mask; the outline and beak have zero changes relative to the rotated baseline. The master is 1024px RGB without alpha; web exports are 192/512px and the native icon copies the master directly.
+
+## Reference silhouette redraw (v5, November 12, 2026)
+
+The user rejected v4's separate egg-shaped head, cheek bulges and inward taper. Built-in imagegen editing used the original November 9 screenshot as the primary shape reference. The selected result is an upright interpretation with one continuous head/neck contour, broad parallel sides, a lighter outline and the Sigma expression. It is not an exact tracing. Full-body SVG drawings remain unchanged. Native and web exports retain the existing 1024/512/192px sizes.
+
+Selected silhouette prompt:
+
++ Create the corrected DuckPlan app icon from this original duck reference. The essential correction is the OUTER SHAPE. Draw ONE continuous thin black outline shaped like a softly rounded arch with two almost-vertical sides continuing all the way to the bottom edge. This is a broad white column with a rounded top, NOT a separate bulb-shaped head plus a neck. On a 1254×1254 square: the arch's apex is around (625,175); its sides reach about (215,540) and (1035,540), then continue gently downward near x=215 and x=1035 to the bottom edge. Width at y=800, y=1000 and the bottom must remain about 820px, the same as at the sides of the head. Absolutely no inward-curving waist, cheek lobes, narrowing below the mouth or small stalk. Keep the lines gently hand-drawn and slightly asymmetric like the supplied reference, with lighter stroke thickness about 18–22px, not the thick heavy outline of previous versions. Put the reference duck's simple warm-orange bill and a restrained confident Sigma expression (half-lidded eyes and inward-raised eyebrows) inside the upper part of this ONE broad shape. Keep the duck upright with level eyes. Flat white fill and flat off-white opaque background, no gradients or shading. Crop the broad neck through the bottom edge without a closing horizontal line. No body, shoulders, wings, feet, tail, border, text, screenshot UI or extra objects. One square app icon.
+
+Final outline-legibility prompt:
+
++ Precise single-change edit of this app icon. Keep the existing outer contour PATH, width, proportions, broad continuous arch and straight sides EXACTLY unchanged. Keep all face features, orange bill shape, expression, positions, colors and background exactly unchanged. Change ONLY the thickness of the outer black silhouette line: make it match the black line thickness around the orange bill, approximately 18–20 pixels on this 1254px square, roughly 1.5–1.8 times the current thin outer contour. Keep the stroke centered on the same path. Do not reshape the figure, introduce cheek bulges or taper the sides. The only visible difference should be a slightly stronger, still simple and lighter-than-the-previous-icon exterior outline for legibility at app-icon sizes. Opaque background, same square canvas.
+
+## Thicker app profile (v4, November 12, 2026)
+
+Created with built-in imagegen editing, using the user's original November 9 tilted duck screenshot as the broad-neck reference. Retains the upright Sigma face while widening and smoothing the lower outer contour. Full-body SVG mascot poses remain unchanged. The native app icon is exported at 1024×1024; website/PWA icons are exported at 192×192 and 512×512.
+
+Final edit prompt:
+
++ Use case: precise-object-edit. Image 1 is the DuckPlan app-icon edit target. Image 2 is the user's original duck reference for its broad continuous neck. Keep the FACE FEATURES of image 1 exactly unchanged: eyes, eyebrows, orange bill, positions, expression and scale. Correct only the EXTERIOR OUTLINE OF THE LOWER CHEEKS AND NECK. The lower-cheek contour IS allowed to change starting halfway down the image. Delete both pointed inward nicks at the cheek-to-neck junction. Redraw the outside silhouette as a smooth uninterrupted arch continuing into two broad nearly vertical sides, like a thick inverted U: the rounded upper head remains, the widest cheeks flow smoothly downward into the full-width neck, with no inward step, waist, corner or notch. From approximately image y=600 to the bottom at y=1254, the outer left contour should remain near x=210–220 and the right near x=1030–1040, with smooth gentle curvature only. The neck should be at least as wide as the head, clearly thick and stout as in the original reference. Do not preserve the old notched outline. Preserve all interior face artwork and the upper head arch. Same thick black outline, white duck, orange bill, opaque off-white background, upright orientation and square canvas. No shoulders, wings, torso, feet, tail, clothing, text or decorative elements. Return one polished square app icon.
 
 ## Broad reference neck correction (v3, built-in image editing)
 

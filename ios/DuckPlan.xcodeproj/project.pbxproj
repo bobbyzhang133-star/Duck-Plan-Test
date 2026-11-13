@@ -45,7 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0B89D50BD37B8C11ADB9243D /* DuckPlan.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DuckPlan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B89D50BD37B8C11ADB9243D /* DuckPlan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckPlan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DC38D6C46FFD40C706A5CB0 /* TaskAlarmMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAlarmMetadata.swift; sourceTree = "<group>"; };
 		1427811ED5A055F32DAABE63 /* TaskAlarmWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAlarmWidget.swift; sourceTree = "<group>"; };
 		2281218FCF013E785EDF281A /* DuckPlanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckPlanApp.swift; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		47D5491506010387D782E267 /* bright.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bright.wav; sourceTree = "<group>"; };
 		6286DF86D432C342E232DC0D /* PlannerWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerWebView.swift; sourceTree = "<group>"; };
 		98ACE35F72C4BFB47F8DDCF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A1889357A31F0C0187308B60 /* DuckPlanAlarmWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DuckPlanAlarmWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1889357A31F0C0187308B60 /* DuckPlanAlarmWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DuckPlanAlarmWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC5A77C451E16B1FDE063D19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CDAED2CD530B2310CB00EA72 /* gentle.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gentle.wav; sourceTree = "<group>"; };
 		FBE62E74CBCB277A96E137B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -179,11 +179,9 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					BB8218468A03DE778F6C5ACA = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 					CF3F09693664697E5596940E = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -324,6 +322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				DEVELOPMENT_TEAM = MYJ7P76JQ2;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -341,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				DEVELOPMENT_TEAM = MYJ7P76JQ2;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -418,6 +418,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = MYJ7P76JQ2;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -434,6 +435,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = MYJ7P76JQ2;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

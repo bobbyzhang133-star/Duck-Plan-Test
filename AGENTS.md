@@ -1,5 +1,13 @@
 # Repository Guidelines
 
+## Approved DuckPlan Icon
+
+The user approved v11 on November 12, 2026 as DuckPlan's profile picture and app icon. Preserve `landing/assets/duckplan-sigma-head-v11.png`, its matching web exports and the identical opaque 1024px native `AppIcon.png` unless the user requests a change. Keep the approved outer contour and the complete facial group's proportions intact; preserve native code and signing.
+
+## iPhone Website Updates
+
+The Xcode project bundles this repository's `landing/` directory. It does not automatically use the separate website preview checkout or GitHub main. Before telling the user to Run an updated app, sync the intended latest web files into this directory, preserve existing native alarm code and signing settings, run matching web tests and verify the bundled files in a successful iPhone build. Installing the update on a physical phone remains a separate step.
+
 ## Project Structure & Module Organization
 
 DuckPlan is a student planner built with plain HTML, CSS, and JavaScript. The deployable site lives in `landing/`:

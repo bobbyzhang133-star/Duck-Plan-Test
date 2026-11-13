@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-v11";
+const CACHE_VERSION = "duckplan-app-native-cloud-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,18 +7,22 @@ const APP_SHELL = [
   "./planner-ui.css",
   "./duck-theme.css",
   "./planner-clarity.css",
+  "./planner-motion.css",
+  "./phone-navigation.css",
+  "./phone-navigation.js",
   "./duck-mascot.js",
   "./duck-interactions.js",
   "./planner-clarity.js",
   "./planner-presentation.js",
   "./assets/duckplan-mark.svg",
-  "./assets/duckplan-sigma-icon-v3-192.png",
-  "./assets/duckplan-sigma-icon-v3-512.png",
+  "./assets/duckplan-sigma-icon-v11-192.png",
+  "./assets/duckplan-sigma-icon-v11-512.png",
   "./assets/duckplan-mascot-v8.png",
   "./planner-model.js",
   "./planner-ui.js",
   "./ical-parser.js",
   "./cloud-config.js",
+  "./native-cloud.js",
   "./planner-store.js",
   "./reminder-domain.js",
   "./reminder-ledger.js",
@@ -59,14 +63,21 @@ async function networkFirst(request, fallbackUrl) {
 
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_VERSION);
-  const cached = await cache.match(request, { ignoreSearch: true });
+  // Versioned scripts must not resolve to an older, unversioned precache entry.
+  const cached = await cache.match(request);
   if (cached) {
     fetch(request).then((response) => { if (response.ok) cache.put(request, response); }).catch(() => {});
     return cached;
   }
-  const response = await fetch(request);
-  if (response.ok) cache.put(request, response.clone());
-  return response;
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  } catch (error) {
+    const offline = await cache.match(request, { ignoreSearch: true });
+    if (offline) return offline;
+    throw error;
+  }
 }
 
 self.addEventListener("fetch", (event) => {
@@ -116,7 +127,7 @@ self.addEventListener('push',event=>{
       const {alarms}=await response.json();
       for(const alarm of alarms) {
         await self.registration.showNotification('Time to start your task',{
-          body:alarm.title,icon:'./assets/duckplan-sigma-icon-v3-192.png',tag:`duckplan-alarm-${alarm.id}`,
+          body:alarm.title,icon:'./assets/duckplan-sigma-icon-v11-192.png',tag:`duckplan-alarm-${alarm.id}`,
           requireInteraction:true,data:{taskId:alarm.item_id,view:'home'},
         });
         displayed=true;
@@ -125,7 +136,7 @@ self.addEventListener('push',event=>{
     } catch { /* Always show a visible fallback for a payload-free push. */ }
     if(!displayed) await self.registration.showNotification('DuckPlan task reminder',{
       body:'Open DuckPlan to check your tasks. Sign in if your session has expired.',
-      icon:'./assets/duckplan-sigma-icon-v3-192.png',tag:'duckplan-alarm-check',data:{view:'home'},
+      icon:'./assets/duckplan-sigma-icon-v11-192.png',tag:'duckplan-alarm-check',data:{view:'home'},
     });
   })());
 });

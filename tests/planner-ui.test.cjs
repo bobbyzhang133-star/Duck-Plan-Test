@@ -73,7 +73,7 @@ test("planner markup and styles retain the responsive accessibility contract", (
   assert.match(css, /\.calendar-drag-ghost/);
   assert.match(html, /id="calendar-drag-instructions"/);
   assert.match(app, /actionLabel: "Undo"/);
-  assert.match(app, /sidebar\.inert = !open && !desktopNavigation/);
+  assert.match(app, /sidebar\.inert = false/);
   assert.match(html, /class="calendar-toolbar-primary"/);
   assert.match(html, /class="nav-label">Planning/);
   assert.doesNotMatch(html, /class="calendar-legend"/);
@@ -94,7 +94,7 @@ test("planner markup and styles retain the responsive accessibility contract", (
   assert.match(css, /duckplan-page-wave 350ms/);
   assert.match(css, /clip-path: circle\(71% at 50% 50%\)/);
   assert.match(css, /a\[data-page-navigation\]\.glass-button\[data-activated="true"\]/);
-  assert.match(css, /\.calendar-slot,[\s\S]+\.task-section-heading\):not\(:disabled\):is\(:active,\.interaction-pressed\)/);
+  assert.match(css, /button:is\(\.calendar-slot,[\s\S]+\.task-section-heading\):not\(:disabled\):not\(\[aria-disabled="true"\]\):is\(:active,\.interaction-pressed\)/);
   assert.match(buttonRule, /Rule 1 — Page-changing navigation/);
   assert.match(buttonRule, /Rule 2 — Local and in-page controls/);
   assert.match(buttonRule, /Wait for the actual wave animation to finish/);

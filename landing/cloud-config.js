@@ -4,4 +4,9 @@
 // `apiUrl: "/api"`, so cloud sync turns on only where the backend actually exists.
 window.DUCKPLAN_CLOUD = {
   apiUrl: "",
+  native: false,
 };
+// Xcode's bundled main frame receives this restricted native transport at startup.
+if (window.DuckNativeCloud) {
+  window.DUCKPLAN_CLOUD = { apiUrl: window.DuckNativeCloud.apiUrl, native: true };
+}

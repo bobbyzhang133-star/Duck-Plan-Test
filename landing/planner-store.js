@@ -277,7 +277,7 @@
     }
     async function sessionUser() {
       const session = await api("GET", "/session");
-      providers = { password: true, google: Boolean(session.providers?.google) };
+      providers = { password: true, google: !config.native && Boolean(session.providers?.google) };
       return session.user || null;
     }
 
@@ -383,6 +383,7 @@
       },
       async signInWithGoogle() {
         if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
+        if (config.native) throw new Error("Use your DuckPlan email and password in the iPhone app.");
         locationRef.assign(`${apiUrl}/auth/google?next=${encodeURIComponent(redirectPath)}`);
       },
       async signOut() {

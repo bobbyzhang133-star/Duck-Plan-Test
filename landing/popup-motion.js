@@ -141,7 +141,7 @@
     const key=viewportKey(),cached=prepared.get(element);
     // An early click never synchronously lays out the full form. Reserve a bounded
     // fallback frame; its content scrolls inside it rather than resizing the shell.
-    const width=Math.max(1,Math.min(680,(window.innerWidth||1000)-28));
+    const width=Math.max(1,Math.min(Number(element.dataset.popupWidth)||680,(window.innerWidth||1000)-28));
     const height=Math.max(1,Math.min((window.innerWidth||1000)<=700?860:680,(window.innerHeight||800)-32));
     const shape=cached?.key===key?cached:{key,width,height,radius:24,titleX:26,titleY:52,titleFont:'21.6px',titleWeight:'700'};
     return {...shape,left:Math.max(0,((window.innerWidth||1000)-shape.width)/2),top:Math.max(0,((window.innerHeight||800)-shape.height)/2),prepared:cached?.key===key};

@@ -22,6 +22,35 @@ Native alarm times are absolute instants. Changing a work session does not silen
 move an alarm; edit the alarm explicitly. Once scheduled, iOS handles the alarm
 while DuckPlan is closed or offline. The user can revoke alarm permission at any time.
 
+## Duck alarm appearance
+
+- System alerts use duck-yellow accents and a dark Snooze label for contrast.
+- Snooze Live Activities use a warm cream card with the task centered, plus yellow
+  accents in the Dynamic Island. iOS retains control of the actual system alert layout.
+- While the app is active, actual AlarmKit `alerting` updates present a centered
+  task card over a blurred planner. The card uses the bundled duck mascot and
+  provides Stop and the task's configured Snooze duration via AlarmManager.
+- Stopping an alarm does not mark its task completed. Multiple ringing tasks are
+  shown in order; handling one reveals the next. Failed actions keep controls visible.
+- The card scrolls for long titles, landscape and larger text; Reduce Transparency
+  replaces the blur with an opaque cream background.
+
+For a silent visual preview in a Debug simulator build, launch with
+`-duckplan-alarm-preview`. This never schedules an alarm or changes saved tasks.
+Use `-duckplan-alarm-no-snooze` to inspect the Stop-only layout. The optional
+`DUCKPLAN_ALARM_PREVIEW_TITLE` environment variable supplies a long sample title.
+These preview controls are excluded from physical-device and Release builds.
+Existing scheduled system alarms retain their saved appearance; edit and save an
+alarm again to apply the new tint. Rebuild and run on the iPhone to install changes.
+
+Theme verification (November 11, 2026): the app and widget compile in Debug for
+iPhone 17 Simulator and Release for generic iOS, with signing disabled. The four
+native-alarm adapter tests and project/diff checks pass. Silent simulator previews
+were inspected for the centered card, a long task title, and the Stop-only card
+at the largest accessibility text size. These previews do not
+verify real AlarmKit delivery, sound, system-alert appearance, or Stop/Snooze on a
+physical device; exercise those on the iPhone after installing this build.
+
 ## Build and run
 
 Requires macOS compatible with Xcode 26+, Xcode's iOS SDK and an iPhone/iPad on iOS 26+.
@@ -41,11 +70,33 @@ xcodegen generate --spec ios/project.yml
 xcodebuild -project ios/DuckPlan.xcodeproj -scheme DuckPlan -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
 ```
 
-The native app currently bundles the local planner. Browser/PWA storage is separate
-from native app storage; existing website tasks are not automatically imported.
-Remote-account/cloud-native sync and remote completion cancellation while this app
-is closed are not implemented. The web version retains its separate push-notification
-feature. No production cloud migration or VAPID key is required for local AlarmKit alarms.
+The native app bundles the planner and supports DuckPlan email/password accounts
+under **More → Settings → Account**. Sign in with the same DuckPlan account as the
+website to load its tasks. Apple/Xcode sign-in is separate. Google redirect sign-in
+is not offered inside the bundled app.
+
+The bundled main frame uses an endpoint-restricted native URLSession bridge to
+`https://duckplan.duckplan-cloudflare.workers.dev/api`. Session cookies stay in native
+cookie storage and are not returned to JavaScript. No server CORS relaxation or
+public deployment is required. The local planner remains available without sign-in;
+copying its tasks into an account requires the existing explicit Import action.
+
+Native account data refreshes on returning to the app and every 30 seconds while
+foregrounded. Browser/PWA local storage is separate from native local storage.
+Ringing alarms stay device-local: signing in does not copy website notifications
+into AlarmKit alarms. Remote task completion can cancel alarms after the app next
+refreshes, but cannot cancel them while the app is closed. The web version retains
+its separate push-notification feature. No VAPID key is required for local AlarmKit alarms.
+
+For isolated simulator testing only, Debug builds accept
+`DUCKPLAN_NATIVE_API_URL=http://127.0.0.1:8792/api`. The port may vary; only that
+loopback host and `/api` path are accepted. Physical-device and Release builds
+ignore this override and use the production HTTPS endpoint. Native destination,
+method, body and redirect boundaries can be tested without network calls using:
+
+```sh
+node ios/scripts/test-cloud-boundary.mjs
+```
 
 ## Mandatory physical-device verification before calling this finished
 
