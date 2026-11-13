@@ -83,10 +83,13 @@ func components(_ image: Raster, roi: (Int, Int, Int, Int)? = nil) -> [Component
   }
   return result.sorted { $0.points.count > $1.points.count }
 }
-let root = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : FileManager.default.currentDirectoryPath
+let root = CommandLine.arguments.dropFirst().first { !$0.hasPrefix("--") } ?? FileManager.default.currentDirectoryPath
+let raisedBrow = CommandLine.arguments.contains("--raised-brow")
+let version = raisedBrow ? "v7" : "v6"
 let originalPath = root + "/docs/sigma-mascot/source/original-duck-reference.png"
 let original = try Raster(originalPath)
-let expression = try Raster(root + "/landing/assets/duckplan-sigma-head-v5.png")
+let expressionSource = raisedBrow ? "docs/sigma-mascot/source/raised-brow-features-v7.png" : "landing/assets/duckplan-sigma-head-v5.png"
+let expression = try Raster(root + "/" + expressionSource)
 let parts = components(original)
 require(parts.count >= 4, "Missing original artwork components")
 let eyes = [parts[2], parts[3]].sorted { $0.centerX < $1.centerX }
@@ -144,7 +147,8 @@ for i in eraseMask.indices where eraseMask[i] {
 }
 let size = 1024
 let cropX = 74.0, cropY = 58.0, cropSize = 280.0
-let proof = root + "/docs/sigma-mascot/v6-preservation/"
+let proof = root + "/docs/sigma-mascot/" + version + "-preservation/"
+try FileManager.default.createDirectory(atPath: proof, withIntermediateDirectories: true)
 func taps(_ x: Double, _ y: Double) -> [(Int, Double)] {
   let x0 = Int(floor(x)), y0 = Int(floor(y)), fx = x - Double(x0), fy = y - Double(y0)
   return [(x0,y0,(1-fx)*(1-fy)), (x0+1,y0,fx*(1-fy)), (x0,y0+1,(1-fx)*fy), (x0+1,y0+1,fx*fy)]
@@ -173,9 +177,26 @@ for y in 0..<size { for x in 0..<size {
   }
 } }
 try baseline.save(proof + "rotated-original.png")
-let features = components(expression, roi: (370, 330, 880, 501))
-let brows = features.filter { $0.centerY < 420 }.sorted { $0.centerX < $1.centerX }
-let lids = features.filter { $0.centerY >= 420 }.sorted { $0.centerX < $1.centerX }
+func merge(_ parts: [Component]) -> Component {
+  require(!parts.isEmpty, "Missing expression feature")
+  let points = parts.flatMap { $0.points }
+  return Component(points: points,
+    minX: parts.map { $0.minX }.min()!, minY: parts.map { $0.minY }.min()!,
+    maxX: parts.map { $0.maxX }.max()!, maxY: parts.map { $0.maxY }.max()!,
+    centerX: parts.reduce(0) { $0 + $1.centerX * Double($1.points.count) } / Double(points.count),
+    centerY: parts.reduce(0) { $0 + $1.centerY * Double($1.points.count) } / Double(points.count))
+}
+let features = components(expression, roi: raisedBrow ? nil : (370, 330, 880, 501))
+let browCutoff = raisedBrow ? Double(expression.height) * 0.52 : 420
+let browParts = features.filter { $0.centerY < browCutoff }
+let eyeParts = features.filter { $0.centerY >= browCutoff }
+// Open eyes have disconnected pupils; keep each pupil with its eye outline.
+let brows = raisedBrow ? [true, false].map { left in
+  merge(browParts.filter { ($0.centerX < Double(expression.width) / 2) == left })
+} : browParts.sorted { $0.centerX < $1.centerX }
+let lids = raisedBrow ? [true, false].map { left in
+  merge(eyeParts.filter { ($0.centerX < Double(expression.width) / 2) == left })
+} : eyeParts.sorted { $0.centerX < $1.centerX }
 require(brows.count == 2 && lids.count == 2, "Expected four expression components; found \(brows.count) brows and \(lids.count) eyes")
 func composite(_ feature: Component, center: (Double, Double), width: Double) {
   let minX = feature.minX - 2, minY = feature.minY - 2
@@ -211,7 +232,8 @@ for side in 0..<2 {
   let inward = side == 0 ? 4.0 : -4.0
   composite(lids[side], center: (eye.0 + inward, eye.1 - 13), width: 43)
   let browInset = side == 0 ? 14.0 : -14.0
-  composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - 40), width: 45)
+  let browLift = raisedBrow ? (side == 0 ? 49.0 : 34.0) : 40.0
+  composite(brows[side], center: (eye.0 + inward + browInset, eye.1 - browLift), width: 45)
 }
 var changes = 0, outsideEdits = 0, outlineChanges = 0, beakChanges = 0
 for i in 0..<(size * size) {
@@ -227,16 +249,16 @@ require(outsideEdits == 0 && outlineChanges == 0 && beakChanges == 0, "Protected
 var mask = Raster(width: size, height: size, color: [0,0,0])
 for i in editMask.indices where editMask[i] { for channel in 0..<3 { mask.rgb[i * 3 + channel] = 255 } }
 try mask.save(proof + "facial-edit-mask.png")
-try final.save(root + "/landing/assets/duckplan-sigma-head-v6.png")
+try final.save(root + "/landing/assets/duckplan-sigma-head-" + version + ".png")
 let report: [String: Any] = [
   "source": "docs/sigma-mascot/source/original-duck-reference.png",
-  "expressionSource": "landing/assets/duckplan-sigma-head-v5.png",
+  "expressionSource": expressionSource,
   "clockwiseDegrees": angle * 180 / Double.pi,
   "pivot": [cx,cy], "rotatedCrop": [cropX,cropY,cropSize,cropSize],
   "outputSize": size, "changedFacialPixels": changes,
   "changedPixelsOutsideFacialEdits": outsideEdits,
   "changedOriginalOutlinePixels": outlineChanges, "changedOriginalBeakPixels": beakChanges,
-  "method": "Original raster copied with one rotation/scale/crop; existing expression components composited inside. No generated or reconstructed contour."
+  "method": "Original raster copied with one rotation/scale/crop; \(raisedBrow ? "reference-inspired asymmetric raised-brow" : "existing") expression components composited inside. No generated or reconstructed contour."
 ]
 let data = try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted,.sortedKeys])
 try data.write(to: URL(fileURLWithPath: proof + "preservation-report.json"))

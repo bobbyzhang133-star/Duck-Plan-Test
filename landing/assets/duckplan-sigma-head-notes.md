@@ -1,12 +1,20 @@
 # Upright sigma duck profile
 
-Created with the built-in image-generation tool by editing the user's supplied
-duck screenshot. Online expression references: https://knowyourmeme.com/memes/sigma-face
-and https://www.kapwing.com/explore/sigma-face-argenby-video-meme .
+The current outline uses the user's original duck pixels, copied and rotated with
+the deterministic Swift compositor. Facial features are composited inside that
+protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v6.png. Current app exports:
-duckplan-sigma-icon-v6-192.png and duckplan-sigma-icon-v6-512.png.
+Current master: duckplan-sigma-head-v7.png. Current app exports:
+duckplan-sigma-icon-v7-192.png and duckplan-sigma-icon-v7-512.png.
 Earlier icons are retained for comparison.
+
+## Raised-brow expression inside the approved outline (v7, November 12, 2026)
+
+The user approved v6's copied outline, then supplied a new photo as the facial-expression reference. V7 preserves the exact original rotated contour and beak. Only the facial expression changes: viewer-left eyebrow raised, viewer-left eye more open and the other eye narrower for an asymmetric skeptical look. The reference photo does not supply a new head shape or outline.
+
+`tools/build-original-outline-icon.swift --raised-brow` uses the retained original screenshot and `docs/sigma-mascot/source/raised-brow-features-v7.png`, compositing the expression components only inside the permitted face area. It writes the master and separate preservation evidence to `docs/sigma-mascot/v7-preservation/`, while retaining the v6 source and proof. Guards reject changes to the outline, beak or pixels outside the facial mask. Exports remain opaque 1024px native and 192/512px web icons.
+
+The built-in imagegen tool produced only a transparent eye/brow layer from the user-supplied November 12 expression photo and v6's line-art style. The compositor keeps its generated alpha source intact and composites the black features into the original face. No generated contour is used. The exact [expression-feature prompt](../../docs/sigma-mascot/source/raised-brow-features-v7-prompt.txt) is saved beside that layer.
 
 ## Original pixels copied and rotated (v6, November 12, 2026)
 

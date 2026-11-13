@@ -1,0 +1,21 @@
+{
+  "changedFacialPixels" : 43014,
+  "changedOriginalBeakPixels" : 0,
+  "changedOriginalOutlinePixels" : 0,
+  "changedPixelsOutsideFacialEdits" : 0,
+  "clockwiseDegrees" : 45.018669803874516,
+  "expressionSource" : "docs\/sigma-mascot\/source\/raised-brow-features-v7.png",
+  "method" : "Original raster copied with one rotation\/scale\/crop; reference-inspired asymmetric raised-brow expression components composited inside. No generated or reconstructed contour.",
+  "outputSize" : 1024,
+  "pivot" : [
+    213.9386655011655,
+    186.54501364863208
+  ],
+  "rotatedCrop" : [
+    74,
+    58,
+    280,
+    280
+  ],
+  "source" : "docs\/sigma-mascot\/source\/original-duck-reference.png"
+}
