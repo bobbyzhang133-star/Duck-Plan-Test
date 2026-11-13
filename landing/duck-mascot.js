@@ -48,7 +48,7 @@
   function mount(element, state = "happy") {
     if (!element) return;
     element.innerHTML = element.classList.contains("brand-mark")
-      ? '<img class="duck-brand-image" src="./assets/duckplan-sigma-icon-v5-192.png" alt="" aria-hidden="true" width="192" height="192" />'
+      ? '<img class="duck-brand-image" src="./assets/duckplan-sigma-icon-v6-192.png" alt="" aria-hidden="true" width="192" height="192" />'
       : markup(state, element.classList.contains("pond-duck") ? "side" : "front");
   }
   function setState(element, state) {

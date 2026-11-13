@@ -1,6 +1,17 @@
 # Sigma mascot
 
-The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v5.png` and its 192/512px icon exports. The November 12 redraw uses the user's original duck screenshot for a continuous head-to-neck silhouette, without cheek bulges or an inward neck pinch. Its outline is lighter than v4, with the upright Sigma expression retained. This is a cleaned upright interpretation of the reference, not an exact tracing. The native icon exports this master at 1024px. The selected built-in imagegen prompts are recorded in `landing/assets/duckplan-sigma-head-notes.md`; previous images remain available.
+The app profile, sidebar and favicon use `landing/assets/duckplan-sigma-head-v6.png` and its 192/512px exports. Following the user's explicit copy-and-paste instruction, this version uses the actual original outline pixels, rotated 45.0187 degrees clockwise, uniformly scaled and cropped. Existing Sigma eyes and brows are composited inside the face. The original outline and beak are preserved; this version does not use a generated approximation. The native icon copies the opaque 1024px master directly. Previous images remain available.
+
+The byte-identical original is [source/original-duck-reference.png](source/original-duck-reference.png). [v6-preservation/rotated-original.png](v6-preservation/rotated-original.png) is the unchanged rotated baseline; [v6-preservation/facial-edit-mask.png](v6-preservation/facial-edit-mask.png) identifies the permitted changes. [The preservation report](v6-preservation/preservation-report.json) and an independent raw-PNG check confirm zero changed pixels outside that mask. The crop stops before the screenshot's clipped contour endpoints, so no neck extension is invented.
+
+Rebuild from the repository root on macOS:
+
+```sh
+xcrun swiftc -O -module-cache-path /private/tmp/duckplan-v6-module-cache tools/build-original-outline-icon.swift -o /private/tmp/duckplan-build-original-icon
+/private/tmp/duckplan-build-original-icon
+```
+
+The source geometry and earlier generation prompts are recorded in `landing/assets/duckplan-sigma-head-notes.md`.
 
 Full-body UI poses remain native SVG markup in `landing/duck-mascot.js`, styled by `landing/duck-theme.css`, using the earlier `landing/assets/duckplan-sigma-head-v3.png` as their visual reference. Their drawings, placements and reactions are unchanged by the app-profile edit.
 

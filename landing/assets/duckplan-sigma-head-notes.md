@@ -4,9 +4,17 @@ Created with the built-in image-generation tool by editing the user's supplied
 duck screenshot. Online expression references: https://knowyourmeme.com/memes/sigma-face
 and https://www.kapwing.com/explore/sigma-face-argenby-video-meme .
 
-Current master: duckplan-sigma-head-v5.png. Current app exports:
-duckplan-sigma-icon-v5-192.png and duckplan-sigma-icon-v5-512.png.
+Current master: duckplan-sigma-head-v6.png. Current app exports:
+duckplan-sigma-icon-v6-192.png and duckplan-sigma-icon-v6-512.png.
 Earlier icons are retained for comparison.
+
+## Original pixels copied and rotated (v6, November 12, 2026)
+
+The user explicitly requested copying/pasting the actual original outline, straightening it and adding the facial expression inside. This version uses deterministic raster compositing, not image generation. The original screenshot is copied unchanged to `docs/sigma-mascot/source/original-duck-reference.png`; its SHA-256 is `ce8a703ac230a5e754f5178a9f1cdeac2e25d7dcf1c776d8eedcc288949d66a4`.
+
+`tools/build-original-outline-icon.swift` rotates the source 45.0186698039 degrees clockwise around the original eye midpoint, then applies one uniform scale and crop. The 280px square crop ends before either screenshot-clipped neck contour, so no missing outline is reconstructed. The original beak stays intact. Only the old eye components are erased; existing Sigma eyes/brows are composited inside the face, with guards protecting the outline and bill.
+
+The saved rotated-source baseline, facial edit mask and preservation report are in `docs/sigma-mascot/v6-preservation/`. Independent raw-PNG comparison confirms zero changed pixels outside the facial mask; the outline and beak have zero changes relative to the rotated baseline. The master is 1024px RGB without alpha; web exports are 192/512px and the native icon copies the master directly.
 
 ## Reference silhouette redraw (v5, November 12, 2026)
 
