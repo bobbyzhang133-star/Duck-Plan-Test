@@ -119,6 +119,8 @@
     let dialogSource = null;
     let dialogSourceKey = "";
     let taskClassId = null;
+    let calendarDrawerOpen = false;
+    let calendarDrawerAnimation = null;
     let ownerKey = currentOwnerKey();
     let ownerGeneration = 0;
     let destroyed = false;
@@ -159,6 +161,7 @@
       selectedTab = "assignments";
       taskClassId = null;
       pending.clear();
+      resetCalendarTemplateDrawer();
     }
 
     function fail(error) {
@@ -200,14 +203,70 @@
       }).join("")}</div>`;
     }
 
+    function cancelCalendarDrawerMotion() {
+      const current = calendarDrawerAnimation;
+      calendarDrawerAnimation = null;
+      current?.animation.cancel();
+    }
+
+    function resetCalendarTemplateDrawer() {
+      calendarDrawerOpen = false;
+      cancelCalendarDrawerMotion();
+      const panel = find("#calendar-template-drawer-panel");
+      if (panel) { panel.hidden = true; panel.inert = true; panel.style.height = ""; }
+      find("#calendar-template-drawer-toggle")?.setAttribute("aria-expanded", "false");
+      find("#calendar-assignment-templates .library-calendar-drawer")?.classList.remove("is-open");
+    }
+
+    function toggleCalendarTemplateDrawer(control) {
+      const panel = find("#calendar-template-drawer-panel");
+      if (!panel || destroyed) return;
+      const startHeight = panel.hidden ? 0 : panel.getBoundingClientRect().height;
+      const focusInPanel = panel.contains(doc.activeElement);
+      cancelCalendarDrawerMotion();
+      calendarDrawerOpen = !calendarDrawerOpen;
+      const open = calendarDrawerOpen;
+      control.setAttribute("aria-expanded", String(open));
+      control.closest(".library-calendar-drawer").classList.toggle("is-open", open);
+      if (!open && focusInPanel) control.focus({ preventScroll: true });
+      panel.hidden = false;
+      panel.inert = !open;
+      panel.style.height = `${startHeight}px`;
+      const endHeight = open ? panel.scrollHeight : 0;
+      const view = doc.defaultView;
+      const styles = view?.getComputedStyle(panel);
+      const durationToken = styles?.getPropertyValue("--motion-sheet").trim() || "340ms";
+      const parsedDuration = parseFloat(durationToken) * (durationToken.endsWith("ms") ? 1 : 1000);
+      const duration = Number.isFinite(parsedDuration) ? Math.max(0, parsedDuration) : 340;
+      const reduced = view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      const settle = () => { panel.style.height = ""; panel.hidden = !open; panel.inert = !open; };
+      if (reduced || !duration || !panel.animate || Math.abs(startHeight - endHeight) < 1) { settle(); return; }
+      const animation = panel.animate([{ height: `${startHeight}px` }, { height: `${endHeight}px` }], {
+        duration, easing: styles?.getPropertyValue("--motion-sheet-ease").trim() || "cubic-bezier(.25,0,.2,1)", fill: "both",
+      });
+      const state = calendarDrawerAnimation = { animation, panel, owner: captureOwner() };
+      animation.finished.then(() => {
+        if (calendarDrawerAnimation !== state) return;
+        calendarDrawerAnimation = null;
+        if (panel.isConnected && isCurrentOwner(state.owner)) settle();
+        else { panel.hidden = true; panel.inert = true; panel.style.height = ""; }
+        animation.cancel();
+      }, () => {});
+    }
+
     function renderTemplates() {
       for (const [id, context, compact] of [["assignment-templates", "shelf", false], ["calendar-assignment-templates", "calendar-shelf", true]]) {
         const target = find(`#${id}`);
         if (!target) continue;
-        const open = Boolean(target.querySelector("details")?.open);
+        const open = compact ? calendarDrawerOpen : Boolean(target.querySelector("details")?.open);
         const headingId = `${id}-heading`;
-        const content = `<section class="library-section" aria-labelledby="${headingId}"><div class="library-heading"><div><h2 id="${headingId}">Assignment templates</h2><p>Each use creates a separate task.</p></div>${button("new-template", "", "New template", { primary: true, context })}</div>${unavailableNotice()}${templateCards(templates(), context)}<p class="library-footnote">Drag a block onto the calendar to schedule a copy. Your template stays here.</p></section>`;
-        replace(target, `<details class="library-template-shelf${compact ? " library-calendar-templates" : ""}" ${open ? "open" : ""}><summary data-library-focus="${context}:summary">Assignment templates <span>${templates().length}</span></summary>${content}</details>`);
+        const content = `<section class="library-section" aria-labelledby="${compact ? "calendar-template-drawer-toggle" : headingId}"><div class="library-heading${compact ? " library-drawer-content-heading" : ""}"><div>${compact ? "" : `<h2 id="${headingId}">Assignment templates</h2>`}<p>Each use creates a separate task.</p></div>${button("new-template", "", "New template", { primary: true, context })}</div>${unavailableNotice()}${templateCards(templates(), context)}<p class="library-footnote">Drag a block onto the calendar to schedule a copy. Your template stays here.</p></section>`;
+        if (compact) {
+          cancelCalendarDrawerMotion();
+          replace(target, `<section class="library-calendar-drawer${open ? " is-open" : ""}"><h2 class="library-template-drawer-heading"><button type="button" class="library-template-drawer-toggle" id="calendar-template-drawer-toggle" data-library-action="toggle-template-drawer" data-library-focus="calendar-shelf:drawer-toggle" aria-expanded="${open}" aria-controls="calendar-template-drawer-panel"><svg class="library-template-stack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 4h12M4 7h16"/><rect x="3" y="10" width="18" height="11" rx="2"/></svg><span class="library-template-drawer-title">Assignment templates</span><span class="library-template-drawer-count" aria-label="${templates().length} saved templates">${templates().length}</span><svg class="library-template-drawer-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h2><div class="library-template-drawer-panel" id="calendar-template-drawer-panel" role="region" aria-labelledby="calendar-template-drawer-toggle" ${open ? "" : "hidden inert"}>${content}</div></section>`);
+        } else {
+          replace(target, `<details class="library-template-shelf" ${open ? "open" : ""}><summary data-library-focus="${context}:summary">Assignment templates <span>${templates().length}</span></summary>${content}</details>`);
+        }
       }
     }
 
@@ -295,7 +354,7 @@
       current.remove();
       dialog = null;
       const replacement = dialogSourceKey && [...doc.querySelectorAll("[data-library-focus]")].find(item => item.dataset.libraryFocus === dialogSourceKey);
-      const fallback = dialogSourceKey.startsWith("calendar") ? find("#calendar-assignment-templates summary") : /^(class|resources):/.test(dialogSourceKey) ? find("#library-class-select") : find('#assignment-templates [data-library-action="new-template"]');
+      const fallback = dialogSourceKey.startsWith("calendar") ? find("#calendar-template-drawer-toggle") : /^(class|resources):/.test(dialogSourceKey) ? find("#library-class-select") : find('#assignment-templates [data-library-action="new-template"]');
       const source = dialogSource?.isConnected ? dialogSource : replacement || fallback;
       source?.focus({ preventScroll: true });
       dialogSource = null;
@@ -422,6 +481,7 @@
       const control = event.target.closest("[data-library-action]");
       if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return;
       const { libraryAction: action, libraryId: id } = control.dataset;
+      if (action === "toggle-template-drawer") { toggleCalendarTemplateDrawer(control); return; }
       if (organizationAction(action) && !available()) return;
       if (action === "add-template") { addTemplate(id); return; }
       if (action === "schedule-template") { scheduleTemplate(id, { source: control }); return; }
@@ -480,6 +540,7 @@
         destroyed = true;
         ownerGeneration += 1;
         pending.clear();
+        resetCalendarTemplateDrawer();
         detachDialog();
         doc.removeEventListener("click", onClick);
         doc.removeEventListener("change", onChange);
