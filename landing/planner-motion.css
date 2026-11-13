@@ -26,8 +26,9 @@
   grid-column: 2; grid-row: 1; min-width: 0; width: 100%;
   container-name: workspace; container-type: inline-size;
 }
-.motion-preview .unified-shell .brand { justify-content: flex-start; gap: 12px; margin: 0 8px 14px; white-space: nowrap; }
-.motion-preview .brand-mark { flex: 0 0 32px; width: 32px; height: 36px; }
+.motion-preview .unified-shell .brand { justify-content: flex-start; gap: 12px; margin: 0 8px 14px; white-space: nowrap; width: fit-content; }
+.motion-preview:not(.sidebar-open) .sidebar .brand { width: 36px; }
+.motion-preview .brand-mark { flex: 0 0 36px; width: 36px; height: 36px; }
 .motion-preview .drawer-close { display: none; }
 .motion-preview .topbar-nav-open-button { display: grid; flex: 0 0 40px; }
 .motion-preview .sidebar .sidebar-rail-toggle {
