@@ -12,6 +12,8 @@ Goals, habits and standalone notes start empty. The local planner saves them in 
 
 All mutations use the existing optimistic rollback and account-generation guards. Account changes clear personal state immediately; retired responses and live callbacks cannot repopulate another account's planner.
 
+Cloud refreshes also share a per-account synchronization queue. It waits for pending writes and rejects snapshots invalidated by a later mutation, live row or refresh request, then reloads a fresh snapshot. The first socket connection catches the gap after the bootstrap snapshot. Import and Axis updates participate in the same guarded flow. Failed mutations roll back their unchanged optimistic rows without discarding unrelated successful updates. These races are covered by the personal-store regressions and the final two-context browser checks in `docs/contextual-add/README.md`.
+
 ## API and synchronization
 
 `GET /api/planner` retains existing fields and adds `goals`, `habits`, `habit_checkins` and `notes` row arrays. Goals use `target_count`, `current_count` and `deadline_date`; habits store `repeat_days` as JSON; check-ins use `habit_id` and `date`; note timestamps use `created_at` and `updated_at`.

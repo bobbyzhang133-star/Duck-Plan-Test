@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-motion-preview-v26";
+const CACHE_VERSION = "duckplan-app-motion-preview-v27";
 const APP_SHELL = [
   "./",
   "./index.html",

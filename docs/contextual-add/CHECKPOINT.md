@@ -1,5 +1,7 @@
 # Safe stopping checkpoint — November 12, 2026
 
+**Resumed and completed locally November 13, 2026.** The required local continuation checks are complete; see the [final verification record](README.md), including device-testing limits. This document preserves the state when work was paused.
+
 The user requested a safe checkpoint and stopped work before final release verification. Resume from branch `codex/contextual-add-personal-planner-20261112`; this is a work-in-progress checkpoint, not a public release.
 
 ## Implemented

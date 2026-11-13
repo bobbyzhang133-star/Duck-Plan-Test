@@ -35,6 +35,135 @@ async function cloudHarness({ legacyPersonal = false } = {}) {
   return { ...fake, storage, store, create, requests, sockets, network };
 }
 
+function emptyPlanner() { return { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [] }; }
+function deferred() { let resolve; const promise = new Promise((done) => { resolve = done; }); return { promise, resolve }; }
+const turn = () => new Promise((resolve) => setImmediate(resolve));
+
+test("an old snapshot cannot erase a newer save/live row, and revalidation retains unrelated server data", async () => {
+  const app = await cloudHarness(), { store } = app;
+  await store.signUp("snapshot-race@store.test", "planner test password");
+  const response = deferred(), started = deferred(); let held = false;
+  const socket = app.sockets.at(-1);
+  app.network.intercept = (request) => {
+    if (!held && request.path === "/api/planner") { held = true; started.resolve(); return response.promise; }
+    return null;
+  };
+  const refresh = store.refresh(); await started.promise;
+  const goal = await store.upsertGoal({ title: "Saved while refreshing" });
+  socket.receive(app.broadcasts.at(-1).message);
+  const other = app.create(); await other.init();
+  await other.upsertNote({ title: "Unrelated remote note", body: "Keep this too" });
+  response.resolve(new Response(JSON.stringify(emptyPlanner())));
+  await refresh;
+  assert.equal(store.listGoals()[0].id, goal.id);
+  assert.equal(store.listNotes()[0].body, "Keep this too");
+});
+
+test("refreshes coalesce and wait for every pending write instead of loading a pre-commit snapshot", async () => {
+  const app = await cloudHarness(), { store } = app;
+  await store.signUp("pending-snapshot@store.test", "planner test password");
+  const goalGate = deferred(), noteGate = deferred(), goalStarted = deferred(), noteStarted = deferred();
+  app.network.intercept = (request) => {
+    if (request.method === "PUT" && request.path.startsWith("/api/goals/")) { goalStarted.resolve(); return goalGate.promise; }
+    if (request.method === "PUT" && request.path.startsWith("/api/notes/")) { noteStarted.resolve(); return noteGate.promise; }
+    return null;
+  };
+  const baseline = app.requests.filter((request) => request.path === "/api/planner").length;
+  const goal = store.upsertGoal({ title: "Pending goal" }), note = store.upsertNote({ title: "Pending note", body: "Not committed yet" });
+  await Promise.all([goalStarted.promise, noteStarted.promise]);
+  const refreshes = Promise.all([store.refresh(), store.refresh(), store.refresh()]);
+  await turn();
+  assert.equal(app.requests.filter((request) => request.path === "/api/planner").length, baseline);
+  goalGate.resolve(null); await goal; await turn();
+  assert.equal(app.requests.filter((request) => request.path === "/api/planner").length, baseline, "another write is still pending");
+  noteGate.resolve(null); await Promise.all([note, refreshes]);
+  assert.equal(app.requests.filter((request) => request.path === "/api/planner").length, baseline + 1);
+  assert.equal(store.listGoals().length, 1); assert.equal(store.listNotes().length, 1);
+});
+
+test("overlapping refresh requests serialize and finish with one fresh follow-up snapshot", async () => {
+  const app = await cloudHarness(), { store } = app;
+  await store.signUp("overlap-snapshot@store.test", "planner test password");
+  const other = app.create(); await other.init();
+  const response = deferred(), started = deferred(); let held = false;
+  app.network.intercept = (request) => {
+    if (!held && request.path === "/api/planner") { held = true; started.resolve(); return response.promise; }
+    return null;
+  };
+  const baseline = app.requests.filter((request) => request.path === "/api/planner").length;
+  const first = store.refresh(); await started.promise;
+  const goal = await other.upsertGoal({ title: "Created on the other device" });
+  const second = store.refresh(); await turn();
+  assert.equal(app.requests.filter((request) => request.path === "/api/planner").length, baseline + 1);
+  response.resolve(new Response(JSON.stringify(emptyPlanner())));
+  await Promise.all([first, second]);
+  assert.equal(store.listGoals()[0].id, goal.id);
+  assert.equal(app.requests.filter((request) => request.path === "/api/planner").length, baseline + 2);
+});
+
+test("the first socket connection catches a write missed between the bootstrap snapshot and connection", async (t) => {
+  const app = await cloudHarness(), { store } = app;
+  await store.signUp("bootstrap-snapshot@store.test", "planner test password");
+  const response = deferred(), started = deferred(); let held = false;
+  app.network.intercept = (request) => {
+    if (!held && request.path === "/api/planner") { held = true; started.resolve(); return response.promise; }
+    return null;
+  };
+  const newcomer = app.create();
+  t.after(() => newcomer.signOut());
+  const initialization = newcomer.init(); await started.promise;
+  const goal = await store.upsertGoal({ title: "Created before the new socket connected" });
+  response.resolve(new Response(JSON.stringify(emptyPlanner()))); await initialization;
+  assert.deepEqual(newcomer.listGoals(), []);
+  const caughtUp = deferred();
+  newcomer.subscribe(({ reason }) => { if (reason === "remote") caughtUp.resolve(); });
+  app.sockets.at(-1).onopen(); await caughtUp.promise;
+  assert.equal(newcomer.listGoals()[0].id, goal.id);
+});
+
+test("a failed write cannot roll back another successful write when recovery reload is unavailable", async () => {
+  const app = await cloudHarness(), { store } = app;
+  await store.signUp("rollback-snapshot@store.test", "planner test password");
+  const response = deferred(), started = deferred(); let failReload = false;
+  app.network.intercept = (request) => {
+    if (request.method === "PUT" && request.path.startsWith("/api/goals/")) { started.resolve(); return response.promise; }
+    if (failReload && request.path === "/api/planner") return new Response(JSON.stringify({ error: "Reload unavailable" }), { status: 503 });
+    return null;
+  };
+  const failed = assert.rejects(store.upsertGoal({ title: "Will fail" }), /Write rejected/);
+  await started.promise;
+  const note = await store.upsertNote({ title: "Successfully saved", body: "Keep the successful write" });
+  failReload = true;
+  response.resolve(new Response(JSON.stringify({ error: "Write rejected" }), { status: 503 }));
+  await failed;
+  assert.deepEqual(store.listGoals(), []);
+  assert.equal(store.listNotes()[0].id, note.id);
+});
+
+test("import and Axis writes defer refresh snapshots and use guarded catch-up loads after settling", async () => {
+  for (const kind of ["import", "axis"]) {
+    const app = await cloudHarness(), { store } = app;
+    if (kind === "import") await store.upsertGoal({ title: "Local imported goal" });
+    await store.signUp(`${kind}-pending-snapshot@store.test`, "planner test password");
+    const other = app.create(); await other.init();
+    const response = deferred(), started = deferred();
+    app.network.intercept = (request) => {
+      if (request.method === "POST" && request.path === `/api/${kind}`) { started.resolve(); return response.promise; }
+      return null;
+    };
+    const baseline = app.requests.filter((request) => request.path === "/api/planner").length;
+    const write = kind === "import" ? store.importLocalTasks() : store.invokeAxis({ mode: "sync" });
+    await started.promise;
+    const refresh = store.refresh(); await turn();
+    assert.equal(app.requests.filter((request) => request.path === "/api/planner").length, baseline, kind);
+    const remote = await other.upsertNote({ title: "Concurrent remote note", body: "Retain unrelated server state" });
+    response.resolve(kind === "import" ? null : new Response(JSON.stringify({ added: 0, updated: 0 })));
+    await Promise.all([write, refresh]);
+    assert.equal(store.listNotes()[0].id, remote.id, kind);
+    if (kind === "import") assert.equal(store.listGoals()[0].title, "Local imported goal");
+  }
+});
+
 test("personal local data starts empty, saves goals/habits/notes and check-ins, and never restores deleted samples", async () => {
   const storage = memoryStorage(), store = makeStore(storage); await store.init();
   assert.equal(store.supportsPersonal, true);

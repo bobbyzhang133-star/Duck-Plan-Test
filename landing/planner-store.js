@@ -277,7 +277,8 @@
       socket = new WebSocketImpl(url);
       socket.onopen = () => {
         if (closed) { socket.close(1000); return; }
-        if (attempts > 0) onReconnect();
+        // Catch writes committed between the initial snapshot and this connection too.
+        onReconnect();
         attempts = 0;
         pingTimer = timers.setInterval(() => { try { socket.send("ping"); } catch { /* reconnecting */ } }, 30_000);
       };
@@ -352,6 +353,7 @@
     const api = configured ? createApi({ apiUrl, fetchImpl }) : null;
     let backend = local;
     let backendGeneration = 0;
+    let synchronization = createSynchronization();
     let state = { classes: [], tasks: [], templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true };
     let unwatch = () => {};
     let authError = null;
@@ -386,33 +388,66 @@
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
     function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, ...next }; }
     function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
+    function createSynchronization() { return { revision: 0, pendingWrites: 0, writeWaiters: new Set(), reloadRequested: false, reloadPromise: null }; }
+    function wakeWrites(context) { for (const resolve of context.writeWaiters) resolve(); context.writeWaiters.clear(); }
+    function waitForWrites(context) { return context.pendingWrites ? new Promise((resolve) => context.writeWaiters.add(resolve)) : Promise.resolve(); }
+    async function persistCloudChange(context, work) {
+      context.revision += 1;
+      context.pendingWrites += 1;
+      try { return await work(); }
+      finally { context.pendingWrites -= 1; if (!context.pendingWrites) wakeWrites(context); }
+    }
 
     async function activate(nextBackend) {
       const generation = ++backendGeneration;
+      wakeWrites(synchronization);
+      const context = synchronization = createSynchronization();
       unwatch();
       backend = nextBackend;
       replaceState({ classes: [], tasks: [], organizationAvailable: nextBackend.mode === "local", personalAvailable: nextBackend.mode === "local" });
       notify("context");
       const next = await nextBackend.load();
       if (generation !== backendGeneration) return;
-      replaceState(hydrateDeviceExtras(next));
+      if (!context.revision && !context.pendingWrites) replaceState(hydrateDeviceExtras(next));
       unwatch = nextBackend.mode === "local"
         ? nextBackend.watch((value) => { if (generation === backendGeneration) { replaceState(value); notify("remote"); } })
         : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) applyRowChange(table, row); }, onReload: () => { if (generation === backendGeneration) reloadCloud(); } });
+      if (nextBackend.mode === "cloud" && (context.revision || context.pendingWrites)) await reloadCloud();
+      if (generation !== backendGeneration) return;
       notify("load");
     }
     async function reloadCloud() {
       if (backend.mode !== "cloud") return;
-      const activeBackend = backend, generation = backendGeneration;
-      try {
-        const next = await activeBackend.load();
-        if (generation !== backendGeneration) return;
-        replaceState(hydrateDeviceExtras(next)); notify("remote");
-      } catch (error) {
-        if (generation === backendGeneration && error.status === 401) { await activate(local); notify("auth"); }
-      }
+      const activeBackend = backend, generation = backendGeneration, context = synchronization;
+      const current = () => generation === backendGeneration && context === synchronization;
+      context.reloadRequested = true;
+      if (context.reloadPromise) return context.reloadPromise;
+      const run = async () => {
+        while (current() && context.reloadRequested) {
+          await waitForWrites(context);
+          if (!current()) return;
+          context.reloadRequested = false;
+          const revision = context.revision;
+          try {
+            const next = await activeBackend.load();
+            if (!current()) return;
+            if (context.pendingWrites || revision !== context.revision || context.reloadRequested) {
+              context.reloadRequested = true;
+              continue;
+            }
+            replaceState(hydrateDeviceExtras(next)); notify("remote");
+          } catch (error) {
+            if (!current()) return;
+            if (error.status === 401) { await activate(local); notify("auth"); return; }
+          }
+        }
+      };
+      const pending = run().finally(() => { if (context.reloadPromise === pending) context.reloadPromise = null; });
+      context.reloadPromise = pending;
+      return pending;
     }
     function applyRowChange(table, row) {
+      synchronization.revision += 1;
       if (table === "items") {
         const others = state.tasks.filter((task) => task.id !== row.id);
         state = { ...state, tasks: row.deleted_at ? others : [...others, hydrateDeviceExtras({ tasks: [rowToTask(row)] }).tasks[0]] };
@@ -437,20 +472,45 @@
       }
       notify("remote");
     }
-    async function mutate(apply, persist) {
-      const activeBackend = backend, generation = backendGeneration;
-      const previous = state;
-      state = apply(state);
-      notify("local");
-      try { await persist(state, activeBackend); } catch (error) {
-        if (generation !== backendGeneration) throw error;
-        state = previous;
-        if (activeBackend.mode === "cloud") {
-          const next = await activeBackend.load().catch(() => previous);
-          if (generation !== backendGeneration) throw error;
-          replaceState(hydrateDeviceExtras(next));
+    function rollbackMutation(previous, applied) {
+      const next = { ...state };
+      for (const key of Object.keys(applied)) {
+        if (previous[key] === applied[key]) continue;
+        if (!Array.isArray(applied[key])) {
+          if (state[key] === applied[key]) next[key] = previous[key];
+          continue;
         }
+        const identify = (item) => key === "habitCheckins" ? `${item.habitId}:${item.date}` : item.id;
+        const before = new Map(previous[key].map((item) => [identify(item), item]));
+        const after = new Map(applied[key].map((item) => [identify(item), item]));
+        next[key] = state[key].flatMap((item) => {
+          const id = identify(item);
+          if (before.get(id) === after.get(id) || item !== after.get(id)) return [item];
+          return before.has(id) ? [before.get(id)] : [];
+        });
+        // A concurrent change may own an absent row. A fresh snapshot restores failed
+        // deletions instead of guessing and resurrecting another write's deletion.
+      }
+      state = next;
+    }
+    async function mutate(apply, persist) {
+      const activeBackend = backend, generation = backendGeneration, context = synchronization;
+      const previous = state;
+      const applied = state = apply(state);
+      const revision = ++context.revision;
+      context.pendingWrites += 1;
+      notify("local");
+      let failure = null;
+      try { await persist(state, activeBackend); } catch (error) { failure = error; }
+      finally { context.pendingWrites -= 1; if (!context.pendingWrites) wakeWrites(context); }
+      if (failure) {
+        const error = failure;
+        if (generation !== backendGeneration) throw error;
+        if (context.revision === revision) state = previous;
+        else rollbackMutation(previous, applied);
+        context.revision += 1;
         notify("error");
+        if (activeBackend.mode === "cloud") await reloadCloud();
         throw error;
       }
       if (generation === backendGeneration) notify("persisted");
@@ -697,7 +757,7 @@
       dismissLocalImport() { if (backend.user) rememberImport(backend.user.id, "dismissed"); },
       async importLocalTasks() {
         if (backend.mode !== "cloud") throw new Error("Sign in first.");
-        const activeBackend = backend, generation = backendGeneration;
+        const activeBackend = backend, generation = backendGeneration, context = synchronization;
         const localState = await local.load();
         if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
         const organizationTasks = localState.tasks.some((task) => task.importance || (task.urgency && task.urgency !== "auto"));
@@ -707,11 +767,11 @@
         const userId = activeBackend.user.id;
         const idempotencyKey = await localImportFingerprint(localState);
         if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
-        await activeBackend.importRows({ ...plan, idempotencyKey });
+        await persistCloudChange(context, () => activeBackend.importRows({ ...plan, idempotencyKey }));
         rememberImport(userId, new Date().toISOString());
         if (generation === backendGeneration) {
-          const next = await activeBackend.load();
-          if (generation === backendGeneration) { replaceState(hydrateDeviceExtras(next)); notify("load"); }
+          await reloadCloud();
+          if (generation === backendGeneration) notify("load");
         }
         return plan.itemRows.length;
       },
@@ -726,12 +786,11 @@
       async syncAxisNow() { return this.invokeAxis({ mode: "sync" }); },
       async invokeAxis(body) {
         if (backend.mode !== "cloud") throw new Error("Sign in to connect Axis.");
-        const activeBackend = backend, generation = backendGeneration;
-        const result = await api("POST", "/axis", body);
+        const activeBackend = backend, generation = backendGeneration, context = synchronization;
+        const result = await persistCloudChange(context, () => api("POST", "/axis", body));
         if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
-        const next = await activeBackend.load();
+        await reloadCloud();
         if (generation !== backendGeneration || activeBackend !== backend) throw new Error("Your account changed. Please try again.");
-        replaceState(hydrateDeviceExtras(next));
         notify("load");
         return result;
       },
