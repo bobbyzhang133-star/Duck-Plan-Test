@@ -1,0 +1,187 @@
+{
+  "runtime": "157.0.8103.78",
+  "measurement": "Synthetic Chromium RAF timestamps in each own ready→finished interval. No recording, no style reads per frame; capture ready cost reported separately. Not a device benchmark.",
+  "cases": [
+    {
+      "width": 1280,
+      "variant": "page",
+      "routes": [
+        "tasks",
+        "calendar",
+        "settings",
+        "home"
+      ],
+      "traces": [
+        {
+          "frames": 29,
+          "readyElapsed": 22.19999999552965,
+          "finishedElapsed": 492.1000000014901,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.799999999999955,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 28,
+          "readyElapsed": 21.200000002980232,
+          "finishedElapsed": 480.1000000014901,
+          "minGap": 16.5,
+          "maxGap": 16.799999999999955,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 28,
+          "readyElapsed": 20,
+          "finishedElapsed": 476.8999999985099,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.799999999999727,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 29,
+          "readyElapsed": 24.5,
+          "finishedElapsed": 494.20000000298023,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.699999999999818
+        }
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "variant": "layered",
+      "routes": [
+        "tasks",
+        "calendar",
+        "settings",
+        "home"
+      ],
+      "traces": [
+        {
+          "frames": 33,
+          "readyElapsed": 29.5,
+          "finishedElapsed": 574.7999999970198,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.700000000000045,
+          "medianGap": 16.700000000000045
+        },
+        {
+          "frames": 32,
+          "readyElapsed": 14.799999997019768,
+          "finishedElapsed": 539.2999999970198,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.700000000000273,
+          "medianGap": 16.700000000000045
+        },
+        {
+          "frames": 32,
+          "readyElapsed": 22.69999999552965,
+          "finishedElapsed": 543.5,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.700000000000273,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 32,
+          "readyElapsed": 25.799999997019768,
+          "finishedElapsed": 560.0999999940395,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.699999999999818
+        }
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 835,
+      "variant": "page",
+      "routes": [
+        "tasks",
+        "calendar",
+        "settings",
+        "home"
+      ],
+      "traces": [
+        {
+          "frames": 29,
+          "readyElapsed": 23,
+          "finishedElapsed": 492.80000000447035,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.799999999999955,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 28,
+          "readyElapsed": 21.299999997019768,
+          "finishedElapsed": 479.5,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.700000000000045
+        },
+        {
+          "frames": 28,
+          "readyElapsed": 24,
+          "finishedElapsed": 479.20000000298023,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 29,
+          "readyElapsed": 27.200000002980232,
+          "finishedElapsed": 496.20000000298023,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.699999999999818
+        }
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 835,
+      "variant": "layered",
+      "routes": [
+        "tasks",
+        "calendar",
+        "settings",
+        "home"
+      ],
+      "traces": [
+        {
+          "frames": 33,
+          "readyElapsed": 23.399999998509884,
+          "finishedElapsed": 573.8999999985099,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.700000000000045
+        },
+        {
+          "frames": 32,
+          "readyElapsed": 20.299999997019768,
+          "finishedElapsed": 542.8999999985099,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.700000000000045
+        },
+        {
+          "frames": 32,
+          "readyElapsed": 23.799999997019768,
+          "finishedElapsed": 542.2999999970198,
+          "minGap": 16.59999999999991,
+          "maxGap": 16.799999999999727,
+          "medianGap": 16.699999999999818
+        },
+        {
+          "frames": 33,
+          "readyElapsed": 25.899999998509884,
+          "finishedElapsed": 560.5,
+          "minGap": 16.5,
+          "maxGap": 16.800000000000182,
+          "medianGap": 16.699999999999818
+        }
+      ],
+      "unexpected": []
+    }
+  ],
+  "allSyntheticContextsClosed": true
+}

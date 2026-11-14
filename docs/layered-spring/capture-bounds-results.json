@@ -1,0 +1,799 @@
+{
+  "runtime": "157.0.8103.78",
+  "mode": "isolated local dense-task fixture",
+  "cases": [
+    {
+      "width": 1280,
+      "route": "tasks",
+      "workspace": {
+        "x": 76,
+        "y": 0,
+        "width": 1204,
+        "height": 900,
+        "top": 0,
+        "right": 1280,
+        "bottom": 900,
+        "left": 76
+      },
+      "activeRoute": "tasks",
+      "composition": "layered",
+      "contentMode": "content",
+      "clip": "inset(0px 0px 0px 76px)",
+      "groups": [
+        {
+          "name": "duck-workspace",
+          "width": 1204,
+          "height": 900,
+          "transform": "matrix(1, 0, 0, 1, 76, 0)"
+        },
+        {
+          "name": "duck-route-old-controls",
+          "width": 66.5938,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 397, 38)"
+        },
+        {
+          "name": "duck-route-old-controls-1",
+          "width": 74,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 471, 38)"
+        },
+        {
+          "name": "duck-route-old-title",
+          "width": 82.7969,
+          "height": 35.5469,
+          "transform": "matrix(1, 0, 0, 1, 561, 39)"
+        },
+        {
+          "name": "duck-route-old-controls-2",
+          "width": 160.594,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 1078, 38)"
+        },
+        {
+          "name": "duck-route-old-content-1",
+          "width": 846,
+          "height": 768,
+          "transform": "matrix(1, 0, 0, 1, 395, 93)"
+        },
+        {
+          "name": "duck-route-old-content",
+          "width": 280,
+          "height": 866,
+          "transform": "matrix(1, 0, 0, 1, 93, 17)"
+        },
+        {
+          "name": "duck-route-new-title",
+          "width": 127.344,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 104, 26)"
+        },
+        {
+          "name": "duck-route-new-controls",
+          "width": 431.266,
+          "height": 45.25,
+          "transform": "matrix(1, 0, 0, 1, 821, 25)"
+        }
+      ],
+      "named": [
+        {
+          "name": "duck-route-new-title",
+          "tag": "topbar-title",
+          "rect": {
+            "x": 104,
+            "y": 25.5,
+            "width": 127.34375,
+            "height": 44,
+            "top": 25.5,
+            "right": 231.34375,
+            "bottom": 69.5,
+            "left": 104
+          }
+        },
+        {
+          "name": "duck-route-new-controls",
+          "tag": "topbar-actions",
+          "rect": {
+            "x": 820.71875,
+            "y": 24.875,
+            "width": 431.28125,
+            "height": 45.25,
+            "top": 24.875,
+            "right": 1252,
+            "bottom": 70.125,
+            "left": 820.71875
+          }
+        }
+      ],
+      "backing": {
+        "animationName": "duck-page-in-below, duck-page-fade-in",
+        "duration": "0.44s, 0.16s",
+        "delay": "0.06s, 0.06s",
+        "timing": "linear(0 0%, 0.006638 1.66667%, 0.02515 3.33333%, 0.053557 5%, 0.09004 6.66667%, 0.132942 8.33333%, 0.180768 10%, 0.232176 11.6667%, 0.285978 13.3333%, 0.341125 15%, 0.396708 16.6667%, 0.451944 18.3333%, 0.506168 20%, 0.558829 21.6667%, 0.609474 23.3333%, 0.657743 25%, 0.703362 26.6667%, 0.746127 28.3333%, 0.785906 30%, 0.822621 31.6667%, 0.856246 33.3333%, 0.8868 35%, 0.914338 36.6667%, 0.938946 38.3333%, 0.960735 40%, 0.979837 41.6667%, 0.996398 43.3333%, 1.01058 45%, 1.02254 46.6667%, 1.03246 48.3333%, 1.0405 50%, 1.04684 51.6667%, 1.05165 53.3333%, 1.05508 55%, 1.0573 56.6667%, 1.05845 58.3333%, 1.05867 60%, 1.05811 61.6667%, 1.05687 63.3333%, 1.05508 65%, 1.05284 66.6667%, 1.05025 68.3333%, 1.04739 70%, 1.04433 71.6667%, 1.04115 73.3333%, 1.0379 75%, 1.03464 76.6667%, 1.03141 78.3333%, 1.02824 80%, 1.02513 81.6667%, 1.02194 83.3333%, 1.0186 85%, 1.01516 86.6667%, 1.01173 88.3333%, 1.0085 90%, 1.00562 91.6667%, 1.00327 93.3333%, 1.00156 95%, 1.00052 96.6667%, 1.00007 98.3333%, 1 100%), cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "distance": "64px"
+      },
+      "routeRect": {
+        "x": 104,
+        "y": 122,
+        "width": 1148,
+        "height": 3300.09375,
+        "top": 122,
+        "right": 1252,
+        "bottom": 3422.09375,
+        "left": 104
+      }
+    },
+    {
+      "width": 1280,
+      "route": "settings",
+      "workspace": {
+        "x": 76,
+        "y": 0,
+        "width": 1204,
+        "height": 900,
+        "top": 0,
+        "right": 1280,
+        "bottom": 900,
+        "left": 76
+      },
+      "activeRoute": "settings",
+      "composition": "layered",
+      "contentMode": "content",
+      "clip": "inset(0px 0px 0px 76px)",
+      "groups": [
+        {
+          "name": "duck-workspace",
+          "width": 1204,
+          "height": 900,
+          "transform": "matrix(1, 0, 0, 1, 76, 0)"
+        },
+        {
+          "name": "duck-route-old-title",
+          "width": 127.344,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 104, 26)"
+        },
+        {
+          "name": "duck-route-old-controls",
+          "width": 431.266,
+          "height": 45.25,
+          "transform": "matrix(1, 0, 0, 1, 821, 25)"
+        },
+        {
+          "name": "duck-route-new-title",
+          "width": 162.438,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 104, 26)"
+        },
+        {
+          "name": "duck-route-new-controls",
+          "width": 44,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 1208, 26)"
+        }
+      ],
+      "named": [
+        {
+          "name": "duck-route-new-title",
+          "tag": "topbar-title",
+          "rect": {
+            "x": 104,
+            "y": 25.5,
+            "width": 162.4375,
+            "height": 44,
+            "top": 25.5,
+            "right": 266.4375,
+            "bottom": 69.5,
+            "left": 104
+          }
+        },
+        {
+          "name": "duck-route-new-controls",
+          "tag": "topbar-actions",
+          "rect": {
+            "x": 1208,
+            "y": 25.5,
+            "width": 44,
+            "height": 44,
+            "top": 25.5,
+            "right": 1252,
+            "bottom": 69.5,
+            "left": 1208
+          }
+        }
+      ],
+      "backing": {
+        "animationName": "duck-page-in-below, duck-page-fade-in",
+        "duration": "0.44s, 0.16s",
+        "delay": "0.06s, 0.06s",
+        "timing": "linear(0 0%, 0.006638 1.66667%, 0.02515 3.33333%, 0.053557 5%, 0.09004 6.66667%, 0.132942 8.33333%, 0.180768 10%, 0.232176 11.6667%, 0.285978 13.3333%, 0.341125 15%, 0.396708 16.6667%, 0.451944 18.3333%, 0.506168 20%, 0.558829 21.6667%, 0.609474 23.3333%, 0.657743 25%, 0.703362 26.6667%, 0.746127 28.3333%, 0.785906 30%, 0.822621 31.6667%, 0.856246 33.3333%, 0.8868 35%, 0.914338 36.6667%, 0.938946 38.3333%, 0.960735 40%, 0.979837 41.6667%, 0.996398 43.3333%, 1.01058 45%, 1.02254 46.6667%, 1.03246 48.3333%, 1.0405 50%, 1.04684 51.6667%, 1.05165 53.3333%, 1.05508 55%, 1.0573 56.6667%, 1.05845 58.3333%, 1.05867 60%, 1.05811 61.6667%, 1.05687 63.3333%, 1.05508 65%, 1.05284 66.6667%, 1.05025 68.3333%, 1.04739 70%, 1.04433 71.6667%, 1.04115 73.3333%, 1.0379 75%, 1.03464 76.6667%, 1.03141 78.3333%, 1.02824 80%, 1.02513 81.6667%, 1.02194 83.3333%, 1.0186 85%, 1.01516 86.6667%, 1.01173 88.3333%, 1.0085 90%, 1.00562 91.6667%, 1.00327 93.3333%, 1.00156 95%, 1.00052 96.6667%, 1.00007 98.3333%, 1 100%), cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "distance": "64px"
+      },
+      "routeRect": {
+        "x": 104,
+        "y": 122,
+        "width": 1148,
+        "height": 1427.171875,
+        "top": 122,
+        "right": 1252,
+        "bottom": 1549.171875,
+        "left": 104
+      }
+    },
+    {
+      "width": 1280,
+      "route": "calendar",
+      "workspace": {
+        "x": 76,
+        "y": 0,
+        "width": 1204,
+        "height": 900,
+        "top": 0,
+        "right": 1280,
+        "bottom": 900,
+        "left": 76
+      },
+      "activeRoute": "calendar",
+      "composition": "layered",
+      "contentMode": "surface",
+      "clip": "inset(0px 0px 0px 76px)",
+      "groups": [
+        {
+          "name": "duck-workspace",
+          "width": 1204,
+          "height": 900,
+          "transform": "matrix(1, 0, 0, 1, 76, 0)"
+        },
+        {
+          "name": "duck-route-old-title",
+          "width": 162.438,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 104, 26)"
+        },
+        {
+          "name": "duck-route-old-controls",
+          "width": 44,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 1208, 26)"
+        },
+        {
+          "name": "duck-route-new-controls",
+          "width": 66.5938,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 397, 38)"
+        },
+        {
+          "name": "duck-route-new-controls-1",
+          "width": 74,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 471, 38)"
+        },
+        {
+          "name": "duck-route-new-title",
+          "width": 82.7969,
+          "height": 35.5469,
+          "transform": "matrix(1, 0, 0, 1, 561, 39)"
+        },
+        {
+          "name": "duck-route-new-controls-2",
+          "width": 160.594,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 1078, 38)"
+        },
+        {
+          "name": "duck-route-new-content-1",
+          "width": 846,
+          "height": 768,
+          "transform": "matrix(1, 0, 0, 1, 395, 93)"
+        },
+        {
+          "name": "duck-route-new-content",
+          "width": 280,
+          "height": 866,
+          "transform": "matrix(1, 0, 0, 1, 93, 17)"
+        }
+      ],
+      "named": [
+        {
+          "name": "duck-route-new-content",
+          "tag": "daily-task-panel",
+          "rect": {
+            "x": 93,
+            "y": 17,
+            "width": 280,
+            "height": 866,
+            "top": 17,
+            "right": 373,
+            "bottom": 883,
+            "left": 93
+          }
+        },
+        {
+          "name": "duck-route-new-controls",
+          "tag": "calendar-today",
+          "rect": {
+            "x": 397,
+            "y": 38,
+            "width": 66.59375,
+            "height": 38,
+            "top": 38,
+            "right": 463.59375,
+            "bottom": 76,
+            "left": 397
+          }
+        },
+        {
+          "name": "duck-route-new-controls-1",
+          "tag": "calendar-stepper",
+          "rect": {
+            "x": 470.59375,
+            "y": 38,
+            "width": 74,
+            "height": 38,
+            "top": 38,
+            "right": 544.59375,
+            "bottom": 76,
+            "left": 470.59375
+          }
+        },
+        {
+          "name": "duck-route-new-title",
+          "tag": "calendar-title-copy",
+          "rect": {
+            "x": 560.59375,
+            "y": 39.21875,
+            "width": 82.8125,
+            "height": 35.5625,
+            "top": 39.21875,
+            "right": 643.40625,
+            "bottom": 74.78125,
+            "left": 560.59375
+          }
+        },
+        {
+          "name": "duck-route-new-controls-2",
+          "tag": "calendar-toolbar-actions",
+          "rect": {
+            "x": 1078.40625,
+            "y": 38,
+            "width": 160.59375,
+            "height": 38,
+            "top": 38,
+            "right": 1239,
+            "bottom": 76,
+            "left": 1078.40625
+          }
+        },
+        {
+          "name": "duck-route-new-content-1",
+          "tag": "planner-calendar",
+          "rect": {
+            "x": 395,
+            "y": 93,
+            "width": 846,
+            "height": 768,
+            "top": 93,
+            "right": 1241,
+            "bottom": 861,
+            "left": 395
+          }
+        }
+      ],
+      "backing": {
+        "animationName": "duck-page-in-above, duck-page-fade-in",
+        "duration": "0.44s, 0.16s",
+        "delay": "0s, 0s",
+        "timing": "cubic-bezier(0.2, 0.8, 0.2, 1), cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "distance": "16px"
+      },
+      "routeRect": {
+        "x": 92,
+        "y": 16,
+        "width": 1172,
+        "height": 868,
+        "top": 16,
+        "right": 1264,
+        "bottom": 884,
+        "left": 92
+      }
+    },
+    {
+      "width": 835,
+      "route": "tasks",
+      "workspace": {
+        "x": 76,
+        "y": 0,
+        "width": 759,
+        "height": 900,
+        "top": 0,
+        "right": 835,
+        "bottom": 900,
+        "left": 76
+      },
+      "activeRoute": "tasks",
+      "composition": "layered",
+      "contentMode": "content",
+      "clip": "inset(0px 0px 0px 76px)",
+      "groups": [
+        {
+          "name": "duck-workspace",
+          "width": 759,
+          "height": 900,
+          "transform": "matrix(1, 0, 0, 1, 76, 0)"
+        },
+        {
+          "name": "duck-route-old-controls",
+          "width": 66.5938,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 367, 36)"
+        },
+        {
+          "name": "duck-route-old-controls-1",
+          "width": 74,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 441, 36)"
+        },
+        {
+          "name": "duck-route-old-title",
+          "width": 70.1875,
+          "height": 31.5469,
+          "transform": "matrix(1, 0, 0, 1, 531, 39)"
+        },
+        {
+          "name": "duck-route-old-controls-2",
+          "width": 160.594,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 643, 36)"
+        },
+        {
+          "name": "duck-route-old-content-1",
+          "width": 441,
+          "height": 776,
+          "transform": "matrix(1, 0, 0, 1, 365, 91)"
+        },
+        {
+          "name": "duck-route-old-content",
+          "width": 260,
+          "height": 866,
+          "transform": "matrix(1, 0, 0, 1, 93, 17)"
+        },
+        {
+          "name": "duck-route-new-title",
+          "width": 128.344,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 98, 22)"
+        },
+        {
+          "name": "duck-route-new-controls",
+          "width": 715,
+          "height": 45.25,
+          "transform": "matrix(1, 0, 0, 1, 98, 90)"
+        }
+      ],
+      "named": [
+        {
+          "name": "duck-route-new-title",
+          "tag": "topbar-title",
+          "rect": {
+            "x": 98,
+            "y": 22,
+            "width": 128.34375,
+            "height": 44,
+            "top": 22,
+            "right": 226.34375,
+            "bottom": 66,
+            "left": 98
+          }
+        },
+        {
+          "name": "duck-route-new-controls",
+          "tag": "topbar-actions",
+          "rect": {
+            "x": 98,
+            "y": 90,
+            "width": 715,
+            "height": 45.25,
+            "top": 90,
+            "right": 813,
+            "bottom": 135.25,
+            "left": 98
+          }
+        }
+      ],
+      "backing": {
+        "animationName": "duck-page-in-below, duck-page-fade-in",
+        "duration": "0.44s, 0.16s",
+        "delay": "0.06s, 0.06s",
+        "timing": "linear(0 0%, 0.006638 1.66667%, 0.02515 3.33333%, 0.053557 5%, 0.09004 6.66667%, 0.132942 8.33333%, 0.180768 10%, 0.232176 11.6667%, 0.285978 13.3333%, 0.341125 15%, 0.396708 16.6667%, 0.451944 18.3333%, 0.506168 20%, 0.558829 21.6667%, 0.609474 23.3333%, 0.657743 25%, 0.703362 26.6667%, 0.746127 28.3333%, 0.785906 30%, 0.822621 31.6667%, 0.856246 33.3333%, 0.8868 35%, 0.914338 36.6667%, 0.938946 38.3333%, 0.960735 40%, 0.979837 41.6667%, 0.996398 43.3333%, 1.01058 45%, 1.02254 46.6667%, 1.03246 48.3333%, 1.0405 50%, 1.04684 51.6667%, 1.05165 53.3333%, 1.05508 55%, 1.0573 56.6667%, 1.05845 58.3333%, 1.05867 60%, 1.05811 61.6667%, 1.05687 63.3333%, 1.05508 65%, 1.05284 66.6667%, 1.05025 68.3333%, 1.04739 70%, 1.04433 71.6667%, 1.04115 73.3333%, 1.0379 75%, 1.03464 76.6667%, 1.03141 78.3333%, 1.02824 80%, 1.02513 81.6667%, 1.02194 83.3333%, 1.0186 85%, 1.01516 86.6667%, 1.01173 88.3333%, 1.0085 90%, 1.00562 91.6667%, 1.00327 93.3333%, 1.00156 95%, 1.00052 96.6667%, 1.00007 98.3333%, 1 100%), cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "distance": "64px"
+      },
+      "routeRect": {
+        "x": 98,
+        "y": 184.25,
+        "width": 715,
+        "height": 3631.21875,
+        "top": 184.25,
+        "right": 813,
+        "bottom": 3815.46875,
+        "left": 98
+      }
+    },
+    {
+      "width": 835,
+      "route": "settings",
+      "workspace": {
+        "x": 76,
+        "y": 0,
+        "width": 759,
+        "height": 900,
+        "top": 0,
+        "right": 835,
+        "bottom": 900,
+        "left": 76
+      },
+      "activeRoute": "settings",
+      "composition": "layered",
+      "contentMode": "content",
+      "clip": "inset(0px 0px 0px 76px)",
+      "groups": [
+        {
+          "name": "duck-workspace",
+          "width": 759,
+          "height": 900,
+          "transform": "matrix(1, 0, 0, 1, 76, 0)"
+        },
+        {
+          "name": "duck-route-old-title",
+          "width": 128.344,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 98, 22)"
+        },
+        {
+          "name": "duck-route-old-controls",
+          "width": 715,
+          "height": 45.25,
+          "transform": "matrix(1, 0, 0, 1, 98, 90)"
+        },
+        {
+          "name": "duck-route-new-title",
+          "width": 163.438,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 98, 22)"
+        },
+        {
+          "name": "duck-route-new-controls",
+          "width": 715,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 98, 90)"
+        }
+      ],
+      "named": [
+        {
+          "name": "duck-route-new-title",
+          "tag": "topbar-title",
+          "rect": {
+            "x": 98,
+            "y": 22,
+            "width": 163.4375,
+            "height": 44,
+            "top": 22,
+            "right": 261.4375,
+            "bottom": 66,
+            "left": 98
+          }
+        },
+        {
+          "name": "duck-route-new-controls",
+          "tag": "topbar-actions",
+          "rect": {
+            "x": 98,
+            "y": 90,
+            "width": 715,
+            "height": 44,
+            "top": 90,
+            "right": 813,
+            "bottom": 134,
+            "left": 98
+          }
+        }
+      ],
+      "backing": {
+        "animationName": "duck-page-in-below, duck-page-fade-in",
+        "duration": "0.44s, 0.16s",
+        "delay": "0.06s, 0.06s",
+        "timing": "linear(0 0%, 0.006638 1.66667%, 0.02515 3.33333%, 0.053557 5%, 0.09004 6.66667%, 0.132942 8.33333%, 0.180768 10%, 0.232176 11.6667%, 0.285978 13.3333%, 0.341125 15%, 0.396708 16.6667%, 0.451944 18.3333%, 0.506168 20%, 0.558829 21.6667%, 0.609474 23.3333%, 0.657743 25%, 0.703362 26.6667%, 0.746127 28.3333%, 0.785906 30%, 0.822621 31.6667%, 0.856246 33.3333%, 0.8868 35%, 0.914338 36.6667%, 0.938946 38.3333%, 0.960735 40%, 0.979837 41.6667%, 0.996398 43.3333%, 1.01058 45%, 1.02254 46.6667%, 1.03246 48.3333%, 1.0405 50%, 1.04684 51.6667%, 1.05165 53.3333%, 1.05508 55%, 1.0573 56.6667%, 1.05845 58.3333%, 1.05867 60%, 1.05811 61.6667%, 1.05687 63.3333%, 1.05508 65%, 1.05284 66.6667%, 1.05025 68.3333%, 1.04739 70%, 1.04433 71.6667%, 1.04115 73.3333%, 1.0379 75%, 1.03464 76.6667%, 1.03141 78.3333%, 1.02824 80%, 1.02513 81.6667%, 1.02194 83.3333%, 1.0186 85%, 1.01516 86.6667%, 1.01173 88.3333%, 1.0085 90%, 1.00562 91.6667%, 1.00327 93.3333%, 1.00156 95%, 1.00052 96.6667%, 1.00007 98.3333%, 1 100%), cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "distance": "64px"
+      },
+      "routeRect": {
+        "x": 98,
+        "y": 183,
+        "width": 715,
+        "height": 1469.71875,
+        "top": 183,
+        "right": 813,
+        "bottom": 1652.71875,
+        "left": 98
+      }
+    },
+    {
+      "width": 835,
+      "route": "calendar",
+      "workspace": {
+        "x": 76,
+        "y": 0,
+        "width": 759,
+        "height": 900,
+        "top": 0,
+        "right": 835,
+        "bottom": 900,
+        "left": 76
+      },
+      "activeRoute": "calendar",
+      "composition": "layered",
+      "contentMode": "surface",
+      "clip": "inset(0px 0px 0px 76px)",
+      "groups": [
+        {
+          "name": "duck-workspace",
+          "width": 759,
+          "height": 900,
+          "transform": "matrix(1, 0, 0, 1, 76, 0)"
+        },
+        {
+          "name": "duck-route-old-title",
+          "width": 163.438,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 98, 22)"
+        },
+        {
+          "name": "duck-route-old-controls",
+          "width": 715,
+          "height": 44,
+          "transform": "matrix(1, 0, 0, 1, 98, 90)"
+        },
+        {
+          "name": "duck-route-new-controls",
+          "width": 66.5938,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 367, 36)"
+        },
+        {
+          "name": "duck-route-new-controls-1",
+          "width": 74,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 441, 36)"
+        },
+        {
+          "name": "duck-route-new-title",
+          "width": 70.1875,
+          "height": 31.5469,
+          "transform": "matrix(1, 0, 0, 1, 531, 39)"
+        },
+        {
+          "name": "duck-route-new-controls-2",
+          "width": 160.594,
+          "height": 38,
+          "transform": "matrix(1, 0, 0, 1, 643, 36)"
+        },
+        {
+          "name": "duck-route-new-content-1",
+          "width": 441,
+          "height": 776,
+          "transform": "matrix(1, 0, 0, 1, 365, 91)"
+        },
+        {
+          "name": "duck-route-new-content",
+          "width": 260,
+          "height": 866,
+          "transform": "matrix(1, 0, 0, 1, 93, 17)"
+        }
+      ],
+      "named": [
+        {
+          "name": "duck-route-new-content",
+          "tag": "daily-task-panel",
+          "rect": {
+            "x": 93,
+            "y": 17,
+            "width": 260,
+            "height": 866,
+            "top": 17,
+            "right": 353,
+            "bottom": 883,
+            "left": 93
+          }
+        },
+        {
+          "name": "duck-route-new-controls",
+          "tag": "calendar-today",
+          "rect": {
+            "x": 367,
+            "y": 36,
+            "width": 66.59375,
+            "height": 38,
+            "top": 36,
+            "right": 433.59375,
+            "bottom": 74,
+            "left": 367
+          }
+        },
+        {
+          "name": "duck-route-new-controls-1",
+          "tag": "calendar-stepper",
+          "rect": {
+            "x": 440.59375,
+            "y": 36,
+            "width": 74,
+            "height": 38,
+            "top": 36,
+            "right": 514.59375,
+            "bottom": 74,
+            "left": 440.59375
+          }
+        },
+        {
+          "name": "duck-route-new-title",
+          "tag": "calendar-title-copy",
+          "rect": {
+            "x": 530.59375,
+            "y": 39.21875,
+            "width": 70.1875,
+            "height": 31.5625,
+            "top": 39.21875,
+            "right": 600.78125,
+            "bottom": 70.78125,
+            "left": 530.59375
+          }
+        },
+        {
+          "name": "duck-route-new-controls-2",
+          "tag": "calendar-toolbar-actions",
+          "rect": {
+            "x": 643.40625,
+            "y": 36,
+            "width": 160.59375,
+            "height": 38,
+            "top": 36,
+            "right": 804,
+            "bottom": 74,
+            "left": 643.40625
+          }
+        },
+        {
+          "name": "duck-route-new-content-1",
+          "tag": "planner-calendar",
+          "rect": {
+            "x": 365,
+            "y": 91,
+            "width": 441,
+            "height": 776,
+            "top": 91,
+            "right": 806,
+            "bottom": 867,
+            "left": 365
+          }
+        }
+      ],
+      "backing": {
+        "animationName": "duck-page-in-above, duck-page-fade-in",
+        "duration": "0.44s, 0.16s",
+        "delay": "0s, 0s",
+        "timing": "cubic-bezier(0.2, 0.8, 0.2, 1), cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "distance": "16px"
+      },
+      "routeRect": {
+        "x": 92,
+        "y": 16,
+        "width": 727,
+        "height": 868,
+        "top": 16,
+        "right": 819,
+        "bottom": 884,
+        "left": 92
+      }
+    }
+  ],
+  "blocked": [],
+  "pageErrors": [],
+  "allSyntheticContextsClosed": true
+}
