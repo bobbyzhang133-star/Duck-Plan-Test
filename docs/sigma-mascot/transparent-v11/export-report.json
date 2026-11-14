@@ -1,0 +1,40 @@
+{
+  "allExteriorCornersClear" : true,
+  "barrierMaxChannel" : 60,
+  "clearPixels" : 369061,
+  "dimensions" : [
+    1024,
+    1024
+  ],
+  "edgeInkEstimateRawRGB" : [
+    17,
+    16,
+    24
+  ],
+  "enclosedRGBChanges" : 0,
+  "exports" : [
+    192,
+    512
+  ],
+  "exteriorEdgeRadius" : 12,
+  "exteriorUnmatteNeutralInkRange" : [
+    9,
+    25
+  ],
+  "matteRawRGB" : [
+    249,
+    249,
+    245
+  ],
+  "method" : "Original source-pixel exterior flood fill with top\/side seeds. Enclosed artwork copied unchanged. Only exterior-connected antialias pixels are alpha-matted\/unmatted; no generated shape or generated pixels used.",
+  "opaquePixels" : 653928,
+  "output" : "landing\/assets\/duckplan-sigma-head-v11-transparent.png",
+  "outputSHA256" : "8964decdb6dc2448a21beb1ea5fa92ebc979cd1f7c2eb19b61e1320e70eb78db",
+  "partiallyTransparentEdgePixels" : 25587,
+  "protectedVeryDarkAlphaLoss" : 0,
+  "resampling" : "CoreGraphics high interpolation with premultiplied alpha, matching source RGB color profile",
+  "retainedWhiteBodyAndFace" : true,
+  "source" : "landing\/assets\/duckplan-sigma-head-v11.png",
+  "sourcePreserved" : true,
+  "sourceSHA256" : "7714bd8afc68d05399841291712d57cfcb62ad729eec3cd58e570670156501f5"
+}

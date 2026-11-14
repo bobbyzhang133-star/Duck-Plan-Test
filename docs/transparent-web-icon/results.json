@@ -1,0 +1,684 @@
+{
+  "runtime": "157.0.8103.78",
+  "source": "Current local website transparent-icon change",
+  "origin": "http://127.0.0.1:8034",
+  "results": [
+    {
+      "test": "light835",
+      "folded": {
+        "source": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "mark": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "markStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "fill"
+        },
+        "imageStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "contain"
+        },
+        "folded": true,
+        "theme": "light",
+        "overflow": false,
+        "favicon": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "appleTouch": "/assets/duckplan-sigma-icon-v11-512.png"
+      },
+      "expanded": {
+        "source": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "mark": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 145.171875,
+          "height": 36,
+          "top": 18,
+          "right": 167.171875,
+          "bottom": 54,
+          "left": 22
+        },
+        "markStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "fill"
+        },
+        "imageStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "contain"
+        },
+        "folded": false,
+        "theme": "light",
+        "overflow": false,
+        "favicon": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "appleTouch": "/assets/duckplan-sigma-icon-v11-512.png"
+      },
+      "iconNavigation": "Tasks→brand→Calendar",
+      "pixels": [
+        {
+          "path": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+          "sha256": "cd6c62abeb39b3e03d4e78c3aa60b933780a1aaa5572bc8caeeb57739fb8a220",
+          "width": 192,
+          "height": 192,
+          "minAlpha": 0,
+          "maxAlpha": 255,
+          "zeroPixels": 12962,
+          "partialPixels": 1262,
+          "corners": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "exterior": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "body": [
+            249,
+            249,
+            245,
+            255
+          ]
+        },
+        {
+          "path": "/assets/duckplan-sigma-icon-v11-transparent-512.png",
+          "sha256": "b27878a0f5f7fbc9be4891b294f8b5eff2155a7990e2df200e938fe06db443fb",
+          "width": 512,
+          "height": 512,
+          "minAlpha": 0,
+          "maxAlpha": 255,
+          "zeroPixels": 91898,
+          "partialPixels": 7700,
+          "corners": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "exterior": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "body": [
+            249,
+            249,
+            245,
+            255
+          ]
+        },
+        {
+          "path": "/assets/duckplan-sigma-icon-v11-192.png",
+          "sha256": "b97dd4b8d603359e9612143f311ec929b7c4865de56a880efa1879ed436c7f77",
+          "width": 192,
+          "height": 192,
+          "minAlpha": 255,
+          "maxAlpha": 255,
+          "zeroPixels": 0,
+          "partialPixels": 0,
+          "corners": [
+            [
+              249,
+              249,
+              245,
+              255
+            ],
+            [
+              249,
+              249,
+              245,
+              255
+            ],
+            [
+              249,
+              249,
+              245,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ]
+          ],
+          "exterior": [
+            [
+              248,
+              249,
+              245,
+              255
+            ],
+            [
+              249,
+              249,
+              245,
+              255
+            ]
+          ],
+          "body": [
+            249,
+            249,
+            245,
+            255
+          ]
+        },
+        {
+          "path": "/assets/duckplan-sigma-icon-v11-512.png",
+          "sha256": "7c6e55d67949e07310b4a6abf6ebdcfb2a199084e07def1d58585c7c40429d1f",
+          "width": 512,
+          "height": 512,
+          "minAlpha": 255,
+          "maxAlpha": 255,
+          "zeroPixels": 0,
+          "partialPixels": 0,
+          "corners": [
+            [
+              249,
+              249,
+              245,
+              255
+            ],
+            [
+              249,
+              249,
+              245,
+              255
+            ],
+            [
+              249,
+              249,
+              245,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ]
+          ],
+          "exterior": [
+            [
+              248,
+              249,
+              245,
+              255
+            ],
+            [
+              249,
+              249,
+              245,
+              255
+            ]
+          ],
+          "body": [
+            249,
+            249,
+            245,
+            255
+          ]
+        }
+      ],
+      "manifest": {
+        "any": [
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-transparent-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ],
+        "maskable": [
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+          },
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+          }
+        ],
+        "shortcutsTransparent": true
+      }
+    },
+    {
+      "test": "dark835",
+      "folded": {
+        "source": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "mark": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "markStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "fill"
+        },
+        "imageStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "contain"
+        },
+        "folded": true,
+        "theme": "dark",
+        "overflow": false,
+        "favicon": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "appleTouch": "/assets/duckplan-sigma-icon-v11-512.png"
+      },
+      "expanded": {
+        "source": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "mark": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 145.171875,
+          "height": 36,
+          "top": 18,
+          "right": 167.171875,
+          "bottom": 54,
+          "left": 22
+        },
+        "markStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "fill"
+        },
+        "imageStyle": {
+          "background": "rgba(0, 0, 0, 0)",
+          "borderWidths": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "shadow": "none",
+          "objectFit": "contain"
+        },
+        "folded": false,
+        "theme": "dark",
+        "overflow": false,
+        "favicon": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "appleTouch": "/assets/duckplan-sigma-icon-v11-512.png"
+      },
+      "iconNavigation": "Tasks→brand→Calendar",
+      "pixels": null,
+      "manifest": {
+        "any": [
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-transparent-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ],
+        "maskable": [
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+          },
+          {
+            "src": "/assets/duckplan-sigma-icon-v11-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+          }
+        ],
+        "shortcutsTransparent": true
+      }
+    },
+    {
+      "test": "phone390",
+      "touchEmulated": true,
+      "overflow": false,
+      "faviconAvailable": true
+    },
+    {
+      "test": "offlineBrowser390",
+      "cache": {
+        "name": "duckplan-app-motion-preview-v40",
+        "iconsCached": true
+      },
+      "iconsDecodeOffline": true,
+      "pixels": [
+        {
+          "path": "/assets/duckplan-sigma-icon-v11-transparent-192.png",
+          "sha256": "cd6c62abeb39b3e03d4e78c3aa60b933780a1aaa5572bc8caeeb57739fb8a220",
+          "width": 192,
+          "height": 192,
+          "minAlpha": 0,
+          "maxAlpha": 255,
+          "zeroPixels": 12962,
+          "partialPixels": 1262,
+          "corners": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "exterior": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "body": [
+            249,
+            249,
+            245,
+            255
+          ]
+        },
+        {
+          "path": "/assets/duckplan-sigma-icon-v11-transparent-512.png",
+          "sha256": "b27878a0f5f7fbc9be4891b294f8b5eff2155a7990e2df200e938fe06db443fb",
+          "width": 512,
+          "height": 512,
+          "minAlpha": 0,
+          "maxAlpha": 255,
+          "zeroPixels": 91898,
+          "partialPixels": 7700,
+          "corners": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "exterior": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "body": [
+            249,
+            249,
+            245,
+            255
+          ]
+        }
+      ],
+      "surface": "Chromium service-worker browser tab, not installed PWA"
+    }
+  ],
+  "pageErrors": [],
+  "unexpectedResponses": [],
+  "blocked": [],
+  "allSyntheticContextsClosed": true,
+  "productionWrites": false,
+  "limits": [
+    "Chromium only",
+    "Phone is touch emulation, not physical Safari",
+    "Offline check is a browser service-worker context, not installed PWA",
+    "Native icon equality checked separately; native app not changed or launched"
+  ]
+}

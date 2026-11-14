@@ -4,6 +4,8 @@
 
 The user approved v11 on November 12, 2026 as DuckPlan's profile picture and app icon. Keep this approved design unless the user requests a change; see `.cursor/rules/approved-duck-icon.mdc`.
 
+On November13,2026 the user requested transparent exterior backgrounds for the sidebar duck and website icon. Use the v11 transparent derivatives for ordinary web branding/favicon/notification and manifest `any` icons, preserving the exact duck artwork and opaque white body. Keep the original opaque master/native icon and explicit maskable/Apple-touch exports; see `docs/transparent-web-icon/README.md`.
+
 ## Clarifying Requests
 
 For all DuckPlan work, ask a concise clarification question when the intended version, page, behavior or scope has materially different plausible interpretations. Reuse confirmed answers and continue safe independent investigation while waiting. See `.cursor/rules/clarify-ambiguous-requests.mdc`. Calendar is the confirmed default opening page; retain Dashboard and the other sections.

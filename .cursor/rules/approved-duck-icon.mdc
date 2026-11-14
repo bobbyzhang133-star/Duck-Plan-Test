@@ -6,9 +6,10 @@ alwaysApply: true
 # Approved DuckPlan Icon
 
 - The user approved v11 on November 12, 2026 as DuckPlan's profile picture and app icon.
-- Use `landing/assets/duckplan-sigma-head-v11.png` as the canonical master, with its existing `duckplan-sigma-icon-v11-192.png` and `duckplan-sigma-icon-v11-512.png` web exports.
+- Use `landing/assets/duckplan-sigma-head-v11.png` as the canonical opaque artwork master. On November13,2026 the user requested background removal for the sidebar and website profile icon: use its `duckplan-sigma-head-v11-transparent.png` derivative and `duckplan-sigma-icon-v11-transparent-192.png` / `duckplan-sigma-icon-v11-transparent-512.png` exports for ordinary website branding, favicon, notifications and manifest `any` icons.
 - Preserve the approved copied outline, curved eyebrows, half-lidded eyes and rounded orange bill. Do not redesign or regenerate this artwork unless the user requests a change.
 - Keep the complete facial group under one uniform scale. Do not independently stretch or reposition the eyes, eyebrows or bill.
-- Website branding, favicon, Apple touch icon, PWA and notification icons use these exports. The native `AppIcon.png` uses the opaque 1024px master.
+- Preserve the duck's opaque white body, black contour and original facial pixels when extracting transparency. Only exterior background and its antialiased matte may change; do not regenerate or transform the drawing for a background-only request.
+- Keep the original opaque192/512px exports for explicit manifest `maskable` icons and the existing Apple touch icon. The native `AppIcon.png` continues to use the opaque1024px master. An OS-provided icon plate is separate from an unwanted rectangle baked into a website image.
 - Keep the existing Xcode project's bundled assets consistent with this approved version while preserving native code and signing.
 - The source and reproduction method are documented in `docs/sigma-mascot/README.md`.
