@@ -1194,6 +1194,13 @@ button:is(.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-c
   filter: brightness(.86) saturate(1.06);
   box-shadow: inset 0 0 0 3px rgba(140,91,0,.34);
 }
+/* Task titles open their editor. Keep the lightweight tint/press feedback
+   without drawing a rectangular inset box inside the task row. */
+.motion-preview button.task-select:not(:disabled):not([aria-disabled="true"]):is(:hover,:active,.interaction-pressed,.interaction-released) {
+  transform: none; box-shadow: none;
+}
+button.task-select[draggable="true"] { cursor: grab; }
+button.task-select.is-drag-source { opacity: .45; cursor: grabbing; }
 
 /* The collapsed drawer clips each nav row to its icon rail, so apply feedback
    to the icon tile that remains visible instead of moving the hidden row. */

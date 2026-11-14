@@ -20,6 +20,7 @@ test("planner markup exposes install metadata and an accessible install control"
   const html = fs.readFileSync(path.join(landing, "index.html"), "utf8");
   const styles = fs.readFileSync(path.join(landing, "styles.css"), "utf8");
   assert.match(html, /rel="manifest" href="\.\/app\.webmanifest"/);
+  assert.ok(html.indexOf("./task-list-drag.js") >= 0 && html.indexOf("./task-list-drag.js") < html.indexOf("./app.js"), "Task scheduling loads before planner startup");
   assert.match(html, /id="install-app-settings" aria-labelledby="install-app-heading"/);
   assert.match(html, /id="install-app-button" hidden/);
   assert.match(html, /src="\.\/app-install\.js\?v=app-1"/);
@@ -28,7 +29,8 @@ test("planner markup exposes install metadata and an accessible install control"
 
 test("service worker caches the shell, leaves APIs online-only, and handles notification clicks", () => {
   const worker = fs.readFileSync(path.join(landing, "service-worker.js"), "utf8");
-  assert.match(worker, /const CACHE_VERSION = "duckplan-app-motion-preview-v47"/);
+  assert.match(worker, /const CACHE_VERSION = "duckplan-app-motion-preview-v49"/);
+  assert.ok(worker.includes('"./task-list-drag.js"'), "Offline planner includes the scheduling controller");
   for (const asset of ["planner-clarity.css", "planner-clarity.js", "planner-presentation.js", "duck-mascot.js", "phone-navigation.css", "phone-navigation.js", "calendar-library-tabs.js", "calendar-library-tabs.css", "view-transitions.js", "page-stack.css"]) assert.ok(worker.includes(asset), `Offline shell includes ${asset}`);
   assert.match(worker, /event\.request\.mode === "navigate"/);
   assert.match(worker, /url\.pathname\.startsWith\("\/api\/"\)/);

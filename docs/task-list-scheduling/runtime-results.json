@@ -1,0 +1,481 @@
+{
+  "runtime": "157.0.8103.78",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 900,
+      "input": "mouse/keyboard"
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "input": "emulated touch"
+    },
+    {
+      "width": 320,
+      "height": 900,
+      "input": "emulated touch"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "input": "emulated touch"
+    }
+  ],
+  "modes": [
+    "local browser storage at8034",
+    "signed-in real isolated Worker+D1+DurableObject at8796, migrations0001–0005"
+  ],
+  "assetVersion": "task-list-scheduling-20261113, cachev48 while tested; final cache-only bump managed by parent",
+  "cases": [
+    {
+      "test": "trusted-task-drag-and-reload",
+      "mode": "local browser storage",
+      "list": "calendar",
+      "status": "PASS",
+      "before": {
+        "completed": false,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "id": "366d1bc9-cc8c-44a1-b796-e5b0af5fbae6",
+        "title": "Unscheduled QA task",
+        "classId": "147ebfdb-1bb8-468b-8d45-d18df1e9886f",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "2026-11-13",
+        "dueTime": "18:30",
+        "scheduledStart": null,
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "reminderChoice": "30",
+        "actualMinutes": 37,
+        "source": "manual",
+        "schemaVersion": 2
+      },
+      "after": {
+        "completed": false,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "id": "366d1bc9-cc8c-44a1-b796-e5b0af5fbae6",
+        "title": "Unscheduled QA task",
+        "classId": "147ebfdb-1bb8-468b-8d45-d18df1e9886f",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "2026-11-13",
+        "dueTime": "18:30",
+        "scheduledStart": "2026-11-09T09:00",
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "reminderChoice": "30",
+        "actualMinutes": 37,
+        "source": "manual",
+        "schemaVersion": 2
+      },
+      "count": 8,
+      "events": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "id": "366d1bc9-cc8c-44a1-b796-e5b0af5fbae6",
+          "target": "BUTTON",
+          "types": [],
+          "view": "calendar"
+        },
+        {
+          "type": "drop",
+          "trusted": true,
+          "id": null,
+          "target": "BUTTON",
+          "types": [
+            "application/x-duckplan-task-id"
+          ],
+          "view": "calendar"
+        }
+      ],
+      "color": "#39896f"
+    },
+    {
+      "test": "trusted-task-drag-and-reload",
+      "mode": "local browser storage",
+      "list": "tasks",
+      "status": "PASS",
+      "before": {
+        "completed": false,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "id": "366d1bc9-cc8c-44a1-b796-e5b0af5fbae6",
+        "title": "Unscheduled QA task",
+        "classId": "147ebfdb-1bb8-468b-8d45-d18df1e9886f",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "",
+        "dueTime": "",
+        "scheduledStart": null,
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "reminderChoice": "30",
+        "actualMinutes": 37,
+        "source": "manual",
+        "schemaVersion": 2
+      },
+      "after": {
+        "completed": false,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "id": "366d1bc9-cc8c-44a1-b796-e5b0af5fbae6",
+        "title": "Unscheduled QA task",
+        "classId": "147ebfdb-1bb8-468b-8d45-d18df1e9886f",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "",
+        "dueTime": "",
+        "scheduledStart": "2026-11-09T09:00",
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "reminderChoice": "30",
+        "actualMinutes": 37,
+        "source": "manual",
+        "schemaVersion": 2
+      },
+      "count": 8,
+      "events": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "id": "366d1bc9-cc8c-44a1-b796-e5b0af5fbae6",
+          "target": "BUTTON",
+          "types": [],
+          "view": "tasks"
+        },
+        {
+          "type": "drop",
+          "trusted": true,
+          "id": null,
+          "target": "BUTTON",
+          "types": [
+            "application/x-duckplan-task-id"
+          ],
+          "view": "calendar"
+        }
+      ],
+      "color": "#39896f"
+    },
+    {
+      "test": "undo-preserves-later-notes",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "escape-cancels-drag",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "task-click-opens-prefilled-editor-cancel",
+      "mode": "local browser storage",
+      "list": "calendar",
+      "status": "PASS"
+    },
+    {
+      "test": "task-click-opens-prefilled-editor-cancel",
+      "mode": "local browser storage",
+      "list": "tasks",
+      "status": "PASS"
+    },
+    {
+      "test": "checkbox-remains-independent",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "keyboard-enter-and-focus",
+      "mode": "local browser storage",
+      "status": "PASS",
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "no-rectangular-row-flash",
+      "mode": "local browser storage",
+      "reduced": "reduce",
+      "status": "PASS",
+      "press": "none",
+      "release": "none"
+    },
+    {
+      "test": "no-rectangular-row-flash",
+      "mode": "local browser storage",
+      "reduced": "no-preference",
+      "status": "PASS",
+      "press": "none",
+      "release": "none"
+    },
+    {
+      "test": "template-native-drag-independent-copy-retained-and-reload",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "normal-motion-crossroute-drag",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "touch-edit-manual-schedule-and-reload",
+      "mode": "local",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "test": "touch-edit-manual-schedule-and-reload",
+      "mode": "local",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "test": "touch-edit-manual-schedule-and-reload",
+      "mode": "local",
+      "width": 768,
+      "status": "PASS"
+    },
+    {
+      "test": "trusted-task-drag-and-reload",
+      "mode": "signed-in real local Worker",
+      "list": "calendar",
+      "status": "PASS",
+      "before": {
+        "id": "09bd01b4-3c47-44b2-9887-a51af96fced9",
+        "title": "Unscheduled QA task",
+        "classId": "347d8b20-f721-4628-810c-2096733cdde8",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "2026-11-13",
+        "dueTime": "18:30",
+        "scheduledStart": null,
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "completed": false,
+        "source": "manual",
+        "axisMissing": false,
+        "schemaVersion": 2,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "reminderChoice": "30",
+        "actualMinutes": 37
+      },
+      "after": {
+        "id": "09bd01b4-3c47-44b2-9887-a51af96fced9",
+        "title": "Unscheduled QA task",
+        "classId": "347d8b20-f721-4628-810c-2096733cdde8",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "2026-11-13",
+        "dueTime": "18:30",
+        "scheduledStart": "2026-11-09T09:00",
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "completed": false,
+        "source": "manual",
+        "axisMissing": false,
+        "schemaVersion": 2,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "reminderChoice": "30",
+        "actualMinutes": 37
+      },
+      "count": 1,
+      "events": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "id": "09bd01b4-3c47-44b2-9887-a51af96fced9",
+          "target": "BUTTON",
+          "types": [],
+          "view": "calendar"
+        },
+        {
+          "type": "drop",
+          "trusted": true,
+          "id": null,
+          "target": "BUTTON",
+          "types": [
+            "application/x-duckplan-task-id"
+          ],
+          "view": "calendar"
+        }
+      ],
+      "color": "#39896f"
+    },
+    {
+      "test": "trusted-task-drag-and-reload",
+      "mode": "signed-in real local Worker",
+      "list": "tasks",
+      "status": "PASS",
+      "before": {
+        "id": "09bd01b4-3c47-44b2-9887-a51af96fced9",
+        "title": "Unscheduled QA task",
+        "classId": "347d8b20-f721-4628-810c-2096733cdde8",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "",
+        "dueTime": "",
+        "scheduledStart": null,
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "completed": false,
+        "source": "manual",
+        "axisMissing": false,
+        "schemaVersion": 2,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "reminderChoice": "30",
+        "actualMinutes": 37
+      },
+      "after": {
+        "id": "09bd01b4-3c47-44b2-9887-a51af96fced9",
+        "title": "Unscheduled QA task",
+        "classId": "347d8b20-f721-4628-810c-2096733cdde8",
+        "type": "task",
+        "notes": "Keep these task notes",
+        "priority": "High",
+        "dueDate": "",
+        "dueTime": "",
+        "scheduledStart": "2026-11-09T09:00",
+        "scheduledEnd": null,
+        "durationMinutes": 45,
+        "completed": false,
+        "source": "manual",
+        "axisMissing": false,
+        "schemaVersion": 2,
+        "importance": "important",
+        "urgency": "not_urgent",
+        "reminderChoice": "30",
+        "actualMinutes": 37
+      },
+      "count": 1,
+      "events": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "id": "09bd01b4-3c47-44b2-9887-a51af96fced9",
+          "target": "BUTTON",
+          "types": [],
+          "view": "tasks"
+        },
+        {
+          "type": "drop",
+          "trusted": true,
+          "id": null,
+          "target": "BUTTON",
+          "types": [
+            "application/x-duckplan-task-id"
+          ],
+          "view": "calendar"
+        }
+      ],
+      "color": "#39896f"
+    },
+    {
+      "test": "undo-preserves-later-notes",
+      "mode": "signed-in real local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "escape-cancels-drag",
+      "mode": "signed-in real local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "task-click-opens-prefilled-editor-cancel",
+      "mode": "signed-in real local Worker",
+      "list": "calendar",
+      "status": "PASS"
+    },
+    {
+      "test": "task-click-opens-prefilled-editor-cancel",
+      "mode": "signed-in real local Worker",
+      "list": "tasks",
+      "status": "PASS"
+    },
+    {
+      "test": "checkbox-remains-independent",
+      "mode": "signed-in real local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "keyboard-enter-and-focus",
+      "mode": "signed-in real local Worker",
+      "status": "PASS",
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "no-rectangular-row-flash",
+      "mode": "signed-in real local Worker",
+      "reduced": "reduce",
+      "status": "PASS",
+      "press": "none",
+      "release": "none"
+    },
+    {
+      "test": "no-rectangular-row-flash",
+      "mode": "signed-in real local Worker",
+      "reduced": "no-preference",
+      "status": "PASS",
+      "press": "none",
+      "release": "none"
+    },
+    {
+      "test": "template-native-drag-independent-copy-retained-and-reload",
+      "mode": "signed-in real local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "real-local-backend-network-failure-rollback-and-reload",
+      "mode": "signed-in real local Worker",
+      "status": "PASS",
+      "expectedOfflineRequests": true
+    }
+  ],
+  "totalCases": 27,
+  "errors": [],
+  "expectedNetworkFailures": [
+    {
+      "origin": "http://127.0.0.1:8796",
+      "width": 1280,
+      "url": "/api/items/09bd01b4-3c47-44b2-9887-a51af96fced9",
+      "message": "net::ERR_INTERNET_DISCONNECTED",
+      "expected": true,
+      "reason": "Intentional browserContext offline test; task rollback and post-online reload verified"
+    },
+    {
+      "origin": "http://127.0.0.1:8796",
+      "width": 1280,
+      "url": "/api/planner",
+      "message": "net::ERR_INTERNET_DISCONNECTED",
+      "expected": true,
+      "reason": "Intentional browserContext offline test; task rollback and post-online reload verified"
+    }
+  ],
+  "allSyntheticContextsClosed": true,
+  "scope": "Actual isolated Chromium157 nativeHTML5trustedmouse drags and real local backend, no mocked transport. Touch viewport tests establish browser fallback editing/scheduling only; not physical Safari/native/PWA parity.",
+  "notes": [
+    "Calendar-side task retained due date/time; standaloneTasks drag starts with no due date/time and no scheduledStart.",
+    "The final signed-in drag/reload cases await the visible post-persistence Scheduled toast before reloading; no aborted non-offline request remains.",
+    "Harness waits for real cloud capability load and re-queries current rendered elements after store/WebSocket updates. Initial setup/evaluation races were corrected; classId and actual rendered color are preserved.",
+    "Parent fixed dragenter hover, fresh-pointerdown click suppression and reduced-motion shadow specificity after runtime findings; final cases rerun."
+  ]
+}

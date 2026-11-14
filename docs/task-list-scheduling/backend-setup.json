@@ -1,0 +1,42 @@
+{
+  "origin": "http://127.0.0.1:8796",
+  "runtime": "Wrangler 4.157.0 / local workerd",
+  "compatibilityDate": "2026-10-01",
+  "mode": "isolated real local Worker+D1+DurableObject",
+  "database": "task-list-qa",
+  "localDatabaseId": "ef09af19-1225-4ad6-badf-e0e573aaf5f1",
+  "migrationHistory": [
+    "0001_initial_schema.sql",
+    "0002_password_sign_in.sql",
+    "0003_task_alarms.sql",
+    "0004_product_organization.sql",
+    "0005_personal_planning.sql"
+  ],
+  "apiSession": {
+    "status": 200,
+    "user": null,
+    "providers": {
+      "password": true,
+      "google": false
+    }
+  },
+  "cloudConfig": {
+    "apiUrl": "/api"
+  },
+  "backendHashes": {
+    "cloudflare/src/index.js": "f5abe1810a175dafc673855b67ee214b14a9d82091569a561563414e6a11d4af",
+    "cloudflare/src/planner.js": "db237d2e91084ffc7b2b83112b6b86f31b098f3fe064c20fc41139a335d6151a",
+    "cloudflare/src/auth.js": "bb1e8e15f90c8fc08f735ee8a43a9dd75756f50fb84561b5623b663fcff2904d",
+    "cloudflare/migrations/0001_initial_schema.sql": "030f8c1936c5e05080853479ef518e080cc1cc6514312d8e15e02c103c29595f",
+    "cloudflare/migrations/0002_password_sign_in.sql": "d6d8893d1e8cba703371ae8826d6b52bd5c3f9a53cce067d87cfdd94d97483c3",
+    "cloudflare/migrations/0003_task_alarms.sql": "d75ec49687e805ac7b272128ffd818160eabfc67404137d58e142236d763adc2",
+    "cloudflare/migrations/0004_product_organization.sql": "cf380b81d77d5a393c6fedd5931c0c80d6708df950e1d2a7c6194e75d8dd5ae1",
+    "cloudflare/migrations/0005_personal_planning.sql": "a05c7f28adc736c1b622c734c743e3551e4697eef50b268741806ddc146bfa2a"
+  },
+  "scope": "No remote database, deployment, user records, .dev.vars or production credentials used. Actual browser feature checks belong to parent task.",
+  "featureSourceHashes": {
+    "landing/app.js": "ce0bedc54c6674425d30e5f7874465108b20d76452403d4c451fd9f3beb8a604",
+    "landing/task-list-drag.js": "d40c503b763ccaf232ebc2966c06048f8829bca647ff4d364e96dd2d4f592b16",
+    "landing/styles.css": "14eb9e872f642e4513ddbaba8bdf03be4a451e2ae8338bb5e3a14f7977d9db3a"
+  }
+}

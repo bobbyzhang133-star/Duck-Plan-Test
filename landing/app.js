@@ -138,6 +138,26 @@ const viewTransitions = window.DuckViewTransitions.create({
   order: [...sidebar.querySelectorAll(".nav-item[data-view]")].map((item) => item.dataset.view),
   getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
 });
+const taskListDrag = window.DuckTaskListDrag?.create({
+  window, document,
+  getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
+  getTask: id => store.listItems().find(task => task.id === id && !task.completed),
+  getPlacement: (event, task) => {
+    if (!event.target.closest("#planner-calendar")) return null;
+    const placement = templateCalendarPlacement(event, task);
+    return placement ? { ...placement, pointerX: event.clientX, pointerY: event.clientY } : null;
+  },
+  showPreview: (task, placement) => {
+    if (!templateDrag || templateDrag.template !== task) beginCalendarDropPreview(task);
+    updateTemplatePreview({ target: placement.source, clientX: placement.pointerX, clientY: placement.pointerY });
+  },
+  clearPreview: clearTemplateDrag,
+  schedule: scheduleListTask,
+  openCalendar: () => {
+    if (document.body.dataset.view !== "calendar") setView("calendar", true);
+    setTaskPanel(false, false);
+  },
+});
 const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 let taskPanelLauncher = null;
 
@@ -424,7 +444,7 @@ function taskCardMarkup(task, mode = "daily") {
   const due = task.dueDate ? `${formatShortDate(task.dueDate)}${task.dueTime ? ` · ${formatTime(task.dueTime)}` : ""}` : "No deadline";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span> · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${priorityBadge(task)}</span></button>
+    <button class="task-select" type="button" data-edit-task="${task.id}" ${task.completed ? "" : `draggable="true" data-drag-task="${task.id}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span> · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${priorityBadge(task)}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
 }
@@ -465,7 +485,7 @@ function allTaskMarkup(task) {
   const scheduled = Model.scheduledParts(task);
   return `<article class="all-task-row ${task.completed ? "completed" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}</span></button>
+    <button class="task-select" type="button" data-edit-task="${task.id}" ${task.completed ? "" : `draggable="true" data-drag-task="${task.id}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}</span></button>
     <span class="task-due"><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${formatTime(task.dueTime)}</small></span>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
@@ -950,6 +970,34 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
   return true;
 }
 
+async function scheduleListTask(task, drop) {
+  const owner = `${store.mode}:${store.user?.id || "local"}`;
+  const previousStart = task.scheduledStart || null, previousEnd = task.scheduledEnd || null;
+  const scheduledStart = `${drop.date}T${drop.time}`;
+  if (previousStart === scheduledStart) return;
+  selectedDate = drop.date; selectedTaskId = task.id;
+  try {
+    await store.upsertItem({ ...task, scheduledStart, scheduledEnd: null });
+    if (owner !== `${store.mode}:${store.user?.id || "local"}`) return;
+    const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
+    els.calendarStatus.textContent = `${task.title} scheduled for ${destination}.`;
+    showToast(`Scheduled for ${destination}.`, {
+      actionLabel: "Undo", duration: 5000,
+      onAction: async () => {
+        if (owner !== `${store.mode}:${store.user?.id || "local"}`) return;
+        const current = store.listItems().find(item => item.id === task.id);
+        if (!current || current.scheduledStart !== scheduledStart) {
+          showToast("This task has changed since it was scheduled."); return;
+        }
+        try {
+          await store.upsertItem({ ...current, scheduledStart: previousStart, scheduledEnd: previousEnd });
+          if (owner === `${store.mode}:${store.user?.id || "local"}`) showToast("Task scheduling undone.");
+        } catch (error) { if (owner === `${store.mode}:${store.user?.id || "local"}`) reportError(error); }
+      },
+    });
+  } catch (error) { if (owner === `${store.mode}:${store.user?.id || "local"}`) reportError(error); }
+}
+
 function calendarColumnAt(clientX) {
   return [...els.calendar.querySelectorAll(".timeline-column")].find((column) => {
     const rect = column.getBoundingClientRect();
@@ -1227,10 +1275,7 @@ function scrollTemplatePreview() {
   templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
 }
 
-document.addEventListener("dragstart", event => {
-  const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
-  const template = id && taskLibrary.draftForTemplate(id);
-  if (!template || event.defaultPrevented) return;
+function beginCalendarDropPreview(template) {
   clearTemplateDrag();
   const preview = document.createElement("div");
   preview.className = "calendar-event-block calendar-drag-ghost template-drop-preview";
@@ -1240,6 +1285,12 @@ document.addEventListener("dragstart", event => {
   preview.style.setProperty("--course-color", /^#[0-9a-f]{6}$/i.test(info.color) ? info.color : "#8f8a7d");
   document.body.append(preview);
   templateDrag = { template, preview, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+}
+document.addEventListener("dragstart", event => {
+  const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
+  const template = id && taskLibrary.draftForTemplate(id);
+  if (!template || event.defaultPrevented) return;
+  beginCalendarDropPreview(template);
 });
 document.addEventListener("dragend", clearTemplateDrag);
 window.addEventListener("blur", clearTemplateDrag);
@@ -1562,10 +1613,12 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  if (reason === "context") taskListDrag?.cancel();
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
     viewTransitions.cancel();
     renderedPlannerOwner = owner;
+    taskListDrag?.cancel();
     clearTemplateDrag();
     plannerOwnerVersion += 1;
     accountStateVersion += 1;
