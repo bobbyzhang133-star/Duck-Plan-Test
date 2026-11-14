@@ -1,0 +1,156 @@
+{
+  "runtime": "157.0.8103.78",
+  "stage": "complete",
+  "closedMoving": {
+    "phase": "animate",
+    "open": false,
+    "frame": {
+      "x": 8,
+      "y": -18.172311782836914,
+      "width": 374,
+      "height": 756,
+      "top": -18.172311782836914,
+      "right": 382,
+      "bottom": 737.8276882171631,
+      "left": 8
+    },
+    "sheet": {
+      "x": 9,
+      "y": 752.8276977539062,
+      "width": 372,
+      "height": 641.4374389648438,
+      "top": 752.8276977539062,
+      "right": 381,
+      "bottom": 1394.26513671875,
+      "left": 9
+    },
+    "summary": {
+      "x": 21,
+      "y": 659.5464477539062,
+      "width": 348,
+      "height": 65.28125,
+      "top": 659.5464477539062,
+      "right": 369,
+      "bottom": 724.8276977539062,
+      "left": 21
+    },
+    "scrim": {
+      "x": 8,
+      "y": 8,
+      "width": 374,
+      "height": 756,
+      "top": 8,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "horizontalOverflow": false,
+    "coarse": false
+  },
+  "point": {
+    "x": 195,
+    "y": 692.1870727539062,
+    "hit": ""
+  },
+  "openedMoving": {
+    "phase": null,
+    "open": true,
+    "frame": {
+      "x": 8,
+      "y": 8,
+      "width": 374,
+      "height": 756,
+      "top": 8,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "sheet": {
+      "x": 8,
+      "y": 122.5625,
+      "width": 374,
+      "height": 641.4375,
+      "top": 122.5625,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "summary": {
+      "x": 21,
+      "y": 685.71875,
+      "width": 348,
+      "height": 65.28125,
+      "top": 685.71875,
+      "right": 369,
+      "bottom": 751,
+      "left": 21
+    },
+    "scrim": {
+      "x": 8,
+      "y": 8,
+      "width": 374,
+      "height": 756,
+      "top": 8,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "horizontalOverflow": false,
+    "coarse": false
+  },
+  "openedAfter": {
+    "phase": null,
+    "open": true,
+    "frame": {
+      "x": 8,
+      "y": 8,
+      "width": 374,
+      "height": 756,
+      "top": 8,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "sheet": {
+      "x": 8,
+      "y": 122.5625,
+      "width": 374,
+      "height": 641.4375,
+      "top": 122.5625,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "summary": {
+      "x": 21,
+      "y": 685.71875,
+      "width": 348,
+      "height": 65.28125,
+      "top": 685.71875,
+      "right": 369,
+      "bottom": 751,
+      "left": 21
+    },
+    "scrim": {
+      "x": 8,
+      "y": 8,
+      "width": 374,
+      "height": 756,
+      "top": 8,
+      "right": 382,
+      "bottom": 764,
+      "left": 8
+    },
+    "horizontalOverflow": false,
+    "coarse": false
+  },
+  "sheetJump": {
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0
+  },
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true
+}

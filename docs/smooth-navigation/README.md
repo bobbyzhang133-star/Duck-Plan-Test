@@ -1,5 +1,7 @@
 # Smoother directional navigation
 
+This records the `4820707` baseline. The subsequent [moving-layout correction](../moving-layout/README.md) groups complete page surfaces together so borders and dividers participate in the same spring.
+
 Local follow-up to the approved up/down layered spring, starting from `6814b34` on `codex/smoother-navigation-20261113`. The direction, 48/56/64px entrances, 0/30/60ms sequence, 440ms spring and gentle bounce are retained.
 
 ## Findings and changes

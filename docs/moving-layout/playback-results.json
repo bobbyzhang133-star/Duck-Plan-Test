@@ -1,0 +1,48 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "route": "home",
+      "direction": "forward",
+      "roots": [
+        {
+          "id": "duck-route-live-content-move",
+          "target": "topbar compact-topbar"
+        },
+        {
+          "id": "duck-route-live-content-1-move",
+          "target": "view dashboard-view active"
+        }
+      ]
+    },
+    {
+      "route": "calendar",
+      "direction": "back",
+      "roots": [
+        {
+          "id": "duck-route-live-content-move",
+          "target": "planner-workspace"
+        }
+      ]
+    },
+    {
+      "route": "home",
+      "direction": "forward",
+      "roots": [
+        {
+          "id": "duck-route-live-content-move",
+          "target": "topbar compact-topbar"
+        },
+        {
+          "id": "duck-route-live-content-1-move",
+          "target": "view dashboard-view active"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "file": "moving-layout-835.webm",
+  "allSyntheticContextsClosed": true,
+  "scope": "Normal unpaused Chromium fixture playback, not a performance measurement"
+}
