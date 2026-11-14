@@ -39,9 +39,13 @@
 .library-card-tools { margin-top: 12px; }
 .library-card-tools .library-button { min-height: 38px; padding: 6px 11px; font-size: 12px; }
 .library-template-actions { display: flex; align-items: center; flex-wrap: nowrap; margin: 0; gap: 6px; }
-.library-template-actions .library-button { flex: 0 0 auto; min-width: 0; min-height: 36px; padding: 6px 12px; font-size: 11px; border-radius: 999px; box-shadow: none; }
-.library-template-actions [data-library-action="schedule-template"] { border-color: var(--ink-deep); background: var(--ink-deep); color: var(--card); }
-.library-template-actions [data-library-action="add-template"] { border-color: var(--line); background: var(--card); color: var(--ink-deep); }
+.library-template-actions .library-button { flex: 0 0 auto; min-width: 0; min-height: 36px; padding: 6px 10px; font-size: 11px; font-weight: 500; border-radius: 999px; box-shadow: none; }
+.motion-preview .library-template-actions button[data-library-action="schedule-template"] { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding-inline: 8px; border: 1px solid color-mix(in srgb,var(--muted) 28%,var(--card)); background: transparent; color: var(--muted); box-shadow: none; text-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.library-schedule-icon { flex: 0 0 18px; width: 18px; height: 18px; }
+.motion-preview .library-template-actions button[data-library-action="add-template"] { padding-inline: 4px; border-color: transparent; background: transparent; color: var(--muted); box-shadow: none; text-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.motion-preview .library-template-actions button:is([data-library-action="schedule-template"],[data-library-action="add-template"])::after { display: none; }
+.motion-preview .library-template-actions button[data-library-action="schedule-template"]:not(:disabled):not([aria-disabled="true"]):is(:hover,:active,.interaction-pressed,.interaction-released) { border-color: color-mix(in srgb,var(--muted) 45%,var(--card)); background: color-mix(in srgb,var(--muted) 6%,var(--card)); box-shadow: none; }
+.motion-preview .library-template-actions button[data-library-action="add-template"]:not(:disabled):not([aria-disabled="true"]):is(:hover,:active,.interaction-pressed,.interaction-released) { border-color: transparent; background: transparent; color: var(--ink-deep); box-shadow: none; }
 .library-template-actions [data-library-action="template-menu"] { width: 36px; margin-left: auto; padding: 0; border-color: transparent; background: transparent; font-size: 23px; line-height: 1; }
 .library-template-actions [data-library-action="template-menu"]:hover, .library-template-actions [data-library-action="template-menu"][aria-expanded="true"] { background: var(--surface); }
 .library-template-menu { position: fixed; z-index: 1000; display: grid; width: min(190px,calc(100vw - 16px)); padding: 5px; border: 1px solid var(--line); border-radius: 11px; background: var(--card); color: var(--ink-deep); box-shadow: 0 8px 30px #00000024; }
@@ -152,5 +156,4 @@
   .library-drag-hint { display: none; }
   .library-template-actions [data-library-action="template-menu"] { width: 44px; }
   .library-template-actions .library-button, .library-template-library-header .library-button { min-height: 44px; font-size: 12px; }
-  .library-template-actions [data-library-action="schedule-template"] { border-color: var(--ink-deep); background: var(--ink-deep); color: var(--card); }
 }

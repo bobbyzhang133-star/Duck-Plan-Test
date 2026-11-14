@@ -1,0 +1,67 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "fresh-idle-reference-colors",
+      "width": 320,
+      "theme": "light",
+      "status": "PASS",
+      "colors": [
+        {
+          "action": "schedule-template",
+          "color": "rgb(104, 103, 94)",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "action": "add-template",
+          "color": "rgb(104, 103, 94)",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "test": "fresh-idle-reference-colors",
+      "width": 320,
+      "theme": "dark",
+      "status": "PASS",
+      "colors": [
+        {
+          "action": "schedule-template",
+          "color": "rgb(189, 184, 168)",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "action": "add-template",
+          "color": "rgb(189, 184, 168)",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "test": "fresh-idle-reference-colors",
+      "width": 835,
+      "theme": "light",
+      "status": "PASS",
+      "colors": [
+        {
+          "action": "schedule-template",
+          "color": "rgb(104, 103, 94)",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "action": "add-template",
+          "color": "rgb(104, 103, 94)",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "allSyntheticContextsClosed": true
+}
