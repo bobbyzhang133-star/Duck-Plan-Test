@@ -1,0 +1,1893 @@
+{
+  "runtime": "157.0.8103.78",
+  "mode": "Fresh signed-out fixture; native-old/live-incoming expected; no API/external traffic",
+  "cases": [
+    {
+      "width": 835,
+      "height": 747,
+      "target": "checkbox",
+      "hold": 0,
+      "sampleDelay": 110,
+      "point": {
+        "sampledAt": 462.09999999403954,
+        "x": 144,
+        "y": 524.4161987304688,
+        "id": "physics-quiz",
+        "date": null,
+        "time": null,
+        "hit": "<input class=\"task-check\" type=\"checkbox\" data-task-id=\"physics-quiz\" aria-label=\"Mark Complete motion quiz complete\">",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 100.06699999753293
+          },
+          {
+            "playState": "running",
+            "time": 100.06699999753293
+          }
+        ]
+      },
+      "after": {
+        "phase": "animate",
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": true
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": false,
+        "date": "",
+        "time": "",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 317.29999999701977,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 318,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 318.09999999403954,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 524.4161987304688,
+            "checkboxRect": {
+              "x": 132,
+              "y": 512.4161987304688,
+              "width": 24,
+              "height": 24,
+              "top": 512.4161987304688,
+              "right": 156,
+              "bottom": 536.4161987304688,
+              "left": 132
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 464.8999999985099,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 524.4161987304688,
+            "checkboxRect": {
+              "x": 132,
+              "y": 512.4161987304688,
+              "width": 24,
+              "height": 24,
+              "top": 512.4161987304688,
+              "right": 156,
+              "bottom": 536.4161987304688,
+              "left": 132
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 465.29999999701977,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 524,
+            "checkboxRect": {
+              "x": 132,
+              "y": 512.4161987304688,
+              "width": 24,
+              "height": 24,
+              "top": 512.4161987304688,
+              "right": 156,
+              "bottom": 536.4161987304688,
+              "left": 132
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 465.59999999403954,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [
+        {
+          "id": "physics-quiz",
+          "completed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 835,
+      "height": 747,
+      "target": "checkbox",
+      "hold": 100,
+      "sampleDelay": 220,
+      "point": {
+        "sampledAt": 1202.6999999955297,
+        "x": 144,
+        "y": 476.94952392578125,
+        "id": "physics-quiz",
+        "date": null,
+        "time": null,
+        "hit": "<input class=\"task-check\" type=\"checkbox\" data-task-id=\"physics-quiz\" checked=\"\" aria-label=\"Mark Complete motion quiz complete\">",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": true
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 216.65899999666726
+          },
+          {
+            "playState": "running",
+            "time": 216.65899999666726
+          }
+        ]
+      },
+      "after": {
+        "phase": "animate",
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": false,
+        "date": "",
+        "time": "",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 948.6999999955297,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 949.1999999955297,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 949.1999999955297,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 476.94952392578125,
+            "checkboxRect": {
+              "x": 132,
+              "y": 461.3589172363281,
+              "width": 24,
+              "height": 24,
+              "top": 461.3589172363281,
+              "right": 156,
+              "bottom": 485.3589172363281,
+              "left": 132
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 1213.7999999970198,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 476.94952392578125,
+            "checkboxRect": {
+              "x": 133.22679138183594,
+              "y": 462.585693359375,
+              "width": 21.546417236328125,
+              "height": 21.54644775390625,
+              "top": 462.585693359375,
+              "right": 154.77320861816406,
+              "bottom": 484.13214111328125,
+              "left": 133.22679138183594
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 1315.3999999985099,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 476,
+            "checkboxRect": {
+              "x": 133.22679138183594,
+              "y": 462.585693359375,
+              "width": 21.546417236328125,
+              "height": 21.54644775390625,
+              "top": 462.585693359375,
+              "right": 154.77320861816406,
+              "bottom": 484.13214111328125,
+              "left": 133.22679138183594
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 1315.8999999985099,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [
+        {
+          "id": "physics-quiz",
+          "completed": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 835,
+      "height": 747,
+      "target": "slot",
+      "hold": 0,
+      "sampleDelay": 110,
+      "point": {
+        "sampledAt": 1809.0999999940395,
+        "x": 472.3515625,
+        "y": 202.90835571289062,
+        "id": null,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "hit": "<button type=\"button\" class=\"calendar-slot\" tabindex=\"-1\" data-slot-date=\"2026-11-09\" data-slot-time=\"07:00\" aria-label=\"Plan work on Monday, November 9 at 7:00 AM\"></button>",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 100.02099999861103
+          },
+          {
+            "playState": "running",
+            "time": 100.02099999861103
+          }
+        ]
+      },
+      "after": {
+        "phase": null,
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": true,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 132,
+              "y": 458.34375,
+              "width": 24,
+              "height": 24,
+              "top": 458.34375,
+              "right": 156,
+              "bottom": 482.34375,
+              "left": 132
+            },
+            "id": null,
+            "date": null,
+            "time": 1664.0999999940395,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 132,
+              "y": 458.34375,
+              "width": 24,
+              "height": 24,
+              "top": 458.34375,
+              "right": 156,
+              "bottom": 482.34375,
+              "left": 132
+            },
+            "id": null,
+            "date": null,
+            "time": 1664.6999999955297,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189,
+            "checkboxRect": {
+              "x": 132,
+              "y": 458.34375,
+              "width": 24,
+              "height": 24,
+              "top": 458.34375,
+              "right": 156,
+              "bottom": 482.34375,
+              "left": 132
+            },
+            "id": null,
+            "date": null,
+            "time": 1664.6999999955297,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 202.90835571289062,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 1811.8999999985099,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 202.90835571289062,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 1812.3999999985099,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 202,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 1812.5,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [],
+      "passed": true
+    },
+    {
+      "width": 835,
+      "height": 747,
+      "target": "slot",
+      "hold": 100,
+      "sampleDelay": 110,
+      "point": {
+        "sampledAt": 2643.5,
+        "x": 472.3515625,
+        "y": 202.9217071533203,
+        "id": null,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "hit": "<button type=\"button\" class=\"calendar-slot\" tabindex=\"-1\" data-slot-date=\"2026-11-09\" data-slot-time=\"07:00\" aria-label=\"Plan work on Monday, November 9 at 7:00 AM\" style=\"\"></button>",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 100.05300000019402
+          },
+          {
+            "playState": "running",
+            "time": 100.05300000019402
+          }
+        ]
+      },
+      "after": {
+        "phase": null,
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": true,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 41.650001525878906,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 2114.7999999970198,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 41.650001525878906,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 2115.5999999940395,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 41,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 2115.5999999940395,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 132,
+              "y": 458.34375,
+              "width": 24,
+              "height": 24,
+              "top": 458.34375,
+              "right": 156,
+              "bottom": 482.34375,
+              "left": 132
+            },
+            "id": null,
+            "date": null,
+            "time": 2498.39999999851,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 132,
+              "y": 458.34375,
+              "width": 24,
+              "height": 24,
+              "top": 458.34375,
+              "right": 156,
+              "bottom": 482.34375,
+              "left": 132
+            },
+            "id": null,
+            "date": null,
+            "time": 2499,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189,
+            "checkboxRect": {
+              "x": 132,
+              "y": 458.34375,
+              "width": 24,
+              "height": 24,
+              "top": 458.34375,
+              "right": 156,
+              "bottom": 482.34375,
+              "left": 132
+            },
+            "id": null,
+            "date": null,
+            "time": 2499,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 202.9217071533203,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 2646.2999999970198,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 202.9217071533203,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 2748.89999999851,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 202,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 2748.89999999851,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "target": "checkbox",
+      "hold": 0,
+      "sampleDelay": 110,
+      "point": {
+        "sampledAt": 465.8999999985099,
+        "x": 150,
+        "y": 462.1875,
+        "id": "physics-quiz",
+        "date": null,
+        "time": null,
+        "hit": "<input class=\"task-check\" type=\"checkbox\" data-task-id=\"physics-quiz\" aria-label=\"Mark Complete motion quiz complete\">",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 100.01600000188593
+          },
+          {
+            "playState": "running",
+            "time": 100.01600000188593
+          }
+        ]
+      },
+      "after": {
+        "phase": "animate",
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": true
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": false,
+        "date": "",
+        "time": "",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 322.3999999985099,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 323.30000000447035,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 323.30000000447035,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 462.1875,
+            "checkboxRect": {
+              "x": 138,
+              "y": 450.1875,
+              "width": 24,
+              "height": 24,
+              "top": 450.1875,
+              "right": 162,
+              "bottom": 474.1875,
+              "left": 138
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 469.30000000447035,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 462.1875,
+            "checkboxRect": {
+              "x": 138,
+              "y": 450.1875,
+              "width": 24,
+              "height": 24,
+              "top": 450.1875,
+              "right": 162,
+              "bottom": 474.1875,
+              "left": 138
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 469.70000000298023,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 462,
+            "checkboxRect": {
+              "x": 138,
+              "y": 450.1875,
+              "width": 24,
+              "height": 24,
+              "top": 450.1875,
+              "right": 162,
+              "bottom": 474.1875,
+              "left": 138
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 470,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [
+        {
+          "id": "physics-quiz",
+          "completed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "target": "checkbox",
+      "hold": 100,
+      "sampleDelay": 220,
+      "point": {
+        "sampledAt": 1191.3000000044703,
+        "x": 150,
+        "y": 414.6959228515625,
+        "id": "physics-quiz",
+        "date": null,
+        "time": null,
+        "hit": "<input class=\"task-check\" type=\"checkbox\" data-task-id=\"physics-quiz\" checked=\"\" aria-label=\"Mark Complete motion quiz complete\">",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": true
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 216.67399999691406
+          },
+          {
+            "playState": "running",
+            "time": 216.67399999691406
+          }
+        ]
+      },
+      "after": {
+        "phase": "animate",
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": false,
+        "date": "",
+        "time": "",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 938.6000000014901,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299.1400146484375,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 939,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 299,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 939.2000000029802,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 414.6959228515625,
+            "checkboxRect": {
+              "x": 138,
+              "y": 399.112548828125,
+              "width": 24,
+              "height": 24,
+              "top": 399.112548828125,
+              "right": 162,
+              "bottom": 423.112548828125,
+              "left": 138
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 1200.8000000044703,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 414.6959228515625,
+            "checkboxRect": {
+              "x": 139.22689819335938,
+              "y": 400.33941650390625,
+              "width": 21.54620361328125,
+              "height": 21.54620361328125,
+              "top": 400.33941650390625,
+              "right": 160.77310180664062,
+              "bottom": 421.8856201171875,
+              "left": 139.22689819335938
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 1303.3999999985099,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "INPUT",
+            "clientY": 414,
+            "checkboxRect": {
+              "x": 139.22689819335938,
+              "y": 400.33941650390625,
+              "width": 21.54620361328125,
+              "height": 21.54620361328125,
+              "top": 400.33941650390625,
+              "right": 160.77310180664062,
+              "bottom": 421.8856201171875,
+              "left": 139.22689819335938
+            },
+            "id": "physics-quiz",
+            "date": null,
+            "time": 1304,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [
+        {
+          "id": "physics-quiz",
+          "completed": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "target": "slot",
+      "hold": 0,
+      "sampleDelay": 110,
+      "point": {
+        "sampledAt": 1797.3999999985099,
+        "x": 516.2109375,
+        "y": 204.91461181640625,
+        "id": null,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "hit": "<button type=\"button\" class=\"calendar-slot\" tabindex=\"-1\" data-slot-date=\"2026-11-09\" data-slot-time=\"07:00\" aria-label=\"Plan work on Monday, November 9 at 7:00 AM\"></button>",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 100.03599999885782
+          },
+          {
+            "playState": "running",
+            "time": 100.03599999885782
+          }
+        ]
+      },
+      "after": {
+        "phase": null,
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": true,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 138,
+              "y": 396.09375,
+              "width": 24,
+              "height": 24,
+              "top": 396.09375,
+              "right": 162,
+              "bottom": 420.09375,
+              "left": 138
+            },
+            "id": null,
+            "date": null,
+            "time": 1653.2000000029802,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 138,
+              "y": 396.09375,
+              "width": 24,
+              "height": 24,
+              "top": 396.09375,
+              "right": 162,
+              "bottom": 420.09375,
+              "left": 138
+            },
+            "id": null,
+            "date": null,
+            "time": 1654,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189,
+            "checkboxRect": {
+              "x": 138,
+              "y": 396.09375,
+              "width": 24,
+              "height": 24,
+              "top": 396.09375,
+              "right": 162,
+              "bottom": 420.09375,
+              "left": 138
+            },
+            "id": null,
+            "date": null,
+            "time": 1654.1000000014901,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 204.91461181640625,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 1800.8000000044703,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 204.91461181640625,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 1801.3999999985099,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 204,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 1801.3999999985099,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "target": "slot",
+      "hold": 100,
+      "sampleDelay": 110,
+      "point": {
+        "sampledAt": 2630.60000000149,
+        "x": 516.2109375,
+        "y": 204.91378784179688,
+        "id": null,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "hit": "<button type=\"button\" class=\"calendar-slot\" tabindex=\"-1\" data-slot-date=\"2026-11-09\" data-slot-time=\"07:00\" aria-label=\"Plan work on Monday, November 9 at 7:00 AM\" style=\"\"></button>",
+        "sameHit": true,
+        "phase": "animate",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveAnimations": [
+          {
+            "playState": "running",
+            "time": 100.03400000044094
+          },
+          {
+            "playState": "running",
+            "time": 100.03400000044094
+          }
+        ]
+      },
+      "after": {
+        "phase": null,
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": true,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "events": [
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 118.1500015258789,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 2103.7000000029802,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 118.1500015258789,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 2104.5,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 118,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": null,
+            "time": 2104.5,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 138,
+              "y": 396.09375,
+              "width": 24,
+              "height": 24,
+              "top": 396.09375,
+              "right": 162,
+              "bottom": 420.09375,
+              "left": 138
+            },
+            "id": null,
+            "date": null,
+            "time": 2485.89999999851,
+            "phase": null
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189.13999938964844,
+            "checkboxRect": {
+              "x": 138,
+              "y": 396.09375,
+              "width": 24,
+              "height": 24,
+              "top": 396.09375,
+              "right": 162,
+              "bottom": 420.09375,
+              "left": 138
+            },
+            "id": null,
+            "date": null,
+            "time": 2486.5,
+            "phase": null
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "svg",
+            "clientY": 189,
+            "checkboxRect": {
+              "x": 138,
+              "y": 396.09375,
+              "width": 24,
+              "height": 24,
+              "top": 396.09375,
+              "right": 162,
+              "bottom": 420.09375,
+              "left": 138
+            },
+            "id": null,
+            "date": null,
+            "time": 2486.5,
+            "phase": null
+          },
+          {
+            "name": "pointerdown",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 204.91378784179688,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 2634.5,
+            "phase": "animate"
+          },
+          {
+            "name": "pointerup",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 204.91378784179688,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 2736.89999999851,
+            "phase": "animate"
+          },
+          {
+            "name": "click",
+            "trusted": true,
+            "target": "BUTTON",
+            "clientY": 204,
+            "checkboxRect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "id": null,
+            "date": "2026-11-09",
+            "time": 2736.89999999851,
+            "phase": "animate"
+          }
+        ]
+      },
+      "changes": [],
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "allSyntheticContextsClosed": true
+}

@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const Transitions = require("../landing/view-transitions.js");
 
 const order = ["calendar", "home", "tasks", "classes", "goals", "notes", "settings"];
-const flush = () => Promise.resolve();
+const flush = async () => { for (let i = 0; i < 4; i += 1) await Promise.resolve(); };
 
 function deferred() {
   let resolve, reject;
@@ -21,7 +21,7 @@ function eventTarget() {
     listeners,
     addEventListener(name, callback) { listeners.set(name, callback); },
     removeEventListener(name, callback) { if (listeners.get(name) === callback) listeners.delete(name); },
-    dispatch(name, event = {}) { listeners.get(name)?.(event); },
+    dispatch(name, event = {}) { listeners.get(name)?.({ type: name, ...event }); },
   };
 }
 
@@ -40,6 +40,28 @@ function inlineStyle(initial = {}) {
   };
 }
 
+function animateTarget(element) {
+  element.animations = [];
+  element.animate = (keyframes, options) => {
+    const completion = deferred();
+    const animation = {
+      keyframes, options, currentTime: 0, startTime: 0, playState: "running", pauses: 0, plays: 0, cancels: 0,
+      finished: completion.promise,
+      effect: { target: element, getTiming: () => options, getKeyframes: () => keyframes },
+      pause() { this.pauses += 1; this.playState = "paused"; },
+      play() {
+        if (this.currentTime >= Number(options.duration) + Number(options.delay || 0)) this.currentTime = 0;
+        this.plays += 1; this.playState = "running";
+      },
+      finish() { this.currentTime = Number(options.duration) + Number(options.delay || 0); this.playState = "finished"; completion.resolve(); },
+      cancel() { this.cancels += 1; this.playState = "idle"; completion.reject(new Error("Animation canceled")); },
+    };
+    element.animations.push(animation);
+    return animation;
+  };
+  return element;
+}
+
 function layer(options = {}) {
   const element = {
     insideWorkspace: options.insideWorkspace ?? true,
@@ -51,7 +73,7 @@ function layer(options = {}) {
     children: options.children || [],
   };
   element.getBoundingClientRect = () => element.bounds;
-  return element;
+  return animateTarget(element);
 }
 
 function fixture(options = {}) {
@@ -65,18 +87,27 @@ function fixture(options = {}) {
   const root = {
     dataset: {},
     style,
+    visualStyle: { getPropertyValue: name => ({
+      "--motion-route-duration": "440ms", "--motion-route-in-fade": "160ms", "--motion-route-stagger": "30ms",
+      "--motion-route-in-distance": "60px", "--motion-route-surface-distance": "16px",
+      "--motion-route-title-distance": "48px", "--motion-route-controls-distance": "56px", "--motion-route-content-distance": "64px",
+      "--motion-route-spring": "cubic-bezier(.22,1,.36,1)", "--motion-route-fade-ease": "cubic-bezier(.2,.8,.2,1)",
+    }[name] || "") },
   };
   const reduced = Object.assign(eventTarget(), { matches: Boolean(options.reduced) });
   const coarse = Object.assign(eventTarget(), { matches: Boolean(options.coarse) });
   const source = { name: "sidebar button" };
   const content = { insideWorkspace: true };
-  const workspace = {
+  const workspace = animateTarget({
+    style: inlineStyle(options.workspaceStyles),
     contains: target => target === workspace || Boolean(target?.insideWorkspace),
     getBoundingClientRect: () => state.box,
     parentElement: { getAnimations: () => state.shellMoving ? [{ playState: "running" }] : [] },
-  };
+  });
+  const initialWorkspaceProperties = new Map(workspace.style.properties), initialWorkspacePriorities = new Map(workspace.style.priorities);
   const doc = Object.assign(eventTarget(), {
     documentElement: root,
+    timeline: { currentTime: 100 },
     hidden: Boolean(options.hidden),
     body: { classList: { contains: name => name === "task-panel-open" && state.sheet } },
     querySelector: selector => selector === "dialog[open]" ? state.dialog : selector === "#template-management-menu" ? state.menu : null,
@@ -101,11 +132,14 @@ function fixture(options = {}) {
     return transition;
   };
   const observers = [];
+  const frames = new Map(); let nextFrame = 0;
   const win = Object.assign(eventTarget(), {
     document: doc,
     innerWidth: options.innerWidth ?? 1280,
     innerHeight: options.innerHeight ?? 900,
     getComputedStyle: options.getComputedStyle || (element => element.visualStyle),
+    requestAnimationFrame: callback => { const id = ++nextFrame; frames.set(id, callback); return id; },
+    cancelAnimationFrame: id => frames.delete(id),
     matchMedia: query => query.includes("reduced-motion") ? reduced : coarse,
     MutationObserver: class {
       constructor(callback) { this.callback = callback; this.disconnected = false; observers.push(this); }
@@ -115,14 +149,25 @@ function fixture(options = {}) {
     },
   });
   const updates = [];
-  const motion = Transitions.create({ window: win, workspace, order, getOwner: () => state.owner, ...(options.getLayers ? { getLayers: options.getLayers } : {}) });
+  const observed = new Set([workspace]);
+  const getLayers = options.getLayers ? route => {
+    const targets = options.getLayers(route);
+    if (Array.isArray(targets)) targets.forEach(target => { if (target?.element) observed.add(target.element); });
+    return targets;
+  } : null;
+  const motion = Transitions.create({ window: win, workspace, order, getOwner: () => state.owner, ...(getLayers ? { getLayers } : {}) });
   const navigate = (from = "calendar", to = "tasks", extra = {}) => motion.navigate({ from, to, source, update: () => updates.push(to), ...extra });
   const clean = () => {
     assert.deepEqual(root.dataset, {});
     assert.deepEqual(properties, originalProperties);
     assert.deepEqual(style.priorities, originalPriorities);
+    assert.deepEqual(workspace.style.properties, initialWorkspaceProperties);
+    assert.deepEqual(workspace.style.priorities, initialWorkspacePriorities);
   };
-  return { state, root, properties, reduced, coarse, source, content, workspace, doc, native, observers, win, updates, motion, navigate, clean };
+  const live = () => [...observed].flatMap(element => element.animations || []);
+  const finishLive = () => live().filter(animation => animation.playState !== "idle").forEach(animation => animation.finish());
+  const flushFrame = () => { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback(100)); };
+  return { state, root, properties, reduced, coarse, source, content, workspace, doc, native, observers, win, updates, motion, navigate, clean, live, finishLive, flushFrame, frames };
 }
 
 test("sidebar order selects forward/back motion with a fixed viewport-intersected clip", () => {
@@ -160,12 +205,13 @@ test("route commits in the native capture callback before ready or animation com
   transition.capture();
   assert.deepEqual(f.updates, ["tasks"], "A route can only be committed once");
   transition.finished.resolve();
+  f.finishLive();
   await flush();
   f.clean();
   f.motion.destroy();
 });
 
-test("component captures have unique phase/role names and restore inline values and priorities", async () => {
+test("outgoing captures keep unique roles while incoming components remain live and restore inline names", async () => {
   const oldTitle = layer({ styles: { "view-transition-name": ["original-title", "important"] } });
   const newTitle = layer({ styles: { "view-transition-name": ["next-title", "important"] } });
   const extraOldTitle = layer(), extraNewTitle = layer();
@@ -195,14 +241,54 @@ test("component captures have unique phase/role names and restore inline values 
   assert.equal(extraOldTitle.style.properties.size, 0);
   f.native[0].capture();
   const newNames = names([newTitle, ...newControls.slice(0, 3), ...newContent.slice(0, 2)]);
-  assert.deepEqual(newNames, ["duck-route-new-title", "duck-route-new-controls", "duck-route-new-controls-1", "duck-route-new-controls-2", "duck-route-new-content", "duck-route-new-content-1"]);
-  assert.equal(new Set([...oldNames, ...newNames]).size, 12, "Old and new snapshots never accidentally pair by the same name");
+  assert.deepEqual(newNames, ["none", "none", "none", "none", "none", "none"], "Incoming controls must not be extracted into non-hit-testable native snapshots");
+  assert.equal(new Set(oldNames).size, 6);
+  assert.equal(f.workspace.style.getPropertyValue("view-transition-name"), "none", "The incoming backing also stays in the live document");
+  assert.ok(f.live().length >= 6, "Incoming semantic components have live animations");
+  assert.ok(f.live().every(animation => animation.playState === "paused" && animation.currentTime === 0), "Incoming motion is prepared at zero before native capture completes");
   assert.equal(extraNewTitle.style.properties.size, 0);
+  f.native[0].ready.resolve(); await flush();
+  assert.ok(f.live().every(animation => animation.playState === "running"));
   f.native[0].finished.resolve(); await flush();
+  assert.equal(newTitle.style.getPropertyValue("view-transition-name"), "none", "Native exit completion cannot restore live layers before their entrance finishes");
+  f.finishLive(); await flush();
   assert.equal(newTitle.style.getPropertyValue("view-transition-name"), "next-title");
   assert.equal(newTitle.style.getPropertyPriority("view-transition-name"), "important");
   assert.ok([...newControls, ...newContent].every(element => element.style.properties.size === 0));
   f.clean(); f.motion.destroy();
+});
+
+test("component capture measures every layer before changing names in each phase", () => {
+  const events = [];
+  const makeTargets = () => ["title", "controls", "controls", "controls", "content", "content"].map((role, index) => {
+    const element = layer();
+    element.measureIndex = index;
+    const setProperty = element.style.setProperty.bind(element.style);
+    element.getBoundingClientRect = () => { events.push(`bounds:${index}`); return element.bounds; };
+    element.style.setProperty = (name, value, priority) => {
+      if (name === "view-transition-name" && (value.startsWith("duck-route-") || value === "none")) events.push(`name:${index}`);
+      setProperty(name, value, priority);
+    };
+    return { role, element };
+  });
+  const oldTargets = makeTargets(), newTargets = makeTargets();
+  const f = fixture({
+    getLayers: route => route === "calendar" ? oldTargets : newTargets,
+    getComputedStyle: element => { if (Number.isInteger(element.measureIndex)) events.push("computed"); return element.visualStyle; },
+  });
+  const assertBatched = phase => {
+    const firstWrite = events.findIndex(event => event.startsWith("name:"));
+    const lastRead = events.reduce((last, event, index) => event.startsWith("bounds:") || event === "computed" ? index : last, -1);
+    assert.equal(events.filter(event => event.startsWith("bounds:")).length, 6, phase);
+    assert.equal(events.filter(event => event === "computed").length, 6, phase);
+    assert.equal(events.filter(event => event.startsWith("name:")).length, 6, phase);
+    assert.ok(firstWrite > lastRead, `${phase}: naming a layer cannot invalidate styles before the remaining layers are measured`);
+  };
+  f.navigate("calendar", "tasks", { update: () => { events.length = 0; f.updates.push("tasks"); } });
+  assertBatched("outgoing");
+  f.native[0].capture();
+  assertBatched("incoming");
+  f.motion.destroy(); f.clean();
 });
 
 test("fixed clip bounds intersect the viewport and original clip declarations survive cleanup", () => {
@@ -226,11 +312,11 @@ test("fixed clip bounds intersect the viewport and original clip declarations su
   }
 });
 
-test("incoming content capture selects a surface backing while long-body fallback uses content backing", async () => {
-  for (const [label, bounds, expected] of [
-    ["bounded content", {}, "surface"],
-    ["oversized content", { height: 1600, bottom: 1640 }, "content"],
-    ["offscreen content", { top: 950, bottom: 1050, height: 100 }, "content"],
+test("incoming motion animates visible long content directly without a list-height snapshot", async () => {
+  for (const [label, bounds, animated] of [
+    ["bounded content", {}, true],
+    ["oversized content", { height: 1600, bottom: 1640 }, true],
+    ["offscreen content", { top: 950, bottom: 1050, height: 100 }, false],
   ]) {
     const oldTitle = layer(), newTitle = layer(), body = layer({ bounds });
     const f = fixture({ getLayers: route => route === "calendar"
@@ -239,14 +325,99 @@ test("incoming content capture selects a surface backing while long-body fallbac
     });
     f.navigate();
     assert.equal(f.root.dataset.pageTransitionComposition, "layered", label);
-    assert.equal(f.root.dataset.pageTransitionBacking, undefined, "Backing is decided using incoming capture availability");
     f.native[0].capture();
-    assert.equal(f.root.dataset.pageTransitionBacking, expected, label);
-    assert.equal(newTitle.style.getPropertyValue("view-transition-name"), "duck-route-new-title", label);
-    assert.equal(body.style.getPropertyValue("view-transition-name"), expected === "surface" ? "duck-route-new-content" : "", label);
-    f.native[0].finished.resolve(); await flush();
+    assert.equal(newTitle.style.getPropertyValue("view-transition-name"), "none", label);
+    assert.equal(body.style.getPropertyValue("view-transition-name"), animated ? "none" : "", label);
+    assert.equal(f.live().some(animation => animation.effect.target === body), animated, label);
+    f.native[0].ready.resolve(); await flush();
+    f.native[0].finished.resolve(); f.finishLive(); await flush();
     f.clean(); f.motion.destroy();
   }
+});
+
+test("live entrance keeps directional distances and delays, stays paused for capture and starts only when ready", async () => {
+  for (const [from, to, sign] of [["calendar", "tasks", 1], ["tasks", "calendar", -1]]) {
+    const targets = ["title", "controls", "content"].map(role => ({ role, element: layer() }));
+    const f = fixture({ getLayers: () => targets });
+    f.navigate(from, to); f.native[0].capture();
+    assert.equal(f.root.dataset.pageTransitionPhase, "update");
+    assert.equal(f.root.dataset.pageTransitionRenderer, "live");
+    for (const [index, { role, element }] of targets.entries()) {
+      assert.equal(element.style.getPropertyValue("view-transition-name"), "none");
+      const move = element.animations.find(animation => animation.id.endsWith("-move"));
+      const fade = element.animations.find(animation => animation.id.endsWith("-fade"));
+      assert.deepEqual(move.keyframes, [{ transform: `translateY(${[48, 56, 64][index] * sign}px)` }, { transform: "translateY(0px)" }], role);
+      assert.deepEqual(fade.keyframes, [{ opacity: 0 }, { opacity: 1 }], role);
+      assert.equal(move.options.duration, 440, role); assert.equal(fade.options.duration, 160, role);
+      assert.equal(move.options.delay, index * 30, role); assert.equal(fade.options.delay, index * 30, role);
+      assert.ok(element.animations.every(animation => animation.currentTime === 0 && animation.playState === "paused" && animation.plays === 0));
+    }
+    f.native[0].ready.resolve(); await flush();
+    assert.equal(f.root.dataset.pageTransitionPhase, "animate");
+    assert.ok(f.live().every(animation => animation.playState === "running" && animation.plays === 1));
+    f.motion.destroy(); await flush(); f.clean();
+  }
+});
+
+test("transition cleanup waits for both the outgoing snapshot and the live entrance", async () => {
+  for (const first of ["native", "live"]) {
+    const next = layer({ styles: { "view-transition-name": ["original-live-name", "important"] } });
+    const f = fixture({ getLayers: () => [{ role: "content", element: next }] });
+    f.navigate(); f.native[0].capture(); f.native[0].ready.resolve(); await flush();
+    if (first === "native") f.native[0].finished.resolve(); else f.finishLive();
+    await flush();
+    assert.equal(f.root.dataset.pageTransitionPhase, "animate", `${first}: the other half remains active`);
+    assert.equal(next.style.getPropertyValue("view-transition-name"), "none");
+    if (first === "native") f.finishLive(); else f.native[0].finished.resolve();
+    await flush();
+    f.clean();
+    assert.equal(next.style.getPropertyValue("view-transition-name"), "original-live-name");
+    assert.equal(next.style.getPropertyPriority("view-transition-name"), "important");
+    assert.ok(f.live().every(animation => animation.playState === "idle" && animation.cancels === 1));
+    f.motion.destroy();
+  }
+});
+
+test("canceling prepared or playing entrances removes every effect and blocks late native playback", async () => {
+  for (const playing of [false, true]) {
+    const next = layer({ styles: { "view-transition-name": ["preserved-live-name", "important"] } });
+    const f = fixture({ workspaceStyles: { "view-transition-name": ["workspace-name", "important"] }, getLayers: () => [{ role: "title", element: next }] });
+    f.navigate(); f.native[0].capture();
+    if (playing) { f.native[0].ready.resolve(); await flush(); }
+    assert.ok(f.live().every(animation => animation.playState === (playing ? "running" : "paused")));
+    f.motion.cancel(); await flush();
+    f.clean();
+    assert.equal(next.style.getPropertyValue("view-transition-name"), "preserved-live-name");
+    assert.equal(next.style.getPropertyPriority("view-transition-name"), "important");
+    assert.ok(f.live().every(animation => animation.playState === "idle" && animation.cancels === 1));
+    f.native[0].ready.resolve(); f.native[0].finished.resolve(); await flush();
+    assert.ok(f.live().every(animation => animation.plays === (playing ? 1 : 0)), "A late ready callback cannot restart a retired entrance");
+    assert.deepEqual(f.updates, ["tasks"]); f.clean(); f.motion.destroy();
+  }
+});
+
+test("live-animation failure or an owner change before ready falls back with full cleanup", async () => {
+  for (const failure of ["effect", "owner"]) {
+    const next = layer({ styles: { "view-transition-name": "saved-name" } });
+    const f = fixture({ getLayers: () => [{ role: "content", element: next }] });
+    f.navigate(); f.native[0].capture();
+    if (failure === "effect") f.live()[0].cancel(); else { f.state.owner = "owner-B"; f.native[0].ready.resolve(); }
+    await flush();
+    f.clean();
+    assert.equal(next.style.getPropertyValue("view-transition-name"), "saved-name");
+    assert.ok(f.live().every(animation => animation.playState === "idle"));
+    assert.deepEqual(f.updates, ["tasks"], "A visual failure cannot retry a committed route");
+    f.motion.destroy();
+  }
+  const title = layer(), broken = layer(); broken.animate = () => { throw new Error("Animation setup unavailable"); };
+  const f = fixture({ getLayers: () => [{ role: "title", element: title }, { role: "controls", element: broken }] });
+  f.navigate(); f.native[0].capture();
+  assert.deepEqual(f.updates, ["tasks"]);
+  assert.equal(title.animations.length, 2, "The failure happens after effects were already prepared");
+  assert.ok(title.animations.every(animation => animation.playState === "idle"), "Partially prepared effects are removed immediately");
+  f.native[0].ready.resolve(); f.native[0].finished.resolve(); await flush();
+  f.clean(); assert.equal(title.style.properties.size + broken.style.properties.size, 0);
+  f.motion.destroy();
 });
 
 test("layer selection excludes hidden, offscreen, oversized and overlapping capture targets", () => {
@@ -263,7 +434,7 @@ test("layer selection excludes hidden, offscreen, oversized and overlapping capt
     ["oversized height", () => layer({ bounds: { bottom: 1400, height: 1360 } })],
     ["oversized width", () => layer({ bounds: { right: 2000, width: 1900 } })],
     ["no inline style", () => { const target = layer(); delete target.style; return target; }],
-    ["workspace itself", f => { f.workspace.style = inlineStyle({ "view-transition-name": "workspace-name" }); return f.workspace; }],
+    ["workspace itself", f => f.workspace],
   ];
   for (const [label, create] of excluded) {
     const valid = layer(); let bad;
@@ -302,7 +473,7 @@ test("component getter failures roll back partial naming and fall back without b
     assert.equal(f.root.dataset.pageTransitionComposition, "page", failure);
     assert.equal(first.style.getPropertyValue("view-transition-name"), "preserved-name", failure);
     assert.equal(first.style.getPropertyPriority("view-transition-name"), "important", failure);
-    f.native[0].capture(); f.native[0].finished.resolve(); await flush();
+    f.native[0].capture(); f.native[0].finished.resolve(); f.finishLive(); await flush();
     assert.deepEqual(f.updates, ["tasks"], failure); f.clean(); f.motion.destroy();
   }
   const old = layer(), firstNew = layer({ styles: { "view-transition-name": ["destination-name", "important"] } });
@@ -344,10 +515,10 @@ test("stale, reentrant and owner-changing callbacks cannot tag layers over the l
   assert.equal(calendar.style.getPropertyValue("view-transition-name"), "duck-route-old-title");
   assert.equal(tasks.style.properties.size, 0);
   latest.capture();
-  assert.equal(notes.style.getPropertyValue("view-transition-name"), "duck-route-new-title");
+  assert.equal(notes.style.getPropertyValue("view-transition-name"), "none");
   stale.capture(); await flush();
-  assert.equal(notes.style.getPropertyValue("view-transition-name"), "duck-route-new-title");
-  latest.finished.resolve(); await flush(); f.clean(); f.motion.destroy();
+  assert.equal(notes.style.getPropertyValue("view-transition-name"), "none");
+  latest.finished.resolve(); f.finishLive(); await flush(); f.clean(); f.motion.destroy();
 
   const g = fixture({ getLayers });
   g.navigate("calendar", "tasks", { update: () => { g.updates.push("tasks"); g.navigate("tasks", "notes"); } });
@@ -357,7 +528,7 @@ test("stale, reentrant and owner-changing callbacks cannot tag layers over the l
   g.native[0].finished.resolve(); await flush();
   assert.equal(tasks.style.getPropertyValue("view-transition-name"), "duck-route-old-title");
   g.native[1].capture();
-  assert.equal(notes.style.getPropertyValue("view-transition-name"), "duck-route-new-title");
+  assert.equal(notes.style.getPropertyValue("view-transition-name"), "none");
   g.motion.destroy(); g.clean();
 
   const h = fixture({ getLayers });
@@ -369,7 +540,7 @@ test("stale, reentrant and owner-changing callbacks cannot tag layers over the l
   h.native[0].capture(); h.native[0].finished.resolve(); await flush();
   assert.equal(tasks.style.getPropertyValue("view-transition-name"), "duck-route-old-title", "Retired-owner callbacks cannot clear the new owner's source layer");
   h.native[1].capture();
-  assert.equal(notes.style.getPropertyValue("view-transition-name"), "duck-route-new-title");
+  assert.equal(notes.style.getPropertyValue("view-transition-name"), "none");
   h.motion.cancel();
   assert.ok([calendar, tasks, notes].every(element => element.style.properties.size === 0));
   h.clean(); h.motion.destroy();
@@ -394,6 +565,7 @@ test("rapid pending navigation keeps only the latest route and ignores stale cal
   await flush();
   assert.deepEqual(f.updates, ["notes"]);
   latest.finished.resolve();
+  f.finishLive();
   await flush();
   f.clean();
   f.motion.destroy();
@@ -462,21 +634,112 @@ test("startup, same/unknown routes and unsafe animation contexts update immediat
   }
 });
 
-test("desktop pointer entry settles a pending route before content interaction and prevents duplicate commits", () => {
+test("ordinary pointer travel does not measure layout or snap a transition, while pointer-down still settles once", async () => {
   const f = fixture();
+  let boundsReads = 0;
+  f.workspace.getBoundingClientRect = () => { boundsReads += 1; return f.state.box; };
   f.doc.dispatch("pointermove", { clientX: 20, clientY: 200 });
+  assert.equal(boundsReads, 0, "Idle pointer movement only records the point");
   f.navigate();
   const transition = f.native[0];
+  const readsAfterSetup = boundsReads;
   f.doc.dispatch("pointermove", { clientX: 100, clientY: 200 });
+  assert.deepEqual(f.updates, [], "Hovering into content cannot force a pending route to commit");
+  assert.equal(transition.transition.skips, 0);
+  assert.equal(f.root.dataset.pageTransitionPhase, "capture");
+  assert.equal(boundsReads, readsAfterSetup, "Pointer travel must not read workspace geometry");
+  transition.capture();
+  transition.ready.resolve(); await flush();
+  for (const clientX of [120, 180, 300]) f.doc.dispatch("pointermove", { clientX, clientY: 200 });
+  assert.equal(f.root.dataset.pageTransitionPhase, "animate", "The entrance continues while the cursor crosses the page");
+  assert.equal(transition.transition.skips, 0);
+  assert.equal(boundsReads, readsAfterSetup);
+  f.doc.dispatch("pointerdown", { clientX: 300, clientY: 200, pointerType: "mouse" });
   assert.deepEqual(f.updates, ["tasks"]);
   assert.equal(transition.transition.skips, 1);
   f.clean();
   transition.capture();
-  assert.deepEqual(f.updates, ["tasks"]);
+  assert.deepEqual(f.updates, ["tasks"], "The deferred callback cannot duplicate the route after a real interaction");
   f.navigate("tasks", "notes");
   assert.deepEqual(f.updates, ["tasks", "notes"], "A pointer already inside main content keeps subsequent navigation immediate");
   assert.equal(f.native.length, 1);
+  boundsReads = 0;
+  f.doc.dispatch("pointermove", { clientX: 20, clientY: 200 });
+  f.doc.dispatch("pointermove", { clientX: 100, clientY: 200 });
+  assert.equal(boundsReads, 0, "Returning to idle does not leave a geometry-reading mouse handler");
   f.motion.destroy();
+});
+
+test("live pointer holds preserve the transformed hitbox through focus and resume after release without restarting finished fades", async () => {
+  for (const release of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    const incoming = layer();
+    const f = fixture({ getLayers: () => [{ role: "content", element: incoming }] });
+    f.navigate(); f.native[0].capture(); f.native[0].ready.resolve(); await flush();
+    const move = f.live().find(animation => animation.id.endsWith("-move"));
+    const fade = f.live().find(animation => animation.id.endsWith("-fade"));
+    move.currentTime = 280; fade.finish(); await flush();
+    f.doc.dispatch("pointerdown", { clientX: 200, clientY: 200, pointerId: 7, pointerType: "mouse", target: f.content });
+    assert.equal(move.playState, "paused", release);
+    assert.equal(move.currentTime, 280, "Pointer-down cannot snap the live hitbox to the end");
+    assert.equal(fade.playState, "finished", "A completed fade is not made resumable again");
+    assert.equal(f.native[0].transition.skips, 0);
+    f.doc.dispatch("focusin", { target: f.content });
+    assert.equal(f.root.dataset.pageTransitionPhase, "animate", "Focus from the held pointer does not move its target");
+    assert.equal(f.native[0].transition.skips, 0);
+    f.doc.dispatch(release, { pointerId: 8 });
+    assert.equal(f.frames.size, 0, "Another pointer cannot release the held hitbox");
+    f.doc.dispatch(release, { pointerId: 7 });
+    assert.equal(move.playState, "paused", "The release event and its click finish before movement resumes");
+    assert.equal(f.frames.size, 1);
+    f.flushFrame();
+    assert.equal(move.playState, "running"); assert.equal(move.currentTime, 280);
+    assert.equal(move.plays, 2);
+    assert.equal(fade.plays, 1, "Resuming a hold cannot restart an already-finished opacity animation");
+    assert.equal(fade.currentTime, 220);
+    f.motion.destroy(); await flush(); f.clean();
+  }
+});
+
+test("held live entrances still settle for keyboard input and reject owner-stale deferred resumes", async () => {
+  for (const finish of ["keyboard", "owner", "destroy"]) {
+    const incoming = layer();
+    const f = fixture({ getLayers: () => [{ role: "controls", element: incoming }] });
+    f.navigate(); f.native[0].capture(); f.native[0].ready.resolve(); await flush();
+    f.doc.dispatch("pointerdown", { clientX: 200, clientY: 200, pointerId: 3, pointerType: "mouse" });
+    if (finish === "keyboard") f.doc.dispatch("keydown", { target: f.content });
+    else {
+      f.doc.dispatch("pointerup", { pointerId: 3 });
+      if (finish === "owner") { f.state.owner = "owner-B"; f.flushFrame(); }
+      else f.motion.destroy();
+    }
+    await flush();
+    f.flushFrame();
+    assert.ok(f.live().every(animation => animation.playState === "idle" && animation.plays === 1), finish);
+    assert.equal(f.frames.size, 0);
+    assert.deepEqual(f.updates, ["tasks"]);
+    f.clean(); f.motion.destroy();
+  }
+});
+
+test("a second press before the deferred resume preserves the held effect and cancels the old frame", async () => {
+  const incoming = layer(), f = fixture({ getLayers: () => [{ role: "content", element: incoming }] });
+  f.navigate(); f.native[0].capture(); f.native[0].ready.resolve(); await flush();
+  const move = f.live().find(animation => animation.id.endsWith("-move"));
+  const fade = f.live().find(animation => animation.id.endsWith("-fade"));
+  move.currentTime = 280; fade.finish(); await flush();
+  f.doc.dispatch("pointerdown", { clientX: 200, clientY: 200, pointerId: 1, pointerType: "mouse" });
+  f.doc.dispatch("pointerup", { pointerId: 1 });
+  assert.equal(f.frames.size, 1);
+  f.doc.dispatch("pointerdown", { clientX: 200, clientY: 200, pointerId: 2, pointerType: "mouse" });
+  assert.equal(f.frames.size, 0, "Repressing cancels the previous scheduled resume");
+  assert.equal(move.playState, "paused"); assert.equal(move.currentTime, 280);
+  f.doc.dispatch("pointerup", { pointerId: 1 });
+  assert.equal(f.frames.size, 0, "The retired pointer cannot release the new hold");
+  f.doc.dispatch("pointerup", { pointerId: 2 });
+  f.flushFrame();
+  assert.equal(move.playState, "running"); assert.equal(move.currentTime, 280); assert.equal(move.plays, 2);
+  assert.equal(fade.plays, 1); assert.equal(fade.currentTime, 220);
+  f.motion.destroy(); await flush(); f.clean();
 });
 
 test("pointer-down, content keyboard/focus, preferences, resize and page exit settle with complete cleanup", () => {

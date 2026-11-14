@@ -1,0 +1,38 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [],
+  "errors": [
+    "DuckPopupMotion is not defined"
+  ],
+  "blocked": [],
+  "failed": [
+    {
+      "url": "http://127.0.0.1:8034/planner-clarity.css",
+      "failure": "net::ERR_CONNECTION_RESET"
+    },
+    {
+      "url": "http://127.0.0.1:8034/personal-notes.js?v=contextual-add-20261112",
+      "failure": "net::ERR_CONNECTION_RESET"
+    },
+    {
+      "url": "http://127.0.0.1:8034/personal-goals.js?v=contextual-add-20261112",
+      "failure": "net::ERR_CONNECTION_RESET"
+    },
+    {
+      "url": "http://127.0.0.1:8034/popup-motion.js",
+      "failure": "net::ERR_CONNECTION_RESET"
+    },
+    {
+      "url": "http://127.0.0.1:8034/page-navigation-feedback.js?v=two-button-rules-1",
+      "failure": "net::ERR_CONNECTION_RESET"
+    }
+  ],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:8034/browser-notifications.js?v=app-1",
+      "status": 200
+    }
+  ],
+  "stage": "fallback {\"reduced\":true}",
+  "harnessError": "page.waitForFunction: Timeout 5000ms exceeded."
+}

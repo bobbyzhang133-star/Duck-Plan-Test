@@ -1,5 +1,7 @@
 # Layered spring navigation
 
+This records the `6814b34` snapshot-based baseline. The subsequent [smooth-navigation follow-up](../smooth-navigation/README.md) retains its directional spring while making incoming controls live and interactive.
+
 Local implementation of the [latest review recommendation](../reviews/layered-spring-2026-11-13.md), extending baseline `26c1bf9` on `codex/layered-spring-navigation-20261113`.
 
 The default entrance coordinates three semantic roles: title at 48px, controls at 56px and content at 64px. Their delays are 0/30/60ms; each moves over 440ms, so the last group settles at 500ms. A dedicated sampled spring peaks at 1.058697, producing a 2.82–3.76px bounce. Incoming opacity reaches one over 160ms after its delay. Outgoing content moves 32px over 180ms and fades away in 140ms. Lower sidebar destinations lift outgoing content and enter from below; upper destinations reverse direction. No scale or blur is used.

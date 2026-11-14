@@ -1,0 +1,19 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "route": "tasks",
+      "elapsed": 663,
+      "phaseAtHover": "animate"
+    },
+    {
+      "route": "calendar",
+      "elapsed": 617,
+      "phaseAtHover": "animate"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "video": "final-playback-835.webm",
+  "allSyntheticContextsClosed": true
+}

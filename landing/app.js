@@ -868,7 +868,7 @@ function applyView(name, preserveDrawer = false) {
   if (!preserveDrawer) setSidebar(false);
   workspace.scrollTo({ top: 0, left: 0, behavior: "instant" });
   window.scrollTo({ top: 0, behavior: "instant" });
-  requestAnimationFrame(() => setupButtonMaterial());
+  // Routing reuses already-normalized controls; only renders need a new scan.
 }
 
 function setView(name, preserveDrawer = false) {
@@ -1141,8 +1141,8 @@ document.addEventListener("click", (event) => {
     return;
   }
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>navigateView(viewButton.dataset.view,sidebar.contains(viewButton),viewButton),event);
-  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>navigateView(goButton.dataset.go,sidebar.contains(goButton),goButton),event); }
+  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) navigateView(viewButton.dataset.view, sidebar.contains(viewButton), viewButton);
+  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);

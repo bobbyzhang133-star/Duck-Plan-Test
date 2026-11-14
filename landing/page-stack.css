@@ -28,82 +28,28 @@ body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
 .motion-preview .unified-workspace > :is(.view:not(#view-calendar),.compact-topbar) {
   max-width: calc(1600px - 2 * var(--space-page)); margin-inline: auto;
 }
+/* Capture only the outgoing page. The incoming page animates as live DOM so
+   its moving controls retain native hit-testing throughout the entrance. */
 :root[data-page-transition] { view-transition-name: none; }
-/* Named descendants are excluded from this backing capture. Transparent
-   margins keep the existing body/theme paint stationary underneath. */
-:root[data-page-transition] .unified-workspace { view-transition-name: duck-workspace; }
+:root[data-page-transition][data-page-transition-phase="capture"] .unified-workspace { view-transition-name: duck-workspace; }
 :root[data-page-transition]::view-transition {
   pointer-events: none;
   clip-path: inset(var(--route-clip-top,0px) var(--route-clip-right,0px) var(--route-clip-bottom,0px) var(--route-clip-left,0px));
 }
-/* Unique outgoing/incoming names never morph one route's element dimensions
-   into another's. Their groups stay still while only their paint moves. */
 :root[data-page-transition]::view-transition-group(duck-workspace),
 :root[data-page-transition]::view-transition-group(duck-route-old-title),
 :root[data-page-transition]::view-transition-group(duck-route-old-controls),
 :root[data-page-transition]::view-transition-group(duck-route-old-controls-1),
 :root[data-page-transition]::view-transition-group(duck-route-old-controls-2),
 :root[data-page-transition]::view-transition-group(duck-route-old-content),
-:root[data-page-transition]::view-transition-group(duck-route-old-content-1),
-:root[data-page-transition]::view-transition-group(duck-route-new-title),
-:root[data-page-transition]::view-transition-group(duck-route-new-controls),
-:root[data-page-transition]::view-transition-group(duck-route-new-controls-1),
-:root[data-page-transition]::view-transition-group(duck-route-new-controls-2),
-:root[data-page-transition]::view-transition-group(duck-route-new-content),
-:root[data-page-transition]::view-transition-group(duck-route-new-content-1) {
-  animation: none;
-  overflow: visible;
-}
-:root[data-page-transition]::view-transition-group(duck-workspace) { z-index: 0; }
-:root[data-page-transition]::view-transition-group(duck-route-old-title),
-:root[data-page-transition]::view-transition-group(duck-route-old-controls),
-:root[data-page-transition]::view-transition-group(duck-route-old-controls-1),
-:root[data-page-transition]::view-transition-group(duck-route-old-controls-2),
-:root[data-page-transition]::view-transition-group(duck-route-old-content),
-:root[data-page-transition]::view-transition-group(duck-route-old-content-1) { z-index: 1; }
-:root[data-page-transition]::view-transition-group(duck-route-new-title),
-:root[data-page-transition]::view-transition-group(duck-route-new-controls),
-:root[data-page-transition]::view-transition-group(duck-route-new-controls-1),
-:root[data-page-transition]::view-transition-group(duck-route-new-controls-2),
-:root[data-page-transition]::view-transition-group(duck-route-new-content),
-:root[data-page-transition]::view-transition-group(duck-route-new-content-1) { z-index: 2; }
-
+:root[data-page-transition]::view-transition-group(duck-route-old-content-1) { animation: none; overflow: visible; }
 :root[data-page-transition]::view-transition-image-pair(duck-workspace),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-title),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-controls),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-controls-1),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-controls-2),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-content),
-:root[data-page-transition]::view-transition-image-pair(duck-route-old-content-1),
-:root[data-page-transition]::view-transition-image-pair(duck-route-new-title),
-:root[data-page-transition]::view-transition-image-pair(duck-route-new-controls),
-:root[data-page-transition]::view-transition-image-pair(duck-route-new-controls-1),
-:root[data-page-transition]::view-transition-image-pair(duck-route-new-controls-2),
-:root[data-page-transition]::view-transition-image-pair(duck-route-new-content),
-:root[data-page-transition]::view-transition-image-pair(duck-route-new-content-1) {
-  animation: none;
-  overflow: visible;
-  isolation: isolate;
-}
-:root[data-page-transition]::view-transition-old(duck-workspace),
-:root[data-page-transition]::view-transition-new(duck-workspace),
-:root[data-page-transition]::view-transition-old(duck-route-old-title),
-:root[data-page-transition]::view-transition-old(duck-route-old-controls),
-:root[data-page-transition]::view-transition-old(duck-route-old-controls-1),
-:root[data-page-transition]::view-transition-old(duck-route-old-controls-2),
-:root[data-page-transition]::view-transition-old(duck-route-old-content),
-:root[data-page-transition]::view-transition-old(duck-route-old-content-1),
-:root[data-page-transition]::view-transition-new(duck-route-new-title),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls-1),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls-2),
-:root[data-page-transition]::view-transition-new(duck-route-new-content),
-:root[data-page-transition]::view-transition-new(duck-route-new-content-1) {
-  width: 100%; height: 100%;
-  object-fit: fill;
-  mix-blend-mode: normal;
-  animation-fill-mode: both;
-}
+:root[data-page-transition]::view-transition-image-pair(duck-route-old-content-1) { animation: none; overflow: visible; isolation: isolate; }
 :root[data-page-transition]::view-transition-old(duck-workspace),
 :root[data-page-transition]::view-transition-old(duck-route-old-title),
 :root[data-page-transition]::view-transition-old(duck-route-old-controls),
@@ -111,46 +57,10 @@ body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
 :root[data-page-transition]::view-transition-old(duck-route-old-controls-2),
 :root[data-page-transition]::view-transition-old(duck-route-old-content),
 :root[data-page-transition]::view-transition-old(duck-route-old-content-1) {
+  width: 100%; height: 100%; object-fit: fill; mix-blend-mode: normal;
   animation-duration: var(--motion-route-exit-duration), var(--motion-route-out-fade);
   animation-timing-function: var(--motion-route-ease), var(--motion-route-fade-ease);
-}
-:root[data-page-transition]::view-transition-new(duck-workspace),
-:root[data-page-transition]::view-transition-new(duck-route-new-title),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls-1),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls-2),
-:root[data-page-transition]::view-transition-new(duck-route-new-content),
-:root[data-page-transition]::view-transition-new(duck-route-new-content-1) {
-  animation-duration: var(--motion-route-duration), var(--motion-route-in-fade);
-  animation-timing-function: var(--motion-route-spring), var(--motion-route-fade-ease);
-  animation-delay: var(--route-layer-delay,0ms), var(--route-layer-delay,0ms);
-}
-:root[data-page-transition]::view-transition-new(duck-workspace) { --route-enter-distance: var(--motion-route-in-distance); }
-:root[data-page-transition-composition="layered"]::view-transition-new(duck-workspace) {
-  --route-enter-distance: var(--motion-route-surface-distance);
-  animation-timing-function: var(--motion-route-ease), var(--motion-route-fade-ease);
-}
-/* If an oversized content root cannot be captured separately, its bounded
-   workspace backing carries the content phase instead of only a surface lift. */
-:root[data-page-transition-composition="layered"][data-page-transition-backing="content"]::view-transition-new(duck-workspace) {
-  --route-enter-distance: var(--motion-route-content-distance);
-  --route-layer-delay: calc(var(--motion-route-stagger) * 2);
-  animation-timing-function: var(--motion-route-spring), var(--motion-route-fade-ease);
-}
-:root[data-page-transition]::view-transition-new(duck-route-new-title) {
-  --route-enter-distance: var(--motion-route-title-distance);
-  --route-layer-delay: 0ms;
-}
-:root[data-page-transition]::view-transition-new(duck-route-new-controls),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls-1),
-:root[data-page-transition]::view-transition-new(duck-route-new-controls-2) {
-  --route-enter-distance: var(--motion-route-controls-distance);
-  --route-layer-delay: var(--motion-route-stagger);
-}
-:root[data-page-transition]::view-transition-new(duck-route-new-content),
-:root[data-page-transition]::view-transition-new(duck-route-new-content-1) {
-  --route-enter-distance: var(--motion-route-content-distance);
-  --route-layer-delay: calc(var(--motion-route-stagger) * 2);
+  animation-fill-mode: both;
 }
 :root[data-page-transition="forward"]::view-transition-old(duck-workspace),
 :root[data-page-transition="forward"]::view-transition-old(duck-route-old-title),
@@ -166,52 +76,15 @@ body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
 :root[data-page-transition="back"]::view-transition-old(duck-route-old-controls-2),
 :root[data-page-transition="back"]::view-transition-old(duck-route-old-content),
 :root[data-page-transition="back"]::view-transition-old(duck-route-old-content-1) { animation-name: duck-page-out-down, duck-page-fade-out; }
-:root[data-page-transition="forward"]::view-transition-new(duck-workspace),
-:root[data-page-transition="forward"]::view-transition-new(duck-route-new-title),
-:root[data-page-transition="forward"]::view-transition-new(duck-route-new-controls),
-:root[data-page-transition="forward"]::view-transition-new(duck-route-new-controls-1),
-:root[data-page-transition="forward"]::view-transition-new(duck-route-new-controls-2),
-:root[data-page-transition="forward"]::view-transition-new(duck-route-new-content),
-:root[data-page-transition="forward"]::view-transition-new(duck-route-new-content-1) { animation-name: duck-page-in-below, duck-page-fade-in; }
-:root[data-page-transition="back"]::view-transition-new(duck-workspace),
-:root[data-page-transition="back"]::view-transition-new(duck-route-new-title),
-:root[data-page-transition="back"]::view-transition-new(duck-route-new-controls),
-:root[data-page-transition="back"]::view-transition-new(duck-route-new-controls-1),
-:root[data-page-transition="back"]::view-transition-new(duck-route-new-controls-2),
-:root[data-page-transition="back"]::view-transition-new(duck-route-new-content),
-:root[data-page-transition="back"]::view-transition-new(duck-route-new-content-1) { animation-name: duck-page-in-above, duck-page-fade-in; }
 @keyframes duck-page-out-up { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--motion-route-out-distance))); } }
 @keyframes duck-page-out-down { from { transform: translateY(0); } to { transform: translateY(var(--motion-route-out-distance)); } }
-@keyframes duck-page-in-below { from { transform: translateY(var(--route-enter-distance)); } to { transform: translateY(0); } }
-@keyframes duck-page-in-above { from { transform: translateY(calc(-1 * var(--route-enter-distance))); } to { transform: translateY(0); } }
 @keyframes duck-page-fade-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes duck-page-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  :root::view-transition-group(duck-workspace),
-  :root::view-transition-group(duck-route-old-title),
-  :root::view-transition-group(duck-route-old-controls),
-  :root::view-transition-group(duck-route-old-controls-1),
-  :root::view-transition-group(duck-route-old-controls-2),
-  :root::view-transition-group(duck-route-old-content),
-  :root::view-transition-group(duck-route-old-content-1),
-  :root::view-transition-group(duck-route-new-title),
-  :root::view-transition-group(duck-route-new-controls),
-  :root::view-transition-group(duck-route-new-controls-1),
-  :root::view-transition-group(duck-route-new-controls-2),
-  :root::view-transition-group(duck-route-new-content),
-  :root::view-transition-group(duck-route-new-content-1),
-  :root::view-transition-old(duck-workspace),
-  :root::view-transition-new(duck-workspace),
-  :root::view-transition-old(duck-route-old-title),
-  :root::view-transition-old(duck-route-old-controls),
-  :root::view-transition-old(duck-route-old-controls-1),
-  :root::view-transition-old(duck-route-old-controls-2),
-  :root::view-transition-old(duck-route-old-content),
-  :root::view-transition-old(duck-route-old-content-1),
-  :root::view-transition-new(duck-route-new-title),
-  :root::view-transition-new(duck-route-new-controls),
-  :root::view-transition-new(duck-route-new-controls-1),
-  :root::view-transition-new(duck-route-new-controls-2),
-  :root::view-transition-new(duck-route-new-content),
-  :root::view-transition-new(duck-route-new-content-1) { animation: none !important; }
+:root[data-page-transition]::view-transition-old(duck-workspace),
+:root[data-page-transition]::view-transition-old(duck-route-old-title),
+:root[data-page-transition]::view-transition-old(duck-route-old-controls),
+:root[data-page-transition]::view-transition-old(duck-route-old-controls-1),
+:root[data-page-transition]::view-transition-old(duck-route-old-controls-2),
+:root[data-page-transition]::view-transition-old(duck-route-old-content),
+:root[data-page-transition]::view-transition-old(duck-route-old-content-1) { animation: none !important; }
 }

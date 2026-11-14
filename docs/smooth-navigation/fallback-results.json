@@ -1,0 +1,96 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    },
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "width": 320,
+        "height": 740,
+        "touch": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    },
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "reduced": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    },
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "unsupported": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    },
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "fail": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "failed": [],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:8034/browser-notifications.js?v=app-1",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8034/browser-notifications.js?v=app-1",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8034/browser-notifications.js?v=app-1",
+      "status": 200
+    }
+  ],
+  "allSyntheticContextsClosed": true,
+  "notes": [
+    "Touch cases were loaded and passed before the server restart; the three previously blocked startup cases passed after the local static server backlog was increased to128.",
+    "Historical connection-reset evidence remains in fallback-retry-results.json. No application code changed for the server repair."
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "width": 835,
+      "target": {
+        "id": "physics-quiz",
+        "x": 144,
+        "y": 534.34375,
+        "offset": 64,
+        "opacity": "0",
+        "name": "duck-route-new-content",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveTargetAtPaintPoint": "<div class=\"app-shell unified-shell\">\n      <aside class=\"sidebar\" id=\"planner-sidebar\" aria-hidden=\"false\">\n        <a class=\"brand\" href=\"#calendar\" data-go=\"calendar\" aria-label=\"DuckPlan home\" title=\"DuckPlan home\"><span class=\"brand-mark\" data-duck-state=\"happy\" aria-hidden=\"true\"><img class=\"duck-brand-image\" src=\"./assets/duckplan-sigma-icon-v11-transparent-192.png\" alt=\"\" aria-hidden=\"true\" width=\"192\" height=\"192\"></span><span>DuckPlan</span></a>\n        <button class=\"drawer-close glas"
+      },
+      "afterHover": "animate",
+      "after": {
+        "phase": null,
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": false
+      },
+      "changes": [],
+      "intendedOnly": false
+    },
+    {
+      "width": 1280,
+      "target": {
+        "id": "physics-quiz",
+        "x": 150,
+        "y": 446.70605,
+        "offset": 38.6123,
+        "opacity": "0.931015",
+        "name": "duck-route-new-content",
+        "before": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "liveTargetAtPaintPoint": "<div class=\"app-shell unified-shell\">\n      <aside class=\"sidebar\" id=\"planner-sidebar\" aria-hidden=\"false\">\n        <a class=\"brand\" href=\"#calendar\" data-go=\"calendar\" aria-label=\"DuckPlan home\" title=\"DuckPlan home\"><span class=\"brand-mark\" data-duck-state=\"happy\" aria-hidden=\"true\"><img class=\"duck-brand-image\" src=\"./assets/duckplan-sigma-icon-v11-transparent-192.png\" alt=\"\" aria-hidden=\"true\" width=\"192\" height=\"192\"></span><span>DuckPlan</span></a>\n        <button class=\"drawer-close glas"
+      },
+      "afterHover": "animate",
+      "after": {
+        "phase": null,
+        "items": [
+          {
+            "id": "calculus-practice",
+            "completed": false
+          },
+          {
+            "id": "english-response",
+            "completed": false
+          },
+          {
+            "id": "physics-notes",
+            "completed": false
+          },
+          {
+            "id": "cs-wireframe",
+            "completed": false
+          },
+          {
+            "id": "english-vocab",
+            "completed": false
+          },
+          {
+            "id": "physics-quiz",
+            "completed": false
+          },
+          {
+            "id": "backpack",
+            "completed": true
+          }
+        ],
+        "modal": false
+      },
+      "changes": [],
+      "intendedOnly": false
+    }
+  ],
+  "allSyntheticContextsClosed": true,
+  "acceptance": "FAIL for intermediate hover-removal candidate; not final acceptance"
+}

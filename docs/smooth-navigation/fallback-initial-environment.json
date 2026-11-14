@@ -1,0 +1,41 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    },
+    {
+      "test": "immediate-fallback",
+      "spec": {
+        "width": 320,
+        "height": 740,
+        "touch": true
+      },
+      "passed": true,
+      "cleanup": {
+        "attrs": [],
+        "names": 0,
+        "animations": 0,
+        "active": 1
+      }
+    }
+  ],
+  "errors": [
+    "Cannot read properties of undefined (reading 'capability')"
+  ],
+  "blocked": [],
+  "stage": "fallback {\"reduced\":true}",
+  "harnessError": "page.waitForFunction: Timeout 5000ms exceeded."
+}
