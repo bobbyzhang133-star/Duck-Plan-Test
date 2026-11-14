@@ -258,6 +258,51 @@ test("outgoing captures keep unique roles while incoming components remain live 
   f.clean(); f.motion.destroy();
 });
 
+test("one independent outline keeps finite directional motion without consuming the content roots", async () => {
+  for (const [from, to, sign] of [["calendar", "tasks", 1], ["tasks", "calendar", -1]]) {
+    const oldOutline = layer({ styles: { "view-transition-name": ["original-outline", "important"] } });
+    const nextOutline = layer({ styles: { "view-transition-name": ["destination-outline", "important"] } });
+    const extraOldOutline = layer(), extraNextOutline = layer();
+    const oldContent = [layer(), layer()], nextContent = [layer(), layer()];
+    const targets = (outline, extra, content) => [
+      { role: "outline", element: outline }, { role: "outline", element: extra },
+      ...content.map(element => ({ role: "content", element })),
+    ];
+    const f = fixture({ getLayers: route => route === from
+      ? targets(oldOutline, extraOldOutline, oldContent)
+      : targets(nextOutline, extraNextOutline, nextContent),
+    });
+    assert.equal(f.root.visualStyle.getPropertyValue("--motion-route-outline-distance"), "", "Exercise the role's distance fallback without a CSS token");
+    f.navigate(from, to);
+    assert.equal(oldOutline.style.getPropertyValue("view-transition-name"), "duck-route-old-outline");
+    assert.equal(extraOldOutline.style.properties.size, 0, "Only one decorative outline is captured");
+    assert.deepEqual(oldContent.map(element => element.style.getPropertyValue("view-transition-name")), ["duck-route-old-content", "duck-route-old-content-1"], "The existing two content roots remain available");
+    f.native[0].capture();
+    assert.equal(oldOutline.style.getPropertyValue("view-transition-name"), "original-outline");
+    assert.equal(oldOutline.style.getPropertyPriority("view-transition-name"), "important");
+    assert.equal(nextOutline.style.getPropertyValue("view-transition-name"), "none", "Incoming decoration stays in the live document");
+    assert.equal(extraNextOutline.style.properties.size, 0);
+    assert.equal(extraNextOutline.animations.length, 0);
+    assert.equal(nextOutline.animations.length, 2);
+    const move = nextOutline.animations.find(animation => animation.id.endsWith("-move"));
+    const fade = nextOutline.animations.find(animation => animation.id.endsWith("-fade"));
+    assert.equal(move.id, "duck-route-live-outline-move");
+    assert.deepEqual(move.keyframes, [{ transform: `translateY(${64 * sign}px)` }, { transform: "translateY(0px)" }]);
+    assert.deepEqual(fade.keyframes, [{ opacity: 0 }, { opacity: 1 }]);
+    assert.equal(move.options.duration, 440); assert.equal(fade.options.duration, 160);
+    assert.ok(nextOutline.animations.every(animation => animation.options.delay === 60 && Number.isFinite(animation.options.duration) && animation.playState === "paused" && animation.currentTime === 0), "Outline effects have finite content-phase timing and wait for capture readiness");
+    assert.ok(nextContent.every(element => element.animations.length === 2), "Outline effects do not replace either content entrance");
+    f.native[0].ready.resolve(); await flush();
+    assert.ok(nextOutline.animations.every(animation => animation.playState === "running"));
+    f.native[0].finished.resolve(); await flush();
+    assert.equal(nextOutline.style.getPropertyValue("view-transition-name"), "none", "The native exit cannot clean a still-running live outline");
+    f.finishLive(); await flush();
+    assert.equal(nextOutline.style.getPropertyValue("view-transition-name"), "destination-outline");
+    assert.equal(nextOutline.style.getPropertyPriority("view-transition-name"), "important");
+    f.clean(); f.motion.destroy();
+  }
+});
+
 test("component capture measures every layer before changing names in each phase", () => {
   const events = [];
   const makeTargets = () => ["title", "controls", "controls", "controls", "content", "content"].map((role, index) => {

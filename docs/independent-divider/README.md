@@ -1,5 +1,7 @@
 # Individual pieces with a separate divider
 
+The subsequent [Calendar-outline change](../calendar-outline/README.md) adds the outer Calendar border as another decorative piece while preserving this individual-piece animation.
+
 The title, controls and content retain the individual spring movement from `4820707`. The user clarified that only the marked header line should gain its own animation; whole-header/page grouping is therefore replaced in this follow-up to `46fa189` on `codex/independent-divider-20261113`.
 
 Non-Calendar sections use four disjoint live roots: title (48px, 0ms delay), controls (56px, 30ms), the decorative divider (64px, 60ms), and active content (64px, 60ms). The divider has its own transform and opacity effects, rather than moving a header parent. The existing 440ms spring/bounce, directional behavior and fading are unchanged. Calendar returns to its previous six individual roots; its surrounding frame is not newly animated.

@@ -14,6 +14,7 @@
       ["title", ".calendar-title-copy"],
       ["controls", "#calendar-today"], ["controls", ".calendar-stepper"], ["controls", ".calendar-toolbar-actions"],
       ["content", "#daily-task-panel"], ["content", "#planner-calendar"],
+      ["outline", ".calendar-outline"],
     ] : [["title", ".topbar-title"], ["controls", ".topbar-actions"], ["content", ".topbar-divider"], ["content", `#view-${route}`]];
     return selectors.map(([role, selector]) => ({ role, element: workspace.querySelector?.(selector) }));
   }
@@ -30,7 +31,7 @@
     }
     function restore(restores) { restores.splice(0).reverse().forEach(undo => undo()); }
     function measureLayers(current, route, bounded = true) {
-      const counts = { title: 0, controls: 0, content: 0 }, limits = { title: 1, controls: 3, content: 2 }, selected = [];
+      const counts = { title: 0, controls: 0, content: 0, outline: 0 }, limits = { title: 1, controls: 3, content: 2, outline: 1 }, selected = [];
       for (const { role, element } of getLayers(route) || []) {
         if (!Object.hasOwn(limits, role) || counts[role] >= limits[role] || !element?.style || element === workspace || !workspace.contains(element)
           || element.closest?.("[hidden], [inert]") || selected.some(({ element: other }) => other === element || other.contains?.(element) || element.contains?.(other))) continue;
@@ -77,8 +78,8 @@
         for (const { element } of selected) setTemporaryStyle(current.layers, element, "view-transition-name", "none");
         for (const { element, role, suffix } of selected) {
           if (typeof element.animate !== "function") continue;
-          const delay = stagger * ({ title: 0, controls: 1, content: 2 }[role]);
-          const distance = parseFloat(token(`${role}-distance`, `${{ title: 48, controls: 56, content: 64 }[role]}px`)) * current.movement;
+          const delay = stagger * ({ title: 0, controls: 1, content: 2, outline: 2 }[role]);
+          const distance = parseFloat(token(`${role}-distance`, `${{ title: 48, controls: 56, content: 64, outline: 64 }[role]}px`)) * current.movement;
           for (const [part, frames, timing] of [
             ["move", [{ transform: `translateY(${distance}px)` }, { transform: "translateY(0px)" }], { duration, easing: spring }],
             ["fade", [{ opacity: 0 }, { opacity: 1 }], { duration: fade, easing: fadeEase }],

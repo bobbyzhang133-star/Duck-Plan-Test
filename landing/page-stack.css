@@ -8,6 +8,7 @@
   --motion-route-title-distance: 48px;
   --motion-route-controls-distance: 56px;
   --motion-route-content-distance: 64px;
+  --motion-route-outline-distance: 64px;
   --motion-route-stagger: 30ms;
   --motion-route-out-fade: 140ms;
   --motion-route-in-fade: 160ms;
@@ -38,6 +39,36 @@ body.motion-preview[data-view="home"] .compact-topbar {
   position: absolute; inset: auto 0 -1px; height: 1px;
   background: var(--line); pointer-events: none;
 }
+/* The outline is a sibling of the grid, outside its overflow clip. Retaining
+   the grid's transparent border keeps all content and phone drawer geometry. */
+.motion-preview #view-calendar {
+  position: relative;
+  --calendar-outline-color: rgba(158,116,31,.18);
+  --calendar-outline-radius: 24px;
+  --calendar-outline-shadow: 0 22px 60px rgba(74,52,10,.12);
+}
+.motion-preview #view-calendar > .calendar-outline {
+  position: absolute; inset: 0; z-index: 2; box-sizing: border-box;
+  border: 1px solid var(--calendar-outline-color);
+  border-radius: var(--calendar-outline-radius);
+  box-shadow: var(--calendar-outline-shadow); pointer-events: none;
+}
+@media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar {
+    --calendar-outline-radius: 18px;
+    --calendar-outline-shadow: none;
+  }
+}
+:root[data-theme="dark"] .motion-preview #view-calendar {
+  --calendar-outline-color: var(--line);
+  --calendar-outline-shadow: 0 22px 60px rgba(0,0,0,.35);
+}
+.motion-preview #view-calendar .planner-workspace,
+.motion-preview #view-calendar .planner-workspace:has(.day-view),
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace,
+:root[data-theme="dark"] .motion-preview #view-calendar .planner-workspace:has(.day-view) {
+  border-color: transparent; box-shadow: none;
+}
 /* Capture only the outgoing page. The incoming page animates as live DOM so
    its moving controls retain native hit-testing throughout the entrance. */
 :root[data-page-transition] { view-transition-name: none; }
@@ -47,6 +78,7 @@ body.motion-preview[data-view="home"] .compact-topbar {
   clip-path: inset(var(--route-clip-top,0px) var(--route-clip-right,0px) var(--route-clip-bottom,0px) var(--route-clip-left,0px));
 }
 :root[data-page-transition]::view-transition-group(duck-workspace),
+:root[data-page-transition]::view-transition-group(duck-route-old-outline),
 :root[data-page-transition]::view-transition-group(duck-route-old-title),
 :root[data-page-transition]::view-transition-group(duck-route-old-controls),
 :root[data-page-transition]::view-transition-group(duck-route-old-controls-1),
@@ -54,6 +86,7 @@ body.motion-preview[data-view="home"] .compact-topbar {
 :root[data-page-transition]::view-transition-group(duck-route-old-content),
 :root[data-page-transition]::view-transition-group(duck-route-old-content-1) { animation: none; overflow: visible; }
 :root[data-page-transition]::view-transition-image-pair(duck-workspace),
+:root[data-page-transition]::view-transition-image-pair(duck-route-old-outline),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-title),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-controls),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-controls-1),
@@ -61,6 +94,7 @@ body.motion-preview[data-view="home"] .compact-topbar {
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-content),
 :root[data-page-transition]::view-transition-image-pair(duck-route-old-content-1) { animation: none; overflow: visible; isolation: isolate; }
 :root[data-page-transition]::view-transition-old(duck-workspace),
+:root[data-page-transition]::view-transition-old(duck-route-old-outline),
 :root[data-page-transition]::view-transition-old(duck-route-old-title),
 :root[data-page-transition]::view-transition-old(duck-route-old-controls),
 :root[data-page-transition]::view-transition-old(duck-route-old-controls-1),
@@ -73,6 +107,7 @@ body.motion-preview[data-view="home"] .compact-topbar {
   animation-fill-mode: both;
 }
 :root[data-page-transition="forward"]::view-transition-old(duck-workspace),
+:root[data-page-transition="forward"]::view-transition-old(duck-route-old-outline),
 :root[data-page-transition="forward"]::view-transition-old(duck-route-old-title),
 :root[data-page-transition="forward"]::view-transition-old(duck-route-old-controls),
 :root[data-page-transition="forward"]::view-transition-old(duck-route-old-controls-1),
@@ -80,6 +115,7 @@ body.motion-preview[data-view="home"] .compact-topbar {
 :root[data-page-transition="forward"]::view-transition-old(duck-route-old-content),
 :root[data-page-transition="forward"]::view-transition-old(duck-route-old-content-1) { animation-name: duck-page-out-up, duck-page-fade-out; }
 :root[data-page-transition="back"]::view-transition-old(duck-workspace),
+:root[data-page-transition="back"]::view-transition-old(duck-route-old-outline),
 :root[data-page-transition="back"]::view-transition-old(duck-route-old-title),
 :root[data-page-transition="back"]::view-transition-old(duck-route-old-controls),
 :root[data-page-transition="back"]::view-transition-old(duck-route-old-controls-1),
@@ -91,6 +127,7 @@ body.motion-preview[data-view="home"] .compact-topbar {
 @keyframes duck-page-fade-out { from { opacity: 1; } to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
 :root[data-page-transition]::view-transition-old(duck-workspace),
+:root[data-page-transition]::view-transition-old(duck-route-old-outline),
 :root[data-page-transition]::view-transition-old(duck-route-old-title),
 :root[data-page-transition]::view-transition-old(duck-route-old-controls),
 :root[data-page-transition]::view-transition-old(duck-route-old-controls-1),

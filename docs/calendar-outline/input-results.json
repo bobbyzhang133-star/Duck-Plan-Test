@@ -1,0 +1,29 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "trusted-moving-calendar-slot",
+      "point": {
+        "x": 472.3515625,
+        "y": 245.8310546875,
+        "date": "2026-11-09",
+        "time": "07:00",
+        "hit": true,
+        "phase": "animate"
+      },
+      "editor": {
+        "date": "2026-11-09",
+        "time": "07:00"
+      }
+    },
+    {
+      "test": "trusted-moving-checkbox",
+      "changed": [
+        "physics-quiz"
+      ]
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true
+}
