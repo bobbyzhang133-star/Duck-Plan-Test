@@ -1,0 +1,811 @@
+{
+  "runtime": "157.0.8103.78",
+  "dpr": 2,
+  "out": [
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "settings",
+      "ready": 46.400000005960464,
+      "update": 22.399999991059303,
+      "max": 66.7679999999998,
+      "maxAfterReady": 16.799999999999955,
+      "long": [
+        {
+          "at": 60.89999999701968,
+          "gap": 66.7679999999998
+        }
+      ],
+      "total": 596.4000000059605,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.015015,
+        "RecalcStyleDuration": 0.045887,
+        "ScriptDuration": 0.016492,
+        "TaskDuration": 0.171355
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "calendar",
+      "ready": 20.200000002980232,
+      "update": 9,
+      "max": 16.799999999999955,
+      "maxAfterReady": 16.799999999999955,
+      "long": [],
+      "total": 522.9000000059605,
+      "metrics": {
+        "LayoutCount": 13,
+        "RecalcStyleCount": 60,
+        "LayoutDuration": 0.0040989999999999985,
+        "RecalcStyleDuration": 0.02311400000000001,
+        "ScriptDuration": 0.004799999999999999,
+        "TaskDuration": 0.06371300000000002
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "home",
+      "ready": 30.900000005960464,
+      "update": 12.800000011920929,
+      "max": 33.40000000000009,
+      "maxAfterReady": 16.799999999999727,
+      "long": [
+        {
+          "at": 42.40000000000009,
+          "gap": 33.40000000000009
+        }
+      ],
+      "total": 577.9000000059605,
+      "metrics": {
+        "LayoutCount": 15,
+        "RecalcStyleCount": 60,
+        "LayoutDuration": 0.008116000000000002,
+        "RecalcStyleDuration": 0.02953199999999999,
+        "ScriptDuration": 0.003316000000000003,
+        "TaskDuration": 0.07739099999999999
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "tasks",
+      "ready": 19.599999994039536,
+      "update": 5.899999991059303,
+      "max": 16.799999999999727,
+      "maxAfterReady": 16.799999999999727,
+      "long": [],
+      "total": 542.2000000029802,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.0028709999999999986,
+        "RecalcStyleDuration": 0.021273,
+        "ScriptDuration": 0.0037349999999999987,
+        "TaskDuration": 0.05556
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "settings",
+      "ready": 18.900000005960464,
+      "update": 4.299999997019768,
+      "max": 16.799999999999727,
+      "maxAfterReady": 16.799999999999727,
+      "long": [],
+      "total": 543.5999999940395,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 60,
+        "LayoutDuration": 0.005093999999999998,
+        "RecalcStyleDuration": 0.017235,
+        "ScriptDuration": 0.0035079999999999972,
+        "TaskDuration": 0.05778699999999998
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "calendar",
+      "ready": 20.299999997019768,
+      "update": 5.299999997019768,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 544.6000000089407,
+      "metrics": {
+        "LayoutCount": 13,
+        "RecalcStyleCount": 61,
+        "LayoutDuration": 0.0025310000000000055,
+        "RecalcStyleDuration": 0.018982,
+        "ScriptDuration": 0.0035130000000000022,
+        "TaskDuration": 0.05477399999999999
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "home",
+      "ready": 12.100000008940697,
+      "update": 5.5,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 531.5,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.002682999999999998,
+        "RecalcStyleDuration": 0.01905700000000002,
+        "ScriptDuration": 0.003487999999999998,
+        "TaskDuration": 0.051144999999999996
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "tasks",
+      "ready": 11.299999997019768,
+      "update": 3.1000000089406967,
+      "max": 16.700000000000728,
+      "maxAfterReady": 16.700000000000728,
+      "long": [],
+      "total": 537.9000000059605,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.0017700000000000007,
+        "RecalcStyleDuration": 0.017257999999999996,
+        "ScriptDuration": 0.0031000000000000055,
+        "TaskDuration": 0.047543
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "settings",
+      "ready": 18.200000002980232,
+      "update": 3.4000000059604645,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 544.0999999940395,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 60,
+        "LayoutDuration": 0.004754999999999995,
+        "RecalcStyleDuration": 0.016472999999999988,
+        "ScriptDuration": 0.003006999999999996,
+        "TaskDuration": 0.055259999999999976
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 835,
+      "route": "calendar",
+      "ready": 20,
+      "update": 5,
+      "max": 16.799999999999272,
+      "maxAfterReady": 16.799999999999272,
+      "long": [],
+      "total": 544.5999999940395,
+      "metrics": {
+        "LayoutCount": 13,
+        "RecalcStyleCount": 61,
+        "LayoutDuration": 0.0025220000000000034,
+        "RecalcStyleDuration": 0.017675999999999997,
+        "ScriptDuration": 0.0029910000000000006,
+        "TaskDuration": 0.048427
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "settings",
+      "ready": 20.5,
+      "update": 7.700000002980232,
+      "max": 33.334,
+      "maxAfterReady": 16.800000000000068,
+      "long": [
+        {
+          "at": 37,
+          "gap": 33.334
+        }
+      ],
+      "total": 539.5999999940395,
+      "metrics": {
+        "LayoutCount": 37,
+        "RecalcStyleCount": 52,
+        "LayoutDuration": 0.008434,
+        "RecalcStyleDuration": 0.02073,
+        "ScriptDuration": 0.005762,
+        "TaskDuration": 0.08125199999999999
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "calendar",
+      "ready": 20.399999991059303,
+      "update": 5.399999991059303,
+      "max": 16.799999999999955,
+      "maxAfterReady": 16.799999999999955,
+      "long": [],
+      "total": 541.5,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.002898999999999999,
+        "RecalcStyleDuration": 0.018564999999999998,
+        "ScriptDuration": 0.003699000000000001,
+        "TaskDuration": 0.055739
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "home",
+      "ready": 30.299999997019768,
+      "update": 12.5,
+      "max": 33.299999999999955,
+      "maxAfterReady": 16.799999999999955,
+      "long": [
+        {
+          "at": 42.09999999999991,
+          "gap": 33.299999999999955
+        }
+      ],
+      "total": 576.6999999880791,
+      "metrics": {
+        "LayoutCount": 35,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.009459000000000002,
+        "RecalcStyleDuration": 0.021927000000000002,
+        "ScriptDuration": 0.0032839999999999987,
+        "TaskDuration": 0.07219300000000001
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "tasks",
+      "ready": 25.299999997019768,
+      "update": 6.800000011920929,
+      "max": 16.799999999999727,
+      "maxAfterReady": 16.799999999999727,
+      "long": [],
+      "total": 528.5,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 53,
+        "LayoutDuration": 0.0036339999999999983,
+        "RecalcStyleDuration": 0.023011000000000004,
+        "ScriptDuration": 0.004192000000000001,
+        "TaskDuration": 0.06050900000000001
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "settings",
+      "ready": 18,
+      "update": 3.7000000029802322,
+      "max": 16.799999999999727,
+      "maxAfterReady": 16.799999999999727,
+      "long": [],
+      "total": 543.2999999970198,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 56,
+        "LayoutDuration": 0.005913999999999999,
+        "RecalcStyleDuration": 0.017315999999999998,
+        "ScriptDuration": 0.0035369999999999985,
+        "TaskDuration": 0.06142500000000001
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "calendar",
+      "ready": 20.899999991059303,
+      "update": 5.0999999940395355,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.5,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.0023890000000000022,
+        "RecalcStyleDuration": 0.020846000000000003,
+        "ScriptDuration": 0.004203000000000002,
+        "TaskDuration": 0.05732799999999999
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "home",
+      "ready": 22.799999997019768,
+      "update": 5.0999999940395355,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 547.6999999880791,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 55,
+        "LayoutDuration": 0.003242000000000002,
+        "RecalcStyleDuration": 0.02799399999999999,
+        "ScriptDuration": 0.003578999999999999,
+        "TaskDuration": 0.072546
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "tasks",
+      "ready": 28.200000002980232,
+      "update": 6.200000002980232,
+      "max": 66.60000000000036,
+      "maxAfterReady": 16.700000000000728,
+      "long": [
+        {
+          "at": 42.800000002980596,
+          "gap": 66.60000000000036
+        }
+      ],
+      "total": 561.7999999970198,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 52,
+        "LayoutDuration": 0.004159999999999997,
+        "RecalcStyleDuration": 0.038907,
+        "ScriptDuration": 0.008693999999999997,
+        "TaskDuration": 0.11480100000000004
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "settings",
+      "ready": 22.099999994039536,
+      "update": 4,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 545,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 56,
+        "LayoutDuration": 0.0051150000000000015,
+        "RecalcStyleDuration": 0.018317,
+        "ScriptDuration": 0.003699000000000001,
+        "TaskDuration": 0.06098700000000001
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 835,
+      "route": "calendar",
+      "ready": 19.100000008940697,
+      "update": 4.399999991059303,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.7000000029802,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.002491,
+        "RecalcStyleDuration": 0.01971300000000001,
+        "ScriptDuration": 0.003469,
+        "TaskDuration": 0.05334799999999995
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "settings",
+      "ready": 21.5,
+      "update": 9,
+      "max": 16.800000000000068,
+      "maxAfterReady": 16.800000000000068,
+      "long": [],
+      "total": 557.0999999940395,
+      "metrics": {
+        "LayoutCount": 39,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.009677,
+        "RecalcStyleDuration": 0.022732,
+        "ScriptDuration": 0.006074,
+        "TaskDuration": 0.088423
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "calendar",
+      "ready": 19.900000005960464,
+      "update": 7.799999997019768,
+      "max": 16.799999999999955,
+      "maxAfterReady": 16.799999999999955,
+      "long": [],
+      "total": 541.4000000059605,
+      "metrics": {
+        "LayoutCount": 13,
+        "RecalcStyleCount": 61,
+        "LayoutDuration": 0.00392,
+        "RecalcStyleDuration": 0.022564000000000004,
+        "ScriptDuration": 0.004186999999999999,
+        "TaskDuration": 0.062732
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "home",
+      "ready": 35.5,
+      "update": 17.200000002980232,
+      "max": 33.299999999999955,
+      "maxAfterReady": 16.799999999999955,
+      "long": [
+        {
+          "at": 41.79999999403958,
+          "gap": 33.299999999999955
+        }
+      ],
+      "total": 576.5,
+      "metrics": {
+        "LayoutCount": 34,
+        "RecalcStyleCount": 62,
+        "LayoutDuration": 0.013031,
+        "RecalcStyleDuration": 0.023857000000000003,
+        "ScriptDuration": 0.003987000000000001,
+        "TaskDuration": 0.08304699999999998
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "tasks",
+      "ready": 21.200000002980232,
+      "update": 6.299999997019768,
+      "max": 16.799999999999727,
+      "maxAfterReady": 16.799999999999727,
+      "long": [],
+      "total": 542,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.003581000000000001,
+        "RecalcStyleDuration": 0.023099999999999996,
+        "ScriptDuration": 0.003889,
+        "TaskDuration": 0.063027
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "settings",
+      "ready": 18.099999994039536,
+      "update": 4,
+      "max": 16.700000000000273,
+      "maxAfterReady": 16.700000000000273,
+      "long": [],
+      "total": 542.5999999940395,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 60,
+        "LayoutDuration": 0.004843,
+        "RecalcStyleDuration": 0.017832,
+        "ScriptDuration": 0.0037809999999999996,
+        "TaskDuration": 0.057692999999999994
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "calendar",
+      "ready": 19.5,
+      "update": 5,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 544.6000000089407,
+      "metrics": {
+        "LayoutCount": 13,
+        "RecalcStyleCount": 61,
+        "LayoutDuration": 0.002480000000000003,
+        "RecalcStyleDuration": 0.020288999999999988,
+        "ScriptDuration": 0.003425000000000001,
+        "TaskDuration": 0.057255999999999974
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "home",
+      "ready": 19.899999991059303,
+      "update": 5.699999988079071,
+      "max": 33.30000000000018,
+      "maxAfterReady": 33.30000000000018,
+      "long": [
+        {
+          "at": 239.89999999403972,
+          "gap": 33.30000000000018
+        }
+      ],
+      "total": 541.2999999970198,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 57,
+        "LayoutDuration": 0.0030740000000000003,
+        "RecalcStyleDuration": 0.02215700000000001,
+        "ScriptDuration": 0.004066999999999998,
+        "TaskDuration": 0.061091000000000006
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "tasks",
+      "ready": 20.5,
+      "update": 4.700000002980232,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.5,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 58,
+        "LayoutDuration": 0.002346999999999995,
+        "RecalcStyleDuration": 0.02035300000000001,
+        "ScriptDuration": 0.003498000000000001,
+        "TaskDuration": 0.054742999999999986
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "settings",
+      "ready": 19.200000002980232,
+      "update": 3.9000000059604645,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 527.7999999970198,
+      "metrics": {
+        "LayoutCount": 37,
+        "RecalcStyleCount": 59,
+        "LayoutDuration": 0.005968000000000001,
+        "RecalcStyleDuration": 0.019188999999999984,
+        "ScriptDuration": 0.003693000000000002,
+        "TaskDuration": 0.064025
+      }
+    },
+    {
+      "name": "baseline",
+      "width": 1280,
+      "route": "calendar",
+      "ready": 17.700000002980232,
+      "update": 5.399999991059303,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 542.6000000089407,
+      "metrics": {
+        "LayoutCount": 13,
+        "RecalcStyleCount": 61,
+        "LayoutDuration": 0.0026139999999999983,
+        "RecalcStyleDuration": 0.018624,
+        "ScriptDuration": 0.0032289999999999958,
+        "TaskDuration": 0.05201199999999995
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "settings",
+      "ready": 24.900000005960464,
+      "update": 13,
+      "max": 33.299999999999955,
+      "maxAfterReady": 16.799999999999955,
+      "long": [
+        {
+          "at": 33.99999999403951,
+          "gap": 33.299999999999955
+        }
+      ],
+      "total": 569.7999999970198,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 53,
+        "LayoutDuration": 0.01207,
+        "RecalcStyleDuration": 0.027718,
+        "ScriptDuration": 0.007767,
+        "TaskDuration": 0.107827
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "calendar",
+      "ready": 19.600000008940697,
+      "update": 4.5999999940395355,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 544,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.0024509999999999983,
+        "RecalcStyleDuration": 0.018041,
+        "ScriptDuration": 0.0030930000000000003,
+        "TaskDuration": 0.05687399999999998
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "home",
+      "ready": 32.19999998807907,
+      "update": 14.299999997019768,
+      "max": 33.299999999999955,
+      "maxAfterReady": 16.700000000000273,
+      "long": [
+        {
+          "at": 41.999999988079026,
+          "gap": 33.299999999999955
+        }
+      ],
+      "total": 577.5999999940395,
+      "metrics": {
+        "LayoutCount": 32,
+        "RecalcStyleCount": 57,
+        "LayoutDuration": 0.010366,
+        "RecalcStyleDuration": 0.025004999999999993,
+        "ScriptDuration": 0.003209,
+        "TaskDuration": 0.07563399999999998
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "tasks",
+      "ready": 20.899999991059303,
+      "update": 5,
+      "max": 16.700000000000273,
+      "maxAfterReady": 16.700000000000273,
+      "long": [],
+      "total": 561,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 55,
+        "LayoutDuration": 0.0027259999999999993,
+        "RecalcStyleDuration": 0.021766000000000008,
+        "ScriptDuration": 0.0031870000000000006,
+        "TaskDuration": 0.05543200000000001
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "settings",
+      "ready": 18.299999997019768,
+      "update": 3.6000000089406967,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.4000000059605,
+      "metrics": {
+        "LayoutCount": 38,
+        "RecalcStyleCount": 56,
+        "LayoutDuration": 0.005173000000000004,
+        "RecalcStyleDuration": 0.016772999999999996,
+        "ScriptDuration": 0.0036209999999999992,
+        "TaskDuration": 0.05846300000000004
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "calendar",
+      "ready": 18.400000005960464,
+      "update": 4.299999997019768,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.4000000059605,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.0026230000000000003,
+        "RecalcStyleDuration": 0.020714999999999997,
+        "ScriptDuration": 0.0033630000000000014,
+        "TaskDuration": 0.05496899999999999
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "home",
+      "ready": 20.19999998807907,
+      "update": 4.4000000059604645,
+      "max": 16.733999999999924,
+      "maxAfterReady": 16.700000000000728,
+      "long": [],
+      "total": 543.2999999970198,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.002477999999999994,
+        "RecalcStyleDuration": 0.019896999999999998,
+        "ScriptDuration": 0.0034639999999999983,
+        "TaskDuration": 0.054095000000000004
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "tasks",
+      "ready": 18.600000008940697,
+      "update": 3.699999988079071,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.5,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.002039000000000006,
+        "RecalcStyleDuration": 0.019916000000000017,
+        "ScriptDuration": 0.003695000000000004,
+        "TaskDuration": 0.05184
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "settings",
+      "ready": 19.599999994039536,
+      "update": 4.700000002980232,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 527.1999999880791,
+      "metrics": {
+        "LayoutCount": 37,
+        "RecalcStyleCount": 55,
+        "LayoutDuration": 0.005764999999999999,
+        "RecalcStyleDuration": 0.019210999999999978,
+        "ScriptDuration": 0.0037459999999999993,
+        "TaskDuration": 0.06310400000000005
+      }
+    },
+    {
+      "name": "candidate",
+      "width": 1280,
+      "route": "calendar",
+      "ready": 19.69999998807907,
+      "update": 4.799999997019768,
+      "max": 16.800000000000182,
+      "maxAfterReady": 16.800000000000182,
+      "long": [],
+      "total": 543.8999999910593,
+      "metrics": {
+        "LayoutCount": 11,
+        "RecalcStyleCount": 54,
+        "LayoutDuration": 0.002807999999999998,
+        "RecalcStyleDuration": 0.021339000000000025,
+        "ScriptDuration": 0.0034409999999999996,
+        "TaskDuration": 0.05556099999999997
+      }
+    }
+  ]
+}

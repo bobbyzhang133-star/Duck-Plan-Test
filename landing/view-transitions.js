@@ -70,6 +70,10 @@
       const token = (name, fallback) => style?.getPropertyValue?.(`--motion-route-${name}`)?.trim() || fallback;
       const duration = parseFloat(token("duration", "440ms")), fade = parseFloat(token("in-fade", "160ms")), stagger = parseFloat(token("stagger", "30ms"));
       const spring = token("spring", "cubic-bezier(.22,1,.36,1)"), fadeEase = token("fade-ease", "cubic-bezier(.2,.8,.2,1)");
+      // Computed declarations are live. Read every distance before capture-name
+      // writes or animation creation, rather than flushing style for each piece.
+      const distances = Object.fromEntries(Object.entries({ title: 48, controls: 56, content: 64, outline: 64 })
+        .map(([role, fallback]) => [role, parseFloat(token(`${role}-distance`, `${fallback}px`)) * current.movement]));
       // Incoming controls must be real DOM, not snapshots excluded from native
       // hit-testing. Even an existing custom capture name stays suppressed until
       // the old-only native transition ends; cleanup restores its inline value.
@@ -79,7 +83,7 @@
         for (const { element, role, suffix } of selected) {
           if (typeof element.animate !== "function") continue;
           const delay = stagger * ({ title: 0, controls: 1, content: 2, outline: 2 }[role]);
-          const distance = parseFloat(token(`${role}-distance`, `${{ title: 48, controls: 56, content: 64, outline: 64 }[role]}px`)) * current.movement;
+          const distance = distances[role];
           for (const [part, frames, timing] of [
             ["move", [{ transform: `translateY(${distance}px)` }, { transform: "translateY(0px)" }], { duration, easing: spring }],
             ["fade", [{ opacity: 0 }, { opacity: 1 }], { duration: fade, easing: fadeEase }],

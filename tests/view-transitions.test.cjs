@@ -319,15 +319,19 @@ test("component capture measures every layer before changing names in each phase
   const oldTargets = makeTargets(), newTargets = makeTargets();
   const f = fixture({
     getLayers: route => route === "calendar" ? oldTargets : newTargets,
-    getComputedStyle: element => { if (Number.isInteger(element.measureIndex)) events.push("computed"); return element.visualStyle; },
+    getComputedStyle: element => {
+      if (Number.isInteger(element.measureIndex)) events.push("computed");
+      if (!element.visualStyle?.getPropertyValue) return element.visualStyle;
+      return { getPropertyValue: name => { events.push(`token:${name}`); return element.visualStyle.getPropertyValue(name); } };
+    },
   });
   const assertBatched = phase => {
     const firstWrite = events.findIndex(event => event.startsWith("name:"));
-    const lastRead = events.reduce((last, event, index) => event.startsWith("bounds:") || event === "computed" ? index : last, -1);
+    const lastRead = events.reduce((last, event, index) => event.startsWith("bounds:") || event.startsWith("token:") || event === "computed" ? index : last, -1);
     assert.equal(events.filter(event => event.startsWith("bounds:")).length, 6, phase);
     assert.equal(events.filter(event => event === "computed").length, 6, phase);
     assert.equal(events.filter(event => event.startsWith("name:")).length, 6, phase);
-    assert.ok(firstWrite > lastRead, `${phase}: naming a layer cannot invalidate styles before the remaining layers are measured`);
+    assert.ok(firstWrite > lastRead, `${phase}: geometry and live computed tokens must be read before capture/animation writes`);
   };
   f.navigate("calendar", "tasks", { update: () => { events.length = 0; f.updates.push("tasks"); } });
   assertBatched("outgoing");
