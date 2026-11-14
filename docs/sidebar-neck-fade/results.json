@@ -1,0 +1,209 @@
+{
+  "runtime": "157.0.8103.78",
+  "results": [
+    {
+      "theme": "light",
+      "folded": {
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "mask": "linear-gradient(rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%)",
+        "overflow": false,
+        "favicon": "./assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "theme": "light"
+      },
+      "expanded": {
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 145.171875,
+          "height": 36,
+          "top": 18,
+          "right": 167.171875,
+          "bottom": 54,
+          "left": 22
+        },
+        "mask": "linear-gradient(rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%)",
+        "overflow": false,
+        "favicon": "./assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "theme": "light"
+      },
+      "painted": {
+        "face": [
+          247,
+          248,
+          244,
+          255
+        ],
+        "neck": [
+          255,
+          255,
+          254,
+          255
+        ],
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ]
+      },
+      "baseline": {
+        "face": [
+          247,
+          248,
+          244,
+          255
+        ],
+        "neck": [
+          249,
+          249,
+          245,
+          255
+        ],
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ]
+      },
+      "bottomDifference": 1,
+      "baselineBottomDifference": 10,
+      "faceUnchanged": true,
+      "fadedAreaClick": true,
+      "keyboardEnter": true
+    },
+    {
+      "theme": "dark",
+      "folded": {
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "mask": "linear-gradient(rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%)",
+        "overflow": false,
+        "favicon": "./assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "theme": "dark"
+      },
+      "expanded": {
+        "image": {
+          "x": 22,
+          "y": 18,
+          "width": 36,
+          "height": 36,
+          "top": 18,
+          "right": 58,
+          "bottom": 54,
+          "left": 22
+        },
+        "anchor": {
+          "x": 22,
+          "y": 18,
+          "width": 145.171875,
+          "height": 36,
+          "top": 18,
+          "right": 167.171875,
+          "bottom": 54,
+          "left": 22
+        },
+        "mask": "linear-gradient(rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%)",
+        "overflow": false,
+        "favicon": "./assets/duckplan-sigma-icon-v11-transparent-192.png",
+        "theme": "dark"
+      },
+      "painted": {
+        "face": [
+          247,
+          248,
+          244,
+          255
+        ],
+        "neck": [
+          58,
+          58,
+          50,
+          255
+        ],
+        "background": [
+          43,
+          43,
+          36,
+          255
+        ]
+      },
+      "baseline": {
+        "face": [
+          247,
+          248,
+          244,
+          255
+        ],
+        "neck": [
+          249,
+          249,
+          245,
+          255
+        ],
+        "background": [
+          43,
+          43,
+          36,
+          255
+        ]
+      },
+      "bottomDifference": 15,
+      "baselineBottomDifference": 209,
+      "faceUnchanged": true,
+      "fadedAreaClick": true,
+      "keyboardEnter": true
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "contextsClosed": true,
+  "scope": "isolated Chromium, CSS-only website check; no user records/production/native changes"
+}
