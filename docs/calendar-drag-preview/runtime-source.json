@@ -1,0 +1,32 @@
+{
+  "origin": "http://127.0.0.1:8796",
+  "runtime": "Wrangler 4.157.0 / local workerd",
+  "compatibilityDate": "2026-10-01",
+  "mode": "isolated real local Worker+D1+DurableObject",
+  "database": "calendar-preview-qa",
+  "migrationHistory": [
+    "0001_initial_schema.sql",
+    "0002_password_sign_in.sql",
+    "0003_task_alarms.sql",
+    "0004_product_organization.sql",
+    "0005_personal_planning.sql"
+  ],
+  "sourceBase": "e49cf20",
+  "sourceBranch": "codex/calendar-drag-preview-20261114",
+  "workingTreeFeatureHashes": {
+    "landing/app.js": "57a5beb4e2c852bf2c325e3f94a0a6e53a3d47b08c092e2b28c151254bbeabbc",
+    "landing/task-list-drag.js": "92880204ec3bee0757d9d4ec2ee4fe95e6ec1af1b026fe9f0957c6eaccfdd3f2",
+    "landing/styles.css": "54240690c805421c5f5284b01b6f6c6b97324cf68bdc1baa6504affa3de2d026",
+    "landing/planner-library.js": "9a193537828f112a985846420b8a15f26dad59350b2347ce3b2299cd8f455a76",
+    "landing/planner-library.css": "5390d35057be35b47ba5d94901f8b28d8d0fdb4643ef961267ac43af84864257",
+    "cloudflare/src/index.js": "f5abe1810a175dafc673855b67ee214b14a9d82091569a561563414e6a11d4af",
+    "cloudflare/src/planner.js": "db237d2e91084ffc7b2b83112b6b86f31b098f3fe064c20fc41139a335d6151a",
+    "cloudflare/src/auth.js": "bb1e8e15f90c8fc08f735ee8a43a9dd75756f50fb84561b5623b663fcff2904d",
+    "cloudflare/migrations/0001_initial_schema.sql": "030f8c1936c5e05080853479ef518e080cc1cc6514312d8e15e02c103c29595f",
+    "cloudflare/migrations/0002_password_sign_in.sql": "d6d8893d1e8cba703371ae8826d6b52bd5c3f9a53cce067d87cfdd94d97483c3",
+    "cloudflare/migrations/0003_task_alarms.sql": "d75ec49687e805ac7b272128ffd818160eabfc67404137d58e142236d763adc2",
+    "cloudflare/migrations/0004_product_organization.sql": "cf380b81d77d5a393c6fedd5931c0c80d6708df950e1d2a7c6194e75d8dd5ae1",
+    "cloudflare/migrations/0005_personal_planning.sql": "a05c7f28adc736c1b622c734c743e3551e4697eef50b268741806ddc146bfa2a"
+  },
+  "scope": "No remote database, deployment, user records, production credentials or .dev.vars used. Native/PWA/physical Safari not tested. API backend tests used synthetic @example.test accounts; credentials and cookies are omitted."
+}

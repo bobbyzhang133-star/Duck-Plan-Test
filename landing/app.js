@@ -148,8 +148,14 @@ const taskListDrag = window.DuckTaskListDrag?.create({
     return placement ? { ...placement, pointerX: event.clientX, pointerY: event.clientY } : null;
   },
   showPreview: (task, placement) => {
-    if (!templateDrag || templateDrag.template !== task) beginCalendarDropPreview(task);
+    if (!templateDrag) beginCalendarDropPreview(task);
+    syncCalendarDropPreview(task);
     updateTemplatePreview({ target: placement.source, clientX: placement.pointerX, clientY: placement.pointerY });
+  },
+  showFreePreview: (task, event) => {
+    if (!templateDrag) beginCalendarDropPreview(task, event);
+    syncCalendarDropPreview(task);
+    updateTemplatePreview(event);
   },
   clearPreview: clearTemplateDrag,
   schedule: scheduleListTask,
@@ -942,6 +948,7 @@ function focusMovedCalendarTask(taskId) {
 }
 
 function moveCalendarTask(task, drop, { focus = false } = {}) {
+  const owner = `${store.mode}:${store.user?.id || "local"}`;
   const previousStart = task.scheduledStart;
   const previousSelectedDate = selectedDate;
   const nextStart = `${drop.date}T${drop.time}`;
@@ -958,9 +965,12 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
     actionLabel: "Undo",
     duration: 5000,
     onAction: () => {
+      if (owner !== `${store.mode}:${store.user?.id || "local"}`) return;
+      const current = store.listItems().find(item => item.id === task.id);
+      if (!current || current.scheduledStart !== nextStart) { showToast("This task has changed since it was moved."); return; }
       selectedDate = previousStart?.slice(0, 10) || previousSelectedDate;
       selectedTaskId = task.id;
-      store.upsertItem({ ...task, scheduledStart: previousStart, scheduledEnd: null }).catch(reportError);
+      store.upsertItem({ ...current, scheduledStart: previousStart, scheduledEnd: null }).catch(reportError);
       els.calendarStatus.textContent = `${task.title} returned to its previous time.`;
       showToast("Calendar move undone.");
       if (focus) focusMovedCalendarTask(task.id);
@@ -1041,6 +1051,7 @@ function updateCalendarDragPosition(clientX, clientY) {
 
 function runCalendarDragAutoscroll() {
   if (!calendarDrag?.started) return;
+  if (!currentCalendarDrag()) return;
   if (calendarDrag.scrollVelocity) {
     const before = els.calendar.scrollTop;
     els.calendar.scrollTop += calendarDrag.scrollVelocity;
@@ -1084,6 +1095,14 @@ function cancelCalendarDrag({ announce = false } = {}) {
   if (!calendarDrag?.started) { calendarDrag = null; return; }
   clearCalendarDrag();
   if (announce) showToast("Calendar move cancelled.");
+}
+
+function currentCalendarDrag() {
+  if (!calendarDrag) return false;
+  if (calendarDrag.owner !== `${store.mode}:${store.user?.id || "local"}` || calendarDrag.source.isConnected === false) {
+    cancelCalendarDrag(); return false;
+  }
+  return true;
 }
 
 let modalAnchor = null;
@@ -1234,35 +1253,108 @@ function templateCalendarPlacement(event, template) {
 function hideTemplatePreview() {
   if (!templateDrag) return;
   templateDrag.preview.hidden = true;
-  templateDrag.column?.classList.remove("calendar-drop-target");
-  templateDrag.column = null; templateDrag.velocity = 0;
+  clearTemplateTarget();
+}
+
+function clearTemplateTarget() {
+  if (!templateDrag) return;
+  templateDrag.target?.classList.remove("calendar-drop-target");
+  templateDrag.column = null; templateDrag.target = null; templateDrag.velocity = 0;
 }
 
 function clearTemplateDrag() {
   if (!templateDrag) return;
   hideTemplatePreview(); cancelAnimationFrame(templateDrag.raf);
-  templateDrag.preview.remove(); templateDrag = null;
+  templateDrag.preview.remove(); templateDrag.nativeImage?.remove(); templateDrag = null;
+}
+
+function syncCalendarDropPreview(item) {
+  if (!templateDrag) return;
+  templateDrag.template = item;
+  const title = templateDrag.preview.querySelector("strong");
+  if (title.textContent !== item.title) title.textContent = item.title;
+  const color = classInfo(item).color;
+  const value = /^#[0-9a-f]{6}$/i.test(color) ? color : "#8f8a7d";
+  if (templateDrag.preview.style.getPropertyValue("--course-color") !== value) templateDrag.preview.style.setProperty("--course-color", value);
+}
+
+function refreshCalendarDropItem() {
+  if (!templateDrag) return false;
+  if (templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}`) { clearTemplateDrag(); return false; }
+  const item = templateDrag.libraryId ? taskLibrary?.draftForTemplate(templateDrag.libraryId)
+    : store.listItems().find(task => task.id === templateDrag.template.id && !task.completed);
+  if (!item) { clearTemplateDrag(); return false; }
+  syncCalendarDropPreview(item);
+  return true;
+}
+
+function showFreeCalendarPreview(clientX, clientY, time = null) {
+  if (!templateDrag || !Number.isFinite(clientX) || !Number.isFinite(clientY)) return;
+  clearTemplateTarget();
+  const preview = templateDrag.preview;
+  const columnRect = els.calendar.querySelector(".timeline-column")?.getBoundingClientRect();
+  const width = Math.min(180, Math.max(88, columnRect?.width > 6 ? columnRect.width - 6 : 148));
+  const height = Math.min(156, Math.max(30, Number(templateDrag.template.durationMinutes || 45) * 62 / 60));
+  const left = Math.max(4, Math.min(window.innerWidth - width - 4, clientX + 12));
+  const top = Math.max(4, Math.min(window.innerHeight - height - 4, clientY + 12));
+  Object.assign(preview.style, { left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, clipPath: "none" });
+  preview.dataset.dragPlacement = "free";
+  preview.querySelector("small").textContent = `${time ? `${formatTime(time)} · ` : ""}${templateDrag.template.durationMinutes} min`;
+  preview.hidden = false;
+}
+
+function fitCalendarDropPreview({ left, top, width, height }, mode) {
+  const preview = templateDrag.preview, viewport = els.calendar.getBoundingClientRect();
+  Object.assign(preview.style, {
+    left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`,
+    clipPath: `inset(${Math.max(0, viewport.top - top)}px ${Math.max(0, left + width - viewport.right)}px ${Math.max(0, top + height - viewport.bottom)}px ${Math.max(0, viewport.left - left)}px)`,
+  });
+  preview.dataset.dragPlacement = mode;
+  preview.hidden = false;
 }
 
 function updateTemplatePreview(event) {
   if (!templateDrag) return null;
+  if (templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}`) { clearTemplateDrag(); return null; }
   templateDrag.pointer = { x: event.clientX, y: event.clientY };
   const placement = event.target.closest("#planner-calendar") && templateCalendarPlacement(event, templateDrag.template);
-  hideTemplatePreview();
-  if (!placement?.column) return placement;
-  const { rect, hourHeight, column, minutes, time } = placement;
+  clearTemplateTarget();
+  if (!placement) { showFreeCalendarPreview(event.clientX, event.clientY); return null; }
+  const { minutes, time } = placement;
   const preview = templateDrag.preview;
-  column.classList.add("calendar-drop-target"); templateDrag.column = column;
-  Object.assign(preview.style, { left: `${rect.left + 3}px`, top: `${rect.top + (minutes - 7 * 60) * hourHeight / 60}px`, width: `${Math.max(32, rect.width - 6)}px`, height: `${Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60)}px` });
   preview.querySelector("small").textContent = `${formatTime(time)} · ${templateDrag.template.durationMinutes} min`;
-  preview.hidden = false;
+  const monthDay = placement.source.closest(".month-day");
+  if (monthDay) {
+    const rect = monthDay.getBoundingClientRect(), top = rect.top + 34;
+    monthDay.classList.add("calendar-drop-target"); templateDrag.target = monthDay;
+    fitCalendarDropPreview({ left: rect.left + 5, top, width: Math.max(24, rect.width - 10), height: Math.max(24, Math.min(46, rect.bottom - top - 5)) }, "month");
+    return placement;
+  }
+  const column = placement.column || [...els.calendar.querySelectorAll(".timeline-column")].find(item => item.dataset.columnDate === placement.date);
+  if (!column) { showFreeCalendarPreview(event.clientX, event.clientY, time); return placement; }
+  const rect = column.getBoundingClientRect(), hourHeight = rect.height / 15;
+  const top = rect.top + (minutes - 7 * 60) * hourHeight / 60;
+  const height = Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60);
   const viewport = els.calendar.getBoundingClientRect();
-  templateDrag.velocity = event.clientY < viewport.top + 52 ? -12 : event.clientY > viewport.bottom - 52 ? 12 : 0;
+  // Date/deadline headers keep their existing 09:00 default. If that time is
+  // offscreen, show an honest labeled block by the pointer rather than a false slot.
+  if (!placement.column && (top + height <= viewport.top || top >= viewport.bottom)) {
+    showFreeCalendarPreview(event.clientX, event.clientY, time); return placement;
+  }
+  column.classList.add("calendar-drop-target"); templateDrag.column = column; templateDrag.target = column;
+  fitCalendarDropPreview({ left: rect.left + 3, top, width: Math.max(32, rect.width - 6), height }, "timeline");
+  if (placement.column) templateDrag.velocity = event.clientY < viewport.top + 52 ? -12 : event.clientY > viewport.bottom - 52 ? 12 : 0;
   return placement;
 }
 
 function scrollTemplatePreview() {
   if (!templateDrag) return;
+  if (templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}` || templateDrag.source?.isConnected === false) {
+    const movingTask = !templateDrag.libraryId;
+    clearTemplateDrag();
+    if (movingTask) taskListDrag?.cancel();
+    return;
+  }
   if (templateDrag.velocity) {
     const previous = els.calendar.scrollTop;
     els.calendar.scrollTop += templateDrag.velocity;
@@ -1272,40 +1364,63 @@ function scrollTemplatePreview() {
       if (target) updateTemplatePreview({ target, clientX: x, clientY: y });
     }
   }
-  templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
+  if (templateDrag) templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
 }
 
-function beginCalendarDropPreview(template) {
+function beginCalendarDropPreview(template, event = null) {
   clearTemplateDrag();
   const preview = document.createElement("div");
   preview.className = "calendar-event-block calendar-drag-ghost template-drop-preview";
   preview.setAttribute("aria-hidden", "true"); preview.hidden = true;
   preview.innerHTML = `<strong>${safeText(template.title)}</strong><small></small>`;
-  const info = classInfo(template);
-  preview.style.setProperty("--course-color", /^#[0-9a-f]{6}$/i.test(info.color) ? info.color : "#8f8a7d");
   document.body.append(preview);
-  templateDrag = { template, preview, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+  // The browser's immutable source bitmap would otherwise be a second, larger
+  // drag image. Keep a transparent bitmap attached for the whole native gesture.
+  let nativeImage = null;
+  if (typeof event?.dataTransfer?.setDragImage === "function") {
+    nativeImage = document.createElement("canvas"); nativeImage.width = 1; nativeImage.height = 1;
+    nativeImage.className = "calendar-native-drag-image"; nativeImage.setAttribute("aria-hidden", "true");
+    document.body.append(nativeImage);
+    try { event.dataTransfer.setDragImage(nativeImage, 0, 0); } catch { nativeImage.remove(); nativeImage = null; }
+  }
+  templateDrag = { template, preview, nativeImage, source: event?.target?.closest?.('[draggable="true"]') || event?.target || null, owner: `${store.mode}:${store.user?.id || "local"}`, target: null, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+  syncCalendarDropPreview(template);
+  if (event) showFreeCalendarPreview(event.clientX, event.clientY);
 }
 document.addEventListener("dragstart", event => {
   const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
   const template = id && taskLibrary.draftForTemplate(id);
   if (!template || event.defaultPrevented) return;
-  beginCalendarDropPreview(template);
+  beginCalendarDropPreview(template, event);
+  templateDrag.libraryId = id;
 });
 document.addEventListener("dragend", clearTemplateDrag);
 window.addEventListener("blur", clearTemplateDrag);
 window.addEventListener("pagehide", clearTemplateDrag);
 
-document.addEventListener("dragover", (event) => {
+function updateNativeTemplateDrag(event) {
   if (![...(event.dataTransfer?.types || [])].includes(window.DuckPlanLibrary?.TEMPLATE_MIME)) return;
+  if (!refreshCalendarDropItem()) return;
   const placement = updateTemplatePreview(event);
   if (event.target.closest("#planner-calendar, #all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
     event.preventDefault();
     event.dataTransfer.dropEffect = templateDrag && event.target.closest("#planner-calendar") && !placement ? "none" : "copy";
   }
+}
+document.addEventListener("dragenter", updateNativeTemplateDrag);
+document.addEventListener("dragover", updateNativeTemplateDrag);
+document.addEventListener("drag", event => {
+  if (!templateDrag || (!event.clientX && !event.clientY)) return;
+  if (!refreshCalendarDropItem()) return;
+  const target = document.elementFromPoint(event.clientX, event.clientY);
+  if (target) updateTemplatePreview({ target, clientX: event.clientX, clientY: event.clientY });
 });
 document.addEventListener("drop", (event) => {
-  if (!taskLibrary?.readTemplateDrop(event.dataTransfer)) { clearTemplateDrag(); return; }
+  const templateId = taskLibrary?.readTemplateDrop(event.dataTransfer);
+  if (!templateId) { clearTemplateDrag(); return; }
+  if (!templateDrag || templateDrag.libraryId !== templateId || templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}`) {
+    event.preventDefault(); clearTemplateDrag(); return;
+  }
   const calendar = event.target.closest("#planner-calendar");
   if (calendar) {
     event.preventDefault();
@@ -1362,6 +1477,7 @@ els.calendar.addEventListener("pointerdown", (event) => {
   if (!task) return;
   const sourceRect = source.getBoundingClientRect();
   calendarDrag = {
+    owner: `${store.mode}:${store.user?.id || "local"}`,
     pointerId: event.pointerId,
     source,
     sourceRect,
@@ -1381,6 +1497,7 @@ els.calendar.addEventListener("pointerdown", (event) => {
 });
 els.calendar.addEventListener("pointermove", (event) => {
   if (!calendarDrag || event.pointerId !== calendarDrag.pointerId) return;
+  if (!currentCalendarDrag()) return;
   const distance = Math.hypot(event.clientX - calendarDrag.startX, event.clientY - calendarDrag.startY);
   if (!calendarDrag.started && distance < 5) return;
   event.preventDefault();
@@ -1389,12 +1506,14 @@ els.calendar.addEventListener("pointermove", (event) => {
 });
 els.calendar.addEventListener("pointerup", (event) => {
   if (!calendarDrag || event.pointerId !== calendarDrag.pointerId) return;
+  if (!currentCalendarDrag()) return;
   if (!calendarDrag.started) { calendarDrag = null; return; }
   event.preventDefault();
-  const { task, drop } = calendarDrag;
+  const { drop } = calendarDrag;
+  const task = store.listItems().find(item => item.id === calendarDrag.task.id && !item.completed);
   suppressCalendarEventClickUntil = performance.now() + 650;
   clearCalendarDrag();
-  if (drop) moveCalendarTask(task, drop);
+  if (drop && task) moveCalendarTask(task, drop);
 });
 els.calendar.addEventListener("pointercancel", (event) => {
   if (calendarDrag && event.pointerId === calendarDrag.pointerId) cancelCalendarDrag();
@@ -1613,7 +1732,7 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
-  if (reason === "context") taskListDrag?.cancel();
+  if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); }
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
     viewTransitions.cancel();

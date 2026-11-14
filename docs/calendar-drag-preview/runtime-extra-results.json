@@ -1,0 +1,285 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "native-autoscroll-clips-single-live-preview",
+      "status": "PASS",
+      "scrolled": {
+        "count": 1,
+        "canvas": 1,
+        "sameNode": true,
+        "placement": "timeline",
+        "rect": {
+          "x": 463,
+          "y": 851.5,
+          "width": 105.421875,
+          "height": 93,
+          "top": 851.5,
+          "right": 568.421875,
+          "bottom": 944.5,
+          "left": 463
+        },
+        "caption": "5:45 PM · 90 min",
+        "transform": "none",
+        "opacity": "1",
+        "shadow": "none",
+        "filter": "none",
+        "color": "#39896f",
+        "background": "color(srgb 0.883529 0.930588 0.915294)",
+        "clip": "inset(0px 0px 83.5px)",
+        "column": {
+          "x": 460,
+          "y": 185,
+          "width": 111.421875,
+          "height": 930,
+          "top": 185,
+          "right": 571.421875,
+          "bottom": 1115,
+          "left": 460
+        },
+        "viewport": {
+          "x": 395,
+          "y": 93,
+          "width": 846,
+          "height": 768,
+          "top": 93,
+          "right": 1241,
+          "bottom": 861,
+          "left": 395
+        },
+        "images": [
+          {
+            "canvas": true,
+            "width": 1,
+            "height": 1,
+            "alpha": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "x": 0,
+            "y": 0,
+            "connected": true,
+            "className": "calendar-native-drag-image"
+          }
+        ],
+        "events": [
+          {
+            "name": "dragstart",
+            "trusted": true,
+            "target": "DIV"
+          }
+        ],
+        "scrollTop": 72
+      }
+    },
+    {
+      "test": "month-fitted-preview-default09",
+      "status": "PASS",
+      "month": {
+        "count": 1,
+        "canvas": 1,
+        "sameNode": true,
+        "placement": "month",
+        "rect": {
+          "x": 1124.421875,
+          "y": 244.140625,
+          "width": 110.5625,
+          "height": 46,
+          "top": 244.140625,
+          "right": 1234.984375,
+          "bottom": 290.140625,
+          "left": 1124.421875
+        },
+        "caption": "9:00 AM · 90 min",
+        "transform": "none",
+        "opacity": "1",
+        "shadow": "none",
+        "filter": "none",
+        "color": "#39896f",
+        "background": "color(srgb 0.883529 0.930588 0.915294)",
+        "clip": "inset(0px)",
+        "viewport": {
+          "x": 395,
+          "y": 93,
+          "width": 846,
+          "height": 768,
+          "top": 93,
+          "right": 1241,
+          "bottom": 861,
+          "left": 395
+        },
+        "images": [
+          {
+            "canvas": true,
+            "width": 1,
+            "height": 1,
+            "alpha": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "x": 0,
+            "y": 0,
+            "connected": true,
+            "className": "calendar-native-drag-image"
+          }
+        ],
+        "events": [
+          {
+            "name": "dragstart",
+            "trusted": true,
+            "target": "DIV"
+          }
+        ],
+        "scrollTop": 62
+      }
+    },
+    {
+      "test": "offscreen-date-header09-honest-free-preview",
+      "status": "PASS",
+      "offscreen": {
+        "count": 1,
+        "canvas": 1,
+        "sameNode": true,
+        "placement": "free",
+        "rect": {
+          "x": 527,
+          "y": 139,
+          "width": 105.421875,
+          "height": 93,
+          "top": 139,
+          "right": 632.421875,
+          "bottom": 232,
+          "left": 527
+        },
+        "caption": "9:00 AM · 90 min",
+        "transform": "none",
+        "opacity": "1",
+        "shadow": "none",
+        "filter": "none",
+        "color": "#39896f",
+        "background": "color(srgb 0.883529 0.930588 0.915294)",
+        "clip": "none",
+        "column": {
+          "x": 460,
+          "y": -243,
+          "width": 111.421875,
+          "height": 930,
+          "top": -243,
+          "right": 571.421875,
+          "bottom": 687,
+          "left": 460
+        },
+        "viewport": {
+          "x": 395,
+          "y": 93,
+          "width": 846,
+          "height": 468,
+          "top": 93,
+          "right": 1241,
+          "bottom": 561,
+          "left": 395
+        },
+        "images": [
+          {
+            "canvas": true,
+            "width": 1,
+            "height": 1,
+            "alpha": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "x": 0,
+            "y": 0,
+            "connected": true,
+            "className": "calendar-native-drag-image"
+          }
+        ],
+        "events": [
+          {
+            "name": "dragstart",
+            "trusted": true,
+            "target": "DIV"
+          }
+        ],
+        "scrollTop": 500
+      }
+    },
+    {
+      "test": "existing-pointer-event-exact-block-and-work-time",
+      "status": "PASS",
+      "pointer": {
+        "rect": {
+          "x": 463,
+          "y": 443,
+          "width": 105.421875,
+          "height": 46.5,
+          "top": 443,
+          "right": 568.421875,
+          "bottom": 489.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": 257,
+          "width": 111.421875,
+          "height": 930,
+          "top": 257,
+          "right": 571.421875,
+          "bottom": 1187,
+          "left": 460
+        },
+        "caption": "10:00 AM",
+        "transform": "none",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "nativeCanvas": 0,
+        "customCount": 1
+      }
+    },
+    {
+      "test": "native-source-rerender-cleanup-before-document-dragend",
+      "status": "PASS",
+      "kind": "task",
+      "documentDragEndBeforePointerUp": false
+    },
+    {
+      "test": "native-source-rerender-cleanup-before-document-dragend",
+      "status": "PASS",
+      "kind": "template",
+      "documentDragEndBeforePointerUp": false
+    },
+    {
+      "test": "pointer-source-rerender-cleans-ghost-and-preserves-work-time",
+      "status": "PASS"
+    },
+    {
+      "test": "trusted-native-browser-blur-cleans-preview",
+      "status": "NOT RUN",
+      "reason": "Isolated headless tab activation did not emit native window blur."
+    },
+    {
+      "test": "injected-blur-lifecycle-cleans-preview",
+      "status": "PASS",
+      "blur": [
+        {
+          "trusted": false
+        }
+      ]
+    },
+    {
+      "test": "real-signed-owner-signout-cleans-native-drag",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "navigationAbortedFaviconRequests": []
+}

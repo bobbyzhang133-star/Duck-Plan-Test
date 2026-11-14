@@ -38,10 +38,11 @@
 .library-actions { margin-top: 17px; }
 .library-card-tools { margin-top: 12px; }
 .library-card-tools .library-button { min-height: 38px; padding: 6px 11px; font-size: 12px; }
-.library-template-actions { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.15fr) 36px; margin: 0; gap: 5px; }
-.library-template-actions .library-button { min-width: 0; min-height: 36px; padding: 6px 5px; font-size: 11px; border-radius: 7px; box-shadow: none; }
-.library-template-actions [data-library-action="schedule-template"] { border-color: var(--line); background: var(--card); color: var(--ink-deep); }
-.library-template-actions [data-library-action="template-menu"] { padding: 0; border-color: transparent; background: transparent; font-size: 23px; line-height: 1; }
+.library-template-actions { display: flex; align-items: center; flex-wrap: nowrap; margin: 0; gap: 6px; }
+.library-template-actions .library-button { flex: 0 0 auto; min-width: 0; min-height: 36px; padding: 6px 12px; font-size: 11px; border-radius: 999px; box-shadow: none; }
+.library-template-actions [data-library-action="schedule-template"] { border-color: var(--ink-deep); background: var(--ink-deep); color: var(--card); }
+.library-template-actions [data-library-action="add-template"] { border-color: var(--line); background: var(--card); color: var(--ink-deep); }
+.library-template-actions [data-library-action="template-menu"] { width: 36px; margin-left: auto; padding: 0; border-color: transparent; background: transparent; font-size: 23px; line-height: 1; }
 .library-template-actions [data-library-action="template-menu"]:hover, .library-template-actions [data-library-action="template-menu"][aria-expanded="true"] { background: var(--surface); }
 .library-template-menu { position: fixed; z-index: 1000; display: grid; width: min(190px,calc(100vw - 16px)); padding: 5px; border: 1px solid var(--line); border-radius: 11px; background: var(--card); color: var(--ink-deep); box-shadow: 0 8px 30px #00000024; }
 .library-template-menu button { width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 6px; background: transparent; color: inherit; font: inherit; font-size: 13px; text-align: left; box-shadow: none; }
@@ -141,11 +142,15 @@
   .library-dialog-actions { bottom: -17px; margin: 20px -17px -17px; padding-inline: 17px; }
 }
 @media (prefers-reduced-transparency: reduce) { .library-dialog::backdrop { backdrop-filter: none; } }
+@media (any-pointer: coarse) {
+  .library-template-actions .library-button { min-height: 44px; }
+  .library-template-actions [data-library-action="template-menu"] { width: 44px; }
+}
 @media (max-width: 700px), (max-width: 960px) and (pointer: coarse) and (max-height: 500px) {
   .library-template-desktop-hint { display: none; }
   .library-template-phone-hint { display: inline; }
   .library-drag-hint { display: none; }
-  .library-template-actions { grid-template-columns: minmax(0,1fr) minmax(0,1.15fr) 44px; }
+  .library-template-actions [data-library-action="template-menu"] { width: 44px; }
   .library-template-actions .library-button, .library-template-library-header .library-button { min-height: 44px; font-size: 12px; }
-  .library-template-actions [data-library-action="schedule-template"] { border-color: var(--accent); background: var(--accent-soft); }
+  .library-template-actions [data-library-action="schedule-template"] { border-color: var(--ink-deep); background: var(--ink-deep); color: var(--card); }
 }

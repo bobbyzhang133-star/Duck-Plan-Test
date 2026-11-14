@@ -44,7 +44,7 @@ function event(target, dataTransfer, fields = {}) {
     preventDefault() { this.prevented = true; }, stopImmediatePropagation() { this.stopped = true; }, ...fields,
   };
 }
-function fixture({ hover = true } = {}) {
+function fixture({ hover = true, freePreview = false } = {}) {
   const doc = eventTarget(), win = eventTarget(), timers = new Map(), tasks = new Map();
   const state = { owner: "local-owner", time: 10, preview: [], clears: 0, saved: [], opened: [], errors: {}, scheduleResult: undefined };
   tasks.set("task-a", { id: "task-a", title: "Original task", durationMinutes: 45, dueDate: "2026-11-20", classId: "physics" });
@@ -63,6 +63,7 @@ function fixture({ hover = true } = {}) {
     getOwner() { fail("getOwner"); return state.owner; },
     getPlacement(e) { fail("getPlacement"); state.onPlacement?.(); return e.target === calendar ? placement : null; },
     showPreview(task, drop) { fail("showPreview"); state.preview.push({ task, drop }); },
+    ...(freePreview ? { showFreePreview(task, event) { fail("showFreePreview"); (state.freePreviews ||= []).push({ task, event }); } } : {}),
     clearPreview() { state.clears += 1; fail("clearPreview"); },
     schedule(task, drop) { state.saved.push({ task, drop }); fail("schedule"); return state.scheduleResult; },
     ...(hover ? { openCalendar(target) { fail("openCalendar"); state.opened.push(target); } } : {}),
@@ -113,6 +114,61 @@ test("protected dragover previews a valid destination; invalid areas offer no dr
   assert.equal(f.state.preview.at(-1).drop, f.placement);
   const invalid = f.emit("dragover", f.invalid, data);
   assert.equal(invalid.prevented, false); assert.equal(data.dropEffect, "none"); assert.equal(f.state.clears, 1);
+  f.controller.destroy();
+});
+
+test("an optional free preview starts synchronously and follows invalid areas without ending the drag", () => {
+  const f = fixture({ freePreview: true }), { e, data } = f.begin();
+  assert.equal(f.state.freePreviews.length, 1);
+  assert.equal(f.state.freePreviews[0].event, e, "The host receives the native dragstart while setDragImage is legal");
+  assert.equal(f.state.freePreviews[0].event.dataTransfer.getData(Drag.TASK_MIME), "task-a");
+  f.emit("dragover", f.navigation, data);
+  assert.equal(f.state.freePreviews.length, 2);
+  assert.equal(f.state.clears, 0, "Navigation hover must retain the one custom block");
+  f.emit("dragover", f.calendar, data);
+  assert.equal(f.state.preview.length, 1);
+  assert.equal(data.dropEffect, "move");
+  const latest = { ...f.tasks.get("task-a"), title: "Latest task title" };
+  f.tasks.set("task-a", latest);
+  f.emit("dragover", f.invalid, data);
+  assert.equal(data.dropEffect, "none");
+  assert.equal(f.state.freePreviews.at(-1).task, latest);
+  assert.equal(f.state.clears, 0);
+  f.emit("dragend");
+  assert.equal(f.state.clears, 1, "Final cleanup, rather than an invalid area, removes the visual");
+  assert.equal(f.timers.size, 0);
+  f.controller.destroy();
+});
+
+test("free-preview failures retire the drag at start or during movement without scheduling", () => {
+  for (const phase of ["start", "movement"]) {
+    const f = fixture({ freePreview: true });
+    if (phase === "start") f.state.errors.showFreePreview = true;
+    const { e, data } = f.begin();
+    if (phase === "movement") {
+      f.state.errors.showFreePreview = true;
+      assert.doesNotThrow(() => f.emit("dragover", f.invalid, data));
+    } else assert.equal(e.prevented, true);
+    f.emit("drop", f.calendar, data);
+    assert.equal(f.state.saved.length, 0);
+    assert.equal(f.timers.size, 0);
+    assert.equal(f.state.clears, 1);
+    f.controller.destroy();
+  }
+});
+
+test("a detached drag source retires the session without writing or keeping hover work", () => {
+  const f = fixture(), { data } = f.begin();
+  f.emit("dragenter", f.navigation, data);
+  const clears = f.state.clears;
+  f.source.isConnected = false;
+  f.emit("dragover", f.calendar, data);
+  f.emit("drop", f.calendar, data);
+  f.tick(500);
+  assert.equal(f.state.saved.length, 0);
+  assert.equal(f.state.opened.length, 0);
+  assert.equal(f.timers.size, 0);
+  assert.equal(f.state.clears, clears + 1);
   f.controller.destroy();
 });
 

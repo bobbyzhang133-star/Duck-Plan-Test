@@ -1,0 +1,537 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "touch-action-pills-layout-contrast-focus",
+      "width": 320,
+      "theme": "light",
+      "status": "PASS",
+      "style": {
+        "row": {
+          "x": 25,
+          "y": 422,
+          "width": 270,
+          "height": 44,
+          "top": 422,
+          "right": 295,
+          "bottom": 466,
+          "left": 25
+        },
+        "scrollWidth": 270,
+        "buttons": [
+          {
+            "action": "schedule-template",
+            "rect": {
+              "x": 25,
+              "y": 422,
+              "width": 80.875,
+              "height": 44,
+              "top": 422,
+              "right": 105.875,
+              "bottom": 466,
+              "left": 25
+            },
+            "radius": "999px",
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(41, 41, 41)",
+            "border": "rgb(41, 41, 41)"
+          },
+          {
+            "action": "add-template",
+            "rect": {
+              "x": 111.875,
+              "y": 422,
+              "width": 99.59375,
+              "height": 44,
+              "top": 422,
+              "right": 211.46875,
+              "bottom": 466,
+              "left": 111.875
+            },
+            "radius": "999px",
+            "color": "rgb(41, 41, 41)",
+            "background": "rgb(255, 255, 255)",
+            "border": "rgb(234, 229, 214)"
+          },
+          {
+            "action": "template-menu",
+            "rect": {
+              "x": 251,
+              "y": 422,
+              "width": 44,
+              "height": 44,
+              "top": 422,
+              "right": 295,
+              "bottom": 466,
+              "left": 251
+            },
+            "radius": "999px",
+            "color": "rgb(69, 68, 61)",
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "contrast": 14.5481984654954,
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "touch-action-pills-layout-contrast-focus",
+      "width": 320,
+      "theme": "dark",
+      "status": "PASS",
+      "style": {
+        "row": {
+          "x": 25,
+          "y": 422,
+          "width": 270,
+          "height": 44,
+          "top": 422,
+          "right": 295,
+          "bottom": 466,
+          "left": 25
+        },
+        "scrollWidth": 270,
+        "buttons": [
+          {
+            "action": "schedule-template",
+            "rect": {
+              "x": 25,
+              "y": 422,
+              "width": 80.875,
+              "height": 44,
+              "top": 422,
+              "right": 105.875,
+              "bottom": 466,
+              "left": 25
+            },
+            "radius": "999px",
+            "color": "rgb(43, 43, 36)",
+            "background": "rgb(247, 243, 232)",
+            "border": "rgb(247, 243, 232)"
+          },
+          {
+            "action": "add-template",
+            "rect": {
+              "x": 111.875,
+              "y": 422,
+              "width": 99.59375,
+              "height": 44,
+              "top": 422,
+              "right": 211.46875,
+              "bottom": 466,
+              "left": 111.875
+            },
+            "radius": "999px",
+            "color": "rgb(247, 243, 232)",
+            "background": "rgb(43, 43, 36)",
+            "border": "rgb(69, 67, 56)"
+          },
+          {
+            "action": "template-menu",
+            "rect": {
+              "x": 251,
+              "y": 422,
+              "width": 44,
+              "height": 44,
+              "top": 422,
+              "right": 295,
+              "bottom": 466,
+              "left": 251
+            },
+            "radius": "999px",
+            "color": "rgb(222, 219, 207)",
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "contrast": 12.851829851106718,
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "touch-Schedule-prefilled-editor-and-AddTasks-persistence",
+      "width": 320,
+      "status": "PASS",
+      "form": {
+        "title": "Preview QA template",
+        "date": "2026-11-14",
+        "time": "09:00",
+        "due": "",
+        "duration": "90",
+        "classId": "91153f21-29f2-44ec-882b-36e898c752b1",
+        "notes": "Keep template notes"
+      },
+      "copyCount": 2
+    },
+    {
+      "test": "touch-action-pills-layout-contrast-focus",
+      "width": 390,
+      "theme": "light",
+      "status": "PASS",
+      "style": {
+        "row": {
+          "x": 25,
+          "y": 422,
+          "width": 340,
+          "height": 44,
+          "top": 422,
+          "right": 365,
+          "bottom": 466,
+          "left": 25
+        },
+        "scrollWidth": 340,
+        "buttons": [
+          {
+            "action": "schedule-template",
+            "rect": {
+              "x": 25,
+              "y": 422,
+              "width": 80.875,
+              "height": 44,
+              "top": 422,
+              "right": 105.875,
+              "bottom": 466,
+              "left": 25
+            },
+            "radius": "999px",
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(41, 41, 41)",
+            "border": "rgb(41, 41, 41)"
+          },
+          {
+            "action": "add-template",
+            "rect": {
+              "x": 111.875,
+              "y": 422,
+              "width": 99.59375,
+              "height": 44,
+              "top": 422,
+              "right": 211.46875,
+              "bottom": 466,
+              "left": 111.875
+            },
+            "radius": "999px",
+            "color": "rgb(41, 41, 41)",
+            "background": "rgb(255, 255, 255)",
+            "border": "rgb(234, 229, 214)"
+          },
+          {
+            "action": "template-menu",
+            "rect": {
+              "x": 321,
+              "y": 422,
+              "width": 44,
+              "height": 44,
+              "top": 422,
+              "right": 365,
+              "bottom": 466,
+              "left": 321
+            },
+            "radius": "999px",
+            "color": "rgb(69, 68, 61)",
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "contrast": 14.5481984654954,
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "touch-action-pills-layout-contrast-focus",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS",
+      "style": {
+        "row": {
+          "x": 25,
+          "y": 422,
+          "width": 340,
+          "height": 44,
+          "top": 422,
+          "right": 365,
+          "bottom": 466,
+          "left": 25
+        },
+        "scrollWidth": 340,
+        "buttons": [
+          {
+            "action": "schedule-template",
+            "rect": {
+              "x": 25,
+              "y": 422,
+              "width": 80.875,
+              "height": 44,
+              "top": 422,
+              "right": 105.875,
+              "bottom": 466,
+              "left": 25
+            },
+            "radius": "999px",
+            "color": "rgb(43, 43, 36)",
+            "background": "rgb(247, 243, 232)",
+            "border": "rgb(247, 243, 232)"
+          },
+          {
+            "action": "add-template",
+            "rect": {
+              "x": 111.875,
+              "y": 422,
+              "width": 99.59375,
+              "height": 44,
+              "top": 422,
+              "right": 211.46875,
+              "bottom": 466,
+              "left": 111.875
+            },
+            "radius": "999px",
+            "color": "rgb(247, 243, 232)",
+            "background": "rgb(43, 43, 36)",
+            "border": "rgb(69, 67, 56)"
+          },
+          {
+            "action": "template-menu",
+            "rect": {
+              "x": 321,
+              "y": 422,
+              "width": 44,
+              "height": 44,
+              "top": 422,
+              "right": 365,
+              "bottom": 466,
+              "left": 321
+            },
+            "radius": "999px",
+            "color": "rgb(222, 219, 207)",
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "contrast": 12.851829851106718,
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "touch-Schedule-prefilled-editor-and-AddTasks-persistence",
+      "width": 390,
+      "status": "PASS",
+      "form": {
+        "title": "Preview QA template",
+        "date": "2026-11-14",
+        "time": "09:00",
+        "due": "",
+        "duration": "90",
+        "classId": "dcb91d49-2519-45ba-888f-3106c35b53c6",
+        "notes": "Keep template notes"
+      },
+      "copyCount": 2
+    },
+    {
+      "test": "touch-action-pills-layout-contrast-focus",
+      "width": 768,
+      "theme": "light",
+      "status": "PASS",
+      "style": {
+        "row": {
+          "x": 109,
+          "y": 294,
+          "width": 227,
+          "height": 44,
+          "top": 294,
+          "right": 336,
+          "bottom": 338,
+          "left": 109
+        },
+        "scrollWidth": 227,
+        "buttons": [
+          {
+            "action": "schedule-template",
+            "rect": {
+              "x": 109,
+              "y": 294,
+              "width": 76.828125,
+              "height": 44,
+              "top": 294,
+              "right": 185.828125,
+              "bottom": 338,
+              "left": 109
+            },
+            "radius": "999px",
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(41, 41, 41)",
+            "border": "rgb(41, 41, 41)"
+          },
+          {
+            "action": "add-template",
+            "rect": {
+              "x": 191.828125,
+              "y": 294,
+              "width": 94.234375,
+              "height": 44,
+              "top": 294,
+              "right": 286.0625,
+              "bottom": 338,
+              "left": 191.828125
+            },
+            "radius": "999px",
+            "color": "rgb(41, 41, 41)",
+            "background": "rgb(255, 255, 255)",
+            "border": "rgb(234, 229, 214)"
+          },
+          {
+            "action": "template-menu",
+            "rect": {
+              "x": 292.0625,
+              "y": 294,
+              "width": 44,
+              "height": 44,
+              "top": 294,
+              "right": 336.0625,
+              "bottom": 338,
+              "left": 292.0625
+            },
+            "radius": "999px",
+            "color": "rgb(69, 68, 61)",
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "contrast": 14.5481984654954,
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "touch-action-pills-layout-contrast-focus",
+      "width": 768,
+      "theme": "dark",
+      "status": "PASS",
+      "style": {
+        "row": {
+          "x": 109,
+          "y": 294,
+          "width": 227,
+          "height": 44,
+          "top": 294,
+          "right": 336,
+          "bottom": 338,
+          "left": 109
+        },
+        "scrollWidth": 227,
+        "buttons": [
+          {
+            "action": "schedule-template",
+            "rect": {
+              "x": 109,
+              "y": 294,
+              "width": 76.828125,
+              "height": 44,
+              "top": 294,
+              "right": 185.828125,
+              "bottom": 338,
+              "left": 109
+            },
+            "radius": "999px",
+            "color": "rgb(43, 43, 36)",
+            "background": "rgb(247, 243, 232)",
+            "border": "rgb(247, 243, 232)"
+          },
+          {
+            "action": "add-template",
+            "rect": {
+              "x": 191.828125,
+              "y": 294,
+              "width": 94.234375,
+              "height": 44,
+              "top": 294,
+              "right": 286.0625,
+              "bottom": 338,
+              "left": 191.828125
+            },
+            "radius": "999px",
+            "color": "rgb(247, 243, 232)",
+            "background": "rgb(43, 43, 36)",
+            "border": "rgb(69, 67, 56)"
+          },
+          {
+            "action": "template-menu",
+            "rect": {
+              "x": 292.0625,
+              "y": 294,
+              "width": 44,
+              "height": 44,
+              "top": 294,
+              "right": 336.0625,
+              "bottom": 338,
+              "left": 292.0625
+            },
+            "radius": "999px",
+            "color": "rgb(222, 219, 207)",
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "contrast": 12.851829851106718,
+      "focus": {
+        "visible": true,
+        "width": "3px",
+        "style": "solid"
+      }
+    },
+    {
+      "test": "touch-Schedule-prefilled-editor-and-AddTasks-persistence",
+      "width": 768,
+      "status": "PASS",
+      "form": {
+        "title": "Preview QA template",
+        "date": "2026-11-14",
+        "time": "09:00",
+        "due": "",
+        "duration": "90",
+        "classId": "7ab5ab53-c230-4762-a15f-38bbdf327845",
+        "notes": "Keep template notes"
+      },
+      "copyCount": 2
+    },
+    {
+      "test": "dark-exact-preview-color-no-halo",
+      "kind": "task",
+      "status": "PASS",
+      "preview": "color(srgb 0.182902 0.264471 0.217647)",
+      "calendar": "color(srgb 0.182902 0.264471 0.217647)"
+    },
+    {
+      "test": "dark-exact-preview-color-no-halo",
+      "kind": "template",
+      "status": "PASS",
+      "preview": "color(srgb 0.182902 0.264471 0.217647)",
+      "calendar": "color(srgb 0.182902 0.264471 0.217647)"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Emulated touch browser layouts and working local actions; not physical iOS/Safari/native parity.",
+  "navigationAbortedFaviconRequests": []
+}

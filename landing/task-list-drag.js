@@ -9,7 +9,7 @@
   const SOURCE = "button[data-drag-task]";
   const CALENDAR = '.nav-item[data-view="calendar"], [data-go="calendar"]';
 
-  function create({ window: win, document: doc = win.document, getTask, getOwner = () => "local", getPlacement, showPreview, clearPreview, schedule, openCalendar }) {
+  function create({ window: win, document: doc = win.document, getTask, getOwner = () => "local", getPlacement, showPreview, showFreePreview, clearPreview, schedule, openCalendar }) {
     let active = null, hover = null, suppressed = null, destroyed = false;
     const now = () => win.performance?.now?.() ?? Date.now();
     const sameTask = (task, id) => task && String(task.id) === id;
@@ -32,7 +32,7 @@
     function currentTask(current) {
       if (!current || active !== current) return null;
       try {
-        if (current.owner !== getOwner()) { retire(current); return null; }
+        if (current.owner !== getOwner() || current.source.isConnected === false) { retire(current); return null; }
         const task = getTask(current.id);
         if (!sameTask(task, current.id)) { retire(current); return null; }
         return task;
@@ -82,6 +82,7 @@
         event.dataTransfer.effectAllowed = "move";
         active = { id, owner, source };
         source.classList?.add("is-drag-source");
+        showFreePreview?.(task, event);
       } catch { event.preventDefault(); cancel(); }
     }
     function over(event) {
@@ -92,7 +93,12 @@
         trackCalendarHover(event, current);
         const placement = getPlacement(event, task);
         if (!currentTask(current)) return;
-        if (!placement) { setDropEffect(event, "none"); hidePreview(); return; }
+        if (!placement) {
+          setDropEffect(event, "none");
+          if (showFreePreview) showFreePreview(task, event);
+          else hidePreview();
+          return;
+        }
         showPreview?.(task, placement);
         if (active !== current) return;
         event.preventDefault(); setDropEffect(event, "move");
