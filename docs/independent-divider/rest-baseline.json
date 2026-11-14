@@ -1,0 +1,193 @@
+{
+  "out": [
+    {
+      "width": 835,
+      "theme": "light",
+      "rects": {
+        ".compact-topbar": {
+          "x": 98,
+          "y": 0,
+          "width": 715,
+          "height": 158.25,
+          "top": 0,
+          "right": 813,
+          "bottom": 158.25,
+          "left": 98
+        },
+        ".topbar-title": {
+          "x": 98,
+          "y": 22,
+          "width": 198.21875,
+          "height": 44,
+          "top": 22,
+          "right": 296.21875,
+          "bottom": 66,
+          "left": 98
+        },
+        ".topbar-actions": {
+          "x": 98,
+          "y": 90,
+          "width": 715,
+          "height": 45.25,
+          "top": 90,
+          "right": 813,
+          "bottom": 135.25,
+          "left": 98
+        },
+        "#view-home": {
+          "x": 98,
+          "y": 184.25,
+          "width": 715,
+          "height": 1490.203125,
+          "top": 184.25,
+          "right": 813,
+          "bottom": 1674.453125,
+          "left": 98
+        }
+      },
+      "headerBorder": "1px solid rgb(234, 229, 214)"
+    },
+    {
+      "width": 835,
+      "theme": "dark",
+      "rects": {
+        ".compact-topbar": {
+          "x": 98,
+          "y": 0,
+          "width": 715,
+          "height": 158.25,
+          "top": 0,
+          "right": 813,
+          "bottom": 158.25,
+          "left": 98
+        },
+        ".topbar-title": {
+          "x": 98,
+          "y": 22,
+          "width": 198.21875,
+          "height": 44,
+          "top": 22,
+          "right": 296.21875,
+          "bottom": 66,
+          "left": 98
+        },
+        ".topbar-actions": {
+          "x": 98,
+          "y": 90,
+          "width": 715,
+          "height": 45.25,
+          "top": 90,
+          "right": 813,
+          "bottom": 135.25,
+          "left": 98
+        },
+        "#view-home": {
+          "x": 98,
+          "y": 184.25,
+          "width": 715,
+          "height": 1490.203125,
+          "top": 184.25,
+          "right": 813,
+          "bottom": 1674.453125,
+          "left": 98
+        }
+      },
+      "headerBorder": "1px solid rgb(69, 67, 56)"
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "rects": {
+        ".compact-topbar": {
+          "x": 104,
+          "y": 0,
+          "width": 1148,
+          "height": 96,
+          "top": 0,
+          "right": 1252,
+          "bottom": 96,
+          "left": 104
+        },
+        ".topbar-title": {
+          "x": 104,
+          "y": 25.5,
+          "width": 197.21875,
+          "height": 44,
+          "top": 25.5,
+          "right": 301.21875,
+          "bottom": 69.5,
+          "left": 104
+        },
+        ".topbar-actions": {
+          "x": 820.71875,
+          "y": 24.875,
+          "width": 431.28125,
+          "height": 45.25,
+          "top": 24.875,
+          "right": 1252,
+          "bottom": 70.125,
+          "left": 820.71875
+        },
+        "#view-home": {
+          "x": 104,
+          "y": 122,
+          "width": 1148,
+          "height": 1333.65625,
+          "top": 122,
+          "right": 1252,
+          "bottom": 1455.65625,
+          "left": 104
+        }
+      },
+      "headerBorder": "1px solid rgb(234, 229, 214)"
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "rects": {
+        ".compact-topbar": {
+          "x": 104,
+          "y": 0,
+          "width": 1148,
+          "height": 96,
+          "top": 0,
+          "right": 1252,
+          "bottom": 96,
+          "left": 104
+        },
+        ".topbar-title": {
+          "x": 104,
+          "y": 25.5,
+          "width": 197.21875,
+          "height": 44,
+          "top": 25.5,
+          "right": 301.21875,
+          "bottom": 69.5,
+          "left": 104
+        },
+        ".topbar-actions": {
+          "x": 820.71875,
+          "y": 24.875,
+          "width": 431.28125,
+          "height": 45.25,
+          "top": 24.875,
+          "right": 1252,
+          "bottom": 70.125,
+          "left": 820.71875
+        },
+        "#view-home": {
+          "x": 104,
+          "y": 122,
+          "width": 1148,
+          "height": 1333.65625,
+          "top": 122,
+          "right": 1252,
+          "bottom": 1455.65625,
+          "left": 104
+        }
+      },
+      "headerBorder": "1px solid rgb(69, 67, 56)"
+    }
+  ],
+  "allSyntheticContextsClosed": true
+}

@@ -1,5 +1,7 @@
 # Move complete page layouts
 
+This records the `46fa189` complete-layout grouping. The user's subsequent [independent-divider clarification](../independent-divider/README.md) restores the individual pieces and animates only the marked line as an additional piece.
+
 Local correction of the stationary divider reported on Dashboard, starting from `4820707` on `codex/moving-layout-20261113`.
 
 The marked line is the bottom border of `.compact-topbar`, defined in `landing/planner-ui.css`. The previous transition animated `.topbar-title` and `.topbar-actions` independently while leaving their parent and its border still. Calendar similarly animated selected inner pieces while leaving the surrounding frame still.

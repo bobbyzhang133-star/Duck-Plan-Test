@@ -8,11 +8,13 @@
     return previous < 0 || next < 0 ? 0 : Math.sign(next - previous);
   }
   function defaultLayers(workspace, route) {
-    // Move the complete layout surfaces, including their borders and dividers.
-    // Sibling surfaces share one phase; never animate their children again.
+    // Preserve the staggered pieces. The decorative line is a separate sibling,
+    // not the header border, so it can spring without moving the whole header.
     const selectors = route === "calendar" ? [
-      ["content", ".planner-workspace"],
-    ] : [["content", ".compact-topbar"], ["content", `#view-${route}`]];
+      ["title", ".calendar-title-copy"],
+      ["controls", "#calendar-today"], ["controls", ".calendar-stepper"], ["controls", ".calendar-toolbar-actions"],
+      ["content", "#daily-task-panel"], ["content", "#planner-calendar"],
+    ] : [["title", ".topbar-title"], ["controls", ".topbar-actions"], ["content", ".topbar-divider"], ["content", `#view-${route}`]];
     return selectors.map(([role, selector]) => ({ role, element: workspace.querySelector?.(selector) }));
   }
   function create({ window: win, workspace, order, getOwner = () => "local", getLayers = route => defaultLayers(workspace, route) }) {

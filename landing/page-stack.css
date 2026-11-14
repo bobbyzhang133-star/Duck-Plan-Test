@@ -28,6 +28,16 @@ body.motion-preview .unified-workspace { max-width: none; margin-inline: 0; }
 .motion-preview .unified-workspace > :is(.view:not(#view-calendar),.compact-topbar) {
   max-width: calc(1600px - 2 * var(--space-page)); margin-inline: auto;
 }
+/* Keep the original 1px border space, but paint the line on its own motion
+   target. Reset formerly ignored offsets when making this static header relative. */
+body.motion-preview .compact-topbar,
+body.motion-preview[data-view="home"] .compact-topbar {
+  position: relative; inset: auto; z-index: auto; border-bottom-color: transparent;
+}
+.motion-preview .topbar-divider {
+  position: absolute; inset: auto 0 -1px; height: 1px;
+  background: var(--line); pointer-events: none;
+}
 /* Capture only the outgoing page. The incoming page animates as live DOM so
    its moving controls retain native hit-testing throughout the entrance. */
 :root[data-page-transition] { view-transition-name: none; }
