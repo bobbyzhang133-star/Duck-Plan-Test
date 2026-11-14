@@ -14,7 +14,7 @@ Cleanup covers cancellation, owner/context changes and sources detached by ordin
 
 Read the earlier interactive Calendar/task-list demo in [Repository Overview](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c) in Chrome, including its actual Schedule interaction. No new message was sent. Its compact dark rounded Schedule button and outlined Add to tasks button are now reflected in the local template controls, with a quiet overflow action and at least 44px height on coarse pointers. Light/dark contrast and keyboard focus remain.
 
-The demo also offers an inline time picker with Confirm. An optional clarification about that additional behavior is unanswered; this implementation preserves the existing prefilled Schedule editor and Add to tasks behavior. Only the button styling common to both choices was changed. The earlier tab/layout decisions and newer mascot remain intact.
+The user confirmed on November 14, 2026: change button styling only. Preserve the existing prefilled Schedule editor and Add to tasks behavior; do not add the demo’s inline time picker. The earlier tab/layout decisions and newer mascot remain intact.
 
 ## Verification
 
