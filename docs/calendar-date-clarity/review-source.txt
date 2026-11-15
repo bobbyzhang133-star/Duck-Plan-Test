@@ -1,0 +1,524 @@
+I agree with your concern. I think the underlying issue is that DuckPlan hasn't fully separated two different concepts: when an assignment must be finished and when the student intends to work on it.
+
+I reviewed the latest documented product baseline, 7c76aa6, through the current TEST planning branch. I also checked Google Calendar's current task and deadline behavior.
+
+My recommendation is to improve three things together: task grouping, deadline visualization, and the Calendar's overall readability and interaction design.
+
+1. Fix the duplicate-task problem
+What the current code does
+
+In landing/planner-model.js:78–88, groupForDate() independently builds the following groups:
+
+Overdue: All unfinished assignments whose due date is before today.
+
+Scheduled: All unfinished assignments whose planned work date is the selected date.
+
+Due, not scheduled: Assignments due on the selected date that have no planned work time.
+
+Because these categories are not mutually exclusive, an overdue assignment scheduled for today can appear in both Overdue and Scheduled.
+
+This is a UI duplication, not necessarily two saved task records.
+
+There is also a second issue: if an assignment is due today but scheduled for tomorrow, it can disappear from today's task sections because it has a scheduled time, but not one on today's date.
+
+Both are problems worth fixing.
+
+My proposed solution: one task card, multiple statuses
+
+Instead of letting task categories determine whether a task is overdue, treat overdue as a status attached to the task.
+
+For example:
+
+Scheduled
+
+1 task
+
+Finish calculus assignment
+
+Calculus · High priority
+
+Overdue
+
+Due Nov 13
+
+Work planned: Nov 15 · 3:00–4:00 PM
+
+Proposed task card. The assignment is displayed once, while preserving both dates and its overdue status.
+
+The key is that users should never have to interpret two identical checkboxes as representing one assignment.
+
+How the groups should behave
+
+Situation
+
+
+
+Task list behavior
+
+
+
+
+Due yesterday, work planned today
+
+
+
+One card under Scheduled, marked Overdue
+
+
+
+
+Due yesterday, work planned tomorrow
+
+
+
+Shown as overdue and flagged as planned after its deadline
+
+
+
+
+Due today, work planned tomorrow
+
+
+
+Shown under Due today with a scheduling warning
+
+
+
+
+Due tomorrow, work planned today
+
+
+
+One card under Scheduled, with tomorrow's deadline visible
+
+
+
+
+No work date, no due date
+
+
+
+Unscheduled
+
+
+
+
+Completed task
+
+
+
+Completed, not simultaneously Overdue
+
+For the selected day's task panel, I recommend assigning every task to one primary section. Due-date and overdue information then appears as secondary status information on that card.
+
+A global overdue summary can still be visible, but should not duplicate cards already shown in the day's Scheduled section.
+
+One important distinction: It is completely reasonable for the same assignment to appear on two different dates in the calendar—once as a work session and once as a deadline. That is different from showing two identical task entries in the same task list.
+
+2. Make the difference between Due Date and Work Date much clearer
+
+I agree with having both dates visible in the Calendar. In fact, the current Week/Day implementation already has the foundation:
+
+deadlineChips() renders deadlines in a top Due row.
+
+renderTimeline() renders scheduled work as time-based blocks.
+
+renderMonth() includes tasks on their due dates and planned work dates.
+
+The current problem is that those representations aren't clearly distinguished enough, particularly in Month view.
+
+Interestingly, Google Calendar now supports essentially this separation: tasks have a planned start date/time and a distinct deadline, and the deadline is displayed in the all-day area above the timed calendar.
+Google Calendar Help
+
+My proposed calendar appearance
+
+Assignment: Finish calculus assignment
+
+FRI, NOV 13
+
+DEADLINE
+
+Calculus due
+
+11:59 PM
+
+SUN, NOV 15
+
+WORK SESSION
+
+Finish calculus
+
+3:00–4:00 PM
+
+Work is scheduled after the deadline. DuckPlan should warn the user and offer to reschedule, without changing either date automatically.
+
+My recommended visual language
+
+Element
+
+
+
+Visual appearance
+
+
+
+Behavior
+
+
+
+
+Work session
+
+
+
+Filled block in the class color
+
+
+
+Draggable/reschedulable
+
+
+
+
+Deadline
+
+
+
+Smaller, light-background marker with a flag icon and distinct outline
+
+
+
+Opens task details; changing it requires editing the deadline
+
+
+
+
+Overdue deadline
+
+
+
+Red/orange warning accent plus overdue text
+
+
+
+Remains visible until completion or deadline correction
+
+
+
+
+Completed deadline
+
+
+
+Muted/checked appearance if completed tasks are shown
+
+
+
+Does not look urgent
+
+
+
+
+Suggested work
+
+
+
+Dashed or outlined block with Suggested label
+
+
+
+Not saved until confirmed
+
+I would not use two full-size calendar event blocks for both work time and due time. A deadline generally does not occupy an hour of someone's availability, so drawing it like a scheduled activity would incorrectly imply that it blocks time.
+
+Instead, use the deadline strip above the time grid, as Google Calendar does.
+
+Important functionality: detect work planned after a deadline
+
+DuckPlan should calculate whether the planned work ends after the assignment is due.
+
+If it does, show a warning such as:
+
+Work planned after deadline. Move the session earlier?
+
+This needs to compare the end of the work session against the deadline, including due times—not just compare dates.
+
+The warning should never automatically alter the deadline. A one-click Reschedule work action would be useful.
+
+3. Improve the calendar UI using Google Calendar as inspiration
+support.google.com
+Example of Google Calendar's weekly grid: an all-day area above time-based event blocks, with clear vertical time positions.
+
+Google Calendar's biggest strength is that it gives users a clear understanding of what happens when, without forcing them to read a complicated task-management interface.
+
+DuckPlan should retain its student-focused features, but borrow some of that calendar clarity.
+
+Here are the six improvements I would prioritize.
+
+A. Make scheduled blocks easier to read
+
+In the current styles.css, scheduled event titles use approximately 10px text, secondary information about 9px, and time-axis labels about 9px.
+
+That is too small for comfortable reading, especially on iPad.
+
+I recommend:
+
+Increase ordinary event titles toward 12–13px, depending on available column width.
+
+Make the time labels more legible.
+
+Preserve the class-colored background but use clearer contrast.
+
+Display the most important information first: title, then work time.
+
+Use a compact details popover for additional information instead of squeezing it all into a small block.
+
+For very narrow events, truncation is acceptable if the complete title is immediately accessible through tap or keyboard.
+
+B. Improve the deadline row
+
+Currently deadlineChips() uses .slice(0, 3), meaning only three deadline chips appear for a date, with no built-in overflow indicator from that function.
+
+I would change it to something like:
+
+DEADLINES · FRI 13
+
+Calculus assignment · 11:59 PM
+
+English essay · 5:00 PM
+
++2 more deadlines
+
+This preserves a compact all-day section while preventing hidden deadlines from being silently overlooked.
+
+C. Improve Month view
+
+This might be the biggest visual improvement after fixing duplicates.
+
+Currently, renderMonth() uses class-colored dots for dates that contain either a due date or a scheduled work session. It does not clearly tell the user which type of activity is represented.
+
+I recommend using two different indicators:
+
+Deadline
+
+Planned work
+
+On desktop Month view, show short labeled items where space permits. On phone, use compact distinct markers with a selected-day agenda below.
+
+Keep counts for deadlines and work sessions separate, so two calendar representations of the same task don't imply two assignments were created.
+
+D. Add better task previews
+
+Clicking a scheduled block should first provide a compact task detail view rather than always forcing users into the full editor.
+
+The preview would show:
+
+Finish calculus assignment
+
+Calculus · High priority
+
+Work: Sunday, 3:00–4:00 PM
+
+Due: Friday, 11:59 PM
+
+Past deadline
+Not completed
+
+Below that, provide Edit, Reschedule and Mark complete actions.
+
+This would make calendar interactions feel faster and less disruptive, especially for students who simply want to check an assignment's deadline.
+
+This is a proposed interaction change, so I'd test it against the current direct-editor behavior before replacing it.
+
+E. Make the Calendar easier to scan
+
+I would refine the existing grid with more deliberate hierarchy:
+
+Keep day/date headers visible while scrolling through hours.
+
+Make primary hour lines slightly stronger than half-hour markers.
+
+Keep the current-time indicator clearly visible without making it overly thick.
+
+Reduce excessive selection shading behind a full day's column.
+
+Give the calendar grid more visual emphasis than the toolbar decorations.
+
+Provide a compact legend or optional filters for Work, Deadlines and Completed.
+
+Google Calendar provides Day, Week, Month and Schedule views. DuckPlan already has Day, Week and Month; I think an Agenda view would be a useful later addition, especially for phones.
+Google Calendar Help
+
+F. Keep the phone experience distinct
+
+I would preserve DuckPlan's current full-width phone Calendar and collapsed Tasks sheet.
+
+For phones, the ideal interaction would be:
+
+Select a day using the seven-day strip.
+
+See a compact deadline summary above the time schedule.
+
+Scroll through that day's scheduled work.
+
+Tap a block for quick details, or open Tasks to manage assignments.
+
+I would not try to display a full desktop seven-column timetable on phones.
+
+4. How this should work with Recommend Schedule
+
+These changes also improve the rule-based scheduling feature you approved earlier.
+
+For example, if a task is due Friday at 5 PM, the scheduling engine should treat that deadline as a constraint, not as a block of occupied time.
+
+Its recommendation might be:
+
+Thursday 4–5 PM: Complete assignment.
+
+Friday 5 PM: Deadline marker.
+
+The work session would occupy time. The deadline would remain a fixed milestone.
+
+If there is no available time before the deadline, the system should explain the conflict and offer recovery options rather than silently scheduling it late.
+
+This same distinction should guide manual drag-and-drop. Dragging a work block changes scheduledStart; it does not change dueDate or dueTime.
+
+5. Recommended implementation priority
+
+Priority
+
+
+
+Change
+
+
+
+Reason
+
+
+
+
+P0
+
+
+
+One task card per selected-day task list
+
+
+
+Eliminate confusing duplicated checkboxes and counts
+
+
+
+
+P0
+
+
+
+Detect deadline/work-date conflicts
+
+
+
+Prevent users from overlooking work scheduled after the due time
+
+
+
+
+P1
+
+
+
+Make due and work metadata visible on task cards
+
+
+
+Clarify the relationship without opening the editor
+
+
+
+
+P1
+
+
+
+Redesign deadline markers and overflow
+
+
+
+Make due dates recognizable and avoid hidden deadlines
+
+
+
+
+P1
+
+
+
+Differentiate Month-view work and due indicators
+
+
+
+Improve understanding of the entire month's workload
+
+
+
+
+P2
+
+
+
+Improve event typography, time-axis readability and grid hierarchy
+
+
+
+Bring the Calendar closer to Google Calendar's clarity
+
+
+
+
+P2
+
+
+
+Introduce compact task detail previews
+
+
+
+Reduce unnecessary full-editor navigation
+
+
+
+
+Later
+
+
+
+Agenda view and additional display filters
+
+
+
+Helpful but not essential to fixing the current problem
+
+The first implementation should be primarily in planner-model.js, app.js and the calendar CSS. The existing task data model already supports dueDate, dueTime, scheduledStart and durationMinutes, so these specific UI improvements should not require a new task database schema.
+
+Validation I would require
+
+Test an overdue task scheduled today, overdue work scheduled in the future, a task due today but planned later, work that ends after a precise due time, and tasks whose due date equals their work date. Ensure each task appears only once per selected-day task list, while the Calendar may intentionally show both a deadline and a work block.
+
+Also test four or more deadlines on one day, month/week/day navigation, phone and iPad widths, dark mode, keyboard access, and that dragging work never changes deadlines or manually configured alarms.
+
+My overall recommendation
+
+I would make due dates and planned work dates two visually distinct layers of the same assignment.
+
+That gives DuckPlan a clearer identity than simply imitating Google Calendar:
+
+Google Calendar is fundamentally about when events happen.
+
+DuckPlan should explain what students need to finish, when they intend to work on it, and whether that plan actually meets the deadline.
+
+That last relationship is where I think DuckPlan can become substantially more useful than an ordinary calendar.
+
+Review status: I inspected the source at the latest documented product baseline and researched Google Calendar's current behavior. I did not run the DuckPlan app or change the repository, database or native application.
+
+You said:

@@ -1,0 +1,194 @@
+{
+  "recordedAt": "2026-11-15T07:44:20.974231+00:00",
+  "status": "SAFE CHECKPOINT \u2014 stopped at explicit user request",
+  "checkout": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-motion-preview",
+  "baseCommit": "567d6c2cd59c177460849607bea7ee46d19c5578",
+  "branch": "codex/calendar-date-clarity-20261114",
+  "sourceSha256": {
+    "landing/app-install.js": "40be35c99fedd8d783f18e1f3ffdbb1c87e82e7098ad3113e50526e01ffe9e32",
+    "landing/app.js": "5c4bf4d97639f876dacb57322189244daeac4b7cda14f216a6ba1abb934edd06",
+    "landing/browser-notifications.js": "995aa576b7dbe61c607d0fa004ac655eaffae086049a5f4a9e07714b71535ef0",
+    "landing/button-interactions.js": "9acab5e3ca9330e41cb1673e634ab44df1d602f6848d362c9420b1ece2a3965a",
+    "landing/calendar-date-clarity.css": "18d40cd05989d72084082482994fd2d382c6fdeac8433a2719d974dcfa2e4143",
+    "landing/calendar-date-presentation.js": "f875c2e1fd713bbb3fec9fd32307eb3b132edb8f302b541a1358310fd7735449",
+    "landing/calendar-library-tabs.css": "a595412e50c97c001e6b2a5170bdf48ae1713fff9fa8688e8a9f3dc8dc88ffa8",
+    "landing/calendar-library-tabs.js": "29981d18c02092cb7fd0f9047ce7a741b6600725c465008b7b914f624da80f16",
+    "landing/calendar-task-preview.css": "ede7c54abf6d1bec60e2b62ac322381ec0616cb69f89f37ee3f65eb171ed6b04",
+    "landing/calendar-task-preview.js": "2e0f282ed765031e0d74f2fae3042e0ff7b62c420eb2bb2bbee60c0c0eaf2f67",
+    "landing/cloud-config.js": "0979e867feaf260d0ff656d069ee6851885d26f614ca71220760988eb5bc3543",
+    "landing/duck-interactions.js": "a19a3db005918d29e9b6eb6508a3868c819212c44094052890947c90e27fa1a6",
+    "landing/duck-mascot.js": "5f7973011c0f8d154bad122c5494dc4eca3e425f436d7ccc37206fb57a2248ee",
+    "landing/duck-theme.css": "d77e9d2e1090a70330fcf3841713854a7019eafbbaa9fee1c9ad236cdabdcd2b",
+    "landing/formation-surface.js": "71f1f4cf6e1d1ebe5c4e7285e5546b645ac09b4f13d1565b5de89ee828dfad66",
+    "landing/fur-dispersal.js": "34c68a8b4c83ecbdfcbfbb3d2cd8f8096c167ddcfb436a39cb9a35c9023cff88",
+    "landing/fur-lab.html": "c8fd344877f0509b7b30e978ec7ba1e2c21a405294525ea25724ea316f6a71c8",
+    "landing/fur-lab.js": "b8e6a60ede443b9f09056fedc4a16c4f10735ba696ad8cface5c6afd6b934744",
+    "landing/fur-material.js": "d6309d8a94e0f325d2b4daddd2b215745b4b6bbae5dbdd21fb56ea0e502a276e",
+    "landing/fur-physics-lab.html": "9206150452e15d7751877a82ec1deb928c0cf13c3e25d6ab6018f04d2ffab0bb",
+    "landing/fur-physics-lab.js": "4fa97f3a4b1a8ae8f81f0d587e40c9a0a2134c934120355ab42a9574cedda7ad",
+    "landing/fur-pile.js": "dc06eb3fda3efb2b6d78dc207ccd53245c84c9c24bebac522b1dfa7258ca41c1",
+    "landing/fur-recording.js": "1a0ff35301a8d26c8d5c432dc5d530defac310028e0cfe03b089d4a6beb37a56",
+    "landing/fur-response.js": "8851c3da3b37c89c17cff7cb0abc61009f0dad2aee7dd213eef01ff02f0d35ca",
+    "landing/fur-ribbon.js": "12d17420828540cddb2aee4778a6e2ab2cda5caab37b845c93f147718fb422f6",
+    "landing/fur-sheet.js": "5f053727fe7b098c37607a553a3a6617b50c6a1ac66576394e0236fe747e007c",
+    "landing/ical-parser.js": "041a2f2abf6a148da3fd888eafd1a7bf93cbaeff85a1ec4b890b4fdb7da76483",
+    "landing/index.html": "51fe851b6e89de2c9142d172d0673c30e93689f79e5b4354eae7255aba4b9f24",
+    "landing/material-transitions.js": "d2f2ec05570a329156ccd47b47477a2cf9da942eac9c372a99647d93e37b8358",
+    "landing/motion-tokens.js": "6bdf0a8df4b6e7cd266cd6d7544dc280f167cb2f324f6ff2d6719bd6948c2772",
+    "landing/native-task-alarms.js": "7e512e010696c7833ddbef296ab22dcba03a47cac35caa17e613bbca8422bf82",
+    "landing/native-task-notifications.js": "8f657cda684c7aab1d7751d9e1edc32605251470824c999e1a6e31c3c56c8d73",
+    "landing/page-navigation-feedback.js": "a15eb73e59eb14ed045c12f42bdfde0af149c8d25a5a5d7b3bb937a24a6e337b",
+    "landing/page-stack.css": "624e19a3c7f32939f59cfdb98e9c3e551577ac2c7943ad4bbbb93db7a1ec80f1",
+    "landing/personal-goals.css": "6058e538c63ae428761342ab8b8c83d6157ea439fc40710a5e387c1b82e0eda0",
+    "landing/personal-goals.js": "114b07f77834c3ab0f32e6083811f9fda4bf82bbed142666caa5f7f04962935e",
+    "landing/personal-notes.css": "fa08c24fe046f415ef725196480f93f90a9f0b1c64be1a1b9b46256dd64233f1",
+    "landing/personal-notes.js": "fdb22c35e7706e12d96b0b8ced1ec63d0dfe60867ce626a4a9470b12912b313d",
+    "landing/phone-navigation.css": "2150dbdf722fdb19525d1ce91774e901c2917b9c8df58f521449f9451cc516d0",
+    "landing/phone-navigation.js": "16a0e234d2537b70e626fce9d3aa8a5925dcba1ffd76d75a1582124d9aa1f71c",
+    "landing/planner-clarity.css": "d6dd83a7a34a49407a47b602aed396ac7b355e0f013df8df7a0603b06ae9d5bc",
+    "landing/planner-clarity.js": "91128b816036a0eb183c80cf3ba1fede431971f503b3ebe13849d4e5492571cc",
+    "landing/planner-library.css": "21d88fd3f4f99d9cd27c9ffc2c42aabe147bb14e3676c02b1eb6ce4037fd3cfa",
+    "landing/planner-library.js": "453767437e43af8a59dbc8b9eaf3675eff032d7d2c8fdf8e6683d2135adf8d62",
+    "landing/planner-model.js": "faecc982b7a8676c47ecee91c7c678a2d5407690d96a9df57e1f08d2ae41f314",
+    "landing/planner-motion.css": "523166c2cb493fbba51ff88349d1a9cd33b76b7887f7de54d1677969b6516dec",
+    "landing/planner-presentation.js": "b357fed36a78e000273760a255c3245f6d8c25bb30c9aba19c3f70cd69b527e5",
+    "landing/planner-store.js": "468abe572269c2ac1f9f8cc1608b32d4e18a6d3de7389bcb4f32bfbbbd7b03a6",
+    "landing/planner-ui.css": "071bc30b3f10706ba03f6c9965e561c71643c12b6c08f9c5e22cf679ef2eef8a",
+    "landing/planner-ui.js": "a92a4017d9e7f55bdbcf86bf7bf8f763544d6e0ea67a20d160bb2cc9846eb34c",
+    "landing/popup-motion.js": "3b87e434eed14d1b310eb9e5611b8155dfc86dfbc7befddbdfb6acbe65d5a625",
+    "landing/product-feedback.css": "b93ab0f52349d4661f482c277950b59567f35917b49be871653af75799e83edd",
+    "landing/reminder-domain.js": "3bf88f0e0be683cd98fd6bf8be11bde862ae7f522e8cc3f4500e8738193a4ae8",
+    "landing/reminder-ledger.js": "ab8dc7af80af1928c2a8aa86e5a99c7425ec4701222f2e92781e6f46296202a3",
+    "landing/service-worker.js": "cf3f19a20aa6bfa0677cc0be7047ae48f92d238d6bd57907aea76c94e4865ce9",
+    "landing/sheet-lab.js": "3b10d04a0ffe6fbd0f76b3197f4ec653288960e92fefe1ef3b97871a652a6e08",
+    "landing/styles.css": "a9619eefff72dd613d5a5995293e98fd6e14f923bf38020a06f46d08e36af5cd",
+    "landing/task-alarms.js": "e0be40e93016d8a4d026f05e0ea2133838e9d5f6e94b67031124b7737f67bc1e",
+    "landing/task-list-drag.js": "92880204ec3bee0757d9d4ec2ee4fe95e6ec1af1b026fe9f0957c6eaccfdd3f2",
+    "landing/task-matrix.css": "a47c72f74e89c7fcfd136d096e043dbd564b8c7c66bae19edbdf49a29de0b0bb",
+    "landing/task-matrix.js": "ed94286bcbc8c5ad1e2a6f64e04e311a3205972abeddbc808e469bf0653bda7b",
+    "landing/view-transitions.js": "c3769ef831ef0ddf07bc9ca45b342c9023d694c9ee320564a030a4f5f5140f70",
+    "landing/wave-lab.js": "607f2e4aec6c702bcda3d829c426b72b3513121a2a8fa42d6c5464f4a230ccf0",
+    "landing/work-alert-controller.js": "3ce4f6344dee19d92e46a7586291da45236228421970b58f625f8c19742e139a",
+    "landing/work-alerts.css": "2433f08607ffe23d664c4f8c0af4bd1225e1cdd2a4030d59db206ed94cc32e08",
+    "landing/work-alerts.js": "d6d0daa437e6efd5b9dd55e24fde24cefbd9ca04bbb47a6a9202b8ebe14e8bf2"
+  },
+  "sourceFingerprint": "e1414605bfe2be4dd4070ada95fc42d91e4351c6d47004f828d4f4b783e753d6",
+  "sourceUnchangedSinceFinalAcceptanceStart": true,
+  "runtime": {
+    "engine": "Chromium",
+    "version": "157.0.8103.78",
+    "locale": "en-US",
+    "timeZone": "America/Los_Angeles",
+    "controlledWallClock": "2026-11-20T12:00:00-08:00",
+    "cacheVersion": "duckplan-app-motion-preview-v56"
+  },
+  "backend": {
+    "origin": "http://127.0.0.1:8796",
+    "type": "real isolated local Worker/D1",
+    "schema": "0001\u20130006",
+    "wrangler": "4.157.0",
+    "config": "/private/tmp/duckplan-work-alerts-qa-20261114/wrangler.json",
+    "state": "/private/tmp/duckplan-work-alerts-qa-20261114/state",
+    "productionBindings": false,
+    "backendAndSchemaChangedForThisFeature": false
+  },
+  "results": {
+    "runtime-setup.json": {
+      "status": "PASS",
+      "scope": "isolated transport/fixture preflight only, not UI acceptance"
+    },
+    "runtime.json": {
+      "status": "PASS",
+      "affectedClientCases": 8,
+      "localClients": 4,
+      "signedInClients": 4,
+      "viewports": [
+        [
+          1280,
+          1000
+        ],
+        [
+          835,
+          1112
+        ],
+        [
+          768,
+          1024
+        ],
+        [
+          390,
+          844
+        ],
+        [
+          320,
+          740
+        ]
+      ],
+      "touch": "emulated phone/tablet input",
+      "themes": "light and dark",
+      "reducedMotion": "reduce and no-preference",
+      "browserErrors": 0
+    }
+  },
+  "assertionsExercised": [
+    "Mutually exclusive primary memberships for overdue/scheduled/due-selected/backlog/completed, including future work; 15 primary rows unique, selected progress1/12 and remaining14.",
+    "Both dates labeled, future and overnight end dates visible; same-day/overnight work-end-after-deadline warnings and task-row Reschedule action.",
+    "Date-only end-of-day deadline,8 active deadlines with3 compact markers and+5 more, expansion/collapse, correct preview/Edit target and Escape focus restoration.",
+    "Compact Calendar preview first; Edit and Reschedule preserve fields; Complete remains open with Completed/Mark incomplete; checkbox remains independent.",
+    "24-hour grid1488px,00:00\u201323:00 slots, sticky headers contiguous and aligned, current-time and event coordinates unchanged.",
+    "Week7 desktop/tablet columns and phone7-day selector/one schedule; Month work/deadline occurrences distinct, counts unique, completed occurrences retained/muted/accessible, unfinished first and phone full selected-day agenda.",
+    "Trusted desktop task drag one fitted preview, original ID/count/deadline/manual alert JSON retained, actual Undo complete before cancellation test, Escape cleanup; touch editor work-time alternative survives reload.",
+    "Quoted title preserved in text and daily/all-task accessible labels without inserted HTML or extra attributes.",
+    "Real session invalidation closes preview and removes previous-owner records in all4 signed-in clients."
+  ],
+  "visualReview": {
+    "status": "FOLLOW-UP OPEN",
+    "evidence": "month-local-320.png",
+    "finding": "Busy-day flag/clock count markers appear slightly crowded/bleed into an adjacent Month date cell at320px. Automated page-overflow checks pass; this narrower intra-cell issue needs follow-up. No fix or further test started after user stop."
+  },
+  "notRun": [
+    {
+      "case": "SWv56 offline/reload smoke for4 new assets",
+      "status": "NOT RUN",
+      "reason": "Prepared conceptually but not started before user requested stop. Source manifest is not runtime cache acceptance."
+    },
+    {
+      "case": "Precise phone Due gutter text bounds and Reschedule keyboard focus smoke",
+      "status": "NOT RUN",
+      "reason": "Not started before user stop. Main phone matrix with compactDue label passed overall page overflow/sticky geometry/focus-return checks."
+    },
+    {
+      "case": "Installed PWA, native WKWebView/iPhone/iPad and physical Safari/OS delivery",
+      "status": "NOT RUN",
+      "reason": "Frontend-only affected browser change; no native sync/release or physical capability claim."
+    },
+    {
+      "case": "Full unrelated feature/platform baseline",
+      "status": "NOT RUN",
+      "reason": "No storage/API/native bridge changes or release; affected calendar actions selected proportionately."
+    },
+    {
+      "case": "Public deployment/GitHub push/native bundle update",
+      "status": "NOT RUN BY QA AGENT",
+      "reason": "Root owns checkpoint actions; QA scope is local only."
+    }
+  ],
+  "dataSafety": {
+    "allFixturesSynthetic": true,
+    "productionWrites": false,
+    "userPlannerDataTouched": false,
+    "allSyntheticContextsClosed": true,
+    "ownedWorker8796Stopped": true,
+    "existingPreview8034Untouched": true,
+    "nativeAndOtherCheckoutsUntouched": true
+  },
+  "harnessSha256": {
+    "docs/calendar-date-clarity/runtime-setup.js": "9a6a0f5e22c74a815f670e0943898faabeb57ee126ba1d4319eefac724c3d4e6",
+    "docs/calendar-date-clarity/runtime.js": "9e3da19dee53430c5f92690ef870db0438007ec4a1ab5eaeb9dd2213e8a5c378"
+  },
+  "setupNotes": [
+    "A preliminary cloud fixture used global IDs already owned by a prior synthetic account and correctly got409; final fixture uses a unique UUID namespace for each client.",
+    "A preliminary cancellation gesture started before cloud Undo was durable. Final harness waits for Undo completion and actual refresh before the next gesture.",
+    "No product edits were made by the QA agent."
+  ]
+}

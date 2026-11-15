@@ -1,6 +1,6 @@
 # Recommend schedule first version plan
 
-Status: first implementation proposal refined after the completed Chat Check. Product source remains at `7c76aa616b831bda00401ce3e46160d8b2c260d7`. This planning branch changes documentation only. Review completed in the existing [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c); [returned review](ai-schedule-chat-response-2026-11-14.txt).
+Status: first implementation proposal refined after the completed Chat Check. The original product baseline was `7c76aa616b831bda00401ce3e46160d8b2c260d7`. Later Calendar date/preview improvements are documented in [calendar-date-clarity](../calendar-date-clarity/README.md); Recommend Schedule itself remains planned. The original Chat Check and release-scope decision changed documentation only. Review completed in the existing [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c); [returned review](ai-schedule-chat-response-2026-11-14.txt).
 
 Confirmed November 14, 2026: the user selected **Rule-based scheduler first; add AI next**. The first usable release includes scheduling, preview, explicit Apply and guarded Undo. External model integration is a later milestone.
 

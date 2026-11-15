@@ -58,6 +58,56 @@
     const explicit = task.scheduledEnd?.split("T")[1];
     return explicit || timeFromMinutes(start.minutes + Number(task.durationMinutes || 45));
   }
+  // Task dates are floating calendar values. UTC-backed arithmetic keeps their
+  // civil dates stable at midnight and DST boundaries without changing alert zones.
+  function calendarTime(value) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):([0-5]\d)$/.exec(value || "");
+    if (!match) return null;
+    const [, year, month, day, hour, minute] = match.map(Number);
+    if (year < 1) return null;
+    const date = new Date(0);
+    date.setUTCFullYear(year, month - 1, day);
+    date.setUTCHours(hour, minute, 0, 0);
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+    return date.getTime();
+  }
+  function calendarWall(value) {
+    const date = new Date(value), year = date.getUTCFullYear();
+    if (!Number.isFinite(value) || year < 1 || year > 9999) return null;
+    return `${String(year).padStart(4, "0")}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`;
+  }
+  function deadlineAt(task = {}) {
+    if (!task.dueDate) return null;
+    const value = `${task.dueDate}T${task.dueTime || "23:59"}`;
+    return calendarTime(value) === null ? null : value;
+  }
+  function scheduledEndAt(task = {}) {
+    const start = calendarTime(task.scheduledStart);
+    if (start === null) return null;
+    const explicit = calendarTime(task.scheduledEnd);
+    if (explicit !== null && explicit >= start) return task.scheduledEnd;
+    const duration = Number(task.durationMinutes || 45);
+    return Number.isInteger(duration) && duration > 0 ? calendarWall(start + duration * 60000) : null;
+  }
+  function taskTiming(task = {}, reference = new Date()) {
+    const due = deadlineAt(task), workStart = calendarTime(task.scheduledStart) === null ? null : task.scheduledStart;
+    const workEnd = scheduledEndAt(task), completed = Boolean(task.completed);
+    let now = null;
+    if (reference instanceof Date && Number.isFinite(reference.getTime())) {
+      const local = `${String(reference.getFullYear()).padStart(4, "0")}-${pad(reference.getMonth() + 1)}-${pad(reference.getDate())}T${pad(reference.getHours())}:${pad(reference.getMinutes())}`;
+      now = calendarTime(local);
+      if (now !== null) now += reference.getSeconds() * 1000 + reference.getMilliseconds();
+    } else if (typeof reference === "string") now = calendarTime(reference);
+    const deadline = calendarTime(due), end = calendarTime(workEnd);
+    return {
+      deadlineAt: due,
+      workStart,
+      workEnd,
+      overdue: !completed && deadline !== null && now !== null && deadline < now,
+      plannedAfterDeadline: !completed && deadline !== null && end !== null && end > deadline,
+      completed,
+    };
+  }
   function migrateTasks(input) {
     if (!Array.isArray(input)) return [];
     return input.filter(Boolean).map((task, index) => ({
@@ -76,16 +126,19 @@
     }));
   }
   function groupForDate(tasks, selectedDate, referenceDate = todayKey()) {
-    const unfinished = tasks.filter((task) => !task.completed);
-    return {
-      overdue: unfinished.filter((task) => task.dueDate && task.dueDate < referenceDate),
-      scheduled: unfinished.filter((task) => scheduledParts(task)?.date === selectedDate)
-        .sort((a, b) => scheduledParts(a).minutes - scheduledParts(b).minutes),
-      unscheduled: unfinished.filter((task) => task.dueDate === selectedDate && !task.scheduledStart)
-        .sort((a, b) => (a.dueTime || "99:99").localeCompare(b.dueTime || "99:99")),
-      backlog: unfinished.filter((task) => !task.dueDate && !task.scheduledStart),
-      completed: tasks.filter((task) => task.completed && (task.dueDate === selectedDate || scheduledParts(task)?.date === selectedDate)),
-    };
+    const groups = { overdue: [], scheduled: [], unscheduled: [], backlog: [], completed: [] };
+    for (const task of tasks) {
+      const workDate = scheduledParts(task)?.date;
+      if (task.completed) {
+        if (task.dueDate === selectedDate || workDate === selectedDate) groups.completed.push(task);
+      } else if (workDate === selectedDate) groups.scheduled.push(task);
+      else if (task.dueDate === selectedDate) groups.unscheduled.push(task);
+      else if (task.dueDate && task.dueDate < referenceDate) groups.overdue.push(task);
+      else if (!task.dueDate && !task.scheduledStart) groups.backlog.push(task);
+    }
+    groups.scheduled.sort((a, b) => scheduledParts(a).minutes - scheduledParts(b).minutes);
+    groups.unscheduled.sort((a, b) => (a.dueTime || "99:99").localeCompare(b.dueTime || "99:99"));
+    return groups;
   }
   function datesForView(view, selectedDate) {
     if (view === "day") return [selectedDate];
@@ -105,16 +158,19 @@
     DAY_MS,
     addDays,
     datesForView,
+    deadlineAt,
     fromDateKey,
     groupForDate,
     localDateTime,
     migrateTasks,
     minutesFromTime,
     scheduledEnd,
+    scheduledEndAt,
     scheduledParts,
     shiftView,
     startOfWeek,
     timeFromMinutes,
+    taskTiming,
     toDateKey,
     todayKey,
   };

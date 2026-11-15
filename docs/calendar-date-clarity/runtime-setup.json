@@ -1,0 +1,31 @@
+{
+  "runtime": "157.0.8103.78",
+  "results": [
+    {
+      "origin": "http://127.0.0.1:8034",
+      "setup": "PASS",
+      "fixture": {
+        "count": 15,
+        "currentDate": "2026-11-20",
+        "mode": "local",
+        "supportsWorkAlerts": true,
+        "supportsOrganization": true
+      },
+      "acceptance": "NOT RUN — waiting for SOURCE_READY"
+    },
+    {
+      "origin": "http://127.0.0.1:8796",
+      "setup": "PASS",
+      "fixture": {
+        "count": 15,
+        "currentDate": "2026-11-20",
+        "mode": "cloud",
+        "supportsWorkAlerts": true,
+        "supportsOrganization": true
+      },
+      "acceptance": "NOT RUN — waiting for SOURCE_READY"
+    }
+  ],
+  "productionWrites": false,
+  "contextsClosed": true
+}

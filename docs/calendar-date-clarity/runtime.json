@@ -1,0 +1,858 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "mode": "local browser storage",
+      "width": 1280,
+      "height": 1000,
+      "touchEmulation": false,
+      "theme": "light",
+      "reducedMotion": false,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "2ffe17c6-0000-4000-8000-000000000002",
+              "2ffe17c6-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "2ffe17c6-0000-4000-8000-000000000005",
+              "2ffe17c6-0000-4000-8000-000000000004",
+              "2ffe17c6-0000-4000-8000-000000000001",
+              "2ffe17c6-0000-4000-8000-000000000007",
+              "2ffe17c6-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "2ffe17c6-0000-4000-8000-000000000003",
+              "2ffe17c6-0000-4000-8000-000000000009",
+              "2ffe17c6-0000-4000-8000-000000000012",
+              "2ffe17c6-0000-4000-8000-000000000013",
+              "2ffe17c6-0000-4000-8000-000000000014",
+              "2ffe17c6-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "2ffe17c6-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "2ffe17c6-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.883529 0.930588 0.915294)"
+          },
+          "reschedule": {
+            "id": "2ffe17c6-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00"
+          }
+        },
+        "week": {
+          "columns": 7,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "trusted mouse/native HTML drag + Undo + Escape",
+          "visual": {
+            "count": 1,
+            "width": 774,
+            "expected": 774,
+            "top": 868,
+            "caption": "2:00 PM · 60 min"
+          }
+        },
+        "owner": {
+          "status": "NOT RUN",
+          "reason": "Owner switch applies to signed-in fixtures"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "signed-in isolated real Worker",
+      "width": 1280,
+      "height": 1000,
+      "touchEmulation": false,
+      "theme": "dark",
+      "reducedMotion": true,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "8d3ff085-0000-4000-8000-000000000002",
+              "8d3ff085-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "8d3ff085-0000-4000-8000-000000000005",
+              "8d3ff085-0000-4000-8000-000000000004",
+              "8d3ff085-0000-4000-8000-000000000001",
+              "8d3ff085-0000-4000-8000-000000000007",
+              "8d3ff085-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "8d3ff085-0000-4000-8000-000000000003",
+              "8d3ff085-0000-4000-8000-000000000009",
+              "8d3ff085-0000-4000-8000-000000000012",
+              "8d3ff085-0000-4000-8000-000000000013",
+              "8d3ff085-0000-4000-8000-000000000014",
+              "8d3ff085-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "8d3ff085-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "8d3ff085-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.182902 0.264471 0.217647)"
+          },
+          "reschedule": {
+            "id": "8d3ff085-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00",
+            "focus": ""
+          }
+        },
+        "week": {
+          "columns": 7,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "trusted mouse/native HTML drag + Undo + Escape",
+          "visual": {
+            "count": 1,
+            "width": 774,
+            "expected": 774,
+            "top": 868,
+            "caption": "2:00 PM · 60 min"
+          }
+        },
+        "owner": {
+          "status": "PASS",
+          "action": "real fixture session invalidation + normal session refresh"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "local browser storage",
+      "width": 835,
+      "height": 1112,
+      "touchEmulation": true,
+      "theme": "dark",
+      "reducedMotion": true,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "910e7a1f-0000-4000-8000-000000000002",
+              "910e7a1f-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "910e7a1f-0000-4000-8000-000000000005",
+              "910e7a1f-0000-4000-8000-000000000004",
+              "910e7a1f-0000-4000-8000-000000000001",
+              "910e7a1f-0000-4000-8000-000000000007",
+              "910e7a1f-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "910e7a1f-0000-4000-8000-000000000003",
+              "910e7a1f-0000-4000-8000-000000000009",
+              "910e7a1f-0000-4000-8000-000000000012",
+              "910e7a1f-0000-4000-8000-000000000013",
+              "910e7a1f-0000-4000-8000-000000000014",
+              "910e7a1f-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "910e7a1f-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "910e7a1f-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.182902 0.264471 0.217647)"
+          },
+          "reschedule": {
+            "id": "910e7a1f-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00",
+            "focus": ""
+          }
+        },
+        "week": {
+          "columns": 7,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "touch editor alternative + persistence",
+          "savedWork": "2026-11-20T16:15"
+        },
+        "owner": {
+          "status": "NOT RUN",
+          "reason": "Owner switch applies to signed-in fixtures"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "signed-in isolated real Worker",
+      "width": 768,
+      "height": 1024,
+      "touchEmulation": true,
+      "theme": "light",
+      "reducedMotion": false,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "2771cf74-0000-4000-8000-000000000002",
+              "2771cf74-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "2771cf74-0000-4000-8000-000000000005",
+              "2771cf74-0000-4000-8000-000000000004",
+              "2771cf74-0000-4000-8000-000000000001",
+              "2771cf74-0000-4000-8000-000000000007",
+              "2771cf74-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "2771cf74-0000-4000-8000-000000000003",
+              "2771cf74-0000-4000-8000-000000000009",
+              "2771cf74-0000-4000-8000-000000000012",
+              "2771cf74-0000-4000-8000-000000000013",
+              "2771cf74-0000-4000-8000-000000000014",
+              "2771cf74-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "2771cf74-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "2771cf74-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.883529 0.930588 0.915294)"
+          },
+          "reschedule": {
+            "id": "2771cf74-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00"
+          }
+        },
+        "week": {
+          "columns": 7,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "touch editor alternative + persistence",
+          "savedWork": "2026-11-20T16:15"
+        },
+        "owner": {
+          "status": "PASS",
+          "action": "real fixture session invalidation + normal session refresh"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "local browser storage",
+      "width": 390,
+      "height": 844,
+      "touchEmulation": true,
+      "theme": "light",
+      "reducedMotion": true,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "6627c7fc-0000-4000-8000-000000000002",
+              "6627c7fc-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "6627c7fc-0000-4000-8000-000000000005",
+              "6627c7fc-0000-4000-8000-000000000004",
+              "6627c7fc-0000-4000-8000-000000000001",
+              "6627c7fc-0000-4000-8000-000000000007",
+              "6627c7fc-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "6627c7fc-0000-4000-8000-000000000003",
+              "6627c7fc-0000-4000-8000-000000000009",
+              "6627c7fc-0000-4000-8000-000000000012",
+              "6627c7fc-0000-4000-8000-000000000013",
+              "6627c7fc-0000-4000-8000-000000000014",
+              "6627c7fc-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "6627c7fc-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "6627c7fc-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.883529 0.930588 0.915294)"
+          },
+          "reschedule": {
+            "id": "6627c7fc-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00",
+            "focus": ""
+          }
+        },
+        "week": {
+          "columns": 1,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "touch editor alternative + persistence",
+          "savedWork": "2026-11-20T16:15"
+        },
+        "owner": {
+          "status": "NOT RUN",
+          "reason": "Owner switch applies to signed-in fixtures"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "signed-in isolated real Worker",
+      "width": 390,
+      "height": 844,
+      "touchEmulation": true,
+      "theme": "dark",
+      "reducedMotion": false,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "a1e96dee-0000-4000-8000-000000000002",
+              "a1e96dee-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "a1e96dee-0000-4000-8000-000000000005",
+              "a1e96dee-0000-4000-8000-000000000004",
+              "a1e96dee-0000-4000-8000-000000000001",
+              "a1e96dee-0000-4000-8000-000000000007",
+              "a1e96dee-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "a1e96dee-0000-4000-8000-000000000003",
+              "a1e96dee-0000-4000-8000-000000000009",
+              "a1e96dee-0000-4000-8000-000000000012",
+              "a1e96dee-0000-4000-8000-000000000013",
+              "a1e96dee-0000-4000-8000-000000000014",
+              "a1e96dee-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "a1e96dee-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "a1e96dee-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.182902 0.264471 0.217647)"
+          },
+          "reschedule": {
+            "id": "a1e96dee-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00"
+          }
+        },
+        "week": {
+          "columns": 1,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "touch editor alternative + persistence",
+          "savedWork": "2026-11-20T16:15"
+        },
+        "owner": {
+          "status": "PASS",
+          "action": "real fixture session invalidation + normal session refresh"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "local browser storage",
+      "width": 320,
+      "height": 740,
+      "touchEmulation": true,
+      "theme": "dark",
+      "reducedMotion": true,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "51809da2-0000-4000-8000-000000000002",
+              "51809da2-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "51809da2-0000-4000-8000-000000000005",
+              "51809da2-0000-4000-8000-000000000004",
+              "51809da2-0000-4000-8000-000000000001",
+              "51809da2-0000-4000-8000-000000000007",
+              "51809da2-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "51809da2-0000-4000-8000-000000000003",
+              "51809da2-0000-4000-8000-000000000009",
+              "51809da2-0000-4000-8000-000000000012",
+              "51809da2-0000-4000-8000-000000000013",
+              "51809da2-0000-4000-8000-000000000014",
+              "51809da2-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "51809da2-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "51809da2-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.182902 0.264471 0.217647)"
+          },
+          "reschedule": {
+            "id": "51809da2-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00",
+            "focus": ""
+          }
+        },
+        "week": {
+          "columns": 1,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "touch editor alternative + persistence",
+          "savedWork": "2026-11-20T16:15"
+        },
+        "owner": {
+          "status": "NOT RUN",
+          "reason": "Owner switch applies to signed-in fixtures"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "mode": "signed-in isolated real Worker",
+      "width": 320,
+      "height": 740,
+      "touchEmulation": true,
+      "theme": "light",
+      "reducedMotion": true,
+      "checks": {
+        "primary": {
+          "memberships": {
+            "overdue": [
+              "f5b36ad0-0000-4000-8000-000000000002",
+              "f5b36ad0-0000-4000-8000-000000000011"
+            ],
+            "scheduled": [
+              "f5b36ad0-0000-4000-8000-000000000005",
+              "f5b36ad0-0000-4000-8000-000000000004",
+              "f5b36ad0-0000-4000-8000-000000000001",
+              "f5b36ad0-0000-4000-8000-000000000007",
+              "f5b36ad0-0000-4000-8000-000000000006"
+            ],
+            "unscheduled": [
+              "f5b36ad0-0000-4000-8000-000000000003",
+              "f5b36ad0-0000-4000-8000-000000000009",
+              "f5b36ad0-0000-4000-8000-000000000012",
+              "f5b36ad0-0000-4000-8000-000000000013",
+              "f5b36ad0-0000-4000-8000-000000000014",
+              "f5b36ad0-0000-4000-8000-000000000015"
+            ],
+            "backlog": [
+              "f5b36ad0-0000-4000-8000-000000000008"
+            ],
+            "completed": [
+              "f5b36ad0-0000-4000-8000-000000000010"
+            ]
+          },
+          "progress": {
+            "copy": "1 of 12 completed",
+            "counts": {
+              "overdue": 2,
+              "scheduled": 5,
+              "backlog": 1,
+              "unscheduled": 6,
+              "completed": 1
+            },
+            "remaining": "14 remaining · 4 overdue · 1 unscheduled"
+          }
+        },
+        "deadline": {
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          },
+          "focusReturned": true
+        },
+        "preview": {
+          "style": {
+            "left": 0,
+            "right": 0,
+            "background": "color(srgb 0.883529 0.930588 0.915294)"
+          },
+          "reschedule": {
+            "id": "f5b36ad0-0000-4000-8000-000000000007",
+            "date": "2026-11-20",
+            "time": "16:00",
+            "focus": ""
+          }
+        },
+        "week": {
+          "columns": 1,
+          "metrics": {
+            "height": 1488,
+            "slots": 24,
+            "first": "00:00",
+            "last": "23:00",
+            "headerOffset": 1,
+            "deadlineGap": 0,
+            "lineOffset": 744,
+            "expectedLine": 744,
+            "eventOffset": 527
+          }
+        },
+        "month": {
+          "busyLabel": "Friday, November 20, 9 deadlines · 6 work sessions, 12 tasks",
+          "quietLabel": "Monday, November 23, 1 deadline · 1 work session, 1 task",
+          "completedLabel": "Tuesday, November 24, 1 deadline · 1 work session, 1 task"
+        },
+        "schedule": {
+          "input": "touch editor alternative + persistence",
+          "savedWork": "2026-11-20T16:15"
+        },
+        "owner": {
+          "status": "PASS",
+          "action": "real fixture session invalidation + normal session refresh"
+        }
+      },
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "allSyntheticContextsClosed": true,
+  "scope": "Affected frontend calendar flows only; signed-in writes use real isolated Worker/schema0001–0006. Touch emulation does not establish native or physical Safari behavior. No deployment or native bundle sync."
+}
