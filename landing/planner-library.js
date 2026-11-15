@@ -504,16 +504,19 @@
       const operationOwner = captureOwner();
       pending.set(id, operationOwner);
       render();
+      let addedTask;
       try {
         const task = schedule ? instantiateScheduledTemplate(item, schedule) : instantiateTemplate(item);
         await store.upsertItem(task);
+        addedTask = task;
         if (isCurrentOwner(operationOwner)) host.showToast?.(schedule ? "Task scheduled. The template is ready to use again." : "Added a new task. The template is ready to use again.");
-        return task;
       } catch (error) { if (isCurrentOwner(operationOwner)) fail(error); }
       finally {
         if (pending.get(id) === operationOwner) pending.delete(id);
         if (isCurrentOwner(operationOwner)) render();
       }
+      if (addedTask && !schedule && isCurrentOwner(operationOwner)) host.onTaskAdded?.(addedTask);
+      return addedTask;
     }
 
     function onClick(event) {

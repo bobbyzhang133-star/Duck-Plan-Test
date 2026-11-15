@@ -1,0 +1,44 @@
+{
+  "runtime": "157.0.8103.78",
+  "mode": "local browser storage / disposable fixture",
+  "sourceBase": "75c6914",
+  "result": {
+    "copyCount": 1,
+    "copy": {
+      "completed": false,
+      "importance": null,
+      "urgency": "auto",
+      "title": "BC Calculus visibility QA",
+      "classId": "personal",
+      "durationMinutes": 45,
+      "priority": "Medium",
+      "notes": "Keep these reusable notes",
+      "reminderChoice": "off",
+      "type": "assignment",
+      "id": "294aa888-1e39-4a70-ae43-ab209626ce3f",
+      "dueDate": "",
+      "dueTime": "",
+      "scheduledStart": null,
+      "scheduledEnd": null,
+      "source": "manual",
+      "schemaVersion": 2
+    },
+    "selectedTab": "templates",
+    "calendarGroupCount": 0,
+    "sourceTemplate": {
+      "id": "5035683f-983d-4aa3-8f37-118b589c378c",
+      "classId": "personal",
+      "title": "BC Calculus visibility QA",
+      "durationMinutes": 45,
+      "priority": "Medium",
+      "notes": "Keep these reusable notes",
+      "reminderChoice": "off"
+    },
+    "toast": "Added a new task. The template is ready to use again.",
+    "calendarRowCount": 0,
+    "reloadPersisted": true,
+    "status": "REPRODUCED"
+  },
+  "errors": [],
+  "scope": "Trusted click saves successfully, but undated unscheduled copy is absent from Calendar groups. User planner untouched."
+}
