@@ -1,6 +1,8 @@
-# AI recommended schedule first version plan
+# Recommend schedule first version plan
 
 Status: first implementation proposal refined after the completed Chat Check. Product source remains at `7c76aa616b831bda00401ce3e46160d8b2c260d7`. This planning branch changes documentation only. Review completed in the existing [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c); [returned review](ai-schedule-chat-response-2026-11-14.txt).
+
+Confirmed November 14, 2026: the user selected **Rule-based scheduler first; add AI next**. The first usable release includes scheduling, preview, explicit Apply and guarded Undo. External model integration is a later milestone.
 
 ## User experience
 
@@ -24,13 +26,13 @@ Preserve the approved Calendar homepage, desktop/iPad task column, collapsed pho
 - Count already scheduled work when enforcing a selected daily cap. Treat configurable breaks as unavailable spacing, not new tasks or invented alarms.
 - Revalidate each edited/regenerated proposal. A snapshot changed by another tab, account switch, task completion, deletion or a newly occupied interval invalidates the old proposal.
 
-## AI and a reliable baseline
+## Rule-based V1 and later AI assistance
 
-Build one deterministic constraint planner and validator first. This provides a testable baseline and a usable local/offline fallback. Label that fallback as a rule-based recommendation, rather than claiming a model was used.
+V1 uses a deterministic constraint planner and validator, with local/offline recommendations. Label it **Recommend schedule** or **Rule-based recommendation**, rather than claiming a model was used. V1 requires no model provider, API key, AI request or model-service data sharing.
 
-The proposed AI enhancement ranks eligible task IDs and explains tradeoffs through an authenticated server endpoint. The constraint planner still determines and validates the actual legal time slots. A model response cannot directly write tasks, bypass availability, invent task IDs or alter deadlines. Reject malformed, stale or infeasible output and keep the last valid preview intact.
+The later AI enhancement can rank eligible task IDs and explain tradeoffs through an authenticated server endpoint. The constraint planner will still determine and validate the actual legal time slots. A model response cannot directly write tasks, bypass availability, invent task IDs or alter deadlines. Reject malformed, stale or infeasible output and keep the last valid preview intact.
 
-External AI is explicitly opt-in. Show the fields being sent and the chosen provider before enabling it. Send only the minimum scheduling metadata; task titles are optional, and private notes, resources, account details, tokens and unrelated habits/goals are excluded. Keep API keys on the server, add bounded requests/rate limits and handle timeouts without creating tasks. Provider/model, budget and the precise data-sharing choice need confirmation before implementing this external path; no credentials or model service are currently configured.
+That later external AI path must be explicitly opt-in. Show the fields being sent and the chosen provider before enabling it. Send only the minimum scheduling metadata; task titles are optional, and private notes, resources, account details, tokens and unrelated habits/goals are excluded. Keep API keys on the server, add bounded requests/rate limits and handle timeouts without creating tasks. Provider/model, budget and data-sharing choices belong to that later milestone and do not block rule-based V1.
 
 ## Reuse and required foundations
 
@@ -43,16 +45,15 @@ External AI is explicitly opt-in. Show the fields being sent and the chosen prov
 - For local Apply, validate first and persist the entire changed item collection once with rollback on storage failure. A single localStorage write does not provide cross-tab compare-and-swap: define a shared owner-scoped lock/revision protocol for all participating task writers, or a transactional storage strategy, before promising conflict-safe local Apply. Test the supported fallback explicitly. Undo restores only fields this batch changed, only while the task/owner versions still match; preserve later user edits.
 - Cloud Undo is a separate owner-scoped, idempotent atomic operation with expected post-Apply versions. Reject a conflicting Undo as a batch, rather than restoring a subset through individual PUTs. Never roll back a later edit or recreate an expired/delivered alert while restoring calendar state.
 - If a later Save availability option is added, its break/cap preferences need an owner-scoped persistence contract and migration where cloud sync is supported. Session-only V1 inputs avoid silently persisting preferences. Free-text class periods and device-only `actualMinutes` do not establish class meeting times or cross-device learned estimates.
-- Add the new batch/AI requests to the existing restricted native transport contract and tests as needed; retain its origin, authentication, body-size and method limits. An older backend should explain which actions are unavailable without losing the preview or task data.
+- Add the new batch requests to the existing restricted native transport contract and tests as needed; retain its origin, authentication, body-size and method limits. An older backend should explain which actions are unavailable without losing the preview or task data. AI transport is deferred with the later model integration.
 
 ## Implementation sequence
 
-1. Confirm the small V1 scope and proposed defaults against the earlier conversation; define planning input/output and owner/version contracts.
+1. Use the confirmed rule-based V1 scope; define planning input/output, proposed defaults and owner/version contracts.
 2. Implement the pure free-time/constraint planner with deterministic fixtures, including impossible inputs and deadline recovery.
 3. Add the Calendar selection/preferences/preview flow and accessible touch/keyboard alternatives. Keep previews read-only.
 4. Implement guarded local batch Apply/Undo and the matching atomic cloud endpoint, then integrate independent alert reconciliation.
-5. Add the optional authenticated AI ranking/explanation path after the validated planner is working, with explicit consent, server-only credentials and honest fallback labels.
-6. Verify actual website and native runtimes, synchronize the intended web bundle into the existing iPhone project, and record exact build/source/platform evidence before release claims.
+5. Verify actual website and native runtimes, synchronize the intended web bundle into the existing iPhone project, and record exact build/source/platform evidence before release claims. Plan the separate optional AI milestone after this first usable version.
 
 ## Acceptance checks
 
@@ -60,12 +61,12 @@ External AI is explicitly opt-in. Show the fields being sent and the chosen prov
 - Preview/regenerate/cancel cause zero task or alert writes. Applying creates no task copies and preserves IDs, deadlines, colors and unrelated metadata.
 - Local storage failure and cloud atomic rejection preserve the prior calendar. Retry is idempotent; stale previews, new occupied slots, double clicks, account/editor changes and safe Undo are covered.
 - Linked alarms and banners follow approved starts; manual times and off/paused states remain unchanged. Report partial OS alert failures accurately.
-- Local/signed-in/offline/reconnect modes, another client changing the plan, old backend compatibility and optional AI timeout/invalid-output/denied-consent paths have separate evidence.
+- Local/signed-in/offline/reconnect modes, another client changing the plan and old backend compatibility have separate evidence. Verify V1 makes no external model requests; AI timeout/invalid-output/consent tests belong to the later integration.
 - Use the required platform procedure for desktop, phone/iPad browser layouts, installed PWA and actual WKWebView. A Chromium viewport or successful build is not a physical-device or native-runtime pass. The existing native iPad launch and OS-delivery blockers remain blockers until tested successfully.
 
 ## Deferred beyond V1
 
-Automatic background rescheduling, moving existing commitments, recurring-task generation, multi-session task splitting, external calendar imports and learned duration predictions are separate follow-ups. This plan does not deploy a website, migrate a production database, call a model with user task data or update the installed physical app.
+External AI ranking/explanations, automatic background rescheduling, moving existing commitments, recurring-task generation, multi-session task splitting, external calendar imports and learned duration predictions are separate follow-ups. This plan does not deploy a website, migrate a production database, call a model with user task data or update the installed physical app.
 
 ## Chat Check outcome
 
@@ -73,8 +74,8 @@ Repository Overview reports inspecting exact TEST planning commit `bd7f03e0abcf2
 
 The review's main gates are atomic Apply/Undo, calendar-wide conflict revisions and separate post-commit alert reconciliation. Its P0 labels mean prerequisites for the proposed new capability; they do not establish a P0 incident in today's application. The revised plan also resolves duration editing, explicit due times, local cross-tab concurrency and legacy alert initialization/preservation.
 
-The reviewer recommends a rule-based first usable release, then optional model ranking. The user has been asked whether actual connected AI is required in the first release; until answered, the two release variants remain explicit. The shared scheduling/preview/persistence foundation is required by either variant.
+The reviewer recommends a rule-based first usable release, then optional model ranking. The user confirmed that direction on November 14, 2026. Scheduling, preview, conflict-safe persistence, alerts and Undo form the V1 scope; actual model integration follows later.
 
 Relevant earlier local requirement: `docs/product-feedback-2026-11-12.md:37–39` calls for opt-in suggestions, explanations, user confirmation and a deterministic baseline before AI organization.
 
-The first local prototype is rule-based. The AI-enhanced V1 includes step5 only after provider/configuration and data-sharing choices are settled; a rule-based prototype must not be reported as completed AI integration. The original draft reviewed externally is TEST commit `bd7f03e0abcf270389bdfa1de517adb2d1bdf06f`; these duration/alert/Undo clarifications follow the independent source review.
+The original draft reviewed externally is TEST commit `bd7f03e0abcf270389bdfa1de517adb2d1bdf06f`. Duration/alert/Undo clarifications follow the independent source review, and the final release scope reflects the user's subsequent choice. A completed rule-based V1 must not be reported as completed AI integration.
