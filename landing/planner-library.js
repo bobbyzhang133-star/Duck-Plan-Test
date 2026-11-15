@@ -111,7 +111,7 @@
     if (!day || !Number.isFinite(day.getTime()) || Number(date.slice(0, 4)) < 1 || day.toISOString().slice(0, 10) !== date) throw invalid("scheduledDate", "Drop onto a calendar day.");
     if (typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) throw invalid("scheduledTime", "Choose a valid work time.");
     const [hour, minute] = time.split(":").map(Number);
-    if (hour * 60 + minute < 7 * 60 || hour * 60 + minute + template.durationMinutes > 22 * 60) throw invalid("durationMinutes", "This template does not fit the visible day. Choose Schedule to set a work time.");
+    if (hour * 60 + minute + template.durationMinutes > 24 * 60) throw invalid("durationMinutes", "This template does not fit the visible day. Choose Schedule to set a work time.");
     return { ...instantiateTemplate(template, { makeId }), scheduledStart: `${date}T${time}` };
   }
 

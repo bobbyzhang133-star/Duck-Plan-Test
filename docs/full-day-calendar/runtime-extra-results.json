@@ -1,0 +1,82 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "existing-block-pointer-edge-reschedule-reload",
+      "mode": "local browser storage",
+      "time": "00:00",
+      "status": "PASS",
+      "preview": {
+        "top": 257,
+        "caption": "12:00 AM",
+        "height": 46.5
+      },
+      "deadline": [
+        "2026-11-14",
+        "18:30"
+      ]
+    },
+    {
+      "test": "existing-block-pointer-edge-reschedule-reload",
+      "mode": "local browser storage",
+      "time": "23:15",
+      "status": "PASS",
+      "preview": {
+        "top": 813.5,
+        "caption": "11:15 PM",
+        "height": 46.5
+      },
+      "deadline": [
+        "2026-11-14",
+        "18:30"
+      ]
+    },
+    {
+      "test": "existing-block-keyboard-duration-aware-midnight-bound",
+      "mode": "local browser storage",
+      "status": "PASS",
+      "latestTime": "23:15",
+      "duration": 45
+    },
+    {
+      "test": "existing-block-pointer-edge-reschedule-reload",
+      "mode": "signed-in real local Worker",
+      "time": "00:00",
+      "status": "PASS",
+      "preview": {
+        "top": 207,
+        "caption": "12:00 AM",
+        "height": 46.5
+      },
+      "deadline": [
+        "2026-11-14",
+        "18:30"
+      ]
+    },
+    {
+      "test": "existing-block-pointer-edge-reschedule-reload",
+      "mode": "signed-in real local Worker",
+      "time": "23:15",
+      "status": "PASS",
+      "preview": {
+        "top": 813.5,
+        "caption": "11:15 PM",
+        "height": 46.5
+      },
+      "deadline": [
+        "2026-11-14",
+        "18:30"
+      ]
+    },
+    {
+      "test": "existing-block-keyboard-duration-aware-midnight-bound",
+      "mode": "signed-in real local Worker",
+      "status": "PASS",
+      "latestTime": "23:15",
+      "duration": 45
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true
+}

@@ -1,0 +1,770 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "24-hour-Day-Week-slots-labels-geometry",
+      "mode": "local browser storage",
+      "view": "day",
+      "status": "PASS",
+      "columns": 1,
+      "labels": [
+        "12:00 AM",
+        "1:00 AM",
+        "2:00 AM",
+        "3:00 AM",
+        "4:00 AM",
+        "5:00 AM",
+        "6:00 AM",
+        "7:00 AM",
+        "8:00 AM",
+        "9:00 AM",
+        "10:00 AM",
+        "11:00 AM",
+        "12:00 PM",
+        "1:00 PM",
+        "2:00 PM",
+        "3:00 PM",
+        "4:00 PM",
+        "5:00 PM",
+        "6:00 PM",
+        "7:00 PM",
+        "8:00 PM",
+        "9:00 PM",
+        "10:00 PM",
+        "11:00 PM"
+      ]
+    },
+    {
+      "test": "24-hour-Day-Week-slots-labels-geometry",
+      "mode": "local browser storage",
+      "view": "week",
+      "status": "PASS",
+      "columns": 7,
+      "labels": [
+        "12:00 AM",
+        "1:00 AM",
+        "2:00 AM",
+        "3:00 AM",
+        "4:00 AM",
+        "5:00 AM",
+        "6:00 AM",
+        "7:00 AM",
+        "8:00 AM",
+        "9:00 AM",
+        "10:00 AM",
+        "11:00 AM",
+        "12:00 PM",
+        "1:00 PM",
+        "2:00 PM",
+        "3:00 PM",
+        "4:00 PM",
+        "5:00 PM",
+        "6:00 PM",
+        "7:00 PM",
+        "8:00 PM",
+        "9:00 PM",
+        "10:00 PM",
+        "11:00 PM"
+      ]
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "local browser storage",
+      "kind": "task",
+      "time": "00:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 257,
+          "width": 774,
+          "height": 46.5,
+          "top": 257,
+          "right": 1237,
+          "bottom": 303.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": 257,
+          "width": 780,
+          "height": 1488,
+          "top": 257,
+          "right": 1240,
+          "bottom": 1745,
+          "left": 460
+        },
+        "caption": "12:00 AM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 0
+      },
+      "saved": {
+        "savedId": "d26b8074-a08c-435d-9266-7b8b895dd763",
+        "scheduledStart": "2026-11-14T00:00",
+        "deadline": [
+          "2026-11-14",
+          "18:30"
+        ],
+        "taskCount": 8,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "local browser storage",
+      "kind": "task",
+      "time": "23:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 798,
+          "width": 774,
+          "height": 46.5,
+          "top": 798,
+          "right": 1237,
+          "bottom": 844.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": -628,
+          "width": 780,
+          "height": 1488,
+          "top": -628,
+          "right": 1240,
+          "bottom": 860,
+          "left": 460
+        },
+        "caption": "11:00 PM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 885
+      },
+      "saved": {
+        "savedId": "d26b8074-a08c-435d-9266-7b8b895dd763",
+        "scheduledStart": "2026-11-14T23:00",
+        "deadline": [
+          "2026-11-14",
+          "18:30"
+        ],
+        "taskCount": 8,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "local browser storage",
+      "kind": "template",
+      "time": "00:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 257,
+          "width": 774,
+          "height": 46.5,
+          "top": 257,
+          "right": 1237,
+          "bottom": 303.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": 257,
+          "width": 780,
+          "height": 1488,
+          "top": 257,
+          "right": 1240,
+          "bottom": 1745,
+          "left": 460
+        },
+        "caption": "12:00 AM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 0
+      },
+      "saved": {
+        "savedId": "c42ad78c-fd95-40a4-b8ea-b64b354d6a6f",
+        "scheduledStart": "2026-11-14T00:00",
+        "deadline": [
+          "",
+          ""
+        ],
+        "taskCount": 9,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "local browser storage",
+      "kind": "template",
+      "time": "23:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 798,
+          "width": 774,
+          "height": 46.5,
+          "top": 798,
+          "right": 1237,
+          "bottom": 844.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": -628,
+          "width": 780,
+          "height": 1488,
+          "top": -628,
+          "right": 1240,
+          "bottom": 860,
+          "left": 460
+        },
+        "caption": "11:00 PM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 885
+      },
+      "saved": {
+        "savedId": "5aeb6a65-27a3-4bf0-b201-717150ba7fc2",
+        "scheduledStart": "2026-11-14T23:00",
+        "deadline": [
+          "",
+          ""
+        ],
+        "taskCount": 10,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "keyboard-midnight-and-23-bounds-editor",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "current-time-line-full-day",
+      "time": "00:30",
+      "status": "PASS",
+      "line": {
+        "top": 31,
+        "columnHeight": 1488
+      }
+    },
+    {
+      "test": "current-time-line-full-day",
+      "time": "23:30",
+      "status": "PASS",
+      "line": {
+        "top": 1457,
+        "columnHeight": 1488
+      }
+    },
+    {
+      "test": "long-day-edge-autoscroll-and-cancel",
+      "status": "PASS",
+      "scroll": 120
+    },
+    {
+      "test": "24-hour-Day-Week-slots-labels-geometry",
+      "mode": "signed-in real local Worker",
+      "view": "day",
+      "status": "PASS",
+      "columns": 1,
+      "labels": [
+        "12:00 AM",
+        "1:00 AM",
+        "2:00 AM",
+        "3:00 AM",
+        "4:00 AM",
+        "5:00 AM",
+        "6:00 AM",
+        "7:00 AM",
+        "8:00 AM",
+        "9:00 AM",
+        "10:00 AM",
+        "11:00 AM",
+        "12:00 PM",
+        "1:00 PM",
+        "2:00 PM",
+        "3:00 PM",
+        "4:00 PM",
+        "5:00 PM",
+        "6:00 PM",
+        "7:00 PM",
+        "8:00 PM",
+        "9:00 PM",
+        "10:00 PM",
+        "11:00 PM"
+      ]
+    },
+    {
+      "test": "24-hour-Day-Week-slots-labels-geometry",
+      "mode": "signed-in real local Worker",
+      "view": "week",
+      "status": "PASS",
+      "columns": 7,
+      "labels": [
+        "12:00 AM",
+        "1:00 AM",
+        "2:00 AM",
+        "3:00 AM",
+        "4:00 AM",
+        "5:00 AM",
+        "6:00 AM",
+        "7:00 AM",
+        "8:00 AM",
+        "9:00 AM",
+        "10:00 AM",
+        "11:00 AM",
+        "12:00 PM",
+        "1:00 PM",
+        "2:00 PM",
+        "3:00 PM",
+        "4:00 PM",
+        "5:00 PM",
+        "6:00 PM",
+        "7:00 PM",
+        "8:00 PM",
+        "9:00 PM",
+        "10:00 PM",
+        "11:00 PM"
+      ]
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "signed-in real local Worker",
+      "kind": "task",
+      "time": "00:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 207,
+          "width": 774,
+          "height": 46.5,
+          "top": 207,
+          "right": 1237,
+          "bottom": 253.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": 207,
+          "width": 780,
+          "height": 1488,
+          "top": 207,
+          "right": 1240,
+          "bottom": 1695,
+          "left": 460
+        },
+        "caption": "12:00 AM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 0
+      },
+      "saved": {
+        "savedId": "8d9da3c9-1a06-4955-ab6b-8d9d1d18166d",
+        "scheduledStart": "2026-11-14T00:00",
+        "deadline": [
+          "2026-11-14",
+          "18:30"
+        ],
+        "taskCount": 1,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "signed-in real local Worker",
+      "kind": "task",
+      "time": "23:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 798,
+          "width": 774,
+          "height": 46.5,
+          "top": 798,
+          "right": 1237,
+          "bottom": 844.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": -628,
+          "width": 780,
+          "height": 1488,
+          "top": -628,
+          "right": 1240,
+          "bottom": 860,
+          "left": 460
+        },
+        "caption": "11:00 PM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 835
+      },
+      "saved": {
+        "savedId": "8d9da3c9-1a06-4955-ab6b-8d9d1d18166d",
+        "scheduledStart": "2026-11-14T23:00",
+        "deadline": [
+          "2026-11-14",
+          "18:30"
+        ],
+        "taskCount": 1,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "signed-in real local Worker",
+      "kind": "template",
+      "time": "00:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 207,
+          "width": 774,
+          "height": 46.5,
+          "top": 207,
+          "right": 1237,
+          "bottom": 253.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": 207,
+          "width": 780,
+          "height": 1488,
+          "top": 207,
+          "right": 1240,
+          "bottom": 1695,
+          "left": 460
+        },
+        "caption": "12:00 AM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 0
+      },
+      "saved": {
+        "savedId": "5f88452e-5890-4c3b-88ee-707e5ecc45d6",
+        "scheduledStart": "2026-11-14T00:00",
+        "deadline": [
+          "",
+          ""
+        ],
+        "taskCount": 2,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "trusted-edge-drag-exact-preview-and-reload",
+      "mode": "signed-in real local Worker",
+      "kind": "template",
+      "time": "23:00",
+      "status": "PASS",
+      "preview": {
+        "count": 1,
+        "rect": {
+          "x": 463,
+          "y": 798,
+          "width": 774,
+          "height": 46.5,
+          "top": 798,
+          "right": 1237,
+          "bottom": 844.5,
+          "left": 463
+        },
+        "column": {
+          "x": 460,
+          "y": -628,
+          "width": 780,
+          "height": 1488,
+          "top": -628,
+          "right": 1240,
+          "bottom": 860,
+          "left": 460
+        },
+        "caption": "11:00 PM · 45 min",
+        "transform": "none",
+        "color": "#39896f",
+        "scrollTop": 835
+      },
+      "saved": {
+        "savedId": "83bd628c-b116-4b64-9b83-dc25b3c9bd90",
+        "scheduledStart": "2026-11-14T23:00",
+        "deadline": [
+          "",
+          ""
+        ],
+        "taskCount": 3,
+        "events": [
+          {
+            "type": "dragstart",
+            "trusted": true
+          },
+          {
+            "type": "drop",
+            "trusted": true
+          }
+        ]
+      }
+    },
+    {
+      "test": "keyboard-midnight-and-23-bounds-editor",
+      "mode": "signed-in real local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "touch-Schedule-day-edges-and-reload-layout",
+      "width": 390,
+      "time": "00:00",
+      "status": "PASS",
+      "savedId": "d20b1e22-c378-4605-94c6-3b2666ff9ecf",
+      "layout": {
+        "pageOverflow": false,
+        "columns": 1,
+        "slots": 24,
+        "taskRect": {
+          "x": 74,
+          "y": 273,
+          "width": 291,
+          "height": 46.5,
+          "top": 273,
+          "right": 365,
+          "bottom": 319.5,
+          "left": 74
+        },
+        "taskPane": {
+          "x": 8,
+          "y": 836,
+          "width": 374,
+          "height": 684,
+          "top": 836,
+          "right": 382,
+          "bottom": 1520,
+          "left": 8
+        },
+        "calendar": {
+          "x": 21,
+          "y": 127,
+          "width": 348,
+          "height": 604.71875,
+          "top": 127,
+          "right": 369,
+          "bottom": 731.71875,
+          "left": 21
+        },
+        "sheetClosed": true
+      }
+    },
+    {
+      "test": "touch-Schedule-day-edges-and-reload-layout",
+      "width": 390,
+      "time": "23:00",
+      "status": "PASS",
+      "savedId": "b7479d8c-e7a4-4e46-a0cd-c3b3c91d65e7",
+      "layout": {
+        "pageOverflow": false,
+        "columns": 1,
+        "slots": 24,
+        "taskRect": {
+          "x": 74,
+          "y": 669,
+          "width": 291,
+          "height": 46.5,
+          "top": 669,
+          "right": 365,
+          "bottom": 715.5,
+          "left": 74
+        },
+        "taskPane": {
+          "x": 8,
+          "y": 836,
+          "width": 374,
+          "height": 684,
+          "top": 836,
+          "right": 382,
+          "bottom": 1520,
+          "left": 8
+        },
+        "calendar": {
+          "x": 21,
+          "y": 127,
+          "width": 348,
+          "height": 604.71875,
+          "top": 127,
+          "right": 369,
+          "bottom": 731.71875,
+          "left": 21
+        },
+        "sheetClosed": true
+      }
+    },
+    {
+      "test": "touch-Schedule-day-edges-and-reload-layout",
+      "width": 768,
+      "time": "00:00",
+      "status": "PASS",
+      "savedId": "a78ebcef-c07c-4b32-8dab-b74ad9712606",
+      "layout": {
+        "pageOverflow": false,
+        "columns": 1,
+        "slots": 24,
+        "taskRect": {
+          "x": 434,
+          "y": 319,
+          "width": 301,
+          "height": 46.5,
+          "top": 319,
+          "right": 735,
+          "bottom": 365.5,
+          "left": 434
+        },
+        "taskPane": {
+          "x": 93,
+          "y": 17,
+          "width": 260,
+          "height": 866,
+          "top": 17,
+          "right": 353,
+          "bottom": 883,
+          "left": 93
+        },
+        "calendar": {
+          "x": 365,
+          "y": 155,
+          "width": 374,
+          "height": 712,
+          "top": 155,
+          "right": 739,
+          "bottom": 867,
+          "left": 365
+        },
+        "sheetClosed": true
+      }
+    },
+    {
+      "test": "touch-Schedule-day-edges-and-reload-layout",
+      "width": 768,
+      "time": "23:00",
+      "status": "PASS",
+      "savedId": "6a910d9d-2f3c-4996-900a-5939b0649fbd",
+      "layout": {
+        "pageOverflow": false,
+        "columns": 1,
+        "slots": 24,
+        "taskRect": {
+          "x": 434,
+          "y": 804,
+          "width": 301,
+          "height": 46.5,
+          "top": 804,
+          "right": 735,
+          "bottom": 850.5,
+          "left": 434
+        },
+        "taskPane": {
+          "x": 93,
+          "y": 17,
+          "width": 260,
+          "height": 866,
+          "top": 17,
+          "right": 353,
+          "bottom": 883,
+          "left": 93
+        },
+        "calendar": {
+          "x": 365,
+          "y": 155,
+          "width": 374,
+          "height": 712,
+          "top": 155,
+          "right": 739,
+          "bottom": 867,
+          "left": 365
+        },
+        "sheetClosed": true
+      }
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Local and real signed-in local Worker; touch/viewport emulation is not physical Safari/native/PWA acceptance."
+}

@@ -50,6 +50,11 @@ test("template calendar drops use the target day, including the deadline band, w
   const context = vm.createContext({
     selectedDate: "2026-11-12", calendarFocusSlot: { date: "2026-11-12", time: "09:00" },
     selectedTaskId: null, tasks: [], PlannerUI, clearTemplateDrag() {}, showToast() {},
+    CALENDAR_START_HOUR: PlannerUI.TIMELINE_START_HOUR,
+    CALENDAR_END_HOUR: PlannerUI.TIMELINE_END_HOUR,
+    CALENDAR_HOURS: PlannerUI.TIMELINE_END_HOUR - PlannerUI.TIMELINE_START_HOUR,
+    store: { mode: "local", user: null },
+    templateDrag: { libraryId: "reusable-template", owner: "local:local" },
     dateObject: (date) => new Date(`${date}T12:00:00`),
     nowKey: () => "2026-11-12", formatTime: (time) => time, formatLongDate: (date) => date,
     deadlineChips: () => "", layoutEvents: () => [], Model: { scheduledParts: () => null },
@@ -67,6 +72,16 @@ test("template calendar drops use the target day, including the deadline band, w
   vm.runInContext(placement, context);
   vm.runInContext(dropHandler, context);
   const html = vm.runInContext('renderTimeline(["2026-11-09", "2026-11-12"])', context);
+  const slots = [...html.matchAll(/data-slot-date="([^"]+)" data-slot-time="([^"]+)"/g)];
+  assert.equal(slots.length, 48);
+  for (const date of ["2026-11-09", "2026-11-12"]) {
+    const daySlots = slots.filter((slot) => slot[1] === date).map((slot) => slot[2]);
+    assert.equal(daySlots.length, 24);
+    assert.equal(daySlots[0], "00:00");
+    assert.equal(daySlots.at(-1), "23:00");
+  }
+  assert.match(html, /--hour-count:24;/);
+  assert.match(html, /--timeline-height:1488px/);
   const deadlineCells = [...html.matchAll(/<div class="deadline-cell"([^>]*)>/g)];
   assert.equal(deadlineCells.length, 2);
   assert.match(deadlineCells[0][1], /data-deadline-date="2026-11-09"/);
@@ -90,7 +105,7 @@ test("template calendar drops use the target day, including the deadline band, w
   };
   const column = {
     dataset: { columnDate: "2026-11-09" },
-    getBoundingClientRect: () => ({ top: 100, height: 930 }),
+    getBoundingClientRect: () => ({ top: 100, height: 24 * 62 }),
   };
   const cases = [
     { target: targetFor({ deadlineDate: "2026-11-09" }), time: "09:00" },
@@ -100,7 +115,7 @@ test("template calendar drops use the target day, including the deadline band, w
   ];
   for (const { target, time } of cases) {
     let prevented = false;
-    onDrop({ target, dataTransfer: {}, clientY: 100 + 3.5 * 62, preventDefault() { prevented = true; } });
+    onDrop({ target, dataTransfer: {}, clientY: 100 + 10.5 * 62, preventDefault() { prevented = true; } });
     assert.equal(prevented, true);
     assert.equal(scheduled.date, "2026-11-09");
     assert.equal(scheduled.time, time);

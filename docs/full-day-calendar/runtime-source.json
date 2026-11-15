@@ -1,0 +1,49 @@
+{
+  "sourceBase": "aaa6b347b19b9c25b1160d9f6034560dab705ed5",
+  "sourceBranch": "codex/full-day-calendar-20261114",
+  "workingTreeHashes": {
+    "landing/app.js": "3848634817c165e41074ee0e1ef0d4d6fc8221ccbf7c79c400c0a561c8255768",
+    "landing/planner-ui.js": "a92a4017d9e7f55bdbcf86bf7bf8f763544d6e0ea67a20d160bb2cc9846eb34c",
+    "landing/planner-library.js": "aabe5dd6af67c26f50620b627c072ab93917d699b791ce6f3af6a06d11ceac5e",
+    "landing/styles.css": "a9619eefff72dd613d5a5995293e98fd6e14f923bf38020a06f46d08e36af5cd",
+    "landing/index.html": "3268e9142866bbff0af412ec651ced352c0c33c43a985ca3354cccdab160862e",
+    "landing/service-worker.js": "6b13759b42f8b7e6d8f99053cd70f8e8a16443574701a9f016071fd508d3cb33",
+    "cloudflare/src/index.js": "f5abe1810a175dafc673855b67ee214b14a9d82091569a561563414e6a11d4af",
+    "cloudflare/src/planner.js": "db237d2e91084ffc7b2b83112b6b86f31b098f3fe064c20fc41139a335d6151a",
+    "cloudflare/src/auth.js": "bb1e8e15f90c8fc08f735ee8a43a9dd75756f50fb84561b5623b663fcff2904d",
+    "cloudflare/migrations/0001_initial_schema.sql": "030f8c1936c5e05080853479ef518e080cc1cc6514312d8e15e02c103c29595f",
+    "cloudflare/migrations/0002_password_sign_in.sql": "d6d8893d1e8cba703371ae8826d6b52bd5c3f9a53cce067d87cfdd94d97483c3",
+    "cloudflare/migrations/0003_task_alarms.sql": "d75ec49687e805ac7b272128ffd818160eabfc67404137d58e142236d763adc2",
+    "cloudflare/migrations/0004_product_organization.sql": "cf380b81d77d5a393c6fedd5931c0c80d6708df950e1d2a7c6194e75d8dd5ae1",
+    "cloudflare/migrations/0005_personal_planning.sql": "a05c7f28adc736c1b622c734c743e3551e4697eef50b268741806ddc146bfa2a"
+  },
+  "browserRuntime": "Chromium 157.0.8103.78",
+  "origins": [
+    "http://127.0.0.1:8034",
+    "http://127.0.0.1:8796"
+  ],
+  "backend": {
+    "runtime": "Wrangler4.157.0 / local workerd",
+    "compatibilityDate": "2026-10-01",
+    "database": "calendar-preview-qa",
+    "mode": "isolated real local Worker+D1+DurableObject",
+    "migrationHistory": [
+      "0001_initial_schema.sql",
+      "0002_password_sign_in.sql",
+      "0003_task_alarms.sql",
+      "0004_product_organization.sql",
+      "0005_personal_planning.sql"
+    ]
+  },
+  "counts": {
+    "mainRuntimePass": 21,
+    "extraRuntimePass": 6,
+    "totalPass": 27
+  },
+  "notes": [
+    "Initial fixture deadline was outside the selected Calendar day; corrected fixture data before final run.",
+    "Signed-in reload waits for durable scheduling success, preventing harness navigation from aborting an optimistic save.",
+    "Existing pointer-block acquisition centers inside the calendar scroller because browser scrollIntoView can leave a block under sticky date headers."
+  ],
+  "scope": "Disposable local/browser and @example.test signed-in fixtures only. No user tabs/records, production account, remote migration, .dev.vars, native build or public deployment. Physical Safari/native WKWebView/installed PWA NOT RUN."
+}

@@ -1,5 +1,8 @@
 const Model = window.DuckPlannerModel;
 const PlannerUI = window.DuckPlannerUI;
+const CALENDAR_START_HOUR = PlannerUI.TIMELINE_START_HOUR;
+const CALENDAR_END_HOUR = PlannerUI.TIMELINE_END_HOUR;
+const CALENDAR_HOURS = CALENDAR_END_HOUR - CALENDAR_START_HOUR;
 const ReminderDomain = window.DuckReminderDomain;
 const ReminderLedger = window.DuckReminderLedger;
 const BrowserNotifications = window.DuckBrowserNotifications;
@@ -659,8 +662,8 @@ function layoutEvents(dayTasks) {
   return sorted;
 }
 function renderTimeline(dates) {
-  const startHour = 7;
-  const endHour = 22;
+  const startHour = CALENDAR_START_HOUR;
+  const endHour = CALENDAR_END_HOUR;
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
@@ -686,7 +689,7 @@ function renderTimeline(dates) {
     }).join("");
     return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}</div>`;
   }).join("");
-  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Due</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
+  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Due</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
 }
 function renderMonth(dates) {
   const currentMonth = dateObject(selectedDate).getMonth();
@@ -1028,7 +1031,7 @@ function updateCalendarDragPosition(clientX, clientY) {
   }
   const rect = column.getBoundingClientRect();
   const durationMinutes = Number(calendarDrag.task.durationMinutes || 45);
-  const hourHeight = rect.height / 15;
+  const hourHeight = rect.height / CALENDAR_HOURS;
   const drop = PlannerUI.snapCalendarDrop({
     date: column.dataset.columnDate,
     pointerY: clientY - calendarDrag.offsetY,
@@ -1036,7 +1039,7 @@ function updateCalendarDragPosition(clientX, clientY) {
     hourHeight,
     durationMinutes,
   });
-  const top = rect.top + ((drop.minutes - 7 * 60) / 60) * hourHeight;
+  const top = rect.top + ((drop.minutes - CALENDAR_START_HOUR * 60) / 60) * hourHeight;
   calendarDrag.drop = drop;
   column.classList.add("calendar-drop-target");
   calendarDrag.ghost.hidden = false;
@@ -1245,8 +1248,8 @@ function templateCalendarPlacement(event, template) {
   const date = target?.dataset.slotDate || target?.dataset.date || target?.dataset.deadlineDate || column?.dataset.columnDate;
   if (!date || !template) return null;
   const rect = column?.getBoundingClientRect();
-  const hourHeight = rect ? rect.height / 15 : 62;
-  const drop = PlannerUI.snapTemplateDrop({ date, pointerY: rect ? event.clientY : 2 * hourHeight, columnTop: rect?.top ?? 0, hourHeight, durationMinutes: template.durationMinutes });
+  const hourHeight = rect ? rect.height / CALENDAR_HOURS : 62;
+  const drop = PlannerUI.snapTemplateDrop({ date, pointerY: rect ? event.clientY : (9 - CALENDAR_START_HOUR) * hourHeight, columnTop: rect?.top ?? 0, hourHeight, durationMinutes: template.durationMinutes });
   return drop ? { ...drop, column, rect, hourHeight, source: target || column } : null;
 }
 
@@ -1332,8 +1335,8 @@ function updateTemplatePreview(event) {
   }
   const column = placement.column || [...els.calendar.querySelectorAll(".timeline-column")].find(item => item.dataset.columnDate === placement.date);
   if (!column) { showFreeCalendarPreview(event.clientX, event.clientY, time); return placement; }
-  const rect = column.getBoundingClientRect(), hourHeight = rect.height / 15;
-  const top = rect.top + (minutes - 7 * 60) * hourHeight / 60;
+  const rect = column.getBoundingClientRect(), hourHeight = rect.height / CALENDAR_HOURS;
+  const top = rect.top + (minutes - CALENDAR_START_HOUR * 60) * hourHeight / 60;
   const height = Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60);
   const viewport = els.calendar.getBoundingClientRect();
   // Date/deadline headers keep their existing 09:00 default. If that time is
@@ -1427,7 +1430,7 @@ document.addEventListener("drop", (event) => {
     const template = taskLibrary.draftForTemplate(taskLibrary.readTemplateDrop(event.dataTransfer));
     const placement = templateCalendarPlacement(event, template);
     if (placement) taskLibrary.handleTemplateDrop(event, placement);
-    else if (template) showToast(template.durationMinutes > 900 ? "This template does not fit the visible day. Choose Schedule to set a work time." : "Drop onto a calendar day or time to schedule this template.");
+    else if (template) showToast(template.durationMinutes > CALENDAR_HOURS * 60 ? "This template does not fit the visible day. Choose Schedule to set a work time." : "Drop onto a calendar day or time to schedule this template.");
   } else if (event.target.closest("#all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
     event.preventDefault();
     taskLibrary.addToTasks(taskLibrary.readTemplateDrop(event.dataTransfer));
@@ -1526,8 +1529,8 @@ els.calendar.addEventListener("keydown", (event) => {
     if (!task || !parts) return;
     event.preventDefault();
     const duration = Number(task.durationMinutes || 45);
-    const minimum = 7 * 60;
-    const maximum = 22 * 60 - duration;
+    const minimum = CALENDAR_START_HOUR * 60;
+    const maximum = CALENDAR_END_HOUR * 60 - duration;
     let date = parts.date;
     let minutes = parts.minutes;
     if (event.key === "ArrowUp") minutes -= 15;
