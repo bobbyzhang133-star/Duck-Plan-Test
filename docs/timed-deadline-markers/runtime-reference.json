@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "mode": "fresh local Chromium phone emulation, not physical Safari",
+  "proof": {
+    "workTitle": "Finish calculus practice3:00 PM",
+    "dueTitle": "Deadline5:00 PMFinish calculus practice",
+    "workMinute": 900,
+    "dueMinute": 1020,
+    "emptyDateOnlyStrip": true,
+    "documentOverflow": false
+  },
+  "productionWrites": false
+}

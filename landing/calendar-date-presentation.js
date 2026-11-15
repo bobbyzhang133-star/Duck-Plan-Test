@@ -23,7 +23,8 @@
     const timing = task => task.completed ? { overdue: false, plannedAfterDeadline: false } : typeof model.taskTiming === "function" ? model.taskTiming(task, now())
       : { overdue: Boolean(!task.completed && task.dueDate && task.dueDate < nowKey()), plannedAfterDeadline: false };
     const visibleTasks = (tasks, includeCompleted = false) => (Array.isArray(tasks) ? tasks : []).filter(task => task && (includeCompleted || !task.completed) && !task.deleted && !task.deleted_at);
-    const dueTime = task => task.dueTime ? formatTime(task.dueTime) : "End of day";
+    const validTime = value => typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+    const dueTime = task => task.dueTime ? validTime(task.dueTime) ? formatTime(task.dueTime) : "Time unavailable" : "End of day";
     const workTime = task => {
       const start = model.scheduledParts(task);
       if (!start) return "Not scheduled";
@@ -46,14 +47,56 @@
       const status = timing(task);
       return `<button type="button" class="deadline-chip calendar-deadline-marker${status.overdue ? " is-overdue" : ""}${task.id === currentSelection() ? " selected" : ""}" style="${colors(task)}" ${taskAttributes(task, "deadline")} aria-label="${escape(accessibleLabel(task, "deadline", date))}">${flag}<span class="deadline-title">${safeText(task.title)}</span><small class="deadline-time">${safeText(dueTime(task))}</small>${status.overdue ? '<span class="sr-only">Overdue</span>' : ""}</button>`;
     }
-    function deadlineChips(tasks, date, { expanded = false, limit = 3 } = {}) {
-      const deadlines = sortedDeadlines(tasks, date);
+    function deadlineChips(tasks, date, { expanded = false, limit = 3, dateOnly = false } = {}) {
+      const deadlines = sortedDeadlines(tasks, date).filter(task => !dateOnly || !validTime(task.dueTime));
       if (!deadlines.length) return "";
       const visibleLimit = Number.isInteger(limit) && limit > 0 ? limit : 3;
       const visible = expanded ? deadlines : deadlines.slice(0, visibleLimit);
       const remaining = deadlines.length - visible.length;
       const overflow = deadlines.length > visibleLimit ? `<button type="button" class="deadline-overflow" data-deadline-overflow="${escape(date)}" aria-expanded="${expanded ? "true" : "false"}" aria-label="${escape(expanded ? `Show fewer deadlines for ${formatLongDate(date)}` : `Show ${remaining} more deadline${remaining === 1 ? "" : "s"} for ${formatLongDate(date)}`)}">${expanded ? "Show fewer" : `+${remaining} more`}</button>` : "";
       return `<div class="deadline-chip-list" data-deadline-expanded="${expanded ? "true" : "false"}">${visible.map(task => deadlineChip(task, date)).join("")}</div>${overflow}`;
+    }
+    function timedDeadlineGroups(tasks, date, { hourHeight = 62, markerHeight = 44 } = {}) {
+      // Date-only deadlines retain their end-of-day status semantics without
+      // inventing a clock position. Invalid legacy timestamps stay in the strip.
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return [];
+      const [year, month, day] = date.split("-").map(Number), check = new Date(0);
+      check.setUTCFullYear(year, month - 1, day); check.setUTCHours(0, 0, 0, 0);
+      if (year < 1 || check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day) return [];
+      const scale = Number.isFinite(hourHeight) && hourHeight > 0 ? hourHeight : 62;
+      const dayHeight = 24 * scale;
+      const height = Math.min(dayHeight, Number.isFinite(markerHeight) && markerHeight > 0 ? markerHeight : 44);
+      const groups = [];
+      for (const task of sortedDeadlines(tasks, date).filter(item => validTime(item.dueTime))) {
+        const minutes = Number(task.dueTime.slice(0, 2)) * 60 + Number(task.dueTime.slice(3));
+        const markerTop = minutes * scale / 60;
+        const top = Math.max(0, Math.min(dayHeight - height, markerTop - height / 2));
+        const entry = { task, minutes, markerTop };
+        let group = groups.at(-1);
+        // Anchor each cluster to its first fixed-height label. Extending the
+        // comparison for every new pin would chain a whole morning into a group.
+        if (!group || top >= group.top + height + 4) {
+          group = { key: `${date}-${minutes}`, date, minutes, lastMinutes: minutes, markerTop, top, height, dayHeight, bottom: Math.min(dayHeight, Math.max(top + height, markerTop + 5)), tasks: [], entries: [] };
+          groups.push(group);
+        }
+        group.tasks.push(task); group.entries.push(entry); group.lastMinutes = minutes;
+        group.bottom = Math.min(dayHeight, Math.max(group.top + group.height, markerTop + 5));
+      }
+      return groups;
+    }
+    function timedDeadlineMarker(group, { overlapsWork = false } = {}) {
+      if (!group?.entries?.length || !Number.isFinite(group.top) || !Number.isFinite(group.bottom)) return "";
+      const task = group.entries[0].task, multiple = group.entries.length > 1;
+      const points = new Map();
+      for (const entry of group.entries) {
+        const point = points.get(entry.minutes) || { markerTop: entry.markerTop, count: 0 };
+        point.count += 1; points.set(entry.minutes, point);
+      }
+      const pins = [...points].map(([minutes, point]) => `<span class="timed-deadline-point${point.markerTop < 5 ? " is-day-start" : ""}${group.dayHeight - point.markerTop < 5 ? " is-day-end" : ""}" data-deadline-minute="${minutes}" style="top:${point.markerTop - group.top}px" aria-hidden="true"><svg class="timed-deadline-diamond" viewBox="0 0 10 10" focusable="false"><path d="M5 0 10 5 5 10 0 5Z" fill="currentColor"/></svg>${point.count > 1 ? `<span class="timed-deadline-point-count">${point.count}</span>` : ""}</span>`).join("");
+      const range = `${formatTime(task.dueTime)}${group.lastMinutes !== group.minutes ? `–${formatTime(group.entries.at(-1).task.dueTime)}` : ""}`;
+      const label = multiple ? `<button type="button" class="timed-deadline-group-trigger" data-timed-deadline-group="${escape(group.key)}" data-deadline-date="${escape(group.date)}" aria-haspopup="dialog" aria-expanded="false" aria-label="${escape(`${countText(group.entries.length, "deadline")} at ${range} on ${formatLongDate(group.date)}. Open deadline list.`)}"><span class="timed-deadline-kicker">${flag}<span class="timed-deadline-kind">Deadlines</span><span class="timed-deadline-count">${group.entries.length}</span></span><strong class="timed-deadline-title">${safeText(range)}</strong></button>`
+        : `<button type="button" class="timed-deadline-marker${timing(task).overdue ? " is-overdue" : ""}${task.id === currentSelection() ? " selected" : ""}" style="${colors(task)}" ${taskAttributes(task, "deadline")} aria-label="${escape(accessibleLabel(task, "deadline", group.date))}"><span class="timed-deadline-kicker">${flag}<span class="timed-deadline-kind">Deadline</span><span class="timed-deadline-time">${safeText(dueTime(task))}</span></span><strong class="timed-deadline-title">${safeText(task.title)}</strong></button>`;
+      return `<div class="timed-deadline-anchor${overlapsWork ? " has-work-overlap" : ""}" data-overlaps-work="${overlapsWork ? "true" : "false"}" style="top:${group.top}px;height:${group.bottom - group.top}px">${pins}${label}</div>`;
     }
     function monthEntry(task, kind, date) {
       const status = timing(task);
@@ -88,7 +131,7 @@
       }).join("");
       return `<div class="month-calendar calendar-layered-month"><div class="calendar-kind-legend" aria-label="Calendar key"><span>${clock}Work session</span><span>${flag}Deadline</span></div><div class="month-weekdays">${weekdays}</div><div class="month-grid">${cells}</div>${agenda(tasks, selectedDate)}</div>`;
     }
-    return { deadlineChips, month, agenda };
+    return { deadlineChips, timedDeadlineGroups, timedDeadlineMarker, month, agenda };
   }
   return { create };
 });

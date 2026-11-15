@@ -26,6 +26,20 @@
 .calendar-preview-notes p { margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
 .calendar-preview-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .calendar-preview-actions button { min-height: 40px; padding-inline: 14px; font-size: 13px; }
+.calendar-deadline-group-preview .calendar-preview-meta::before { display: none; }
+.calendar-deadline-group-list { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.calendar-deadline-group-list li { min-width: 0; }
+.calendar-task-preview .calendar-deadline-group-item {
+  display: grid; grid-template-columns: minmax(72px,max-content) minmax(0,1fr); align-items: center; gap: 12px;
+  box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; margin: 0; padding: 12px;
+  border: 1px solid var(--line); border-radius: 10px; color: var(--ink-deep); background: var(--card);
+  box-shadow: none; text-align: left; font: inherit; cursor: pointer; touch-action: manipulation;
+}
+.calendar-deadline-group-time { color: #843e32; font-size: 13px; line-height: 1.4; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.calendar-deadline-group-task-title { min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
+.calendar-task-preview .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #e7b5a8; background: color-mix(in srgb,#fff0eb 65%,var(--card)); box-shadow: none; transform: none; filter: none; }
+:root[data-theme="dark"] .calendar-deadline-group-time { color: #ffd1c4; }
+:root[data-theme="dark"] .calendar-task-preview .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #8d594e; background: color-mix(in srgb,#b95b4b 18%,var(--card)); }
 .calendar-task-preview button:focus-visible { outline: 3px solid var(--accent, var(--yellow)); outline-offset: 3px; }
 .calendar-task-preview[data-popup-motion="opening"]::backdrop { animation: calendar-preview-backdrop-in var(--motion-popupOpen,240ms) var(--motion-ease,ease) both; }
 .calendar-task-preview[data-popup-motion="closing"]::backdrop { animation: calendar-preview-backdrop-out var(--motion-popupClose,300ms) var(--motion-ease,ease) both; }

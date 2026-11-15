@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "surface": "fresh normal browser tab, not installed PWA",
+  "cacheProof": {
+    "keys": [
+      "duckplan-app-motion-preview-v62"
+    ],
+    "digests": {
+      "calendar-date-presentation.js": "4400193757d2af291bca21562f46963aec96111e6e037b09160d7b980bbee48b",
+      "calendar-date-clarity.css": "ddea6ca772700779a6089f6acbefe3a4b3dd4a81b57a60646be0111da997ecf9",
+      "calendar-task-preview.js": "e2d2a3d12e50c42f22d875c452b43039636b3cc9d0434d74ace7b79b82c94f50",
+      "calendar-task-preview.css": "346c41e6575b79672ec14118732187e930d23411ff53c523cd259ccd34bd3155",
+      "app.js": "3bd11df9b3752e51ab69d487faafe759685fec708fadd0e82339124e15fb37ed",
+      "index.html": "27e9004645e168664817b58e922dbbd68fb70cdef3509b5e265e4c495d516b32"
+    },
+    "scope": "http://127.0.0.1:8034/"
+  },
+  "offlineAssets": [
+    {
+      "name": "index.html",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-clarity.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-task-preview.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-presentation.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-task-preview.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "app.js",
+      "status": 200,
+      "fromServiceWorker": true
+    }
+  ],
+  "offlineDeadlineGroup": true,
+  "exactTaskDetails": true,
+  "onlineReconnect": true,
+  "errors": [],
+  "productionWrites": false
+}

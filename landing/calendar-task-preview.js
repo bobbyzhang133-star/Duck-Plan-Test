@@ -22,17 +22,33 @@
       if (value !== undefined) element.textContent = value;
       return element;
     };
-    const sourceKind = source => source?.dataset?.calendarKind || source?.dataset?.calendarTaskKind || (source?.classList?.contains("deadline-chip") ? "deadline" : source?.classList?.contains("calendar-event-block") ? "work" : "");
+    const sourceKind = source => source?.dataset?.calendarKind || source?.dataset?.calendarTaskKind || (source?.dataset?.timedDeadlineGroup || source?.classList?.contains("deadline-chip") ? "deadline" : source?.classList?.contains("calendar-event-block") ? "work" : "");
+    function groupSource(key, date) {
+      const calendar = doc.querySelector("#planner-calendar");
+      return [...(calendar?.querySelectorAll("[data-timed-deadline-group]") || [])]
+        .find(element => element.dataset.timedDeadlineGroup === key && element.dataset.deadlineDate === date) || null;
+    }
     function sourceFor(context) {
       if (context.source?.isConnected) return context.source;
+      if (context.type === "deadline-group") return groupSource(context.key, context.date);
       const calendar = doc.querySelector("#planner-calendar");
       return [...(calendar?.querySelectorAll("[data-edit-task],[data-calendar-preview-task],[data-calendar-drag-task]") || [])]
         .find(element => [element.dataset.editTask, element.dataset.calendarPreviewTask, element.dataset.calendarDragTask].some(id => String(id) === context.id)
-          && (!context.kind || sourceKind(element) === context.kind)) || null;
+          && (!context.kind || sourceKind(element) === context.kind))
+        || (context.returnGroup ? groupSource(context.returnGroup.key, context.returnGroup.date) : null);
+    }
+    function expandGroup(context, expanded) {
+      if (context.type !== "deadline-group") return;
+      for (const source of new Set([context.source, sourceFor(context)])) {
+        if (!source) continue;
+        source.setAttribute("aria-expanded", String(expanded));
+        if (expanded) source.setAttribute("aria-controls", context.element.id); else source.removeAttribute("aria-controls");
+      }
     }
     function retire(context, { restoreFocus = true, afterClose } = {}) {
       if (dialog !== context) return;
       const canRestore = sameOwner(context);
+      expandGroup(context, false);
       dialog = null; generation += 1;
       motion?.cancel?.(context.element);
       if (context.element.open) context.element.close();
@@ -81,6 +97,12 @@
       const context = dialog;
       if (!context) return;
       if (!sameOwner(context)) { close({ immediate: true, restoreFocus: false }); return; }
+      if (context.type === "deadline-group") {
+        const group = deadlineGroupFor(context);
+        if (!group) { close({ immediate: true }); return; }
+        if (!context.closing) renderDeadlineGroup(context, group);
+        return;
+      }
       const task = taskFor(context.id);
       if (!task) { close({ immediate: true }); return; }
       if (!context.closing) render(context, task);
@@ -116,11 +138,107 @@
         host.openTask?.({ id: context.id, source: sourceFor(context) || doc.querySelector("#calendar-today"), ...(reschedule ? { reschedule: true } : {}) });
       } });
     }
+    function deadlineGroupFor(context) {
+      const group = host.getDeadlineGroup ? host.getDeadlineGroup(context.key, context.date) : context.initialGroup;
+      if (!group || String(group.key) !== context.key || group.date !== context.date) return null;
+      const tasks = [...new Set((group.tasks || []).map(task => String(task.id)))].map(taskFor)
+        .filter(task => task && !task.completed && task.dueDate === context.date && task.dueTime)
+        .sort((a, b) => a.dueTime.localeCompare(b.dueTime) || String(a.title).localeCompare(String(b.title)) || String(a.id).localeCompare(String(b.id)));
+      return tasks.length ? { ...group, tasks } : null;
+    }
+    function renderDeadlineGroup(context, group) {
+      const fields = context.fields, count = group.tasks.length, formatTime = host.formatTime || (value => value);
+      text(fields.title, `${count} ${count === 1 ? "deadline" : "deadlines"}`);
+      text(fields.meta, (host.formatLongDate || (value => value))(context.date));
+      text(fields.status, `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to view its details.`);
+      const signature = JSON.stringify(group.tasks.map(task => String(task.id)));
+      const focusedID = doc.activeElement?.dataset?.deadlinePreviewTask;
+      for (const task of group.tasks) {
+        const id = String(task.id);
+        let row = fields.rows.get(id);
+        if (!row) {
+          const item = node("li"), button = node("button", "calendar-deadline-group-item"); button.type = "button"; button.dataset.deadlinePreviewTask = id;
+          const time = node("time", "calendar-deadline-group-time"), title = node("strong", "calendar-deadline-group-task-title");
+          button.append(time, title); item.append(button); row = { item, button, time, title }; fields.rows.set(id, row);
+        }
+        text(row.title, task.title || "Untitled task"); text(row.time, formatTime(task.dueTime));
+        row.time.setAttribute("datetime", `${context.date}T${task.dueTime}`);
+        row.button.setAttribute("aria-label", `${task.title || "Untitled task"}. Deadline at ${formatTime(task.dueTime)}. View task details.`);
+      }
+      if (signature !== context.rowSignature) {
+        fields.list.textContent = "";
+        for (const task of group.tasks) fields.list.append(fields.rows.get(String(task.id)).item);
+        const active = new Set(group.tasks.map(task => String(task.id)));
+        for (const id of fields.rows.keys()) if (!active.has(id)) fields.rows.delete(id);
+        context.rowSignature = signature;
+        if (context.element.isConnected) {
+          host.setupButtons?.(context.element);
+          if (focusedID) (fields.rows.get(focusedID)?.button || fields.dismiss).focus({ preventScroll: true });
+        }
+      }
+      expandGroup(context, true);
+    }
+    function chooseDeadline(context, id) {
+      if (!current(context) || context.closing) return;
+      if (!deadlineGroupFor(context)?.tasks.some(task => String(task.id) === id)) { sync(); return; }
+      close({ restoreFocus: false, afterClose: () => {
+        if (!sameOwner(context) || !deadlineGroupFor(context)?.tasks.some(task => String(task.id) === id)) return;
+        host.onSelectTask?.(id);
+        if (sameOwner(context)) open(id, sourceFor(context) || doc.querySelector("#calendar-today"));
+      } });
+    }
+    function show(context, dismiss, onClick) {
+      const element = context.element;
+      element.addEventListener("cancel", event => { event.preventDefault(); if (dialog === context) close(); });
+      element.addEventListener("close", () => { if (dialog === context) retire(context); });
+      element.addEventListener("click", event => {
+        if (!current(context) || context.closing) return;
+        const button = event.target.closest?.("button");
+        if (button === dismiss) close();
+        else if (button) return onClick(button);
+        else if (event.target === element) {
+          const bounds = element.getBoundingClientRect();
+          if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();
+        }
+      });
+      element.addEventListener("keydown", event => {
+        if (event.key !== "Tab" || !current(context) || context.closing) return;
+        const controls = [...element.querySelectorAll("button,[href],[tabindex]")].filter(control => !control.disabled && !control.hidden && control.getClientRects().length);
+        const first = controls[0], last = controls.at(-1);
+        if (!first) { event.preventDefault(); element.focus(); return; }
+        if (event.shiftKey && doc.activeElement === first || !event.shiftKey && doc.activeElement === last || !controls.includes(doc.activeElement)) {
+          event.preventDefault(); (event.shiftKey ? last : first).focus();
+        }
+      });
+      doc.body.append(element); host.setupButtons?.(element); element.showModal();
+      const focus = () => { if (current(context) && !context.closing) dismiss.focus({ preventScroll: true }); };
+      if (motion?.open) motion.open(element, context.anchor, focus); else focus();
+    }
+    function openDeadlineGroup(group, source) {
+      if (destroyed || !group?.key || !group.date) return false;
+      const key = String(group.key), date = String(group.date), latest = deadlineGroupFor({ key, date, initialGroup: group });
+      if (!latest) return false;
+      if (dialog?.type === "deadline-group" && current(dialog) && dialog.key === key && dialog.date === date && !dialog.closing) { sync(); return true; }
+      close({ immediate: true, restoreFocus: false });
+      const element = node("dialog", "calendar-task-preview calendar-deadline-group-preview"); element.id = "calendar-task-preview"; element.tabIndex = -1;
+      element.setAttribute("aria-labelledby", "calendar-preview-title"); element.setAttribute("aria-describedby", "calendar-preview-status");
+      const card = node("article", "calendar-preview-card"), heading = node("header", "calendar-preview-heading"), headingText = node("div");
+      const title = node("h2"); title.id = "calendar-preview-title";
+      const meta = node("p", "calendar-preview-meta"), dismiss = node("button", "close-button", "×"); dismiss.type = "button"; dismiss.setAttribute("aria-label", "Close deadline list");
+      headingText.append(node("p", "calendar-preview-kicker", "Timed deadlines"), title, meta); heading.append(headingText, dismiss);
+      const status = node("p", "calendar-preview-status"); status.id = "calendar-preview-status"; status.setAttribute("role", "status");
+      const list = node("ul", "calendar-deadline-group-list"); card.append(heading, status, list); element.append(card);
+      const context = { type: "deadline-group", key, date, initialGroup: group, source, owner: ownerKey(), view: viewKey(), generation: ++generation, element,
+        fields: { title, meta, status, list, dismiss, rows: new Map() }, closing: false, anchor: motion?.capture?.(source) || null };
+      dialog = context; renderDeadlineGroup(context, latest);
+      show(context, dismiss, button => { if (button.dataset.deadlinePreviewTask) chooseDeadline(context, button.dataset.deadlinePreviewTask); });
+      return true;
+    }
     function open(taskID, source) {
       if (destroyed) return false;
       const id = String(taskID), task = taskFor(id);
       if (!task) return false;
-      if (dialog && current(dialog) && dialog.id === id && !dialog.closing) { sync(); return true; }
+      if (dialog && dialog.type !== "deadline-group" && current(dialog) && dialog.id === id && !dialog.closing) { sync(); return true; }
       close({ immediate: true, restoreFocus: false });
       const element = node("dialog", "calendar-task-preview");
       element.id = "calendar-task-preview"; element.tabIndex = -1;
@@ -141,38 +259,19 @@
       for (const [button, name] of [[edit, "edit"], [reschedule, "reschedule"], [completeButton, "complete"]]) { button.type = "button"; button.id = `calendar-preview-${name}`; }
       actions.append(edit, reschedule, completeButton); card.append(heading, status, dates, warning, notesSection, error, actions); element.append(card);
       const context = { id, source, kind: sourceKind(source), owner: ownerKey(), view: viewKey(), generation: ++generation, element,
+        returnGroup: source?.dataset?.timedDeadlineGroup ? { key: source.dataset.timedDeadlineGroup, date: source.dataset.deadlineDate } : null,
         fields: { title, meta, status, work, due, warning, notesSection, notes, error, edit, reschedule, complete: completeButton },
         busy: false, closing: false, anchor: motion?.capture?.(source) || null };
       dialog = context; render(context, task);
-      element.addEventListener("cancel", event => { event.preventDefault(); if (dialog === context) close(); });
-      element.addEventListener("close", () => { if (dialog === context) retire(context); });
-      element.addEventListener("click", event => {
-        const button = event.target.closest?.("button");
-        if (button === dismiss) close();
-        else if (button === edit) handoff(context, false);
+      show(context, dismiss, button => {
+        if (button === edit) handoff(context, false);
         else if (button === reschedule) handoff(context, true);
         else if (button === completeButton) return complete(context);
-        else if (event.target === element) {
-          const bounds = element.getBoundingClientRect();
-          if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();
-        }
       });
-      element.addEventListener("keydown", event => {
-        if (event.key !== "Tab" || !current(context) || context.closing) return;
-        const controls = [...element.querySelectorAll("button,[href],[tabindex]")].filter(control => !control.disabled && !control.hidden && control.getClientRects().length);
-        const first = controls[0], last = controls.at(-1);
-        if (!first) { event.preventDefault(); element.focus(); return; }
-        if (event.shiftKey && doc.activeElement === first || !event.shiftKey && doc.activeElement === last || !controls.includes(doc.activeElement)) {
-          event.preventDefault(); (event.shiftKey ? last : first).focus();
-        }
-      });
-      doc.body.append(element); host.setupButtons?.(element); element.showModal();
-      const focus = () => { if (current(context) && !context.closing) dismiss.focus({ preventScroll: true }); };
-      if (motion?.open) motion.open(element, context.anchor, focus); else focus();
       return true;
     }
     return {
-      open, close, sync,
+      open, openDeadlineGroup, close, sync,
       get isOpen() { return Boolean(dialog?.element.open); },
       destroy() { destroyed = true; close({ immediate: true, restoreFocus: false }); },
     };

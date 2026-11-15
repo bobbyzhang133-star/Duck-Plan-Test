@@ -56,7 +56,10 @@ function fixture({ deferredClose = false } = {}) {
   const today = doc.createElement("button"); today.id = "calendar-today";
   const source = doc.createElement("button"); source.className = "deadline-chip"; source.dataset = { editTask: "alpha", calendarKind: "deadline" };
   calendar.append(source); doc.body.append(today, calendar); doc.activeElement = source;
-  const calls = [], pending = [], toasts = [], errors = [], editors = [], closing = [], motionCalls = [];
+  const calls = [], pending = [], toasts = [], errors = [], editors = [], closing = [], motionCalls = [], selections = [];
+  let groupIDs = null, groupExists = true;
+  const groupKey = "2030-05-02-0", groupDate = "2030-05-02";
+  const currentGroup = () => groupExists && groupIDs ? { key: groupKey, date: groupDate, tasks: groupIDs.map(id => tasks.find(task => task.id === id)).filter(Boolean) } : null;
   const store = {
     mode: "cloud", get user() { return { id: owner }; }, listItems: () => tasks,
     toggleComplete(id, completed) { calls.push({ id, completed, owner }); const capturedOwner = owner; return new Promise((resolve, reject) => pending.push({
@@ -72,12 +75,21 @@ function fixture({ deferredClose = false } = {}) {
   const api = Preview.create({ document: doc, store, model: Model, motion, getOwnerVersion: () => version, getView: () => view,
     classInfo: () => ({ name: "Calculus", color: "#538fc5" }), formatShortDate: value => `short:${value}`, formatLongDate: value => `long:${value}`, formatTime: value => `time:${value}`,
     openTask: options => editors.push(options), showToast: value => toasts.push(value), reportError: error => errors.push(error),
+    getDeadlineGroup: (key, date) => key === groupKey && date === groupDate ? currentGroup() : null,
+    onSelectTask: id => selections.push(id),
   });
-  return { api, doc, source, calendar, today, calls, pending, toasts, errors, editors, closing, motionCalls,
+  return { api, doc, source, calendar, today, calls, pending, toasts, errors, editors, closing, motionCalls, selections,
     dialog: () => doc.querySelector("#calendar-task-preview"), button: name => doc.querySelector(`#calendar-preview-${name}`),
     click(name) { return this.dialog().fire("click", { target: this.button(name) }); },
     replaceTask(id, update) { tasks = tasks.map(task => task.id === id ? { ...task, ...update } : task); },
     deleteTask(id) { tasks = tasks.filter(task => task.id !== id); },
+    group(ids = ["alpha", "beta"]) {
+      groupIDs = ids;
+      const trigger = doc.createElement("button"); trigger.dataset = { timedDeadlineGroup: groupKey, deadlineDate: groupDate };
+      trigger.setAttribute("aria-expanded", "false"); calendar.append(trigger);
+      return { ...currentGroup(), source: trigger };
+    },
+    hideGroup() { groupExists = false; },
     setOwner(value) { owner = value; version += 1; }, setView(value) { view = value; },
     get tasks() { return tasks; },
   };
@@ -183,4 +195,97 @@ test("Escape/backdrop dismissal and Tab wrap preserve keyboard access and rebind
   assert.equal(cancel.prevented, true); assert.equal(f.api.isOpen, false); assert.equal(f.doc.activeElement, deadline);
   assert.equal(f.motionCalls.filter(call => call[0] === "close").at(-1)[2].element, deadline);
   f.api.open("alpha", deadline); f.dialog().fire("click", { clientX: 50, clientY: 50 }); assert.equal(f.api.isOpen, false);
+});
+
+test("a grouped deadline list uses plaintext exact times, current unfinished tasks and no editing or writes", () => {
+  const f = fixture(); f.replaceTask("beta", { dueDate: "2030-05-02", dueTime: "00:15" });
+  const group = f.group(["beta", "alpha", "alpha"]);
+  assert.equal(f.api.openDeadlineGroup(group, group.source), true);
+  const dialog = f.dialog(), entries = dialog.querySelectorAll(".calendar-deadline-group-item");
+  assert.equal(dialog.classList.contains("calendar-deadline-group-preview"), true);
+  assert.equal(dialog.querySelector("#calendar-preview-title").textContent, "2 deadlines");
+  assert.deepEqual(entries.map(entry => entry.dataset.deadlinePreviewTask), ["alpha", "beta"]);
+  assert.equal(entries[0].querySelector(".calendar-deadline-group-time").textContent, "time:00:00");
+  assert.equal(entries[1].querySelector("time").getAttribute("datetime"), "2030-05-02T00:15");
+  assert.equal(entries[0].querySelector("strong").textContent, f.tasks[0].title);
+  assert.equal(dialog.querySelector("img"), null); assert.equal(dialog.querySelector("form"), null);
+  assert.equal(dialog.querySelector("#calendar-preview-edit"), null);
+  assert.equal(group.source.getAttribute("aria-expanded"), "true");
+  assert.equal(group.source.getAttribute("aria-controls"), "calendar-task-preview");
+  assert.equal(f.api.openDeadlineGroup(group, group.source), true);
+  assert.equal(f.dialog(), dialog); assert.equal(f.doc.body.querySelectorAll("dialog").length, 1);
+  assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
+});
+
+test("choosing a grouped deadline waits for closing and opens its compact preview without a write", () => {
+  const f = fixture({ deferredClose: true }); f.replaceTask("beta", { dueDate: "2030-05-02", dueTime: "00:15" });
+  const group = f.group(); f.api.openDeadlineGroup(group, group.source);
+  const list = f.dialog(), entry = list.querySelectorAll(".calendar-deadline-group-item")[1];
+  list.fire("click", { target: entry });
+  assert.equal(f.dialog(), list); assert.equal(list.inert, true); assert.equal(f.calls.length, 0);
+  assert.equal(f.selections.length, 0); f.closing.shift()();
+  assert.equal(f.dialog().classList.contains("calendar-deadline-group-preview"), false);
+  assert.equal(f.dialog().querySelector("#calendar-preview-title").textContent, "Beta");
+  assert.deepEqual(f.selections, ["beta"]); assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
+  assert.equal(group.source.getAttribute("aria-expanded"), "false");
+  group.source.remove(); const replacement = f.doc.createElement("button"); replacement.dataset = { ...group.source.dataset }; f.calendar.append(replacement);
+  f.api.close(); f.closing.shift()();
+  assert.equal(f.doc.activeElement, replacement, "task preview should return to a re-rendered group trigger");
+});
+
+test("group sync re-reads canonical tasks, preserves live row focus, filters completed/deleted entries and closes a missing group", () => {
+  const f = fixture(); f.replaceTask("beta", { dueDate: "2030-05-02", dueTime: "00:15" });
+  const group = f.group(); f.api.openDeadlineGroup(group, group.source);
+  const dialog = f.dialog(), entry = dialog.querySelectorAll(".calendar-deadline-group-item")[1]; entry.focus();
+  f.replaceTask("beta", { title: "Changed elsewhere", dueTime: "00:25" }); f.api.sync();
+  assert.equal(f.dialog(), dialog); assert.equal(f.doc.activeElement, entry);
+  assert.equal(entry.querySelector("strong").textContent, "Changed elsewhere");
+  assert.equal(entry.querySelector("time").textContent, "time:00:25");
+  f.replaceTask("beta", { completed: true }); f.api.sync();
+  assert.equal(dialog.querySelector("#calendar-preview-title").textContent, "1 deadline");
+  assert.equal(dialog.querySelectorAll(".calendar-deadline-group-item").length, 1);
+  assert.equal(f.doc.activeElement.getAttribute("aria-label"), "Close deadline list");
+  f.replaceTask("alpha", { deleted_at: 123 }); f.api.sync();
+  assert.equal(f.api.isOpen, false); assert.equal(group.source.getAttribute("aria-expanded"), "false");
+  f.replaceTask("alpha", { deleted_at: null }); f.api.openDeadlineGroup(group, group.source);
+  f.hideGroup(); group.source.remove(); f.api.sync();
+  assert.equal(f.api.isOpen, false); assert.equal(f.doc.activeElement, f.today);
+  assert.equal(f.calls.length, 0);
+});
+
+test("a delayed grouped-deadline handoff cannot cross an owner change or replace another preview", () => {
+  for (const changeOwner of [false, true]) {
+    const f = fixture({ deferredClose: true }); const group = f.group(["alpha"]); f.api.openDeadlineGroup(group, group.source);
+    f.dialog().fire("click", { target: f.dialog().querySelector(".calendar-deadline-group-item") });
+    if (changeOwner) { f.setOwner("B"); f.api.sync(); }
+    f.api.open("beta", f.source); const next = f.dialog();
+    f.closing.shift()();
+    assert.equal(f.dialog(), next); assert.equal(next.querySelector("#calendar-preview-title").textContent, "Beta");
+    assert.equal(f.selections.length, 0); assert.equal(f.calls.length, 0);
+  }
+});
+
+test("group keyboard dismissal rebinds its launcher, resets aria and routed/destroyed groups cannot linger", () => {
+  const f = fixture(); const group = f.group(["alpha"]); f.api.openDeadlineGroup(group, group.source);
+  const dialog = f.dialog(), controls = dialog.querySelectorAll("button"); controls.at(-1).focus();
+  const tab = { key: "Tab" }; dialog.fire("keydown", tab); assert.equal(tab.prevented, true); assert.equal(f.doc.activeElement, controls[0]);
+  group.source.remove(); const replacement = f.doc.createElement("button"); replacement.dataset = { ...group.source.dataset }; f.calendar.append(replacement);
+  f.api.sync(); assert.equal(replacement.getAttribute("aria-expanded"), "true");
+  const escape = {}; dialog.fire("cancel", escape);
+  assert.equal(escape.prevented, true); assert.equal(f.doc.activeElement, replacement);
+  assert.equal(group.source.getAttribute("aria-expanded"), "false"); assert.equal(replacement.getAttribute("aria-expanded"), "false");
+  assert.equal(replacement.getAttribute("aria-controls"), null);
+  f.api.openDeadlineGroup(group, replacement); f.setView("tasks"); f.api.sync(); assert.equal(f.api.isOpen, false);
+  f.setView("calendar"); f.api.openDeadlineGroup(group, replacement); f.api.destroy();
+  assert.equal(f.api.isOpen, false); assert.equal(replacement.getAttribute("aria-expanded"), "false");
+  assert.equal(f.api.openDeadlineGroup(group, replacement), false);
+});
+
+test("events from a detached deadline dialog cannot dismiss its replacement preview", () => {
+  const f = fixture(); const group = f.group(["alpha"]); f.api.openDeadlineGroup(group, group.source);
+  const previous = f.dialog(), dismiss = previous.querySelector(".close-button");
+  f.api.open("beta", f.source); const next = f.dialog();
+  previous.fire("click", { target: dismiss }); previous.fire("click", { clientX: 20, clientY: 20 });
+  assert.equal(f.dialog(), next); assert.equal(f.api.isOpen, true);
+  assert.equal(next.querySelector("#calendar-preview-title").textContent, "Beta");
 });

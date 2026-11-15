@@ -1,0 +1,739 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "width": 1280,
+      "cloud": false,
+      "reduce": false,
+      "status": "PASS",
+      "day": {
+        "height": 1488,
+        "width": 780,
+        "slots": 24,
+        "first": "00:00",
+        "last": "23:00",
+        "points": [
+          {
+            "minute": 0,
+            "anchorY": 0,
+            "art": {
+              "x": 4,
+              "y": 0,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 10
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 540,
+            "anchorY": 558,
+            "art": {
+              "x": 437.234375,
+              "y": 553,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 563
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 780,
+            "anchorY": 806,
+            "art": {
+              "x": 4,
+              "y": 801,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 811
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 1020,
+            "anchorY": 1054,
+            "art": {
+              "x": 437.234375,
+              "y": 1049,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 1059
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": "2"
+          },
+          {
+            "minute": 1025,
+            "anchorY": 1059.15625,
+            "art": {
+              "x": 437.234375,
+              "y": 1054.15625,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 1064.15625
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 1035,
+            "anchorY": 1069.5,
+            "art": {
+              "x": 437.234375,
+              "y": 1064.5,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 1074.5
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 1439,
+            "anchorY": 1486.953125,
+            "art": {
+              "x": 4,
+              "y": 1476.953125,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 1486.953125
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          }
+        ],
+        "labels": [
+          {
+            "x": 4,
+            "y": 0,
+            "width": 773,
+            "height": 44,
+            "right": 777,
+            "bottom": 44,
+            "text": "Deadline12:00 AMExactly midnight deadline",
+            "group": null
+          },
+          {
+            "x": 437.234375,
+            "y": 536,
+            "width": 340.765625,
+            "height": 44,
+            "right": 778,
+            "bottom": 580,
+            "text": "Deadline9:00 AMWork crosses a 9 AM deadline",
+            "group": null
+          },
+          {
+            "x": 4,
+            "y": 784,
+            "width": 773,
+            "height": 44,
+            "right": 777,
+            "bottom": 828,
+            "text": "Deadline1:00 PMA long \"quoted\" standalone <img src=x onerror=\"window.fixtureInjection=1\"> deadline label",
+            "group": null
+          },
+          {
+            "x": 437.234375,
+            "y": 1032,
+            "width": 340.765625,
+            "height": 44,
+            "right": 778,
+            "bottom": 1076,
+            "text": "Deadlines45:00 PM–5:15 PM",
+            "group": "2026-11-20-1020"
+          },
+          {
+            "x": 4,
+            "y": 1444,
+            "width": 773,
+            "height": 44,
+            "right": 777,
+            "bottom": 1488,
+            "text": "Deadline11:59 PMLast minute deadline",
+            "group": null
+          }
+        ],
+        "dateOnly": [
+          {
+            "id": "c48543fb-0000-4000-8000-000000000006",
+            "text": "Date-only deadlineEnd of day"
+          }
+        ],
+        "overflow": false
+      },
+      "group": {
+        "rows": [
+          {
+            "id": "c48543fb-0000-4000-8000-000000000001",
+            "title": "Independent work and 5 PM deadline",
+            "time": "5:00 PM"
+          },
+          {
+            "id": "c48543fb-0000-4000-8000-000000000003",
+            "title": "Same time \"quoted\" <span data-fixture-injected=\"yes\"> & a very long title that should wrap safely",
+            "time": "5:00 PM"
+          },
+          {
+            "id": "c48543fb-0000-4000-8000-000000000009",
+            "title": "Close deadline five minutes later",
+            "time": "5:05 PM"
+          },
+          {
+            "id": "c48543fb-0000-4000-8000-000000000002",
+            "title": "Deadline fifteen minutes later",
+            "time": "5:15 PM"
+          }
+        ],
+        "groupBounds": {
+          "x": 897.234375,
+          "right": 1238,
+          "width": 340.765625,
+          "viewport": 1280,
+          "scrollWidth": 518,
+          "clientWidth": 518
+        },
+        "editor": {
+          "id": "c48543fb-0000-4000-8000-000000000001",
+          "title": "Independent work and 5 PM deadline",
+          "due": "17:00",
+          "work": "10:00",
+          "actual": "37"
+        },
+        "focusRestored": true,
+        "noWrites": true
+      },
+      "week": {
+        "height": 1488,
+        "width": 112,
+        "slots": 24,
+        "first": "00:00",
+        "last": "23:00",
+        "points": [
+          {
+            "minute": 0,
+            "anchorY": 0,
+            "art": {
+              "x": 4,
+              "y": 0,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 10
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 540,
+            "anchorY": 558,
+            "art": {
+              "x": 63.15625,
+              "y": 553,
+              "width": 10,
+              "height": 10,
+              "right": 73.15625,
+              "bottom": 563
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 780,
+            "anchorY": 806,
+            "art": {
+              "x": 4,
+              "y": 801,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 811
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 1020,
+            "anchorY": 1054,
+            "art": {
+              "x": 63.15625,
+              "y": 1049,
+              "width": 10,
+              "height": 10,
+              "right": 73.15625,
+              "bottom": 1059
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": "2"
+          },
+          {
+            "minute": 1025,
+            "anchorY": 1059.15625,
+            "art": {
+              "x": 63.15625,
+              "y": 1054.15625,
+              "width": 10,
+              "height": 10,
+              "right": 73.15625,
+              "bottom": 1064.15625
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 1035,
+            "anchorY": 1069.5,
+            "art": {
+              "x": 63.15625,
+              "y": 1064.5,
+              "width": 10,
+              "height": 10,
+              "right": 73.15625,
+              "bottom": 1074.5
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          },
+          {
+            "minute": 1439,
+            "anchorY": 1486.953125,
+            "art": {
+              "x": 4,
+              "y": 1476.953125,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 1486.953125
+            },
+            "color": "rgb(196, 89, 73)",
+            "count": ""
+          }
+        ],
+        "labels": [
+          {
+            "x": 4,
+            "y": 0,
+            "width": 105,
+            "height": 44,
+            "right": 109,
+            "bottom": 44,
+            "text": "Deadline12:00 AMExactly midnight deadline",
+            "group": null
+          },
+          {
+            "x": 63.15625,
+            "y": 536,
+            "width": 46.84375,
+            "height": 44,
+            "right": 110,
+            "bottom": 580,
+            "text": "Deadline9:00 AMWork crosses a 9 AM deadline",
+            "group": null
+          },
+          {
+            "x": 4,
+            "y": 784,
+            "width": 105,
+            "height": 44,
+            "right": 109,
+            "bottom": 828,
+            "text": "Deadline1:00 PMA long \"quoted\" standalone <img src=x onerror=\"window.fixtureInjection=1\"> deadline label",
+            "group": null
+          },
+          {
+            "x": 63.15625,
+            "y": 1032,
+            "width": 46.84375,
+            "height": 44,
+            "right": 110,
+            "bottom": 1076,
+            "text": "Deadlines45:00 PM–5:15 PM",
+            "group": "2026-11-20-1020"
+          },
+          {
+            "x": 4,
+            "y": 1444,
+            "width": 105,
+            "height": 44,
+            "right": 109,
+            "bottom": 1488,
+            "text": "Deadline11:59 PMLast minute deadline",
+            "group": null
+          }
+        ],
+        "dateOnly": [
+          {
+            "id": "c48543fb-0000-4000-8000-000000000006",
+            "text": "Date-only deadlineEnd of day"
+          }
+        ],
+        "overflow": false
+      },
+      "drag": {
+        "sameIdentity": true,
+        "deadlineUnchanged": true,
+        "manualAlertsUnchanged": true,
+        "undo": true
+      },
+      "timedOnlyDay": {
+        "emptyStripRemoved": true,
+        "pointAndGridGeometry": {
+          "height": 1488,
+          "width": 780,
+          "slots": 24,
+          "first": "00:00",
+          "last": "23:00",
+          "points": [
+            {
+              "minute": 0,
+              "anchorY": 0,
+              "art": {
+                "x": 4,
+                "y": 0,
+                "width": 10,
+                "height": 10,
+                "right": 14,
+                "bottom": 10
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": ""
+            },
+            {
+              "minute": 540,
+              "anchorY": 558,
+              "art": {
+                "x": 437.234375,
+                "y": 553,
+                "width": 10,
+                "height": 10,
+                "right": 447.234375,
+                "bottom": 563
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": ""
+            },
+            {
+              "minute": 780,
+              "anchorY": 806,
+              "art": {
+                "x": 4,
+                "y": 801,
+                "width": 10,
+                "height": 10,
+                "right": 14,
+                "bottom": 811
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": ""
+            },
+            {
+              "minute": 1020,
+              "anchorY": 1054,
+              "art": {
+                "x": 437.234375,
+                "y": 1049,
+                "width": 10,
+                "height": 10,
+                "right": 447.234375,
+                "bottom": 1059
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": "2"
+            },
+            {
+              "minute": 1025,
+              "anchorY": 1059.15625,
+              "art": {
+                "x": 437.234375,
+                "y": 1054.15625,
+                "width": 10,
+                "height": 10,
+                "right": 447.234375,
+                "bottom": 1064.15625
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": ""
+            },
+            {
+              "minute": 1035,
+              "anchorY": 1069.5,
+              "art": {
+                "x": 437.234375,
+                "y": 1064.5,
+                "width": 10,
+                "height": 10,
+                "right": 447.234375,
+                "bottom": 1074.5
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": ""
+            },
+            {
+              "minute": 1439,
+              "anchorY": 1486.953125,
+              "art": {
+                "x": 4,
+                "y": 1476.953125,
+                "width": 10,
+                "height": 10,
+                "right": 14,
+                "bottom": 1486.953125
+              },
+              "color": "rgb(196, 89, 73)",
+              "count": ""
+            }
+          ],
+          "labels": [
+            {
+              "x": 4,
+              "y": 0,
+              "width": 773,
+              "height": 44,
+              "right": 777,
+              "bottom": 44,
+              "text": "Deadline12:00 AMExactly midnight deadline",
+              "group": null
+            },
+            {
+              "x": 437.234375,
+              "y": 536,
+              "width": 340.765625,
+              "height": 44,
+              "right": 778,
+              "bottom": 580,
+              "text": "Deadline9:00 AMWork crosses a 9 AM deadline",
+              "group": null
+            },
+            {
+              "x": 4,
+              "y": 784,
+              "width": 773,
+              "height": 44,
+              "right": 777,
+              "bottom": 828,
+              "text": "Deadline1:00 PMA long \"quoted\" standalone <img src=x onerror=\"window.fixtureInjection=1\"> deadline label",
+              "group": null
+            },
+            {
+              "x": 437.234375,
+              "y": 1032,
+              "width": 340.765625,
+              "height": 44,
+              "right": 778,
+              "bottom": 1076,
+              "text": "Deadlines45:00 PM–5:15 PM",
+              "group": "2026-11-20-1020"
+            },
+            {
+              "x": 4,
+              "y": 1444,
+              "width": 773,
+              "height": 44,
+              "right": 777,
+              "bottom": 1488,
+              "text": "Deadline11:59 PMLast minute deadline",
+              "group": null
+            }
+          ],
+          "dateOnly": [],
+          "overflow": false
+        }
+      },
+      "month": {
+        "due": "10",
+        "work": "4",
+        "label": "Friday, November 20, 10 deadlines · 4 work sessions, 11 tasks"
+      },
+      "mode": "isolated browser local storage"
+    },
+    {
+      "width": 1280,
+      "cloud": true,
+      "reduce": true,
+      "dark": true,
+      "status": "FAIL",
+      "day": {
+        "height": 1488,
+        "width": 780,
+        "slots": 24,
+        "first": "00:00",
+        "last": "23:00",
+        "points": [
+          {
+            "minute": 0,
+            "anchorY": 0,
+            "art": {
+              "x": 4,
+              "y": 0,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 10
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": ""
+          },
+          {
+            "minute": 540,
+            "anchorY": 558,
+            "art": {
+              "x": 437.234375,
+              "y": 553,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 563
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": ""
+          },
+          {
+            "minute": 780,
+            "anchorY": 806,
+            "art": {
+              "x": 4,
+              "y": 801,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 811
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": ""
+          },
+          {
+            "minute": 1020,
+            "anchorY": 1054,
+            "art": {
+              "x": 437.234375,
+              "y": 1049,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 1059
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": "2"
+          },
+          {
+            "minute": 1025,
+            "anchorY": 1059.15625,
+            "art": {
+              "x": 437.234375,
+              "y": 1054.15625,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 1064.15625
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": ""
+          },
+          {
+            "minute": 1035,
+            "anchorY": 1069.5,
+            "art": {
+              "x": 437.234375,
+              "y": 1064.5,
+              "width": 10,
+              "height": 10,
+              "right": 447.234375,
+              "bottom": 1074.5
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": ""
+          },
+          {
+            "minute": 1439,
+            "anchorY": 1486.953125,
+            "art": {
+              "x": 4,
+              "y": 1476.953125,
+              "width": 10,
+              "height": 10,
+              "right": 14,
+              "bottom": 1486.953125
+            },
+            "color": "rgb(239, 155, 133)",
+            "count": ""
+          }
+        ],
+        "labels": [
+          {
+            "x": 4,
+            "y": 0,
+            "width": 773,
+            "height": 44,
+            "right": 777,
+            "bottom": 44,
+            "text": "Deadline12:00 AMExactly midnight deadline",
+            "group": null
+          },
+          {
+            "x": 437.234375,
+            "y": 536,
+            "width": 340.765625,
+            "height": 44,
+            "right": 778,
+            "bottom": 580,
+            "text": "Deadline9:00 AMWork crosses a 9 AM deadline",
+            "group": null
+          },
+          {
+            "x": 4,
+            "y": 784,
+            "width": 773,
+            "height": 44,
+            "right": 777,
+            "bottom": 828,
+            "text": "Deadline1:00 PMA long \"quoted\" standalone <img src=x onerror=\"window.fixtureInjection=1\"> deadline label",
+            "group": null
+          },
+          {
+            "x": 437.234375,
+            "y": 1032,
+            "width": 340.765625,
+            "height": 44,
+            "right": 778,
+            "bottom": 1076,
+            "text": "Deadlines45:00 PM–5:15 PM",
+            "group": "2026-11-20-1020"
+          },
+          {
+            "x": 4,
+            "y": 1444,
+            "width": 773,
+            "height": 44,
+            "right": 777,
+            "bottom": 1488,
+            "text": "Deadline11:59 PMLast minute deadline",
+            "group": null
+          }
+        ],
+        "dateOnly": [
+          {
+            "id": "ad2f710e-0000-4000-8000-000000000006",
+            "text": "Date-only deadlineEnd of day"
+          }
+        ],
+        "overflow": false
+      },
+      "stage": "Day deadline group/list/details/edit/focus",
+      "error": "Opening deadline list/details/editor unexpectedly wrote task data"
+    }
+  ],
+  "passed": false,
+  "productionWrites": false,
+  "nativeChanges": false,
+  "serviceWorkers": "blocked for isolated focused UI checks"
+}
