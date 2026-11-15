@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-11-15T20:48:31.631000+00:00",
+  "origin": "https://duckplan.duckplan-cloudflare.workers.dev",
+  "scope": "Read-only anonymous public assets; no authenticated schema verification or writes",
+  "tls": "curl default macOS trust; no bypass",
+  "results": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 30840,
+      "sha256": "54ef908e85e48cf6f7347436f3d8e2efa9416ebca16fcee72e22f6daa0fee0f5"
+    },
+    {
+      "path": "/planner-store.js",
+      "status": 200,
+      "bytes": 21556,
+      "sha256": "277181e7082e5bcc0a58215d3f28cd45a4c9297cfcf29b5f890e0d0534050abd",
+      "workAlerts": false,
+      "work_alerts_supported": false,
+      "task_details_supported": false
+    },
+    {
+      "path": "/work-alerts.js",
+      "status": 404,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/work-alert-controller.js",
+      "status": 404,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/service-worker.js",
+      "status": 200,
+      "bytes": 5215,
+      "sha256": "3ebcb3dca3b443846317b6cf928f8724b5e33b3962daa60f590c8044e406c232",
+      "cacheDeclaration": "const CACHE_VERSION = \"duckplan-app-motion-preview-v13\";"
+    },
+    {
+      "path": "/api/session",
+      "status": 200,
+      "bytes": 58,
+      "sha256": "11c84c618b902ba28323477a71e5e67b183c06f173835e6b2b0515af7690981a",
+      "anonymousResponse": {
+        "user": null,
+        "providers": {
+          "password": true,
+          "google": false
+        }
+      }
+    }
+  ]
+}

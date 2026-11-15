@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "runtime": "actual iPhone simulator NativeSyncEngine with real localhost8796 Worker",
+  "method": "POST",
+  "route": "/api/native-sync/devices/:installation/ack",
+  "observedResponses": [
+    200,
+    200
+  ],
+  "registered": false,
+  "credentialsSerialized": false
+}

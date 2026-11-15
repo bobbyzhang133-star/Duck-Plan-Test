@@ -1,0 +1,704 @@
+{
+  "uniquePassedModes": 14,
+  "successfulRuns": 15,
+  "passedModes": [
+    "cloud-baseline",
+    "cloud-baseline-relaunch",
+    "cloud-extended",
+    "cloud-isolation",
+    "cloud-preferences",
+    "cloud-preferences-relaunch",
+    "cloud-shared-create",
+    "cloud-shared-verify",
+    "cloud-sync-status",
+    "local-baseline",
+    "local-baseline-relaunch",
+    "local-extended",
+    "local-preferences",
+    "local-preferences-relaunch"
+  ],
+  "rows": [
+    {
+      "runId": "phone-local-baseline-1794775097553007000",
+      "mode": "local-baseline",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-baseline-1794775097553007000",
+      "mode": "local-baseline",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-local-baseline-1794775097553007000",
+      "mode": "local-baseline",
+      "stage": "baseline-pass",
+      "task": true,
+      "classResource": true,
+      "template": true,
+      "visibleCopy": true,
+      "note": true,
+      "goal": true,
+      "habit": true,
+      "viewport": [
+        402,
+        812
+      ],
+      "overflow": false
+    },
+    {
+      "runId": "phone-local-baseline-1794775097553007000",
+      "mode": "local-baseline",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794775212518287000",
+      "mode": "local-baseline-relaunch",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794775212518287000",
+      "mode": "local-baseline-relaunch",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794775212518287000",
+      "mode": "local",
+      "stage": "baseline-relaunch-pass",
+      "persistence": true
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794775212518287000",
+      "mode": "local-baseline-relaunch",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-extended-1794775228572002000",
+      "mode": "local-extended",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-extended-1794775228572002000",
+      "mode": "local-extended",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-local-extended-1794775228572002000",
+      "mode": "local-extended",
+      "stage": "extended-pass",
+      "calendarModes": true,
+      "midnightLateNight": true,
+      "templateEditScheduleDelete": true,
+      "taskInvalidEditCompleteReopenDelete": true,
+      "notesEditSearchDelete": true,
+      "goalProgressDelete": true,
+      "habitUncheckCascade": true,
+      "resourceDelete": true,
+      "scriptedDOM": true
+    },
+    {
+      "runId": "phone-local-extended-1794775228572002000",
+      "mode": "local-extended",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-preferences-1794775253572871000",
+      "mode": "local-preferences",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-preferences-1794775253572871000",
+      "mode": "local-preferences",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-local-preferences-1794775253572871000",
+      "mode": "local-preferences",
+      "stage": "preferences-pass",
+      "defaultsBothOn": true,
+      "workToAlarmToNotification": true,
+      "manualOverrides": true,
+      "disabledPastSave": true,
+      "clearLinkedSource": true,
+      "restoreFollow": true,
+      "deliveryDisabledForPersistenceCheck": true
+    },
+    {
+      "runId": "phone-local-preferences-1794775253572871000",
+      "mode": "local-preferences",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-preferences-relaunch-1794775274125946000",
+      "mode": "local-preferences-relaunch",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-preferences-relaunch-1794775274125946000",
+      "mode": "local-preferences-relaunch",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-local-preferences-relaunch-1794775274125946000",
+      "mode": "local-preferences-relaunch",
+      "stage": "preferences-relaunch-pass",
+      "persistence": true
+    },
+    {
+      "runId": "phone-local-preferences-relaunch-1794775274125946000",
+      "mode": "local-preferences-relaunch",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-baseline-1794775306668029000",
+      "mode": "cloud-baseline",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-cloud-baseline-1794775306668029000",
+      "mode": "cloud-baseline",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-baseline-1794775306668029000",
+      "mode": "cloud-baseline",
+      "stage": "baseline-pass",
+      "task": true,
+      "classResource": true,
+      "template": true,
+      "visibleCopy": true,
+      "note": true,
+      "goal": true,
+      "habit": true,
+      "viewport": [
+        402,
+        812
+      ],
+      "overflow": false
+    },
+    {
+      "runId": "phone-cloud-baseline-1794775306668029000",
+      "mode": "cloud-baseline",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794775342746271000",
+      "mode": "cloud-baseline-relaunch",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794775342746271000",
+      "mode": "cloud-baseline-relaunch",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794775342746271000",
+      "mode": "cloud",
+      "stage": "baseline-relaunch-pass",
+      "persistence": true
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794775342746271000",
+      "mode": "cloud-baseline-relaunch",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-extended-1794775355698778000",
+      "mode": "cloud-extended",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-extended-1794775355698778000",
+      "mode": "cloud-extended",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-extended-1794775355698778000",
+      "mode": "cloud-extended",
+      "stage": "extended-pass",
+      "calendarModes": true,
+      "midnightLateNight": true,
+      "templateEditScheduleDelete": true,
+      "taskInvalidEditCompleteReopenDelete": true,
+      "notesEditSearchDelete": true,
+      "goalProgressDelete": true,
+      "habitUncheckCascade": true,
+      "resourceDelete": true,
+      "scriptedDOM": true
+    },
+    {
+      "runId": "phone-cloud-extended-1794775355698778000",
+      "mode": "cloud-extended",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-preferences-1794775382409041000",
+      "mode": "cloud-preferences",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-preferences-1794775382409041000",
+      "mode": "cloud-preferences",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-preferences-1794775382409041000",
+      "mode": "cloud-preferences",
+      "stage": "preferences-pass",
+      "defaultsBothOn": true,
+      "workToAlarmToNotification": true,
+      "manualOverrides": true,
+      "disabledPastSave": true,
+      "clearLinkedSource": true,
+      "restoreFollow": true,
+      "deliveryDisabledForPersistenceCheck": true
+    },
+    {
+      "runId": "phone-cloud-preferences-1794775382409041000",
+      "mode": "cloud-preferences",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-preferences-relaunch-1794775397513918000",
+      "mode": "cloud-preferences-relaunch",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-preferences-relaunch-1794775397513918000",
+      "mode": "cloud-preferences-relaunch",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-preferences-relaunch-1794775397513918000",
+      "mode": "cloud-preferences-relaunch",
+      "stage": "preferences-relaunch-pass",
+      "persistence": true
+    },
+    {
+      "runId": "phone-cloud-preferences-relaunch-1794775397513918000",
+      "mode": "cloud-preferences-relaunch",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-isolation-1794775403632387000",
+      "mode": "cloud-isolation",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-isolation-1794775403632387000",
+      "mode": "cloud-isolation",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-isolation-1794775403632387000",
+      "mode": "cloud-isolation",
+      "stage": "isolation-pass",
+      "guestIsolated": true,
+      "secondOwnerIsolated": true,
+      "bothNativeBridgesRejectStaleOwner": true,
+      "staleTapIgnored": true,
+      "originalOwnerRestored": true,
+      "nativeURLSession": true,
+      "deliveryDisabled": true
+    },
+    {
+      "runId": "phone-cloud-isolation-1794775403632387000",
+      "mode": "cloud-isolation",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-shared-create-1794775418933710000",
+      "mode": "cloud-shared-create",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-shared-create-1794775418933710000",
+      "mode": "cloud-shared-create",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-shared-create-1794775418933710000",
+      "mode": "cloud-shared-create",
+      "stage": "shared-create-pass",
+      "taskId": "5507ed98-7e6b-4301-b16b-d22fb50b0b77",
+      "actualMinutes": 37,
+      "reminderChoice": "15",
+      "alarmAt": "2026-11-16T09:15",
+      "notificationAt": "2026-11-16T09:20",
+      "deliveryDisabledForPersistenceCheck": true
+    },
+    {
+      "runId": "phone-cloud-shared-create-1794775418933710000",
+      "mode": "cloud-shared-create",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794775427233579000",
+      "mode": "cloud-sync-status",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794775427233579000",
+      "mode": "cloud-sync-status",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794775427233579000",
+      "mode": "cloud-sync-status",
+      "stage": "sync-status-pass",
+      "initial": {
+        "reason": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build.",
+        "enabled": false,
+        "lastSyncAt": 1794775432520.636,
+        "registered": false
+      },
+      "refreshed": {
+        "enabled": false,
+        "reason": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build.",
+        "registered": false,
+        "lastSyncAt": 1794775432520.636
+      },
+      "visibleExplanation": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build. Last account refresh: 11/15/2026, 12:43:53 PM.",
+      "sharedCopy": "Task details, alarm settings, logged time and reminder choices are shared with devices signed into this account. Alarm and notification access is allowed separately on each device.",
+      "backgroundAPNsDelivery": "BLOCKED \u2014 no paid-team push entitlement or APNs keys"
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794775427233579000",
+      "mode": "cloud-sync-status",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-alerts-1794775477989560000",
+      "mode": "cloud-alerts",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-alerts-1794775477989560000",
+      "mode": "cloud-alerts",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "notDetermined"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-alerts-1794775477989560000",
+      "mode": "cloud-alerts",
+      "stage": "permission-window",
+      "message": "Saving two future channels may request native AlarmKit and normal notification permissions."
+    },
+    {
+      "runId": "phone-cloud-shared-verify-1794776411301028000",
+      "mode": "cloud-shared-verify",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-shared-verify-1794776411301028000",
+      "mode": "cloud-shared-verify",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "denied"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-shared-verify-1794776411301028000",
+      "mode": "cloud-shared-verify",
+      "stage": "shared-verify-pass",
+      "taskId": "5507ed98-7e6b-4301-b16b-d22fb50b0b77",
+      "relaunchPersistence": true,
+      "independentContainers": true,
+      "nativeSyncStatus": {
+        "reason": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build.",
+        "registered": false,
+        "enabled": false,
+        "lastSyncAt": 1794776558363.1921
+      }
+    },
+    {
+      "runId": "phone-cloud-shared-verify-1794776411301028000",
+      "mode": "cloud-shared-verify",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794776563996990000",
+      "mode": "cloud-sync-status",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794776563996990000",
+      "mode": "cloud-sync-status",
+      "stage": "permission-state",
+      "alarm": {
+        "permission": "denied"
+      },
+      "notification": {
+        "permission": "notDetermined"
+      }
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794776563996990000",
+      "mode": "cloud-sync-status",
+      "stage": "sync-status-pass",
+      "initial": {
+        "reason": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build.",
+        "enabled": false,
+        "lastSyncAt": 1794776593641.756,
+        "registered": false
+      },
+      "refreshed": {
+        "reason": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build.",
+        "lastSyncAt": 1794776593641.756,
+        "registered": false,
+        "enabled": false
+      },
+      "visibleExplanation": "This build syncs while DuckPlan is open. Background sync needs a push-enabled signed build. Last account refresh: 11/15/2026, 1:03:26 PM.",
+      "sharedCopy": "Task details, alarm settings, logged time and reminder choices are shared with devices signed into this account. Alarm and notification access is allowed separately on each device.",
+      "backgroundAPNsDelivery": "BLOCKED \u2014 no paid-team push entitlement or APNs keys"
+    },
+    {
+      "runId": "phone-cloud-sync-status-1794776563996990000",
+      "mode": "cloud-sync-status",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    }
+  ]
+}

@@ -21,6 +21,10 @@ web audio or silently replace alarms with notifications.
 
 Scheduled native requests use absolute instants. While their follow links are active, changing the work start updates the alarm and its linked normal notification. A manually chosen time stays fixed until the user restores its follow link. Once scheduled, iOS handles requests while DuckPlan is closed or offline. AlarmKit and normal-notification permissions are independent and can be revoked in Settings.
 
+## Cross-device settings
+
+The compatible account backend shares alarm/notification preferences, logged minutes and reminder choices. The default free Personal Team build refreshes these while the app is open. Receiving new changes while closed needs the separate push-enabled configuration, compatible provisioning and activated APNs server; iOS controls delivery. See the [implementation and verification record](../docs/account-device-sync/README.md) and [owner activation guide](../docs/account-device-sync/OWNER-ACTIVATION.md). Source synchronization or a successful build does not update an installed phone.
+
 ## Duck alarm appearance
 
 - System alerts use duck-yellow accents and a dark Snooze label for contrast.
@@ -52,6 +56,12 @@ physical device; exercise those on the iPhone after installing this build.
 
 ## Build and run
 
+The test-repository version prepared on November 12, 2026 includes the latest
+Calendar homepage, Sigma mascot poses, sideways Daily progress duck, phone/iPad
+layout fixes and native alarm appearance changes. The Xcode project bundles this
+checkout's `landing/` folder directly. Personal development-team settings remain
+local to the existing iPhone project and are not included in the test upload.
+
 Requires macOS compatible with Xcode 26+, Xcode's iOS SDK and an iPhone/iPad on iOS 26+.
 Xcode 26–26.3 support macOS Sequoia 15.6+; consult Apple's requirements for later releases.
 
@@ -69,33 +79,11 @@ xcodegen generate --spec ios/project.yml
 xcodebuild -project ios/DuckPlan.xcodeproj -scheme DuckPlan -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
 ```
 
-The native app bundles the planner and supports DuckPlan email/password accounts
-under **More → Settings → Account**. Sign in with the same DuckPlan account as the
-website to load its tasks. Apple/Xcode sign-in is separate. Google redirect sign-in
-is not offered inside the bundled app.
-
-The bundled main frame uses an endpoint-restricted native URLSession bridge to
-`https://duckplan.duckplan-cloudflare.workers.dev/api`. Session cookies stay in native
-cookie storage and are not returned to JavaScript. No server CORS relaxation or
-public deployment is required. The local planner remains available without sign-in;
-copying its tasks into an account requires the existing explicit Import action.
-
-Native account data refreshes on returning to the app and every 30 seconds while
-foregrounded. Browser/PWA local storage is separate from native local storage.
-Ringing alarms stay device-local: signing in does not copy website notifications
-into AlarmKit alarms. Remote task completion can cancel alarms after the app next
-refreshes, but cannot cancel them while the app is closed. The web version retains
-its separate push-notification feature. No VAPID key is required for local AlarmKit alarms.
-
-For isolated simulator testing only, Debug builds accept
-`DUCKPLAN_NATIVE_API_URL=http://127.0.0.1:8792/api`. The port may vary; only that
-loopback host and `/api` path are accepted. Physical-device and Release builds
-ignore this override and use the production HTTPS endpoint. Native destination,
-method, body and redirect boundaries can be tested without network calls using:
-
-```sh
-node ios/scripts/test-cloud-boundary.mjs
-```
+The native app currently bundles the local planner. Browser/PWA storage is separate
+from native app storage; existing website tasks are not automatically imported.
+Remote-account/cloud-native sync and remote completion cancellation while this app
+is closed are not implemented. The web version retains its separate push-notification
+feature. No production cloud migration or VAPID key is required for local AlarmKit alarms.
 
 ## Mandatory physical-device verification before calling this finished
 

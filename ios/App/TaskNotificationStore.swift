@@ -155,13 +155,14 @@ final class TaskNotificationStore: NSObject, ObservableObject, UNUserNotificatio
         onOpen?()
     }
 
-    func save(taskID: String, title: String, fireAt: Date, expectedScope: String? = nil) async throws -> TaskNotificationRecord {
+    func save(taskID: String, title: String, fireAt: Date, expectedScope: String? = nil, allowAuthorization: Bool = true) async throws -> TaskNotificationRecord {
         guard !taskID.isEmpty, taskID.count <= 200, !title.isEmpty, title.count <= 300,
               fireAt.timeIntervalSinceNow >= 5, fireAt.timeIntervalSinceNow <= 366 * 86400 else { throw TaskNotificationError.invalid }
         try requireScope(expectedScope)
         let scope = currentScope, generation = contextGeneration
         guard validContext(generation, scope: scope, taskID: taskID) else { throw TaskNotificationError.contextChanged }
-        try await authorize()
+        if allowAuthorization { try await authorize() }
+        else { await updatePermission(); guard permission == "authorized" else { throw TaskNotificationError.denied } }
         guard validContext(generation, scope: scope, taskID: taskID) else { throw TaskNotificationError.contextChanged }
         let id = Self.identifier(scope: scope, taskID: taskID)
         let record = TaskNotificationRecord(id: id, scope: scope, taskID: taskID, title: title,

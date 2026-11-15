@@ -6,6 +6,7 @@ import { broadcast } from "./live.js";
 import { loadOrganization, organizationImportStatements } from "./organization.js";
 import { loadPersonal, personalImportPlan } from "./personal.js";
 import { cleanWorkAlerts } from "./work-alerts.js";
+import { cleanTaskDetails } from "./task-details.js";
 
 const ITEM_TYPES = new Set(["assignment", "test", "task", "event"]);
 const PRIORITIES = new Set(["low", "medium", "high"]);
@@ -70,6 +71,7 @@ export function cleanItem(row, id = row?.id) {
     duration_minutes: duration,
     completed: bit(row.completed),
     work_alerts: Object.hasOwn(row, "work_alerts") && row.work_alerts !== null ? JSON.stringify(cleanWorkAlerts(row.work_alerts)) : null,
+    task_details: Object.hasOwn(row, "task_details") && row.task_details !== null ? JSON.stringify(cleanTaskDetails(row.task_details)) : null,
   };
 }
 
@@ -110,8 +112,8 @@ export function jsonInsert(db, table, userId, rows, conflict = "") {
 }
 
 const ITEM_UPSERT = `
-INSERT INTO items (id, user_id, class_id, type, title, notes, priority, due_date, due_time, scheduled_start, duration_minutes, completed, completed_at, updated_at, importance, urgency, work_alerts)
-VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, CASE WHEN ?12 = 1 THEN ?13 END, ?13, ?14, ?15, ?18)
+INSERT INTO items (id, user_id, class_id, type, title, notes, priority, due_date, due_time, scheduled_start, duration_minutes, completed, completed_at, updated_at, importance, urgency, work_alerts, task_details)
+VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, CASE WHEN ?12 = 1 THEN ?13 END, ?13, ?14, ?15, ?18, ?20)
 ON CONFLICT (id) DO UPDATE SET
   class_id = excluded.class_id, type = excluded.type, title = excluded.title, notes = excluded.notes,
   priority = excluded.priority, due_date = excluded.due_date, due_time = excluded.due_time,
@@ -119,6 +121,7 @@ ON CONFLICT (id) DO UPDATE SET
   importance = CASE WHEN ?16 THEN excluded.importance ELSE items.importance END,
   urgency = CASE WHEN ?17 THEN excluded.urgency ELSE items.urgency END,
   work_alerts = CASE WHEN ?19 THEN excluded.work_alerts ELSE items.work_alerts END,
+  task_details = CASE WHEN ?21 THEN excluded.task_details ELSE items.task_details END,
   completed_at = CASE WHEN excluded.completed = 0 THEN NULL WHEN items.completed = 1 THEN items.completed_at ELSE excluded.completed_at END,
   updated_at = excluded.updated_at
 WHERE items.user_id = excluded.user_id AND items.deleted_at IS NULL
@@ -142,7 +145,30 @@ export async function loadPlanner(env, userId) {
     loadOrganization(env, userId),
     loadPersonal(env, userId),
   ]);
-  return { classes: classes.results, items: items.results, ...organization, ...personal, work_alerts_supported: true };
+  return { classes: classes.results, items: items.results, ...organization, ...personal, work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true };
+}
+
+// AFTER UPDATE triggers run after RETURNING captures its row. Always read again
+// before responding/broadcasting so clients receive the authoritative revision.
+async function loadItem(db, id, userId) {
+  return db.prepare("SELECT * FROM items WHERE id = ? AND user_id = ?").bind(id, userId).first();
+}
+
+function cleanAdoption(body) {
+  const allowed = ["expected_revision", "work_alerts", "task_details"];
+  if (!body || typeof body !== "object" || Array.isArray(body) ||
+      Object.keys(body).some(key => !allowed.includes(key)) ||
+      !Number.isSafeInteger(body.expected_revision) || body.expected_revision < 0 ||
+      !["work_alerts", "task_details"].some(key => Object.hasOwn(body, key))) {
+    throw new HttpError(400, "Send a revision and task settings to adopt.");
+  }
+  const row = { expected_revision: body.expected_revision };
+  for (const [key, clean] of [["work_alerts", cleanWorkAlerts], ["task_details", cleanTaskDetails]]) {
+    if (!Object.hasOwn(body, key)) continue;
+    if (body[key] === null) throw new HttpError(400, "Adopted task settings cannot be empty.");
+    row[key] = JSON.stringify(clean(body[key]));
+  }
+  return row;
 }
 
 async function loadImportReceipt(db, userId, key) {
@@ -160,14 +186,38 @@ export async function handlePlanner(request, env, ctx, path, user) {
 
   if (path === "/api/planner" && method === "GET") return json(await loadPlanner(env, user.id));
 
+  const adoptMatch = /^\/api\/items\/([^/]+)\/adopt-settings$/.exec(path);
+  if (adoptMatch && method === "POST") {
+    const id = assertId(decodeURIComponent(adoptMatch[1]), "task id");
+    const body = cleanAdoption(await readJson(request, 4096));
+    const hasAlerts = Object.hasOwn(body, "work_alerts"), hasDetails = Object.hasOwn(body, "task_details");
+    const current = await loadItem(db, id, user.id);
+    if (!current || current.deleted_at) throw new HttpError(404, "That task isn't available for these settings.");
+    // Only canonical NULL fields may be filled. Checking the revision in the same
+    // statement makes stale device caches lose to any intervening task change.
+    const result = await runDb(() => db.prepare(`UPDATE items SET
+      work_alerts = CASE WHEN ?1 AND work_alerts IS NULL THEN ?2 ELSE work_alerts END,
+      task_details = CASE WHEN ?3 AND task_details IS NULL THEN ?4 ELSE task_details END,
+      updated_at = ?5
+      WHERE id = ?6 AND user_id = ?7 AND deleted_at IS NULL AND sync_revision = ?8
+        AND ((?1 AND work_alerts IS NULL) OR (?3 AND task_details IS NULL))`)
+      .bind(bit(hasAlerts), body.work_alerts ?? null, bit(hasDetails), body.task_details ?? null, nowIso(), id, user.id, body.expected_revision).run());
+    const saved = await loadItem(db, id, user.id);
+    if (!saved) throw new HttpError(404, "That task isn't in your planner.");
+    const adopted = result.meta.changes > 0;
+    if (adopted) notify({ table: "items", row: saved });
+    return json({ item: saved, adopted });
+  }
+
   const itemMatch = /^\/api\/items\/([^/]+)$/.exec(path);
   if (itemMatch) {
     const id = assertId(decodeURIComponent(itemMatch[1]), "task id");
     if (method === "PUT") {
       const body = await readJson(request);
       const row = cleanItem(body, id);
-      const saved = await runDb(() => db.prepare(ITEM_UPSERT).bind(row.id, user.id, row.class_id, row.type, row.title, row.notes, row.priority, row.due_date, row.due_time, row.scheduled_start, row.duration_minutes, row.completed, nowIso(), row.importance, row.urgency, bit(Object.hasOwn(body, "importance")), bit(Object.hasOwn(body, "urgency")), row.work_alerts, bit(Object.hasOwn(body, "work_alerts"))).first());
-      if (!saved) throw new HttpError(404, "That task isn't in your planner.");
+      const written = await runDb(() => db.prepare(ITEM_UPSERT).bind(row.id, user.id, row.class_id, row.type, row.title, row.notes, row.priority, row.due_date, row.due_time, row.scheduled_start, row.duration_minutes, row.completed, nowIso(), row.importance, row.urgency, bit(Object.hasOwn(body, "importance")), bit(Object.hasOwn(body, "urgency")), row.work_alerts, bit(Object.hasOwn(body, "work_alerts")), row.task_details, bit(Object.hasOwn(body, "task_details"))).first());
+      if (!written) throw new HttpError(404, "That task isn't in your planner.");
+      const saved = await loadItem(db, id, user.id);
       notify({ table: "items", row: saved });
       return json({ item: saved });
     }
@@ -175,17 +225,18 @@ export async function handlePlanner(request, env, ctx, path, user) {
       const body = await readJson(request);
       if (typeof body.completed !== "boolean") throw new HttpError(400, "Send completed: true or false.");
       const now = nowIso();
-      const saved = await db.prepare("UPDATE items SET completed = ?1, completed_at = CASE WHEN ?1 = 0 THEN NULL ELSE coalesce(completed_at, ?2) END, updated_at = ?2 WHERE id = ?3 AND user_id = ?4 AND deleted_at IS NULL RETURNING *")
+      const written = await db.prepare("UPDATE items SET completed = ?1, completed_at = CASE WHEN ?1 = 0 THEN NULL ELSE coalesce(completed_at, ?2) END, updated_at = ?2 WHERE id = ?3 AND user_id = ?4 AND deleted_at IS NULL RETURNING *")
         .bind(bit(body.completed), now, id, user.id).first();
-      if (!saved) throw new HttpError(404, "That task isn't in your planner.");
+      if (!written) throw new HttpError(404, "That task isn't in your planner.");
+      const saved = await loadItem(db, id, user.id);
       notify({ table: "items", row: saved });
       return json({ item: saved });
     }
     if (method === "DELETE") {
       // Soft delete, so the deletion reaches every device. Deleting twice is fine.
       const now = nowIso();
-      const saved = await db.prepare("UPDATE items SET deleted_at = ?1, updated_at = ?1 WHERE id = ?2 AND user_id = ?3 AND deleted_at IS NULL RETURNING *").bind(now, id, user.id).first();
-      if (saved) notify({ table: "items", row: saved });
+      const written = await db.prepare("UPDATE items SET deleted_at = ?1, updated_at = ?1 WHERE id = ?2 AND user_id = ?3 AND deleted_at IS NULL RETURNING *").bind(now, id, user.id).first();
+      if (written) notify({ table: "items", row: await loadItem(db, id, user.id) });
       return json({ ok: true });
     }
   }

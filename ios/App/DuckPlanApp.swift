@@ -7,12 +7,22 @@ private final class DuckNotificationAppDelegate: NSObject, UIApplicationDelegate
         TaskNotificationStore.shared.installDelegate()
         return true
     }
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NativeBackgroundSync.shared.receiveToken(deviceToken)
+    }
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NativeBackgroundSync.shared.registrationFailed()
+    }
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        NativeBackgroundSync.shared.receiveRemote(userInfo, completion: completionHandler)
+    }
 }
 
 @main
 struct DuckPlanApp: App {
     @UIApplicationDelegateAdaptor(DuckNotificationAppDelegate.self) private var appDelegate
-    @StateObject private var alarms = TaskAlarmStore()
+    @StateObject private var alarms = NativeBackgroundSync.shared.alarms
     @StateObject private var notifications = TaskNotificationStore.shared
     var body: some Scene {
         WindowGroup { PlannerAlarmRoot(alarms: alarms, notifications: notifications) }
@@ -58,10 +68,11 @@ private struct PlannerAlarmRoot: View {
             if phase == .active {
                 alarms.refreshRingingAlarms()
                 Task { await notifications.updatePermission() }
+                NativeBackgroundSync.shared.foreground()
             }
         }
         .onChange(of: alarm?.id) { _, _ in actionError = nil }
-        .task { alarms.refreshRingingAlarms(); await notifications.updatePermission() }
+        .task { alarms.refreshRingingAlarms(); await notifications.updatePermission(); NativeBackgroundSync.shared.foreground() }
     }
 
     private func perform(_ alarm: TaskAlarmRecord, snooze: Bool) {

@@ -1,0 +1,7 @@
+{
+  "qaDevicesRemoved": true,
+  "existingUserDeviceStateBefore": "Booted",
+  "existingUserDeviceStateAfter": "Booted",
+  "existingUserDevicePreserved": true,
+  "productionMutations": false
+}

@@ -49,13 +49,13 @@
   const refresh = () => { const token = generation; return enqueue(token, () => refreshNow(token)); };
   enable?.addEventListener("click", async () => {
     const token = generation;
-    try { await enqueue(token, async () => { await call({ action: "authorize" }); if (current(token)) { setDeviceEnabled(true); await refreshNow(token); capabilityChanged(); } }); }
+    try { await enqueue(token, async () => { await call({ action: "authorize", scope, deviceEnabled: true }); if (current(token)) { setDeviceEnabled(true); await refreshNow(token); capabilityChanged(); } }); }
     catch (error) { if (current(token) && copy) copy.textContent = String(error.message || error); }
   });
   disable?.addEventListener("click", async () => {
     const token = ++generation;
     setDeviceEnabled(false); records.clear(); render();
-    try { await enqueue(token, async () => { await call({ action: "cancelAll" }); if (current(token)) { records.clear(); await refreshNow(token); } }); }
+    try { await enqueue(token, async () => { await call({ action: "cancelAll", scope, deviceEnabled: false }); if (current(token)) { records.clear(); await refreshNow(token); } }); }
     catch (error) { if (current(token) && copy) copy.textContent = String(error.message || error); }
     finally { if (current(token)) capabilityChanged(); }
   });
@@ -72,7 +72,7 @@
       knownTasks = new Map(tasks.map(task => [String(task.id), task])); contextKnown = true;
       const activeTaskIDs = tasks.filter(task => !task.completed && !task.deleted && !task.deleted_at).map(task => String(task.id));
       return enqueue(token, async () => {
-        await call({ action: "context", scope, activeTaskIDs });
+        await call({ action: "context", scope, activeTaskIDs, deviceEnabled: deviceEnabled() });
         if (current(token)) await refreshNow(token);
       });
     },

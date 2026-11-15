@@ -16,6 +16,7 @@ const protectedHashes = () => Object.fromEntries(protect.flatMap(relative => {
   const full = path.join(destination, relative); return fs.statSync(full).isDirectory() ? files(full) : [full];
 }).map(full => [path.relative(destination, full), hash(fs.readFileSync(full))]));
 const beforeNative = protectedHashes();
+const nativeBaseline = execFileSync("git", ["rev-parse", "HEAD"], { cwd: destination, encoding: "utf8" }).trim();
 const nativeTransport = fs.readFileSync(path.join(destination, "landing/native-cloud.js"));
 const approvedMaster = "landing/assets/duckplan-sigma-head-v11.png";
 if (hash(fs.readFileSync(path.join(source, approvedMaster))) !== hash(fs.readFileSync(path.join(destination, approvedMaster)))) throw new Error("Approved native icon master differs; review artwork before copying.");
@@ -51,18 +52,18 @@ for (const full of files(path.join(source, "tests"))) prepared.set(path.relative
 const changed = execFileSync("git", ["diff", "--name-only", "cd346d0", "--", "cloudflare/src", "cloudflare/migrations"], { cwd: source, encoding: "utf8" }).trim().split("\n").filter(Boolean);
 const untracked = execFileSync("git", ["ls-files", "--others", "--exclude-standard", "cloudflare/src", "cloudflare/migrations"], { cwd: source, encoding: "utf8" }).trim().split("\n").filter(Boolean);
 for (const relative of new Set([...changed, ...untracked, "cloudflare/src/index.js", "cloudflare/src/organization.js", "cloudflare/src/personal.js", "cloudflare/migrations/0004_product_organization.sql", "cloudflare/migrations/0005_personal_planning.sql"])) {
-  if (!/^cloudflare\/(?:src\/[^/]+\.js|migrations\/000[4-6]_[^/]+\.sql)$/.test(relative)) throw new Error(`Unexpected feature backend path ${relative}`);
+  if (!/^cloudflare\/(?:src\/[^/]+\.js|migrations\/000[4-8]_[^/]+\.sql)$/.test(relative)) throw new Error(`Unexpected feature backend path ${relative}`);
   const target = path.join(destination, relative);
   const contents = fs.readFileSync(path.join(source, relative));
   if (fs.existsSync(target) && hash(fs.readFileSync(target)) !== hash(contents)) {
     let baseline = null;
-    try { baseline = execFileSync("git", ["show", `8334d6e:${relative}`], { cwd: destination, stdio: ["ignore", "pipe", "ignore"] }); } catch {}
+    try { baseline = execFileSync("git", ["show", `${nativeBaseline}:${relative}`], { cwd: destination, stdio: ["ignore", "pipe", "ignore"] }); } catch {}
     if (!baseline || hash(fs.readFileSync(target)) !== hash(baseline)) throw new Error(`Native backend file has local changes: ${relative}`);
   }
   prepared.set(relative, contents);
 }
 const overlays = [...prepared.keys()].filter(relative => relative.startsWith("landing/") && relative !== "landing/native-cloud.js" && hash(prepared.get(relative)) !== hash(fs.readFileSync(path.join(source, relative))));
-const result = { applied: apply, source, destination, websiteFiles: files(path.join(source, "landing")).length, nativeLandingFiles: [...prepared.keys()].filter(p => p.startsWith("landing/")).length, overlays, nativeExtra: "landing/native-cloud.js", sharedTests: [...prepared.keys()].filter(p => p.startsWith("tests/")).length, backend: [...prepared.keys()].filter(p => p.startsWith("cloudflare/")), nativeProtectedBefore: beforeNative };
+const result = { applied: apply, source, destination, nativeBaseline, websiteFiles: files(path.join(source, "landing")).length, nativeLandingFiles: [...prepared.keys()].filter(p => p.startsWith("landing/")).length, overlays, nativeExtra: "landing/native-cloud.js", sharedTests: [...prepared.keys()].filter(p => p.startsWith("tests/")).length, backend: [...prepared.keys()].filter(p => p.startsWith("cloudflare/")), nativeProtectedBefore: beforeNative };
 if (apply) {
   for (const [relative, contents] of prepared) { const target = path.join(destination, relative); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, contents); }
   if (JSON.stringify(protectedHashes()) !== JSON.stringify(beforeNative)) throw new Error("Native/signing/artwork unexpectedly changed during landing sync.");

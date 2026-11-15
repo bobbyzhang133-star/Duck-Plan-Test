@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "separateInstallationFingerprints": {
+    "phone": "5a3fab1b0290b508fd8af4e1a83967f6cc28dadf7eea10b0ba883b5a32b8a6a7",
+    "ipad": "8d17f9455fddf1a536e9874b15fe077a1fce84f4926188768476b68102560a5d"
+  },
+  "sameControlledAccount": true,
+  "noDevicePushTokensRead": true
+}

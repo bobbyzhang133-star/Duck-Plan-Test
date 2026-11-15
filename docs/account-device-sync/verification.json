@@ -1,0 +1,90 @@
+{
+  "recordedAt": "2026-11-15T21:02:46.303178+00:00",
+  "checks": {
+    "canonicalFullSuite": {
+      "status": "PASS",
+      "tests": 502,
+      "command": "node --test --test-concurrency=2 tests/",
+      "log": "/private/tmp/duckplan-account-sync-all-final.log",
+      "scope": "Full frozen source before final ACK-only backend correction"
+    },
+    "nativeCheckoutFullSuite": {
+      "status": "PASS",
+      "tests": 507,
+      "command": "node --test --test-concurrency=2 tests/",
+      "log": "/private/tmp/duckplan-account-sync-native-all-final.log",
+      "scope": "Native checkout full source before final ACK-only backend correction"
+    },
+    "nativeCloudBoundary": {
+      "status": "PASS",
+      "command": "node ios/scripts/test-cloud-boundary.mjs"
+    },
+    "nativeNotificationBoundary": {
+      "status": "PASS",
+      "cases": 14,
+      "command": "node ios/scripts/test-notification-boundary.mjs"
+    },
+    "finalAckRegression": {
+      "status": "PASS",
+      "tests": 8,
+      "command": "node --test tests/native-background-sync.test.mjs",
+      "scope": "Final ACK and atomic device admission, including concurrent requests, rotation at cap and safe rejection of legacy over-cap rows",
+      "log": "/private/tmp/duckplan-native-background-final-eight.log"
+    },
+    "changedJavaScriptSyntax": {
+      "status": "PASS",
+      "files": 25
+    },
+    "workerDevelopmentDryRun": {
+      "status": "PASS",
+      "wrangler": "4.157.0",
+      "log": "/private/tmp/duckplan-account-sync-dryrun-dev.log",
+      "uploadKiB": 100.86
+    },
+    "workerProductionDryRun": {
+      "status": "PASS",
+      "wrangler": "4.157.0",
+      "log": "/private/tmp/duckplan-account-sync-dryrun-prod.log",
+      "uploadKiB": 100.86
+    },
+    "publicDeployment": {
+      "status": "NOT RUN",
+      "reason": "Prepared owner release only"
+    },
+    "physicalPhoneInstallation": {
+      "status": "NOT RUN",
+      "reason": "Simulator verification only"
+    },
+    "actualAPNsDelivery": {
+      "status": "BLOCKED",
+      "reason": "Free Personal Team, no push-capable signed profile or activated server/APNs keys"
+    },
+    "nativeRuntime": {
+      "status": "PASS",
+      "uniqueDeviceModeOutcomes": 27,
+      "phone": 14,
+      "ipad": 13,
+      "scope": "Actual iOS27.2 Simulator WKWebView, isolated containers, scripted DOM and real native URLSession to fixture Worker; OS delivery excluded",
+      "evidence": "native/runtime-results.json"
+    },
+    "unsignedBuildConfigurations": {
+      "status": "PASS",
+      "configurations": [
+        "default generic iOS Release",
+        "push Debug Simulator",
+        "push generic iOS Release"
+      ],
+      "evidence": "native-build-configurations.json"
+    }
+  },
+  "finalSourceSha256": {
+    "cloudflare/src/native-sync.js": "a4c6e0350366e412fc9517fe6a7bf8860e78e976636fbca5d1cd6912081da835",
+    "tests/native-background-sync.test.mjs": "ce0b2d39757cb803d0fcbf67236ddd29f70c54d5d8340a80e48f67b570345664",
+    "landing/app.js": "734647d6746f29f5323b61fb369362c77b8349dadec2aa7ef773254cf004f299",
+    "landing/planner-store.js": "3cf0456df6b828ac752c585954f8fcfd3f1bfcef495adb450f9f921c3b10f5d3",
+    "landing/work-alert-controller.js": "41b61e464d7fdd9de70f828350c9d37c16789a5171783326af658bd37f50db45",
+    "landing/index.html": "8355fb3a56c61bf8a56dbe2593ee600b42851136abd2ed1d7562f544bf1fef12",
+    "landing/service-worker.js": "9be84fd1c414d1d5f536a2e60107210b9b12e4797d8aebbadb2307023e371c84"
+  },
+  "noDeploymentOrCredentialChange": true
+}

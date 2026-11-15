@@ -18,6 +18,7 @@ private final class FakeNotificationClient: TaskNotificationClient {
     var requests: [String: UNNotificationRequest] = [:]
     var delivered = Set<String>()
     var adds = 0
+    var authorizationRequests = 0
     var failAdd = false
     var holdAuthorization = false
     var holdAdd = false
@@ -25,6 +26,7 @@ private final class FakeNotificationClient: TaskNotificationClient {
     var addGate: CheckedContinuation<Void, Error>?
     func authorization() async -> UNAuthorizationStatus { permission }
     func authorize() async throws -> Bool {
+        authorizationRequests += 1
         if holdAuthorization {
             let result = try await withCheckedThrowingContinuation { authorizationGate = $0 }
             permission = result ? .authorized : .denied
@@ -159,6 +161,17 @@ private struct NativeNotificationBoundary {
         try check(denyClient.adds == 0, "Denied/invalid save touched native requests")
         print("PASS permission denial, scope mismatch and invalid time rejection")
 
+        let backgroundClient = FakeNotificationClient(), backgroundStore = TaskNotificationStore(client: backgroundClient, defaults: MemoryPreferences())
+        backgroundClient.permission = .notDetermined
+        try await backgroundStore.context(scope: "A", activeTaskIDs: ["essay"])
+        try await rejection { _ = try await backgroundStore.save(taskID: "essay", title: "Essay", fireAt: future, expectedScope: "A", allowAuthorization: false) }
+        try check(backgroundClient.authorizationRequests == 0 && backgroundClient.adds == 0, "Background sync requested OS permission")
+        print("PASS background scheduling never requests notification authorization")
+        backgroundClient.permission = .authorized
+        _ = try await backgroundStore.save(taskID: "essay", title: "Essay", fireAt: future, expectedScope: "A", allowAuthorization: false)
+        try check(backgroundClient.authorizationRequests == 0 && backgroundClient.adds == 1, "Previously authorized background scheduling did not register")
+        print("PASS background scheduling uses existing per-device authorization")
+
         let allClient = FakeNotificationClient(), allStore = TaskNotificationStore(client: allClient, defaults: MemoryPreferences())
         try await allStore.context(scope: "A", activeTaskIDs: ["essay"])
         let all = try await allStore.save(taskID: "essay", title: "Essay", fireAt: future)
@@ -204,6 +217,6 @@ private struct NativeNotificationBoundary {
             throw BoundaryFailure(description: "Failed restoration unexpectedly succeeded")
         } catch { try check(String(describing: error) == "same-owner-restore-failed" && !sameOwnerRetired, "Current owner's restore error changed") }
         print("PASS same-owner restoration failure preserves its original error")
-        print("12 native notification and scope-restoration boundary cases passed")
+        print("14 native notification and scope-restoration boundary cases passed")
     }
 }

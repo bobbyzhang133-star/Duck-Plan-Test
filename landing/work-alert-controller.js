@@ -23,10 +23,10 @@
       queue = result.catch(() => {});
       return result;
     }
-    function wallTime(record) {
+    function wallTime(record, timeZone = zone()) {
       if (!Number.isFinite(record?.fire_at)) return null;
       const parts = Object.fromEntries(new Intl.DateTimeFormat("en-CA", {
-        timeZone: zone(), year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+        timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
       }).formatToParts(new Date(record.fire_at)).map(part => [part.type, part.value]));
       return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
     }
@@ -36,6 +36,36 @@
         timeZone: zone(), legacyAlarmAt: wallTime(alarm), legacyNotificationAt: wallTime(notification),
         legacySound: alarm?.sound, legacySnoozeMinutes: alarm?.snoozeMinutes,
       });
+    }
+    function legacyPreferences(task) {
+      if (task.workAlerts != null || task.completed || task.deleted || task.deleted_at) return null;
+      const records = Object.fromEntries([["alarm", alarms], ["notification", notifications]].map(([channel, provider]) => [channel, provider?.native ? provider.get?.(task.id) : null]));
+      const valid = record => record?.item_id === task.id && Number.isFinite(record.fire_at) && record.fire_at % 60000 === 0 && record.fire_at >= now() + Domain.MIN_AHEAD_MS && record.fire_at <= now() + Domain.MAX_AHEAD_MS;
+      const first = [records.alarm, records.notification].find(valid);
+      if (!first) return null;
+      try {
+        const prefs = Domain.defaults({ timeZone: first.time_zone || first.timeZone || zone() });
+        // Import only channels that actually existed on this device. Initializing
+        // normal defaults here would silently turn on a previously absent channel.
+        prefs.alarm.enabled = false;
+        prefs.notification.enabled = false;
+        let count = 0;
+        for (const channel of ["alarm", "notification"]) {
+          const record = records[channel];
+          if (!valid(record)) continue;
+          const value = { enabled: true, mode: "manual", at: wallTime(record, prefs.timeZone) };
+          if (channel === "alarm") Object.assign(value, { sound: record.sound ?? "system", snoozeMinutes: record.snoozeMinutes ?? 5 });
+          let candidate;
+          try { candidate = Domain.normalize({ ...prefs, [channel]: value }); }
+          catch { continue; }
+          const delivery = Domain.deliveries({ ...task, workAlerts: candidate }, { now: now() })[channel];
+          // A repeated DST wall time cannot always encode the original instant.
+          // Leave that legacy request intact instead of migrating a different time.
+          if (!delivery.eligible || delivery.fireAt !== record.fire_at) continue;
+          prefs[channel] = candidate[channel]; count += 1;
+        }
+        return count ? prefs : null;
+      } catch { return null; }
     }
     async function establish(operation, { refresh = false } = {}) {
       if (!current(operation)) return false;
@@ -103,7 +133,21 @@
         for (const id of foreground.keys()) if (!active.has(id)) foreground.delete(id);
         for (const task of tasks) {
           if (!current(operation)) return;
-          const errors = await synchronizeTask(task, operation);
+          let candidate = task;
+          if (store.mode === "cloud" && store.supportsSettingsAdoption && task.workAlerts == null) {
+            const prefs = legacyPreferences(task);
+            if (prefs) {
+              try {
+                const result = await store.adoptItemSettings(task.id, { workAlerts: prefs });
+                if (!current(operation)) return;
+                candidate = result.item || task;
+              } catch (error) {
+                if (current(operation)) onError(new Error(`Saved alert times for ${task.title} could not sync: ${error.message}`));
+                continue;
+              }
+            }
+          }
+          const errors = await synchronizeTask(candidate, operation);
           if (!current(operation)) return;
           for (const item of errors) onError(new Error(`${item.channel === "alarm" ? "Ringing alarm" : "Notification"} for ${task.title}: ${item.error.message}`));
         }

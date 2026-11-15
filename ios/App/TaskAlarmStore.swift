@@ -21,6 +21,7 @@ final class TaskAlarmStore: ObservableObject {
     @Published private(set) var permission = "notDetermined"
     @Published private(set) var currentScope = "local"
     @Published private(set) var ringingAlarms: [TaskAlarmRecord] = []
+    private(set) var inProgressAlarmIDs = Set<UUID>()
     private let manager = AlarmManager.shared
     private let storageKey = "duckplan.native.task-alarms.v1"
     private var observation: Task<Void, Never>?
@@ -46,13 +47,15 @@ final class TaskAlarmStore: ObservableObject {
 
     private func updateRingingAlarms(_ alarms: [Alarm]) {
         let ringingIDs = Set(alarms.filter { $0.state == .alerting }.map(\.id))
+        // Snooze/countdown is the same occurrence under the user's control, too.
+        inProgressAlarmIDs = Set(alarms.filter { [.alerting, .countdown, .paused].contains($0.state) }.map(\.id))
         ringingAlarms = records.filter { ringingIDs.contains($0.id) && $0.scope == currentScope }
             .sorted { $0.fireAt == $1.fireAt ? $0.id.uuidString < $1.id.uuidString : $0.fireAt < $1.fireAt }
     }
 
     func refreshRingingAlarms() {
         updatePermission()
-        guard permission == "authorized" else { ringingAlarms = []; return }
+        guard permission == "authorized" else { ringingAlarms = []; inProgressAlarmIDs = []; return }
         if let alarms = try? manager.alarms { updateRingingAlarms(alarms) }
     }
 
@@ -115,7 +118,7 @@ final class TaskAlarmStore: ObservableObject {
     }
 
     func save(taskID: String, title: String, fireAt: Date, sound: String, snoozeMinutes: Int,
-              expectedScope: String? = nil) async throws -> TaskAlarmRecord {
+              expectedScope: String? = nil, allowAuthorization: Bool = true) async throws -> TaskAlarmRecord {
         guard !taskID.isEmpty, taskID.count <= 200, !title.isEmpty, title.count <= 300,
               fireAt.timeIntervalSinceNow >= 5, fireAt.timeIntervalSinceNow <= 366 * 86400,
               ["system", "gentle", "bright"].contains(sound), [0, 5, 10, 15].contains(snoozeMinutes) else {
@@ -124,7 +127,10 @@ final class TaskAlarmStore: ObservableObject {
         try requireScope(expectedScope)
         let operationScope = currentScope, generation = contextGeneration
         guard validContext(generation, scope: operationScope, taskID: taskID) else { throw TaskAlarmError.contextChanged }
-        if manager.authorizationState != .authorized { try await authorize() }
+        if manager.authorizationState != .authorized {
+            guard allowAuthorization else { throw TaskAlarmError.denied }
+            try await authorize()
+        }
         guard validContext(generation, scope: operationScope, taskID: taskID) else { throw TaskAlarmError.contextChanged }
         let digest = Array(SHA256.hash(data: Data((operationScope + ":" + taskID).utf8)))
         let id = UUID(uuid: (digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15]))
@@ -202,6 +208,7 @@ final class TaskAlarmStore: ObservableObject {
         if try manager.alarms.contains(where: { $0.id == id }) { try manager.cancel(id: id) }
         records.removeAll { $0.id == id }
         ringingAlarms.removeAll { $0.id == id }
+        inProgressAlarmIDs.remove(id)
         persist()
     }
 

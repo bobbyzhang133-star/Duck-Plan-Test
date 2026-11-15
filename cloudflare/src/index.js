@@ -7,6 +7,7 @@ import { PlannerLive, liveStub } from "./live.js";
 import { handleAlarms, dispatchAlarms } from "./alarms.js";
 import { handleOrganization } from "./organization.js";
 import { handlePersonal } from "./personal.js";
+import { handleNativeSync, dispatchNativeSync } from "./native-sync.js";
 
 export { PlannerLive };
 
@@ -39,7 +40,7 @@ export async function handleRequest(request, env, ctx, options = {}) {
     }
 
     const user = await requireUser(request, env);
-    const response = (await handleAlarms(request, env, path, user)) || (await handlePersonal(request, env, ctx, path, user)) || (await handleOrganization(request, env, ctx, path, user)) || (await handlePlanner(request, env, ctx, path, user)) || (await handleAxis(request, env, path, user, options));
+    const response = (await handleNativeSync(request, env, path, user)) || (await handleAlarms(request, env, path, user)) || (await handlePersonal(request, env, ctx, path, user)) || (await handleOrganization(request, env, ctx, path, user)) || (await handlePlanner(request, env, ctx, path, user)) || (await handleAxis(request, env, path, user, options));
     if (response) return response;
     throw new HttpError(404, "Not found.");
   } catch (error) {
@@ -53,6 +54,7 @@ export default {
   fetch: (request, env, ctx) => handleRequest(request, env, ctx),
   scheduled(controller, env, ctx) {
     ctx.waitUntil(dispatchAlarms(env));
+    ctx.waitUntil(dispatchNativeSync(env));
     if (controller.cron === '*/30 * * * *') ctx.waitUntil(syncDueConnections(env).then((summary) => console.log("axis cron", JSON.stringify(summary))));
   },
 };

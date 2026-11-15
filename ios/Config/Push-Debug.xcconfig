@@ -1,0 +1,4 @@
+#include "Debug.xcconfig"
+// Opt-in: requires a push-capable Apple Developer team and matching profile.
+DUCKPLAN_PUSH_ENTITLEMENTS = App/DuckPlan.entitlements
+DUCKPLAN_BACKGROUND_SYNC_ENABLED = YES

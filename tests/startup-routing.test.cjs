@@ -18,6 +18,7 @@ test("Calendar is the default while explicit section links and the Dashboard rem
     return views[0];
   } };
   let route;
+  let previewsClosed = 0;
   const workspace = { scrollTop: 420, scrollLeft: 30, scrollTo({ top, left }) { this.scrollTop = top; this.scrollLeft = left; } };
   const context = vm.createContext({
     document, workspace, els: { views, navItems: [], pageTitle: {}, pageEyebrow: {} },
@@ -26,6 +27,7 @@ test("Calendar is the default while explicit section links and the Dashboard rem
     requestAnimationFrame(callback) { callback(); }, setupButtonMaterial() {},
     updatePrimaryAction() {},
     viewTransitions: { cancel() {} },
+    calendarTaskPreview: { close(options) { assert.equal(options.immediate, true); assert.equal(options.restoreFocus, false); previewsClosed += 1; } },
   });
   vm.runInContext(`${applyView}\n${setView}`, context);
   for (const name of ["", "unknown", "broken[route"]) {
@@ -46,6 +48,7 @@ test("Calendar is the default while explicit section links and the Dashboard rem
   }
   vm.runInContext('setView("today")', context);
   assert.equal(document.body.dataset.view, "home", "Existing Today deep links remain compatible");
+  assert.equal(previewsClosed, 7, "Leaving Calendar dismisses its preview without moving focus to an old launcher");
 });
 
 test("initial markup, brand link and installed-app launch all point to Calendar", () => {

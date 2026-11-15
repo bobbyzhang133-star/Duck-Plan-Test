@@ -1,0 +1,13 @@
+{
+  "device": "ipad",
+  "applicationState": "running",
+  "status": "BLOCKED",
+  "simctlPushExit": 121,
+  "nativeSnapshotReceivedChangedTask": false,
+  "scope": "Simulator injected invalidation and native snapshot fetch only; not APNs delivery or OS alarm/notification delivery",
+  "defaultFreeTeamBuildPushEnabled": false,
+  "permissionDependentCancellation": "NOT RUN \u2014 no authorized OS-scheduled requests available",
+  "reason": "Simulator rejected the injected invalidation.",
+  "simulatorDiagnostic": "UNErrorDomain1401: Notification has no user visible content",
+  "paidTeamAndApnsPrerequisites": "Separately BLOCKED for real APNs delivery; not inferred as cause of this Simulator error"
+}
