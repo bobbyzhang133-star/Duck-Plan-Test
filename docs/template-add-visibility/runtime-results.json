@@ -1,0 +1,179 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "Add-reveals-independent-unscheduled-copy-editor-and-reload",
+      "mode": "local browser storage",
+      "width": 835,
+      "touch": false,
+      "theme": "light",
+      "status": "PASS",
+      "taskId": "50a625f2-158e-4ca6-8b48-1508dd6a8cf9",
+      "sourceTemplateId": "a609ac01-4c6c-4a3f-8964-74c3247f2788",
+      "progress": "1 of 3 completed",
+      "form": {
+        "title": "BC Calculus visibility QA",
+        "date": "",
+        "time": "",
+        "due": "",
+        "dueTime": "",
+        "duration": "45",
+        "notes": "Keep the reusable template notes"
+      }
+    },
+    {
+      "test": "new-and-existing-copies-visible-under-Unscheduled-after-reload",
+      "mode": "local browser storage",
+      "width": 835,
+      "theme": "light",
+      "status": "PASS",
+      "existingCopyId": "61fb9105-dba3-44df-98b5-465bf2733845"
+    },
+    {
+      "test": "trusted-backlog-drag-to-Scheduled-Undo-to-Unscheduled-and-reload",
+      "mode": "local browser storage",
+      "width": 835,
+      "theme": "light",
+      "status": "PASS",
+      "taskId": "50a625f2-158e-4ca6-8b48-1508dd6a8cf9",
+      "scheduledStartBeforeUndo": "2026-11-14T09:00",
+      "scheduledStartAfterUndo": null
+    },
+    {
+      "test": "Add-reveals-independent-unscheduled-copy-editor-and-reload",
+      "mode": "signed-in real local Worker",
+      "width": 835,
+      "touch": false,
+      "theme": "light",
+      "status": "PASS",
+      "taskId": "78daec6f-dd9f-4f7b-ab9b-c1d893c366c4",
+      "sourceTemplateId": "4709082a-38d4-4d35-8760-80c2646d88eb",
+      "progress": "No tasks planned yet",
+      "form": {
+        "title": "BC Calculus visibility QA",
+        "date": "",
+        "time": "",
+        "due": "",
+        "dueTime": "",
+        "duration": "45",
+        "notes": "Keep the reusable template notes"
+      }
+    },
+    {
+      "test": "new-and-existing-copies-visible-under-Unscheduled-after-reload",
+      "mode": "signed-in real local Worker",
+      "width": 835,
+      "theme": "light",
+      "status": "PASS",
+      "existingCopyId": "e67ed3b9-8579-435f-8bb8-adbf315e914b"
+    },
+    {
+      "test": "trusted-backlog-drag-to-Scheduled-Undo-to-Unscheduled-and-reload",
+      "mode": "signed-in real local Worker",
+      "width": 835,
+      "theme": "light",
+      "status": "PASS",
+      "taskId": "78daec6f-dd9f-4f7b-ab9b-c1d893c366c4",
+      "scheduledStartBeforeUndo": "2026-11-14T09:00",
+      "scheduledStartAfterUndo": null
+    },
+    {
+      "test": "Add-reveals-independent-unscheduled-copy-editor-and-reload",
+      "mode": "local browser storage",
+      "width": 390,
+      "touch": true,
+      "theme": "light",
+      "status": "PASS",
+      "taskId": "5af104f5-849c-4749-8c5f-7d2077427061",
+      "sourceTemplateId": "22d7ef81-d2a3-4469-afc3-8f0bec74a9b4",
+      "progress": "1 of 3 completed",
+      "form": {
+        "title": "BC Calculus visibility QA",
+        "date": "",
+        "time": "",
+        "due": "",
+        "dueTime": "",
+        "duration": "45",
+        "notes": "Keep the reusable template notes"
+      }
+    },
+    {
+      "test": "new-and-existing-copies-visible-under-Unscheduled-after-reload",
+      "mode": "local browser storage",
+      "width": 390,
+      "theme": "light",
+      "status": "PASS",
+      "existingCopyId": "9e81fe89-9392-4661-a490-f9b5ffab9bc7"
+    },
+    {
+      "test": "Add-reveals-independent-unscheduled-copy-editor-and-reload",
+      "mode": "local browser storage",
+      "width": 768,
+      "touch": true,
+      "theme": "light",
+      "status": "PASS",
+      "taskId": "72b87ec6-3c0a-4859-a516-718097b2fda0",
+      "sourceTemplateId": "09bfd86f-9b66-4109-bc56-a1d7c0490d14",
+      "progress": "1 of 3 completed",
+      "form": {
+        "title": "BC Calculus visibility QA",
+        "date": "",
+        "time": "",
+        "due": "",
+        "dueTime": "",
+        "duration": "45",
+        "notes": "Keep the reusable template notes"
+      }
+    },
+    {
+      "test": "new-and-existing-copies-visible-under-Unscheduled-after-reload",
+      "mode": "local browser storage",
+      "width": 768,
+      "theme": "light",
+      "status": "PASS",
+      "existingCopyId": "29d68944-f811-4bc2-ac2d-74e130a6fa3f"
+    },
+    {
+      "test": "Add-reveals-independent-unscheduled-copy-editor-and-reload",
+      "mode": "local browser storage",
+      "width": 835,
+      "touch": false,
+      "theme": "dark",
+      "status": "PASS",
+      "taskId": "fb7a7d09-84a0-4fb5-ba04-b8cbbf05b1df",
+      "sourceTemplateId": "2b36a6e1-ddfa-47b5-a4c7-130ba50a33b2",
+      "progress": "1 of 3 completed",
+      "form": {
+        "title": "BC Calculus visibility QA",
+        "date": "",
+        "time": "",
+        "due": "",
+        "dueTime": "",
+        "duration": "45",
+        "notes": "Keep the reusable template notes"
+      }
+    },
+    {
+      "test": "new-and-existing-copies-visible-under-Unscheduled-after-reload",
+      "mode": "local browser storage",
+      "width": 835,
+      "theme": "dark",
+      "status": "PASS",
+      "existingCopyId": "5f95e9f3-c5d9-4516-860c-5c0df3c251d1"
+    },
+    {
+      "test": "trusted-backlog-drag-to-Scheduled-Undo-to-Unscheduled-and-reload",
+      "mode": "local browser storage",
+      "width": 835,
+      "theme": "dark",
+      "status": "PASS",
+      "taskId": "fb7a7d09-84a0-4fb5-ba04-b8cbbf05b1df",
+      "scheduledStartBeforeUndo": "2026-11-14T09:00",
+      "scheduledStartAfterUndo": null
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Local browser storage and real signed-in local Worker; touch emulation is not physical Safari, installed PWA or native acceptance."
+}

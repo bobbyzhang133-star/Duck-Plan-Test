@@ -98,10 +98,12 @@ const els = {
   dailyPanelDate: document.querySelector("#daily-panel-date"), dailyPanelProgress: document.querySelector("#daily-panel-progress"),
   lists: {
     overdue: document.querySelector("#overdue-task-list"), scheduled: document.querySelector("#scheduled-task-list"),
+    backlog: document.querySelector("#backlog-task-list"),
     unscheduled: document.querySelector("#unscheduled-task-list"), completed: document.querySelector("#completed-task-list"),
   },
   counts: {
     overdue: document.querySelector("#overdue-count"), scheduled: document.querySelector("#scheduled-count"),
+    backlog: document.querySelector("#backlog-count"),
     unscheduled: document.querySelector("#unscheduled-count"), completed: document.querySelector("#completed-count"),
   },
 };
@@ -109,6 +111,7 @@ const els = {
 const taskLibrary = window.DuckPlanLibrary?.create({
   store, getSelectedDate: () => selectedDate, showToast, reportError,
   setupButtons: setupButtonMaterial,
+  onTaskAdded: revealAddedTask,
   openTask: (options) => openModal({ ...options, id: options.id || options.task?.id || null }),
 });
 const calendarLibraryTabs = window.DuckCalendarLibraryTabs?.create({
@@ -290,6 +293,23 @@ function focusReminderTask(task) {
   });
 }
 
+function revealAddedTask(task) {
+  if (document.body.dataset.view !== "calendar") return;
+  const current = store.listItems().find(item => item.id === task.id && !item.completed);
+  if (!current) return;
+  tasks = store.listItems();
+  selectTask(current.id);
+  calendarLibraryTabs?.select("tasks");
+  setTaskPanel(true, false);
+  const control = [...els.lists.backlog.querySelectorAll(".task-select")]
+    .find(item => item.dataset.editTask === String(current.id));
+  if (!control) return;
+  const panel = els.taskPanel, row = control.getBoundingClientRect(), frame = panel.getBoundingClientRect();
+  panel.scrollTop += row.top - frame.top - Math.max(0, (panel.clientHeight - row.height) / 2);
+  control.focus({ preventScroll: true });
+  els.calendarStatus.textContent = `${current.title} added to Unscheduled.`;
+}
+
 function openNotificationTarget(taskId = null, view = "settings") {
   window.focus();
   if (taskId) {
@@ -453,7 +473,7 @@ function taskCardMarkup(task, mode = "daily") {
   const due = task.dueDate ? `${formatShortDate(task.dueDate)}${task.dueTime ? ` · ${formatTime(task.dueTime)}` : ""}` : "No deadline";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-edit-task="${task.id}" ${task.completed ? "" : `draggable="true" data-drag-task="${task.id}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span> · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${priorityBadge(task)}</span></button>
+    <button class="task-select" type="button" data-edit-task="${task.id}" ${task.completed ? "" : `draggable="true" data-drag-task="${task.id}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span> · ${mode === "backlog" ? "Unscheduled" : mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${priorityBadge(task)}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
 }
@@ -469,19 +489,19 @@ function renderDailyPlan() {
   els.dailyProgressCopy.textContent = todayItems.length ? `${completed} of ${todayItems.length} tasks completed` : "No tasks planned yet";
   els.dailyPanelDate.textContent = formatLongDate(selectedDate);
   els.dailyPanelProgress.textContent = todayItems.length ? `${completed} of ${todayItems.length} completed` : "No tasks planned yet";
-  const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled].map((task) => task.id)).size;
-  if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${groups.overdue.length ? ` · ${groups.overdue.length} overdue` : ""}`;
+  const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled, ...groups.backlog].map((task) => task.id)).size;
+  if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${groups.overdue.length ? ` · ${groups.overdue.length} overdue` : ""}${groups.backlog.length ? ` · ${groups.backlog.length} unscheduled` : ""}`;
   if (els.phoneTaskSummary) els.phoneTaskSummary.setAttribute("aria-label", `Open tasks for ${formatLongDate(selectedDate)}, ${remaining} remaining`);
   els.taskPanelToggle.textContent = phonePlannerQuery.matches ? `Tasks (${remaining})` : "Tasks";
   els.completionPercent.textContent = `${percent}%`;
   els.completionRing.style.setProperty("--completion", `${percent * 3.6}deg`);
   for (const name of Object.keys(els.lists)) {
     els.counts[name].textContent = groups[name].length;
-    els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, name === "scheduled" ? "scheduled" : "daily")).join("");
+    els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, ["scheduled", "backlog"].includes(name) ? name : "daily")).join("");
     els.lists[name].hidden = collapsed[name] || groups[name].length === 0;
     els.lists[name].closest(".task-section").classList.toggle("is-empty", groups[name].length === 0);
   }
-  els.dailyEmpty.hidden = groups.overdue.length + todayItems.length > 0;
+  els.dailyEmpty.hidden = groups.overdue.length + todayItems.length + groups.backlog.length > 0;
   document.querySelectorAll("[data-collapse]").forEach((button) => {
     button.setAttribute("aria-expanded", String(!collapsed[button.dataset.collapse]));
     button.closest(".task-section").classList.toggle("collapsed", collapsed[button.dataset.collapse]);

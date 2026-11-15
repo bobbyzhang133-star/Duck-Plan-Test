@@ -1,0 +1,26 @@
+{
+  "runtime": "157.0.8103.78",
+  "mode": "real signed-in local Worker / dedicated fixtures",
+  "cases": [
+    {
+      "test": "real-delayed-save-reveals-after-success-and-blocks-repeat-clicks",
+      "status": "PASS",
+      "requests": 1,
+      "taskId": "dcd384fe-b433-4eb9-9f3f-22d362b908b2"
+    },
+    {
+      "test": "injected-503-rolls-back-without-reveal-and-real-retry-succeeds",
+      "status": "PASS",
+      "expectedInjectedFailures": 1,
+      "taskId": "8b455b68-d0f9-4539-b814-431e6d2d2a18"
+    },
+    {
+      "test": "old-owner-delayed-success-does-not-select-reveal-or-toast-in-next-planner",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Successful requests use real API. One503 response is deliberately injected to test rollback/feedback. No production data or user browser used."
+}

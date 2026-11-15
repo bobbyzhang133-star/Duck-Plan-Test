@@ -1,0 +1,50 @@
+{
+  "sourceBase": "cd346d087122d6f132114fea06efab89049e91af",
+  "sourceBranch": "codex/template-add-visibility-20261114",
+  "workingTreeHashes": {
+    "landing/app.js": "b298e48b09f6e0bc325e6404f007a33a5584555d886252e8e44aed294b7b65c4",
+    "landing/planner-model.js": "8db1a870752e0733a1e9f658e544e754265fca1deedd6fdc2d24ca9618368f43",
+    "landing/planner-ui.js": "a92a4017d9e7f55bdbcf86bf7bf8f763544d6e0ea67a20d160bb2cc9846eb34c",
+    "landing/planner-library.js": "4991ac155fe3dff207ff9baab9c2eae3c2642aaead9d218b21b9faf12beb0295",
+    "landing/planner-store.js": "4c73763888e8a088f97c976dcfb5f8d336bac5b8db72086240892c4e9f7b63af",
+    "landing/calendar-library-tabs.js": "29981d18c02092cb7fd0f9047ce7a741b6600725c465008b7b914f624da80f16",
+    "landing/styles.css": "a9619eefff72dd613d5a5995293e98fd6e14f923bf38020a06f46d08e36af5cd",
+    "landing/index.html": "6447447f2ffee8016c42e65fdcf8f0ac5f3190ee1ea9806497e695ca6726406d",
+    "landing/service-worker.js": "2944b2d1e31c49c79f313f4f2c0f9f7cdfb84bd8ee6b82668c421993273aa6e2",
+    "cloudflare/src/index.js": "f5abe1810a175dafc673855b67ee214b14a9d82091569a561563414e6a11d4af",
+    "cloudflare/src/planner.js": "db237d2e91084ffc7b2b83112b6b86f31b098f3fe064c20fc41139a335d6151a",
+    "cloudflare/src/auth.js": "bb1e8e15f90c8fc08f735ee8a43a9dd75756f50fb84561b5623b663fcff2904d",
+    "cloudflare/migrations/0001_initial_schema.sql": "030f8c1936c5e05080853479ef518e080cc1cc6514312d8e15e02c103c29595f",
+    "cloudflare/migrations/0002_password_sign_in.sql": "d6d8893d1e8cba703371ae8826d6b52bd5c3f9a53cce067d87cfdd94d97483c3",
+    "cloudflare/migrations/0003_task_alarms.sql": "d75ec49687e805ac7b272128ffd818160eabfc67404137d58e142236d763adc2",
+    "cloudflare/migrations/0004_product_organization.sql": "cf380b81d77d5a393c6fedd5931c0c80d6708df950e1d2a7c6194e75d8dd5ae1",
+    "cloudflare/migrations/0005_personal_planning.sql": "a05c7f28adc736c1b622c734c743e3551e4697eef50b268741806ddc146bfa2a"
+  },
+  "runtime": "Chromium157.0.8103.78",
+  "backend": {
+    "runtime": "Wrangler4.157.0 / local workerd",
+    "origin": "http://127.0.0.1:8796",
+    "compatibilityDate": "2026-10-01",
+    "database": "calendar-preview-qa",
+    "mode": "isolated local real Worker+D1+DurableObject",
+    "migrations": [
+      "0001_initial_schema.sql",
+      "0002_password_sign_in.sql",
+      "0003_task_alarms.sql",
+      "0004_product_organization.sql",
+      "0005_personal_planning.sql"
+    ]
+  },
+  "counts": {
+    "baselineReproduced": 1,
+    "mainPass": 13,
+    "extraPass": 3,
+    "totalPass": 16
+  },
+  "notes": [
+    "Final main run uses12 previously saved unscheduled copies, asserts new-row center lies inside its scroller below sticky toolbar and is hit-testable, preserves daily progress and selected date.",
+    "Final main run includes trusted backlog task drag to Scheduled and Undo returning same ID/deadline/settings to Unscheduled after reload.",
+    "Expected503 is injected only for failure-path testing; success, retry and delayed pending/owner saves use the real local Worker.",
+    "Native/physicalSafari/installedPWA NOT RUN. No user planner or production data reused."
+  ]
+}
