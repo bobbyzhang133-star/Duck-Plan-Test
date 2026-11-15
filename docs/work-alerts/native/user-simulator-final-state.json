@@ -1,0 +1,15 @@
+{
+  "userSimulator": {
+    "dataPath": "/Users/bobbyzhang/Library/Developer/CoreSimulator/Devices/E8481E77-386B-4C54-BE35-BC1293ECE255/data",
+    "dataPathSize": 3310841856,
+    "logPath": "/Users/bobbyzhang/Library/Logs/CoreSimulator/E8481E77-386B-4C54-BE35-BC1293ECE255",
+    "udid": "E8481E77-386B-4C54-BE35-BC1293ECE255",
+    "lastUsedAt": "2026-11-13T22:34:10Z",
+    "isAvailable": true,
+    "logPathSize": 270336,
+    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+    "state": "Booted",
+    "name": "iPhone 18 Pro"
+  },
+  "note": "Read-only inventory; no actions targeted this device"
+}

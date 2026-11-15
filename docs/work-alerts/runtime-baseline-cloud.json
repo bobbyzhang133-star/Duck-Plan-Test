@@ -1,0 +1,114 @@
+{
+  "runtime": "157.0.8103.78",
+  "origin": "http://127.0.0.1:8796",
+  "source": "current work-alerts working tree; recorded hashes alongside results",
+  "mode": "dedicated real local signed-in fixture",
+  "compatibility": {
+    "current": {
+      "origin": "http://127.0.0.1:8796",
+      "status": 200,
+      "compatible": true,
+      "missing": []
+    },
+    "legacy": {
+      "origin": "http://127.0.0.1:8797",
+      "status": 200,
+      "compatible": false,
+      "missing": [
+        "work_alerts_supported"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "checks": {
+        "startupModeAndComposition": true,
+        "classCreateAndResourceCreateEditOpen": true,
+        "desktopNativeDrag": true,
+        "templateCreateEditScheduleCopyRetainReload": true,
+        "taskCrudAndFailureGuard": "real503+retry",
+        "noteGoalEditHabitCheckinReloadCorrectTypes": true,
+        "deleteReloadCascadeAndCopiesRetained": true
+      },
+      "pageErrors": [],
+      "blocked": [],
+      "unexpectedResponses": [],
+      "finalCounts": {
+        "tasks": 3,
+        "templates": 0,
+        "resources": 0,
+        "goals": 0,
+        "habits": 0,
+        "notes": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "checks": {
+        "startupModeAndComposition": true,
+        "classCreateAndResourceCreateEditOpen": true,
+        "templateCreateEditScheduleCopyRetainReload": true,
+        "taskCrudAndFailureGuard": "real503+retry",
+        "noteGoalEditHabitCheckinReloadCorrectTypes": true,
+        "liveDesktopPeerReceivedNote": true,
+        "deleteReloadCascadeAndCopiesRetained": true
+      },
+      "pageErrors": [],
+      "blocked": [],
+      "unexpectedResponses": [],
+      "finalCounts": {
+        "tasks": 5,
+        "templates": 0,
+        "resources": 0,
+        "goals": 0,
+        "habits": 0,
+        "notes": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "touchEmulated": true,
+      "checks": {
+        "startupModeAndComposition": true,
+        "classCreateAndResourceCreateEditOpen": true,
+        "templateCreateEditScheduleCopyRetainReload": true,
+        "taskCrudAndFailureGuard": "real503+retry",
+        "noteGoalEditHabitCheckinReloadCorrectTypes": true,
+        "liveDesktopPeerReceivedNote": true,
+        "deleteReloadCascadeAndCopiesRetained": true
+      },
+      "pageErrors": [],
+      "blocked": [],
+      "unexpectedResponses": [],
+      "finalCounts": {
+        "tasks": 7,
+        "templates": 0,
+        "resources": 0,
+        "goals": 0,
+        "habits": 0,
+        "notes": 0
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "productionWrites": false,
+  "physicalDeviceClaims": false
+}

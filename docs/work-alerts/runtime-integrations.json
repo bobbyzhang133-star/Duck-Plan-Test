@@ -1,0 +1,57 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "UI-signup-import-work-alert-JSON-signout-signin-session-restore",
+      "mode": "real current local Worker + independent local storage",
+      "status": "PASS"
+    },
+    {
+      "test": "matrix-move-organization-preference-reload-preserves-alert-JSON",
+      "mode": "real current local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "calendar-task-list-native-drag-one-fitted-preview-linked-notification-and-Undo",
+      "mode": "real current local Worker, trusted mouse",
+      "visual": {
+        "count": 1,
+        "nativeImageCount": 1,
+        "width": 774,
+        "expectedWidth": 774,
+        "transform": "none",
+        "caption": "2:00 PM · 60 min"
+      },
+      "status": "PASS"
+    },
+    {
+      "test": "Tasks-list-hover-Calendar-native-drag-same-ID-count-and-reload",
+      "mode": "real current local Worker, trusted mouse",
+      "visual": {
+        "count": 1,
+        "nativeImageCount": 1,
+        "width": 774,
+        "expectedWidth": 774,
+        "transform": "none",
+        "caption": "2:00 PM · 60 min"
+      },
+      "status": "PASS"
+    },
+    {
+      "test": "future-template-native-drop-creates-independent-linked-pair-and-real-job",
+      "mode": "real current local Worker, trusted mouse",
+      "status": "PASS"
+    },
+    {
+      "test": "v55-registered-browser-shell-new-alert-assets-offline-save-reload-reconnect",
+      "mode": "normal browser tab/local storage, actual service worker; NOT installed PWA",
+      "cache": [
+        "duckplan-app-motion-preview-v55"
+      ],
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Actual isolated APIs, trusted desktop input and browser SW. DOM preview evidence does not prove absence of an OS drag bitmap. No installed-PWA or OS notification delivery claim."
+}

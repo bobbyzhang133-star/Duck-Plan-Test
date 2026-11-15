@@ -1,0 +1,13 @@
+PASS stable scoped schedule, exact bridge metadata and failed replacement preservation
+PASS in-memory persistence/relaunch and pending-request recovery without device writes
+PASS inactive-task cancellation, owner isolation and independent cancel
+PASS permission-await context race rejects before native add
+PASS add-await context race retires late pending request
+PASS same-owner deletion during authorization cannot schedule an inactive task
+PASS queued notification tap routing waits for matching owner and active task
+PASS permission denial, scope mismatch and invalid time rejection
+PASS cancel-all is scoped to this notification channel
+PASS late restoration success retires old-owner system request
+PASS late restoration failure retires old-owner system request
+PASS same-owner restoration failure preserves its original error
+12 native notification and scope-restoration boundary cases passed

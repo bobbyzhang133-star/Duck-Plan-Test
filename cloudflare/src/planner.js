@@ -5,6 +5,7 @@ import { HttpError, json, nowIso, readJson } from "./http.js";
 import { broadcast } from "./live.js";
 import { loadOrganization, organizationImportStatements } from "./organization.js";
 import { loadPersonal, personalImportPlan } from "./personal.js";
+import { cleanWorkAlerts } from "./work-alerts.js";
 
 const ITEM_TYPES = new Set(["assignment", "test", "task", "event"]);
 const PRIORITIES = new Set(["low", "medium", "high"]);
@@ -68,6 +69,7 @@ export function cleanItem(row, id = row?.id) {
     scheduled_start: matching(row.scheduled_start, DATETIME, "Scheduled start")?.slice(0, 16) ?? null,
     duration_minutes: duration,
     completed: bit(row.completed),
+    work_alerts: Object.hasOwn(row, "work_alerts") && row.work_alerts !== null ? JSON.stringify(cleanWorkAlerts(row.work_alerts)) : null,
   };
 }
 
@@ -108,14 +110,15 @@ export function jsonInsert(db, table, userId, rows, conflict = "") {
 }
 
 const ITEM_UPSERT = `
-INSERT INTO items (id, user_id, class_id, type, title, notes, priority, due_date, due_time, scheduled_start, duration_minutes, completed, completed_at, updated_at, importance, urgency)
-VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, CASE WHEN ?12 = 1 THEN ?13 END, ?13, ?14, ?15)
+INSERT INTO items (id, user_id, class_id, type, title, notes, priority, due_date, due_time, scheduled_start, duration_minutes, completed, completed_at, updated_at, importance, urgency, work_alerts)
+VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, CASE WHEN ?12 = 1 THEN ?13 END, ?13, ?14, ?15, ?18)
 ON CONFLICT (id) DO UPDATE SET
   class_id = excluded.class_id, type = excluded.type, title = excluded.title, notes = excluded.notes,
   priority = excluded.priority, due_date = excluded.due_date, due_time = excluded.due_time,
   scheduled_start = excluded.scheduled_start, duration_minutes = excluded.duration_minutes, completed = excluded.completed,
   importance = CASE WHEN ?16 THEN excluded.importance ELSE items.importance END,
   urgency = CASE WHEN ?17 THEN excluded.urgency ELSE items.urgency END,
+  work_alerts = CASE WHEN ?19 THEN excluded.work_alerts ELSE items.work_alerts END,
   completed_at = CASE WHEN excluded.completed = 0 THEN NULL WHEN items.completed = 1 THEN items.completed_at ELSE excluded.completed_at END,
   updated_at = excluded.updated_at
 WHERE items.user_id = excluded.user_id AND items.deleted_at IS NULL
@@ -139,7 +142,7 @@ export async function loadPlanner(env, userId) {
     loadOrganization(env, userId),
     loadPersonal(env, userId),
   ]);
-  return { classes: classes.results, items: items.results, ...organization, ...personal };
+  return { classes: classes.results, items: items.results, ...organization, ...personal, work_alerts_supported: true };
 }
 
 async function loadImportReceipt(db, userId, key) {
@@ -163,7 +166,7 @@ export async function handlePlanner(request, env, ctx, path, user) {
     if (method === "PUT") {
       const body = await readJson(request);
       const row = cleanItem(body, id);
-      const saved = await runDb(() => db.prepare(ITEM_UPSERT).bind(row.id, user.id, row.class_id, row.type, row.title, row.notes, row.priority, row.due_date, row.due_time, row.scheduled_start, row.duration_minutes, row.completed, nowIso(), row.importance, row.urgency, bit(Object.hasOwn(body, "importance")), bit(Object.hasOwn(body, "urgency"))).first());
+      const saved = await runDb(() => db.prepare(ITEM_UPSERT).bind(row.id, user.id, row.class_id, row.type, row.title, row.notes, row.priority, row.due_date, row.due_time, row.scheduled_start, row.duration_minutes, row.completed, nowIso(), row.importance, row.urgency, bit(Object.hasOwn(body, "importance")), bit(Object.hasOwn(body, "urgency")), row.work_alerts, bit(Object.hasOwn(body, "work_alerts"))).first());
       if (!saved) throw new HttpError(404, "That task isn't in your planner.");
       notify({ table: "items", row: saved });
       return json({ item: saved });

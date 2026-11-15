@@ -1,0 +1,49 @@
+{
+  "baselineNativeCommit": "8334d6e",
+  "signingAndBundleSettingsUnchanged": true,
+  "originalSettings": [
+    "CODE_SIGN_IDENTITY = \"iPhone Developer\";",
+    "CODE_SIGN_IDENTITY = \"iPhone Developer\";",
+    "CODE_SIGN_STYLE = Automatic;",
+    "CODE_SIGN_STYLE = Automatic;",
+    "DEVELOPMENT_TEAM = \"\";",
+    "DEVELOPMENT_TEAM = \"\";",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app.alarms;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app.alarms;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app;"
+  ],
+  "currentSettings": [
+    "CODE_SIGN_IDENTITY = \"iPhone Developer\";",
+    "CODE_SIGN_IDENTITY = \"iPhone Developer\";",
+    "CODE_SIGN_STYLE = Automatic;",
+    "CODE_SIGN_STYLE = Automatic;",
+    "DEVELOPMENT_TEAM = \"\";",
+    "DEVELOPMENT_TEAM = \"\";",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "DEVELOPMENT_TEAM = MYJ7P76JQ2;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app.alarms;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app.alarms;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app;",
+    "PRODUCT_BUNDLE_IDENTIFIER = com.duckplan.app;"
+  ],
+  "protectedOriginalFiles": {
+    "ios/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png": {
+      "original8334d6e": "7714bd8afc68d05399841291712d57cfcb62ad729eec3cd58e570670156501f5",
+      "current": "7714bd8afc68d05399841291712d57cfcb62ad729eec3cd58e570670156501f5"
+    },
+    "landing/native-cloud.js": {
+      "original8334d6e": "877e80c42471b64e723078dca89e1aace2e4ef8b528d709c925a77ed8ce32f1a",
+      "current": "877e80c42471b64e723078dca89e1aace2e4ef8b528d709c925a77ed8ce32f1a"
+    }
+  },
+  "intentionalNativeChanges": "new independent notification bridge/store and app registration; scope guards in existing alarm store; approved web bundle sync",
+  "nativeCloudSwiftClientUnchangedFrom8334d6e": true,
+  "nativeCloudSwiftClientSHA256": "a580fdec5da12c2a9e3bd0365770a1e8c35a623597e0565c51abe37ffecc0e21"
+}

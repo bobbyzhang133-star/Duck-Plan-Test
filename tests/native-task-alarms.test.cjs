@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const Domain = require('../landing/reminder-domain.js');
 
-function setup() {
+function setup({ beforeRequest } = {}) {
   const elements = new Map();
   const calls = [];
   const saved = new Map();
@@ -17,6 +17,7 @@ function setup() {
   const window = { addEventListener() {}, DuckReminderDomain: Domain, DuckNativeAlarms: {
     async request(body) {
       calls.push(body);
+      await beforeRequest?.(body);
       if (body.action === 'status') return { permission: denied ? 'denied' : 'authorized' };
       if (body.action === 'authorize') { if (denied) throw new Error('Permission denied'); return { permission: 'authorized' }; }
       if (body.action === 'list') return { alarms: [...saved.values()] };
@@ -32,7 +33,7 @@ function setup() {
     },
   } };
   vm.runInNewContext(fs.readFileSync('landing/native-task-alarms.js', 'utf8'), { window, document, Map, Number });
-  return { api: window.DuckTaskAlarms, elements, calls, saved, deny() { denied = true; } };
+  return { api: window.DuckTaskAlarms, window, elements, calls, saved, deny() { denied = true; } };
 }
 test('native task alarms use the selected sound/snooze and serialize schedule and cancellation', async () => {
   const { api, calls } = setup();
@@ -73,3 +74,62 @@ test('native alarm adapter leaves ordinary web browsers unchanged', () => {
   vm.runInNewContext(fs.readFileSync('landing/native-task-alarms.js', 'utf8'), { window });
   assert.equal(window.DuckTaskAlarms, original);
 });
+
+test('canceling device alarms stays paused across reconciliation and is isolated to its owner', async () => {
+  const { api, window, elements, saved } = setup();
+  const preferences = new Map();
+  window.localStorage = { getItem: key => preferences.get(key) ?? null, setItem: (key, value) => preferences.set(key, value) };
+  const tasks = [{ id: 'essay', title: 'Essay' }];
+  await api.setContext('owner-a', tasks);
+  await api.save('essay', '2030-05-02T14:00', { title: 'Essay' });
+  await elements.get('#disable-task-alarms').events.click();
+  assert.equal(saved.size, 0);
+  assert.equal(api.canSave(), false);
+  await api.setContext('owner-a', tasks);
+  assert.equal(api.canSave(), false, 'refreshing tasks must not resume canceled device alarms');
+  await api.setContext('owner-b', tasks);
+  assert.equal(api.canSave(), true, 'a different owner has a separate device preference');
+  await api.setContext('owner-a', tasks);
+  assert.equal(api.canSave(), false);
+  await elements.get('#enable-task-alarms').events.click();
+  assert.equal(api.canSave(), true);
+});
+
+test('native alarm scheduling carries the owner and selected alert time zone', async () => {
+  const { api, calls } = setup();
+  await api.setContext('owner-a', [{ id: 'essay', title: 'Essay' }]);
+  await api.save('essay', '2030-05-02T14:00', { title: 'Essay', scope: 'owner-a', timeZone: 'UTC' });
+  const scheduled = calls.find(call => call.action === 'schedule');
+  assert.equal(scheduled.scope, 'owner-a');
+  assert.equal(scheduled.fireAt, Date.parse('2030-05-02T14:00:00Z'));
+  const before = calls.length;
+  await assert.rejects(api.save('essay', '2030-05-02T14:00', { title: 'Essay', scope: 'owner-b', timeZone: 'UTC' }), /account changed/);
+  assert.equal(calls.length, before);
+});
+
+for (const heldAction of ['status', 'schedule']) {
+  test(`canceling device alarms blocks ${heldAction === 'status' ? 'queued' : 'in-flight'} saves and stays paused`, async () => {
+    let armed = false, enter, release;
+    const entered = new Promise(resolve => { enter = resolve; });
+    const gate = new Promise(resolve => { release = resolve; });
+    const { api, elements, calls, saved } = setup({ beforeRequest: async body => {
+      if (armed && body.action === heldAction) { armed = false; enter(); await gate; }
+    } });
+    await api.setContext('owner-a', [{ id: 'essay', title: 'Essay' }]);
+    armed = true;
+    const refreshing = heldAction === 'status' ? api.refresh() : Promise.resolve();
+    const saving = api.save('essay', '2030-05-02T14:00', { title: 'Essay' });
+    const rejectedSave = assert.rejects(saving, /account or device setting changed/);
+    await entered;
+    const pausing = elements.get('#disable-task-alarms').events.click();
+    assert.equal(api.canSave(), false, 'device choice changes immediately while cancellation waits');
+    await assert.rejects(api.save('essay', '2030-05-02T15:00'), /canceled on this device/);
+    release();
+    await Promise.all([refreshing, rejectedSave, pausing]);
+    assert.equal(saved.size, 0);
+    assert.equal(api.get('essay'), undefined);
+    assert.equal(api.canSave(), false);
+    const cancellation = calls.findLastIndex(call => call.action === 'cancelAll');
+    assert.equal(calls.slice(cancellation + 1).some(call => call.action === 'schedule'), false);
+  });
+}

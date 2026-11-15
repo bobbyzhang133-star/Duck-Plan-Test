@@ -39,6 +39,7 @@
       durationMinutes: Number(row.duration_minutes || 45), completed: Boolean(row.completed), source: row.source || "manual",
       axisMissing: Boolean(row.axis_missing), schemaVersion: 2,
       importance: row.importance || null, urgency: row.urgency || "auto",
+      ...(row.work_alerts != null ? { workAlerts: normalizeWorkAlerts(row.work_alerts) } : {}),
     };
   }
   function taskToRow(task) {
@@ -47,6 +48,7 @@
       priority: String(task.priority || "Medium").toLowerCase(), due_date: task.dueDate || null, due_time: task.dueTime || null,
       scheduled_start: task.scheduledStart || null, duration_minutes: Number(task.durationMinutes || 45), completed: Boolean(task.completed),
       importance: task.importance || null, urgency: task.urgency || "auto",
+      ...(Object.hasOwn(task, "workAlerts") && task.workAlerts !== undefined ? { work_alerts: task.workAlerts === null ? null : JSON.stringify(normalizeWorkAlerts(task.workAlerts)) } : {}),
     };
   }
   function rowToTemplate(row) {
@@ -84,6 +86,36 @@
     const date = new Date(0);
     date.setUTCHours(0, 0, 0, 0); date.setUTCFullYear(year, month - 1, day);
     return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+  }
+  function normalizeWorkAlerts(value) {
+    const invalid = () => { throw new Error("Choose valid work alarm and notification settings."); };
+    if (value === null) return null;
+    if (typeof value === "string") {
+      if (value.length > 2048) invalid();
+      try { value = JSON.parse(value); } catch { invalid(); }
+    }
+    const keys = (item, allowed) => {
+      if (!item || typeof item !== "object" || Array.isArray(item) || Object.keys(item).some(key => !allowed.includes(key)) || allowed.some(key => !Object.hasOwn(item, key))) invalid();
+    };
+    const time = at => {
+      if (at === null) return null;
+      if (typeof at !== "string" || !/^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/.test(at) || !validDate(at.slice(0, 10))) invalid();
+      return at;
+    };
+    keys(value, ["version", "timeZone", "alarm", "notification"]);
+    if (value.version !== 1 || typeof value.timeZone !== "string" || value.timeZone.length > 100) invalid();
+    try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }).format(0); } catch { invalid(); }
+    keys(value.alarm, ["enabled", "mode", "at", "sound", "snoozeMinutes"]);
+    keys(value.notification, ["enabled", "mode", "at"]);
+    const { alarm, notification } = value;
+    if (typeof alarm.enabled !== "boolean" || !["work", "manual"].includes(alarm.mode) || !["system", "gentle", "bright"].includes(alarm.sound) || ![0, 5, 10, 15].includes(alarm.snoozeMinutes)) invalid();
+    if (typeof notification.enabled !== "boolean" || !["alarm", "manual"].includes(notification.mode)) invalid();
+    const alarmAt = time(alarm.at), notificationAt = time(notification.at);
+    if ((alarm.mode === "work" && alarmAt !== null) || (alarm.mode === "manual" && alarm.enabled && alarmAt === null)) invalid();
+    if ((notification.mode === "alarm" && notificationAt !== null) || (notification.mode === "manual" && notification.enabled && notificationAt === null)) invalid();
+    return { version: 1, timeZone: value.timeZone,
+      alarm: { enabled: alarm.enabled, mode: alarm.mode, at: alarmAt, sound: alarm.sound, snoozeMinutes: alarm.snoozeMinutes },
+      notification: { enabled: notification.enabled, mode: notification.mode, at: notificationAt } };
   }
   function normalizeGoal(item) {
     const targetCount = Number(item.targetCount ?? 5), currentCount = Number(item.currentCount ?? 0);
@@ -304,11 +336,15 @@
       mode: "cloud",
       user,
       async load() {
-        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes } = await api("GET", "/planner");
+        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported } = await api("GET", "/planner");
         return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization),
-          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray) };
+          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true };
       },
-      saveTask: (task) => api("PUT", `/items/${encodeURIComponent(task.id)}`, taskToRow(task)),
+      saveTask: (task, state) => {
+        const row = taskToRow(task);
+        if (state.workAlertsAvailable !== true) delete row.work_alerts;
+        return api("PUT", `/items/${encodeURIComponent(task.id)}`, row);
+      },
       setCompleted: (id, completed) => api("PATCH", `/items/${encodeURIComponent(id)}`, { completed }),
       // Soft delete on the server, so the deletion reaches every device.
       deleteTask: (id) => api("DELETE", `/items/${encodeURIComponent(id)}`),
@@ -360,6 +396,9 @@
     let unwatch = () => {};
     let authError = null;
     let providers = { password: true, google: false };
+    let deviceAlertSequence = 0;
+    const deviceAlertCommits = new Map();
+    const deviceAlertAttempts = new Map();
     const importedAccounts = new Set();
     function hasImportMarker(userId) {
       if (importedAccounts.has(userId)) return true;
@@ -374,6 +413,20 @@
       try { return JSON.parse(storage.getItem(DEVICE_EXTRAS_KEY)) || {}; }
       catch { return {}; }
     }
+    function deviceAlertsKey(target = backend) { return `${DEVICE_EXTRAS_KEY}:work-alerts:${target.mode}:${target.user?.id || "local"}`; }
+    function readDeviceAlerts(target = backend) {
+      try { const value = JSON.parse(storage.getItem(deviceAlertsKey(target))); return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
+      catch { return {}; }
+    }
+    function persistDeviceAlerts(task, target, available) {
+      const values = readDeviceAlerts(target);
+      if (!available && task.workAlerts != null) values[task.id] = task.workAlerts;
+      else {
+        if (!Object.hasOwn(values, task.id)) return;
+        delete values[task.id];
+      }
+      storage.setItem(deviceAlertsKey(target), JSON.stringify(values));
+    }
     function writeDeviceExtras(task) {
       const extras = readDeviceExtras();
       extras[task.id] = {
@@ -384,11 +437,16 @@
     }
     function hydrateDeviceExtras(next) {
       const extras = readDeviceExtras();
-      return { ...next, tasks: next.tasks.map((task) => ({ ...task, ...(extras[task.id] || {}) })) };
+      const alerts = backend.mode === "cloud" ? readDeviceAlerts() : {};
+      return { ...next, tasks: next.tasks.map((task) => {
+        let fallback;
+        try { if (task.workAlerts == null && alerts[task.id] != null) fallback = normalizeWorkAlerts(alerts[task.id]); } catch { /* Invalid local metadata must not hide the rest of the account. */ }
+        return { ...task, ...(extras[task.id] || {}), ...(fallback ? { workAlerts: fallback, workAlertsDeviceOnly: true } : {}) };
+      }) };
     }
 
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
-    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, ...next }; }
+    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, workAlertsAvailable: backend.mode === "local", ...next }; }
     function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
     function createSynchronization() { return { revision: 0, pendingWrites: 0, writeWaiters: new Set(), reloadRequested: false, reloadPromise: null }; }
     function wakeWrites(context) { for (const resolve of context.writeWaiters) resolve(); context.writeWaiters.clear(); }
@@ -571,6 +629,7 @@
       get user() { return backend.user || null; },
       get supportsOrganization() { return state.organizationAvailable !== false; },
       get supportsPersonal() { return state.personalAvailable !== false; },
+      get supportsWorkAlerts() { return backend.mode === "local" || state.workAlertsAvailable === true; },
       // Which sign-in methods the Worker has set up (Google needs its client id and secret).
       get providers() { return providers; },
       // A sign-in problem from the last redirect (a cancelled Google sign-in), shown once.
@@ -680,11 +739,52 @@
       },
 
       async upsertItem(task) {
+        const activeBackend = backend, generation = backendGeneration, available = this.supportsWorkAlerts;
+        const existing = state.tasks.find(item => item.id === task.id);
         const next = { completed: false, importance: null, urgency: "auto", ...task, id: task.id || newId(), schemaVersion: 2 };
+        if (!Object.hasOwn(task, "workAlerts") && existing?.workAlerts !== undefined) next.workAlerts = existing.workAlerts;
+        if (next.workAlerts !== undefined) next.workAlerts = normalizeWorkAlerts(next.workAlerts);
+        delete next.workAlertsDeviceOnly;
+        if (activeBackend.mode === "cloud" && !available && next.workAlerts != null) next.workAlertsDeviceOnly = true;
         if (![null, "important", "not_important"].includes(next.importance) || !["auto", "urgent", "not_urgent"].includes(next.urgency)) throw new Error("Choose valid importance and urgency settings.");
         if (!this.supportsOrganization && (next.importance || next.urgency !== "auto")) throw new Error("Task organization isn't available on this server yet.");
         writeDeviceExtras(next);
-        return mutate((current) => ({ ...current, tasks: [...current.tasks.filter((item) => item.id !== next.id), next] }), (current, target) => target.saveTask(next, current)).then(() => next);
+        const sequence = ++deviceAlertSequence;
+        const commitKey = `${deviceAlertsKey(activeBackend)}:${next.id}`;
+        deviceAlertAttempts.set(commitKey, sequence);
+        // Old servers can still save tasks. Their new preferences remain account-scoped
+        // on this device, but only after a durable task save and without stale writes.
+        return mutate((current) => ({ ...current, tasks: [...current.tasks.filter((item) => item.id !== next.id), next] }), async (current, target) => {
+          if (target.mode === "cloud" && !available && next.workAlerts != null) {
+            // Fail before sending the task if its device-only preferences cannot persist.
+            const key = `${deviceAlertsKey(target)}:check`;
+            try { storage.setItem(key, JSON.stringify({ ...readDeviceAlerts(target), [next.id]: next.workAlerts })); }
+            catch { throw new Error("This server hasn't added work alert sync yet, and this device couldn't save the alert settings. Try again after freeing browser storage."); }
+            finally { try { storage.removeItem(key); } catch { /* No settings were activated from the temporary write check. */ } }
+          }
+          const saveResult = await target.saveTask(next, current);
+          if (Object.hasOwn(next, "workAlerts") && activeBackend.mode === "cloud" && sequence >= (deviceAlertCommits.get(commitKey) || 0)) {
+            try { persistDeviceAlerts(next, activeBackend, available); }
+            catch {
+              const error = new Error("Task saved, but this device couldn't retain its work alert settings. Free browser storage and save it again.");
+              error.taskSaved = true;
+              error.savedTask = saveResult?.item ? { ...next, ...rowToTask(saveResult.item) } : next;
+              throw error;
+            }
+            deviceAlertCommits.set(commitKey, sequence);
+            if (!available && generation === backendGeneration && activeBackend === backend && deviceAlertAttempts.get(commitKey) === sequence) {
+              // The server's live echo can arrive before this device-only cache commit.
+              // Restore only metadata, retaining canonical row fields and newer saves.
+              state = { ...state, tasks: state.tasks.map(item => {
+                if (item.id !== next.id) return item;
+                const restored = { ...item, workAlerts: next.workAlerts };
+                if (next.workAlerts != null) restored.workAlertsDeviceOnly = true;
+                else delete restored.workAlertsDeviceOnly;
+                return restored;
+              }) };
+            }
+          }
+        }).then(() => next);
       },
       toggleComplete(id, completed) {
         return mutate((current) => ({ ...current, tasks: current.tasks.map((task) => (task.id === id ? { ...task, completed } : task)) }), (current, target) => target.setCompleted(id, completed, current));
@@ -763,6 +863,7 @@
         const localState = await local.load();
         if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
         const organizationTasks = localState.tasks.some((task) => task.importance || (task.urgency && task.urgency !== "auto"));
+        if (!this.supportsWorkAlerts && localState.tasks.some(task => task.workAlerts != null)) throw new Error("This server can't import your work alarm and notification settings yet. They will stay safely in this browser.");
         if (!this.supportsPersonal && (localState.goals.length || localState.habits.length || localState.habitCheckins.length || localState.notes.length)) throw new Error("This server can't import your saved goals, habits and notes yet. They will stay safely in this browser.");
         if (!this.supportsOrganization && (localState.templates.length || localState.resources.length || organizationTasks || localState.organizationConfigured)) throw new Error("This server can't import your organization data yet. It will stay safely in this browser.");
         const plan = planLocalImport({ localTasks: localState.tasks, localClasses: localState.classes, cloudClasses: state.classes, localTemplates: localState.templates, localResources: localState.resources, localOrganization: localState.organizationConfigured ? localState.organization : undefined, localGoals: localState.goals, localHabits: localState.habits, localHabitCheckins: localState.habitCheckins, localNotes: localState.notes });
@@ -803,5 +904,5 @@
     };
   }
 
-  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote };
+  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote, normalizeWorkAlerts };
 });

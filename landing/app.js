@@ -70,6 +70,27 @@ let calendarProgrammaticScroll = false;
 let calendarDrag = null;
 let templateDrag = null;
 let suppressCalendarEventClickUntil = 0;
+let taskAlertPreferences = null;
+let taskAlertEditorVersion = 0;
+let taskAlertHydration = Promise.resolve();
+let taskAlertHydrationError = null;
+let workAlertContextReady = false;
+const taskAlertTimeChanges = new Set();
+const taskAlertTouchedFields = new Set();
+const workAlerts = window.DuckWorkAlertController.create({
+  store, alarms: window.DuckTaskAlarms, notifications: window.DuckTaskNotifications,
+  timeZone: () => ReminderDomain.browserTimeZone(), storage: localStorage,
+  onError: reportError,
+  onForeground: task => {
+    showToast(`Time to start: ${task.title}`);
+    displayBrowserNotification({ title: task.title, options: {
+      body: "It's time to start this task.", tag: `work:${store.user?.id || "local"}:${task.id}`,
+      data: { taskId: task.id, view: "calendar" },
+    } }, task.id).catch(reportError);
+  },
+});
+
+function saveTaskWithAlerts(task) { return workAlerts.save(task); }
 
 const els = {
   navItems: [...document.querySelectorAll("[data-view]")],
@@ -112,6 +133,7 @@ const taskLibrary = window.DuckPlanLibrary?.create({
   store, getSelectedDate: () => selectedDate, showToast, reportError,
   setupButtons: setupButtonMaterial,
   onTaskAdded: revealAddedTask,
+  saveTask: saveTaskWithAlerts,
   openTask: (options) => openModal({ ...options, id: options.id || options.task?.id || null }),
 });
 const calendarLibraryTabs = window.DuckCalendarLibraryTabs?.create({
@@ -357,6 +379,7 @@ function notifyForTask(task, occurrence) {
 }
 
 window.addEventListener("duckplan:notification-open", (event) => {
+  if (event.detail?.scope && event.detail.scope !== (store.user?.id || "local")) return;
   openNotificationTarget(event.detail?.taskId || null, event.detail?.view || "home");
 });
 
@@ -972,6 +995,8 @@ function focusMovedCalendarTask(taskId) {
 
 function moveCalendarTask(task, drop, { focus = false } = {}) {
   const owner = `${store.mode}:${store.user?.id || "local"}`;
+  const ownerVersion = plannerOwnerVersion;
+  const currentOwner = () => ownerVersion === plannerOwnerVersion && owner === `${store.mode}:${store.user?.id || "local"}`;
   const previousStart = task.scheduledStart;
   const previousSelectedDate = selectedDate;
   const nextStart = `${drop.date}T${drop.time}`;
@@ -981,19 +1006,19 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
   }
   selectedDate = drop.date;
   selectedTaskId = task.id;
-  store.upsertItem({ ...task, scheduledStart: nextStart, scheduledEnd: null }).catch(reportError);
+  saveTaskWithAlerts({ ...task, scheduledStart: nextStart, scheduledEnd: null }).catch(error => { if (currentOwner()) reportError(error); });
   const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
   els.calendarStatus.textContent = `${task.title} moved to ${destination}.`;
   showToast(`Moved to ${destination}.`, {
     actionLabel: "Undo",
     duration: 5000,
     onAction: () => {
-      if (owner !== `${store.mode}:${store.user?.id || "local"}`) return;
+      if (!currentOwner()) return;
       const current = store.listItems().find(item => item.id === task.id);
       if (!current || current.scheduledStart !== nextStart) { showToast("This task has changed since it was moved."); return; }
       selectedDate = previousStart?.slice(0, 10) || previousSelectedDate;
       selectedTaskId = task.id;
-      store.upsertItem({ ...current, scheduledStart: previousStart, scheduledEnd: null }).catch(reportError);
+      saveTaskWithAlerts({ ...current, scheduledStart: previousStart, scheduledEnd: null }).catch(error => { if (currentOwner()) reportError(error); });
       els.calendarStatus.textContent = `${task.title} returned to its previous time.`;
       showToast("Calendar move undone.");
       if (focus) focusMovedCalendarTask(task.id);
@@ -1005,30 +1030,32 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
 
 async function scheduleListTask(task, drop) {
   const owner = `${store.mode}:${store.user?.id || "local"}`;
+  const ownerVersion = plannerOwnerVersion;
+  const currentOwner = () => ownerVersion === plannerOwnerVersion && owner === `${store.mode}:${store.user?.id || "local"}`;
   const previousStart = task.scheduledStart || null, previousEnd = task.scheduledEnd || null;
   const scheduledStart = `${drop.date}T${drop.time}`;
   if (previousStart === scheduledStart) return;
   selectedDate = drop.date; selectedTaskId = task.id;
   try {
-    await store.upsertItem({ ...task, scheduledStart, scheduledEnd: null });
-    if (owner !== `${store.mode}:${store.user?.id || "local"}`) return;
+    await saveTaskWithAlerts({ ...task, scheduledStart, scheduledEnd: null });
+    if (!currentOwner()) return;
     const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
     els.calendarStatus.textContent = `${task.title} scheduled for ${destination}.`;
     showToast(`Scheduled for ${destination}.`, {
       actionLabel: "Undo", duration: 5000,
       onAction: async () => {
-        if (owner !== `${store.mode}:${store.user?.id || "local"}`) return;
+        if (!currentOwner()) return;
         const current = store.listItems().find(item => item.id === task.id);
         if (!current || current.scheduledStart !== scheduledStart) {
           showToast("This task has changed since it was scheduled."); return;
         }
         try {
-          await store.upsertItem({ ...current, scheduledStart: previousStart, scheduledEnd: previousEnd });
-          if (owner === `${store.mode}:${store.user?.id || "local"}`) showToast("Task scheduling undone.");
-        } catch (error) { if (owner === `${store.mode}:${store.user?.id || "local"}`) reportError(error); }
+          await saveTaskWithAlerts({ ...current, scheduledStart: previousStart, scheduledEnd: previousEnd });
+          if (currentOwner()) showToast("Task scheduling undone.");
+        } catch (error) { if (currentOwner()) reportError(error); }
       },
     });
-  } catch (error) { if (owner === `${store.mode}:${store.user?.id || "local"}`) reportError(error); }
+  } catch (error) { if (currentOwner()) reportError(error); }
 }
 
 function calendarColumnAt(clientX) {
@@ -1130,6 +1157,101 @@ function currentCalendarDrag() {
 
 let modalAnchor = null;
 let modalClosing = false;
+function taskAlertDraft() {
+  const form = els.form.elements;
+  return { ...(tasks.find(task => task.id === editingTaskId) || pendingTaskDraft || {}),
+    scheduledStart: form.scheduledDate.value && form.scheduledTime.value ? `${form.scheduledDate.value}T${form.scheduledTime.value}` : null,
+    workAlerts: taskAlertPreferences };
+}
+function renderTaskAlertFields() {
+  if (!taskAlertPreferences) return;
+  const domain = window.DuckWorkAlerts, draft = taskAlertDraft(), times = domain.resolve(draft, taskAlertPreferences);
+  for (const channel of ["alarm", "notification"]) {
+    const pref = taskAlertPreferences[channel], field = els.form.elements[`${channel}At`];
+    els.form.elements[`${channel}Enabled`].checked = pref.enabled;
+    field.value = times[`${channel}At`] || "";
+    field.disabled = !pref.enabled;
+    document.querySelector(`#${channel}-link-status`).textContent = pref.mode === "manual" ? "Custom time" : channel === "alarm" ? "Follows work start" : "Follows alarm time";
+    document.querySelector(`[data-follow-alert="${channel}"]`).disabled = pref.mode !== "manual";
+  }
+  els.form.elements.alarmSound.value = taskAlertPreferences.alarm.sound;
+  els.form.elements.alarmSnooze.value = String(taskAlertPreferences.alarm.snoozeMinutes);
+  document.querySelector("#task-alarm-help").textContent = window.DuckTaskAlarms.native
+    ? "Rings on this iPhone. Alarm permission is separate from normal notifications."
+    : "Ringing alarms are available in the iPhone app. This preference is saved for it.";
+  document.querySelector("#task-notification-help").textContent = window.DuckTaskNotifications.native
+    ? "Shows a normal banner, separately from the ringing alarm. Allow notifications on this device."
+    : window.DuckTaskNotifications.canSave()
+      ? "Enable notifications on this device to receive a banner while DuckPlan is closed. Delivery depends on device and connection settings."
+      : "Local reminders appear while this page is open. Enable notifications for browser banners; sign in on the hosted app for closed-page delivery.";
+  const deliveries = domain.deliveries(draft), pending = Object.values(deliveries).filter(item => !["disabled", "unconfigured"].includes(item.status));
+  document.querySelector("#task-alert-time-help").textContent = !times.alarmAt && !times.notificationAt
+    ? "Choose a work start or custom alert time. Enabled alerts will follow it."
+    : pending.some(item => ["past", "too-soon"].includes(item.status))
+      ? "Past start times are kept on the calendar; their alerts are not scheduled."
+      : pending.some(item => item.status === "too-far") ? "Device alerts can be scheduled up to one year ahead." : "Each alert can be turned off or given its own time.";
+  const current = tasks.find(task => task.id === editingTaskId);
+  document.querySelector("#task-alert-storage-help").hidden = !(store.mode === "cloud" && (store.supportsWorkAlerts === false || current?.workAlertsDeviceOnly));
+  document.querySelector("#task-alarm-account").hidden = Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
+  document.querySelector("#task-alarm-signup").href = store.configured ? new URL("#settings", location.href).href : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
+}
+function validateEditedTaskAlerts(task) {
+  const prefs = window.DuckWorkAlerts.normalize(task.workAlerts);
+  const alarmChanged = taskAlertTimeChanges.has("alarm"), notificationChanged = taskAlertTimeChanges.has("notification");
+  if (!alarmChanged) {
+    prefs.alarm = { ...prefs.alarm, enabled: false, mode: "work", at: null };
+    if (prefs.notification.mode === "alarm") prefs.notification.enabled = false;
+  }
+  if (!notificationChanged && !(alarmChanged && prefs.notification.mode === "alarm")) prefs.notification.enabled = false;
+  window.DuckWorkAlerts.validate({ ...task, workAlerts: prefs });
+}
+function hydrateTaskAlertEditor(values, editorVersion, ownerVersion) {
+  return workAlerts.refresh().then(() => {
+    if (editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion || !els.modal.open || modalClosing) return;
+    const hydrated = workAlerts.preferences({ ...values, scheduledStart: taskAlertDraft().scheduledStart });
+    for (const field of taskAlertTouchedFields) {
+      const [channel, key] = field.split(".");
+      hydrated[channel][key] = taskAlertPreferences[channel][key];
+    }
+    taskAlertPreferences = hydrated;
+    renderTaskAlertFields();
+  });
+}
+els.form.addEventListener("input", event => {
+  if (["scheduledDate", "scheduledTime"].includes(event.target.name)) renderTaskAlertFields();
+});
+els.form.addEventListener("change", event => {
+  if (!taskAlertPreferences) return;
+  const name = event.target.name;
+  for (const channel of ["alarm", "notification"]) {
+    if (name === `${channel}At`) {
+      taskAlertPreferences = window.DuckWorkAlerts.editTime(taskAlertPreferences, channel, event.target.value);
+      taskAlertTouchedFields.add(`${channel}.mode`); taskAlertTouchedFields.add(`${channel}.at`);
+      if (!event.target.value) taskAlertTouchedFields.add(`${channel}.enabled`);
+      taskAlertTimeChanges.add(channel);
+    }
+    if (name === `${channel}Enabled`) {
+      const previous = taskAlertPreferences[channel];
+      taskAlertPreferences = window.DuckWorkAlerts.setEnabled(taskAlertPreferences, channel, event.target.checked);
+      taskAlertTouchedFields.add(`${channel}.enabled`);
+      if (event.target.checked && previous.mode === "manual" && previous.at === null) {
+        taskAlertTouchedFields.add(`${channel}.mode`); taskAlertTouchedFields.add(`${channel}.at`);
+      }
+      if (event.target.checked) taskAlertTimeChanges.add(channel); else taskAlertTimeChanges.delete(channel);
+    }
+  }
+  if (name === "alarmSound") { taskAlertPreferences.alarm.sound = event.target.value; taskAlertTouchedFields.add("alarm.sound"); }
+  if (name === "alarmSnooze") { taskAlertPreferences.alarm.snoozeMinutes = Number(event.target.value); taskAlertTouchedFields.add("alarm.snoozeMinutes"); }
+  renderTaskAlertFields();
+});
+els.form.addEventListener("click", event => {
+  const button = event.target.closest("[data-follow-alert]");
+  if (!button || !taskAlertPreferences) return;
+  taskAlertTouchedFields.add(`${button.dataset.followAlert}.mode`); taskAlertTouchedFields.add(`${button.dataset.followAlert}.at`);
+  taskAlertPreferences = window.DuckWorkAlerts.follow(taskAlertPreferences, button.dataset.followAlert);
+  taskAlertTimeChanges.add(button.dataset.followAlert);
+  renderTaskAlertFields();
+});
 function openModal(prefill = {}) {
   viewTransitions.settle();
   const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
@@ -1147,6 +1269,7 @@ function openModal(prefill = {}) {
   els.modalTitle.textContent = task ? "Edit task" : "Add task";
   els.modalKicker.textContent = task ? "Task details" : "Plan your work";
   els.saveTask.textContent = task ? "Save changes" : "Add to DuckPlan";
+  els.saveTask.disabled = false;
   els.deleteTask.hidden = !task;
   els.form.elements.title.value = values.title || "";
   els.form.elements.classId.value = values.classId !== undefined ? values.classId || "" : store.listClasses()[0]?.id || "";
@@ -1169,23 +1292,20 @@ function openModal(prefill = {}) {
   const choice = values.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
-  const alarm = window.DuckTaskAlarms.get(task?.id);
-  const alarmInput=els.form.elements.alarmAt;
-  alarmInput.disabled=!window.DuckTaskAlarms.canSave();
-  alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
-  document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
-  const alarmAccount = document.querySelector("#task-alarm-account");
-  alarmAccount.hidden = !alarmInput.disabled || Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
-  document.querySelector("#task-alarm-signup").href = store.configured
-    ? new URL("#settings", location.href).href
-    : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
-  if (window.DuckTaskAlarms.native) {
-    document.querySelector('#task-alarm-help').textContent='Rings on this iPhone even while DuckPlan is closed. Clear the time to cancel. Changing scheduled work time does not move this alarm automatically.';
-    els.form.elements.alarmSound.value=alarm?.sound || 'system';
-    els.form.elements.alarmSnooze.value=String(alarm?.snoozeMinutes ?? 5);
-  }
+  const editorVersion = ++taskAlertEditorVersion;
+  const ownerVersion = plannerOwnerVersion;
+  taskAlertHydrationError = null;
+  taskAlertTimeChanges.clear();
+  taskAlertTouchedFields.clear();
+  taskAlertPreferences = workAlerts.preferences({ ...values, scheduledStart: els.form.elements.scheduledDate.value && els.form.elements.scheduledTime.value ? `${els.form.elements.scheduledDate.value}T${els.form.elements.scheduledTime.value}` : null });
+  renderTaskAlertFields();
+  taskAlertHydration = workAlertContextReady ? hydrateTaskAlertEditor(values, editorVersion, ownerVersion).catch(error => {
+    if (editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion || !els.modal.open || modalClosing) return;
+    taskAlertHydrationError = error;
+    reportError(error);
+  }) : Promise.resolve();
   document.querySelector('#task-alarm-save-error').textContent='';
-  document.querySelector("#task-alarm-options").open = Boolean(alarm);
+  document.querySelector("#task-alarm-options").open = Boolean(taskAlertDraft().scheduledStart || values.workAlerts);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
   taskLibrary?.renderTaskResources(els.form.elements.classId.value);
@@ -1587,6 +1707,17 @@ els.modal.addEventListener("click", event => {
 els.search.addEventListener("input", () => { searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
 els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (els.saveTask.disabled) return;
+  const hydrationEditorVersion = taskAlertEditorVersion, hydrationOwnerVersion = plannerOwnerVersion;
+  const currentHydration = () => hydrationEditorVersion === taskAlertEditorVersion && hydrationOwnerVersion === plannerOwnerVersion && els.modal.open && !modalClosing;
+  els.saveTask.disabled = true;
+  await taskAlertHydration;
+  if (!currentHydration()) return;
+  els.saveTask.disabled = false;
+  if (taskAlertHydrationError) {
+    document.querySelector("#task-alarm-save-error").textContent = "Couldn't load your saved alert settings. Close this editor and try again.";
+    return;
+  }
   const form = new FormData(els.form); const title = form.get("title").trim(); if (!title) return;
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
@@ -1596,28 +1727,29 @@ els.form.addEventListener("submit", async (event) => {
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
-  const alarmAt=form.get('alarmAt');
-  if(alarmAt && (!Number.isFinite(new Date(alarmAt).getTime()) || new Date(alarmAt).getTime()<Date.now()+5000)) {
-    document.querySelector('#task-alarm-save-error').textContent=window.DuckTaskAlarms.native?'Choose a future alarm time.':'Choose a future notification time.'; return;
-  }
+  next.workAlerts = window.DuckWorkAlerts.normalize(taskAlertPreferences);
+  try { validateEditedTaskAlerts(next); }
+  catch (error) { document.querySelector("#task-alarm-save-error").textContent = error.message; els.form.elements[error.field]?.focus(); return; }
   els.saveTask.disabled=true;
+  const saveOwnerVersion = plannerOwnerVersion, saveEditorVersion = taskAlertEditorVersion;
+  const currentSave = () => saveOwnerVersion === plannerOwnerVersion && saveEditorVersion === taskAlertEditorVersion && els.modal.open && !modalClosing;
   let taskWasSaved = false;
   try {
-    const saved=await store.upsertItem(next);
+    const saved=await saveTaskWithAlerts(next);
+    if (!currentSave()) return;
     taskWasSaved = true;
     editingTaskId=saved.id;
-    if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt,{
-      title:saved.title, sound:form.get('alarmSound') || 'system', snoozeMinutes:Number(form.get('alarmSnooze') ?? 5),
-    });
     closeModal();
-    showToast(alarmAt?(window.DuckTaskAlarms.native?'Task and iPhone alarm saved.':'Task and notification saved.'):wasEditing?'Task updated.':'Task added to your plan.');
+    showToast(wasEditing ? "Task and alert settings updated." : "Task and alert settings saved.");
   } catch(error) {
-    if (taskWasSaved) document.querySelector('#task-alarm-save-error').textContent=`Task saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+    if (!currentSave()) return;
+    if (error.savedTask) { editingTaskId = error.savedTask.id; pendingTaskDraft = null; }
+    if (taskWasSaved || error.savedTask || error.taskSaved) document.querySelector('#task-alarm-save-error').textContent = error.message;
     else {
       const message = document.querySelector("#task-form-error");
       message.hidden = false; message.textContent = error.message || "Couldn't save this task. Please try again.";
     }
-  } finally { els.saveTask.disabled=false; }
+  } finally { if (currentSave()) els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
   if (!editingTaskId) return;
@@ -1699,7 +1831,7 @@ els.accountSettings.addEventListener("click", (event) => {
   if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
   if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
   if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
-  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await window.DuckTaskAlarms.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
+  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await workAlerts.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
   if (button.id === "import-local") runAction(button, async () => { await store.importLocalTasks(); showToast("Local planner data imported."); await refreshAccountState(); });
 });
@@ -1741,6 +1873,9 @@ function refreshPlannerClock() {
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPlannerClock(); });
 window.addEventListener("focus", () => { updateNotificationPermission(); refreshPlannerClock(); });
+window.addEventListener("duckplan:work-alert-capability", () => {
+  if (workAlertContextReady) workAlerts.reconcile({ refresh: true }).catch(reportError);
+});
 setInterval(refreshPlannerClock, 60000);
 
 const requestedView = location.hash.replace("#", "");
@@ -1776,14 +1911,13 @@ store.subscribe(({ reason }) => {
     renderAxis();
   }
   renderAll();
-  if (window.DuckTaskAlarms.native && ['load','auth','remote','persisted'].includes(reason)) {
-    window.DuckTaskAlarms.setContext(store.user?.id || 'local', store.listItems()).catch(reportError);
-  } else if (reason === 'load' || reason === 'auth') window.DuckTaskAlarms.refresh();
+  if (["load", "auth"].includes(reason)) workAlertContextReady = true;
+  if (workAlertContextReady && ["load", "auth", "remote", "persisted", "context"].includes(reason)) workAlerts.reconcile({ refresh: ["load", "auth"].includes(reason) }).catch(reportError);
   if (reason === "load" || reason === "auth") refreshAccountState();
 });
 store.init().then(() => {
-  if (window.DuckTaskAlarms.native) window.DuckTaskAlarms.setContext(store.user?.id || 'local',store.listItems()).catch(reportError);
-  else window.DuckTaskAlarms.refresh();
+  workAlertContextReady = true;
+  workAlerts.reconcile({ refresh: true }).catch(reportError);
   const alarmTarget=new URL(location.href).searchParams.get('alarmTask');
   if(alarmTarget) { openNotificationTarget(alarmTarget,'home'); const url=new URL(location.href); url.searchParams.delete('alarmTask'); history.replaceState(null,'',url); }
   const problem = store.takeAuthError();

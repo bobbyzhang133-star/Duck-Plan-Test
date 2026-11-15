@@ -1,0 +1,44 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "local-permission-denied-foreground-reminder-disabled-switch-and-reload-dedup",
+      "mode": "local browser storage, controlled browser clock",
+      "status": "PASS",
+      "permission": "denied",
+      "activeTaskId": "696778d0-de92-40d0-b24c-8cf0e7152c4d",
+      "mutedTaskId": "32570b42-91f7-446a-bceb-b468c25a3b47"
+    },
+    {
+      "test": "task-PUT-503-rollback-and-real-retry",
+      "mode": "real current local Worker; explicit negative-response injection",
+      "status": "PASS",
+      "taskId": "cf47fe38-6e44-4234-9e73-f56c32ad7306"
+    },
+    {
+      "test": "notification-PUT-503-partial-save-retry-keeps-new-task-ID",
+      "mode": "real current local Worker; explicit negative-response injection",
+      "status": "PASS",
+      "taskId": "10c4dd1e-4dff-493b-8778-3805efdca8d8"
+    },
+    {
+      "test": "old-past-manual-time-allows-untouched-title-edit-and-opt-out",
+      "mode": "local browser storage; synthetic preexisting preference",
+      "status": "PASS"
+    },
+    {
+      "test": "same-owner-late-save-cannot-replace-new-editor",
+      "mode": "real current local Worker; held real successful response",
+      "status": "PASS"
+    },
+    {
+      "test": "committed-old-owner-save-cannot-rebind-or-schedule-guest",
+      "mode": "real current local Worker, held real success response",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Foreground HTML reminder verified; no OS delivery claim. All positive cloud writes use real isolated Worker; 503 responses are explicit failure injections."
+}

@@ -1,16 +1,27 @@
 import SwiftUI
 import UIKit
 
+@MainActor
+private final class DuckNotificationAppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        TaskNotificationStore.shared.installDelegate()
+        return true
+    }
+}
+
 @main
 struct DuckPlanApp: App {
+    @UIApplicationDelegateAdaptor(DuckNotificationAppDelegate.self) private var appDelegate
     @StateObject private var alarms = TaskAlarmStore()
+    @StateObject private var notifications = TaskNotificationStore.shared
     var body: some Scene {
-        WindowGroup { PlannerAlarmRoot(alarms: alarms) }
+        WindowGroup { PlannerAlarmRoot(alarms: alarms, notifications: notifications) }
     }
 }
 
 private struct PlannerAlarmRoot: View {
     @ObservedObject var alarms: TaskAlarmStore
+    @ObservedObject var notifications: TaskNotificationStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var actionError: String?
     @State private var previewDismissed = false
@@ -31,7 +42,7 @@ private struct PlannerAlarmRoot: View {
     var body: some View {
         let alarm = alarms.ringingAlarms.first ?? preview
         ZStack {
-            PlannerWebView(alarms: alarms)
+            PlannerWebView(alarms: alarms, notifications: notifications)
                 .ignoresSafeArea(edges: .bottom)
                 .allowsHitTesting(alarm == nil)
                 .accessibilityHidden(alarm != nil)
@@ -44,10 +55,13 @@ private struct PlannerAlarmRoot: View {
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { alarms.refreshRingingAlarms() }
+            if phase == .active {
+                alarms.refreshRingingAlarms()
+                Task { await notifications.updatePermission() }
+            }
         }
         .onChange(of: alarm?.id) { _, _ in actionError = nil }
-        .task { alarms.refreshRingingAlarms() }
+        .task { alarms.refreshRingingAlarms(); await notifications.updatePermission() }
     }
 
     private func perform(_ alarm: TaskAlarmRecord, snooze: Bool) {

@@ -507,10 +507,10 @@
       let addedTask;
       try {
         const task = schedule ? instantiateScheduledTemplate(item, schedule) : instantiateTemplate(item);
-        await store.upsertItem(task);
-        addedTask = task;
+        const saved = await (host.saveTask ? host.saveTask(task) : store.upsertItem(task));
+        addedTask = saved || task;
         if (isCurrentOwner(operationOwner)) host.showToast?.(schedule ? "Task scheduled. The template is ready to use again." : "Added a new task. The template is ready to use again.");
-      } catch (error) { if (isCurrentOwner(operationOwner)) fail(error); }
+      } catch (error) { if (error.savedTask) addedTask = error.savedTask; if (isCurrentOwner(operationOwner)) fail(error); }
       finally {
         if (pending.get(id) === operationOwner) pending.delete(id);
         if (isCurrentOwner(operationOwner)) render();
