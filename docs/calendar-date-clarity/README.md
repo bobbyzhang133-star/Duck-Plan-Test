@@ -1,6 +1,6 @@
 # Calendar due dates and planned work
 
-**Safe checkpoint:** stopped at the user's request. See [checkpoint and remaining checks](CHECKPOINT.md). Eight automated affected browser cases passed; 320px Month marker crowding remains an open visual follow-up, and the offline-cache smoke was not run. This is not a completed platform release baseline.
+**Follow-up completed locally November 15:** see the [corrections and verification](RESUME-2026-11-15.md). The [November 14 checkpoint](CHECKPOINT.md) is retained as the historical pause record. This is a local website change, not a completed platform release baseline.
 
 Implemented in the local `DuckPlan-motion-preview` website on `codex/calendar-date-clarity-20261114`, from `567d6c2`. Source: the user's newer [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c), its [returned recommendations](review-source.txt) and [visible generated mockup](reference-mockup.jpg). The image is a captured reference, not an imported replacement UI or new mascot asset.
 
@@ -18,9 +18,9 @@ The user confirmed two interaction choices: Calendar items open a compact previe
 
 ## Implementation and verification
 
-Pure task grouping/timing helpers live in `landing/planner-model.js`; separate rendering and preview controllers live in `calendar-date-presentation.js` and `calendar-task-preview.js`. Root integration stays in `app.js`, with scoped styles in the two new CSS files. Initial scrolling measures the actual timeline header/deadline offset rather than assuming114px. Versioned assets and PWA cachev56 include all four new renderer/preview assets.
+Pure task grouping/timing helpers live in `landing/planner-model.js`; separate rendering and preview controllers live in `calendar-date-presentation.js` and `calendar-task-preview.js`. Root integration stays in `app.js`, with scoped styles in the two new CSS files. Initial scrolling measures the actual timeline header/deadline offset rather than assuming114px. Versioned assets and the current PWA cachev60 include all four new renderer/preview assets; the original checkpoint usedv56.
 
-`verification.json` records the full456-test Node pass,47 JavaScript syntax checks, final focused checks and exact source hashes. Browser action/layout/persistence outcomes are recorded by the affected-feature runtime harness in this directory. These are affected-feature checks for a frontend change, not a new full-platform release baseline.
+`verification.json` records the original checkpoint's456-test Node pass,47 JavaScript syntax checks and source hashes. `resume-verification.json` records the November15 follow-up's76 affected tests and final source hashes. Browser action/layout/persistence outcomes are recorded by the affected-feature runtime harnesses and ledgers in this directory. These are affected-feature checks for a frontend change, not a new full-platform release baseline.
 
 The actual existing in-app browser was refreshed, its new preview was opened read-only and closed, and Calendar Week was restored. Its saved unfinished task count remained seven; no real user task was edited or completed. Synthetic fixture contexts cover mutation tests instead.
 

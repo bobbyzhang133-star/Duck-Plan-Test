@@ -1,0 +1,309 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "viewport": [
+    320,
+    740
+  ],
+  "touchEmulation": true,
+  "mode": "local regular browser tab + actual service worker",
+  "expectedCache": "duckplan-app-motion-preview-v60",
+  "cached": {
+    "keys": [
+      "duckplan-app-motion-preview-v60"
+    ],
+    "assets": {
+      "calendar-date-presentation.js": "f875c2e1fd713bbb3fec9fd32307eb3b132edb8f302b541a1358310fd7735449",
+      "calendar-date-clarity.css": "25fb6e89594053b53dba504b60c71d2c8e767a512fce28482f4997049a768d41",
+      "calendar-task-preview.js": "2e0f282ed765031e0d74f2fae3042e0ff7b62c420eb2bb2bbee60c0c0eaf2f67",
+      "calendar-task-preview.css": "ede7c54abf6d1bec60e2b62ac322381ec0616cb69f89f37ee3f65eb171ed6b04",
+      "app.js": "12392e93dadb64890e8937b3897d08fbed7b38e4b341e43002a469a3840014d9",
+      "index.html": "64f0ce52290b882cc61b7c9b22f32865a6c0e9e13af89824fda67339283fd718"
+    },
+    "scope": "http://127.0.0.1:8034/",
+    "cacheURLs": [
+      "http://127.0.0.1:8034/",
+      "http://127.0.0.1:8034/index.html",
+      "http://127.0.0.1:8034/app.webmanifest",
+      "http://127.0.0.1:8034/styles.css",
+      "http://127.0.0.1:8034/planner-ui.css",
+      "http://127.0.0.1:8034/duck-theme.css",
+      "http://127.0.0.1:8034/planner-clarity.css",
+      "http://127.0.0.1:8034/planner-motion.css",
+      "http://127.0.0.1:8034/page-stack.css",
+      "http://127.0.0.1:8034/phone-navigation.css",
+      "http://127.0.0.1:8034/phone-navigation.js",
+      "http://127.0.0.1:8034/duck-mascot.js",
+      "http://127.0.0.1:8034/duck-interactions.js",
+      "http://127.0.0.1:8034/planner-clarity.js",
+      "http://127.0.0.1:8034/planner-presentation.js",
+      "http://127.0.0.1:8034/assets/duckplan-mark.svg",
+      "http://127.0.0.1:8034/assets/duckplan-sigma-icon-v11-192.png",
+      "http://127.0.0.1:8034/assets/duckplan-sigma-icon-v11-512.png",
+      "http://127.0.0.1:8034/assets/duckplan-sigma-icon-v11-transparent-512.png",
+      "http://127.0.0.1:8034/assets/duckplan-mascot-v8.png",
+      "http://127.0.0.1:8034/planner-model.js",
+      "http://127.0.0.1:8034/calendar-date-presentation.js",
+      "http://127.0.0.1:8034/calendar-date-clarity.css",
+      "http://127.0.0.1:8034/calendar-task-preview.js",
+      "http://127.0.0.1:8034/calendar-task-preview.css",
+      "http://127.0.0.1:8034/planner-ui.js",
+      "http://127.0.0.1:8034/ical-parser.js",
+      "http://127.0.0.1:8034/cloud-config.js",
+      "http://127.0.0.1:8034/planner-store.js",
+      "http://127.0.0.1:8034/task-list-drag.js",
+      "http://127.0.0.1:8034/planner-library.js",
+      "http://127.0.0.1:8034/planner-library.css",
+      "http://127.0.0.1:8034/calendar-library-tabs.js",
+      "http://127.0.0.1:8034/calendar-library-tabs.css",
+      "http://127.0.0.1:8034/task-matrix.js",
+      "http://127.0.0.1:8034/task-matrix.css",
+      "http://127.0.0.1:8034/product-feedback.css",
+      "http://127.0.0.1:8034/personal-notes.js",
+      "http://127.0.0.1:8034/personal-notes.css",
+      "http://127.0.0.1:8034/personal-goals.js",
+      "http://127.0.0.1:8034/personal-goals.css",
+      "http://127.0.0.1:8034/reminder-domain.js",
+      "http://127.0.0.1:8034/work-alerts.js",
+      "http://127.0.0.1:8034/work-alerts.css",
+      "http://127.0.0.1:8034/work-alert-controller.js",
+      "http://127.0.0.1:8034/reminder-ledger.js",
+      "http://127.0.0.1:8034/browser-notifications.js",
+      "http://127.0.0.1:8034/motion-tokens.js",
+      "http://127.0.0.1:8034/view-transitions.js",
+      "http://127.0.0.1:8034/button-interactions.js",
+      "http://127.0.0.1:8034/page-navigation-feedback.js",
+      "http://127.0.0.1:8034/popup-motion.js",
+      "http://127.0.0.1:8034/app-install.js",
+      "http://127.0.0.1:8034/task-alarms.js",
+      "http://127.0.0.1:8034/native-task-alarms.js",
+      "http://127.0.0.1:8034/native-task-notifications.js",
+      "http://127.0.0.1:8034/app.js",
+      "http://127.0.0.1:8034/assets/duckplan-sigma-icon-v11-transparent-192.png"
+    ],
+    "pageURL": "http://127.0.0.1:8034/?qa=calendar-resume-sw#calendar"
+  },
+  "focusVisibility": {
+    "focused": true,
+    "formMetrics": {
+      "scrollTop": 999,
+      "clientHeight": 706,
+      "scrollHeight": 2727,
+      "overflowY": "auto",
+      "scrollBehavior": "auto",
+      "inputOffsetTop": 214
+    },
+    "ancestors": [
+      {
+        "tag": "LABEL",
+        "id": "",
+        "top": 316.34375,
+        "bottom": 393.59375,
+        "clientHeight": 77,
+        "scrollHeight": 77,
+        "scrollTop": 0,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "top": 316.34375,
+        "bottom": 578.09375,
+        "clientHeight": 262,
+        "scrollHeight": 262,
+        "scrollTop": 0,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FIELDSET",
+        "id": "",
+        "top": 210.234375,
+        "bottom": 595.09375,
+        "clientHeight": 383,
+        "scrollHeight": 367,
+        "scrollTop": 0,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DETAILS",
+        "id": "task-schedule-options",
+        "top": 132.734375,
+        "bottom": 606.09375,
+        "clientHeight": 471,
+        "scrollHeight": 471,
+        "scrollTop": 0,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "id": "task-form",
+        "top": 16,
+        "bottom": 724,
+        "clientHeight": 706,
+        "scrollHeight": 2727,
+        "scrollTop": 999,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIALOG",
+        "id": "task-modal",
+        "top": 16,
+        "bottom": 724,
+        "clientHeight": 708,
+        "scrollHeight": 708,
+        "scrollTop": 0,
+        "overflowY": "visible"
+      }
+    ],
+    "field": {
+      "left": 61,
+      "right": 259,
+      "top": 347.59375,
+      "bottom": 393.59375,
+      "width": 198,
+      "height": 46
+    },
+    "clip": {
+      "left": 15,
+      "right": 305,
+      "top": 17,
+      "bottom": 723
+    },
+    "visibleWidth": 198,
+    "visibleHeight": 46,
+    "fullyVisible": true
+  },
+  "reopenedTitleVisibility": {
+    "focused": true,
+    "newTask": true,
+    "field": {
+      "left": 33,
+      "right": 287,
+      "top": 132.390625,
+      "bottom": 178.390625,
+      "width": 254,
+      "height": 46
+    },
+    "clip": {
+      "left": 15,
+      "right": 305,
+      "top": 17,
+      "bottom": 723
+    },
+    "formScrollTop": 34,
+    "visibleWidth": 254,
+    "visibleHeight": 46,
+    "fullyVisible": true
+  },
+  "focusLayoutSamples": [
+    {
+      "target": "task-form",
+      "detailsOpen": true,
+      "detailsHeight": 728.5,
+      "formScrollHeight": 2727,
+      "formScrollTop": 0,
+      "workDateTop": 1346.59375,
+      "workDateBottom": 1392.59375
+    },
+    {
+      "target": "scheduledDate",
+      "detailsOpen": true,
+      "detailsHeight": 728.5,
+      "formScrollHeight": 2727,
+      "formScrollTop": 0,
+      "workDateTop": 1346.59375,
+      "workDateBottom": 1392.59375
+    },
+    {
+      "target": "task-form",
+      "detailsOpen": false,
+      "detailsHeight": 49,
+      "formScrollHeight": 740,
+      "formScrollTop": 34,
+      "workDateTop": 633.09375,
+      "workDateBottom": 679.09375
+    },
+    {
+      "target": "title",
+      "detailsOpen": false,
+      "detailsHeight": 49,
+      "formScrollHeight": 740,
+      "formScrollTop": 34,
+      "workDateTop": 633.09375,
+      "workDateBottom": 679.09375
+    }
+  ],
+  "offlineAssets": [
+    {
+      "name": "index.html",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-clarity.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-task-preview.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-presentation.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-task-preview.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "app.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "index.html",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-clarity.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-task-preview.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-presentation.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-task-preview.js",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "app.js",
+      "status": 200,
+      "fromServiceWorker": true
+    }
+  ],
+  "assertions": [
+    "All4 new assets plus app.js and index.html match frozen SHA-256 in active cache",
+    "Offline navigation reload obtains assets from actual service worker",
+    "Focused Reschedule and reopened Add fields are visible",
+    "Offline Month/agenda/preview/Edit work",
+    "Offline edit survives reload and online reconnect"
+  ],
+  "errors": [],
+  "installedPWAClaim": false,
+  "physicalDeviceClaim": false,
+  "syntheticContextClosed": true
+}

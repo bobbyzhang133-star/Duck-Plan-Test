@@ -1,0 +1,82 @@
+{
+  "date": "2026-11-15",
+  "branch": "codex/calendar-date-clarity-20261114",
+  "baseCommit": "a9439d7ba309db5bcde2e3e6eec6d20a4df6d929",
+  "scope": "Phone Month marker containment; local website only",
+  "cacheVersion": "duckplan-app-motion-preview-v60",
+  "cssVersion": "month-markers-20261115-final",
+  "changedJavascriptSyntax": {
+    "status": "PASS",
+    "files": [
+      "landing/app.js",
+      "landing/service-worker.js"
+    ]
+  },
+  "priorEvidenceReuse": "The earlier456-test/8-client results are preserved as historical evidence for unchanged model/renderer/preview/integration behavior. Final CSS/cache checks are recorded separately, not presented as a repeat of that full matrix.",
+  "nativeSync": false,
+  "publicDeployment": false,
+  "userRecordMutation": false,
+  "initialFocusedTests": {
+    "status": "PASS",
+    "count": 37,
+    "files": [
+      "planner-model",
+      "calendar-date-presentation",
+      "calendar-task-preview",
+      "calendar-selection",
+      "startup-routing",
+      "pwa-app"
+    ],
+    "log": "/private/tmp/duckplan-calendar-resume-focused-20261115.log"
+  },
+  "focusedTests": {
+    "status": "PASS",
+    "count": 76,
+    "files": [
+      "tests/planner-model.test.cjs",
+      "tests/calendar-date-presentation.test.cjs",
+      "tests/calendar-task-preview.test.cjs",
+      "tests/calendar-selection.test.cjs",
+      "tests/startup-routing.test.cjs",
+      "tests/pwa-app.test.cjs",
+      "tests/task-editor-focus.test.cjs",
+      "tests/popup-motion.test.cjs",
+      "tests/work-alert-editor-hydration.test.cjs"
+    ],
+    "log": "/private/tmp/duckplan-calendar-resume-final-20261115.log",
+    "reason": "Final native-default focus handling, synchronous disclosure initialization and guarded form-scroll reveal, plus dependent popup/editor and calendar behaviors."
+  },
+  "initialSourceSha256": {
+    "landing/calendar-date-clarity.css": "bd6b330b6a5606ac85e2b3cd68aaef831d713176e2986e627064ee292d5d4e02",
+    "landing/calendar-date-presentation.js": "f875c2e1fd713bbb3fec9fd32307eb3b132edb8f302b541a1358310fd7735449",
+    "landing/calendar-task-preview.js": "2e0f282ed765031e0d74f2fae3042e0ff7b62c420eb2bb2bbee60c0c0eaf2f67",
+    "landing/calendar-task-preview.css": "ede7c54abf6d1bec60e2b62ac322381ec0616cb69f89f37ee3f65eb171ed6b04",
+    "landing/app.js": "5c4bf4d97639f876dacb57322189244daeac4b7cda14f216a6ba1abb934edd06",
+    "landing/planner-model.js": "faecc982b7a8676c47ecee91c7c678a2d5407690d96a9df57e1f08d2ae41f314",
+    "landing/index.html": "8132eb74e1366195236f2cb01c4328c2fe42956fb091e6999e2844c544118e90",
+    "landing/service-worker.js": "00167f9e4872c9aad55b8e802afe7475829ce00df6084759a461a408b5b84b35",
+    "tests/pwa-app.test.cjs": "382ea63c64c80380a179c43019a544ed57d6cb4157e3464c9d231fd59bf4b678"
+  },
+  "sourceSha256": {
+    "landing/calendar-date-clarity.css": "25fb6e89594053b53dba504b60c71d2c8e767a512fce28482f4997049a768d41",
+    "landing/calendar-date-presentation.js": "f875c2e1fd713bbb3fec9fd32307eb3b132edb8f302b541a1358310fd7735449",
+    "landing/calendar-task-preview.js": "2e0f282ed765031e0d74f2fae3042e0ff7b62c420eb2bb2bbee60c0c0eaf2f67",
+    "landing/calendar-task-preview.css": "ede7c54abf6d1bec60e2b62ac322381ec0616cb69f89f37ee3f65eb171ed6b04",
+    "landing/app.js": "12392e93dadb64890e8937b3897d08fbed7b38e4b341e43002a469a3840014d9",
+    "landing/planner-model.js": "faecc982b7a8676c47ecee91c7c678a2d5407690d96a9df57e1f08d2ae41f314",
+    "landing/index.html": "64f0ce52290b882cc61b7c9b22f32865a6c0e9e13af89824fda67339283fd718",
+    "landing/service-worker.js": "37a2f47f12c5673eafad72e9ecacd95f09a7cb8508e9b19d452450281c1fa81f",
+    "tests/pwa-app.test.cjs": "485da6771f05364e145f12415dbf6eaca9562f9b75aea211d60cd0f51c04b2c4",
+    "tests/task-editor-focus.test.cjs": "3749313f36be32f15ef6bb320cd2b095214cd0df49b980ecdc9b21a0e1db2769"
+  },
+  "actualPreview": {
+    "origin": "http://127.0.0.1:8034",
+    "status": "PASS",
+    "appKey": "calendar-focus-visible-20261115c",
+    "cssKey": "month-markers-20261115-final",
+    "finalView": "Week, Nov9\u201315, selectedNov15; tasks sheet collapsed; no open dialogs",
+    "userRecordMutation": false,
+    "evidence": "Read-only current-page assets and accessibility state; month screenshot /private/tmp/duckplan-month-current-20261115.png from initial phone-only CSS before later general grid containment."
+  },
+  "appVersion": "calendar-focus-visible-20261115c"
+}

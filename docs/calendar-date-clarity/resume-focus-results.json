@@ -1,0 +1,108 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "status": "PASS",
+      "mode": "local browser storage",
+      "width": 320,
+      "height": 740,
+      "touchEmulation": true,
+      "theme": "dark",
+      "reducedMotion": true,
+      "gutterFocus": {
+        "gutter": {
+          "label": "Due",
+          "accessible": "Deadlines",
+          "left": 22,
+          "right": 70,
+          "textLeft": 34.046875,
+          "textRight": 56.9375,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "width": 48,
+          "textWidth": 22.890625
+        },
+        "focus": {
+          "id": "2f95b179-0000-4000-8000-000000000007",
+          "name": "scheduledDate",
+          "date": "2026-11-20",
+          "time": "16:00"
+        },
+        "tabFocus": {
+          "tag": "INPUT",
+          "name": "scheduledDate"
+        },
+        "earlyInteraction": {
+          "status": "NOT APPLICABLE",
+          "reason": "Reduced motion has no delayed focus callback window"
+        },
+        "cancelDuringOpen": {
+          "status": "NOT APPLICABLE"
+        }
+      },
+      "marker": {
+        "status": "NOT RUN IN FOCUS PHASE",
+        "reason": "Covered by final6-client marker matrix"
+      }
+    },
+    {
+      "status": "PASS",
+      "mode": "signed-in isolated real Worker",
+      "width": 1280,
+      "height": 1000,
+      "touchEmulation": false,
+      "theme": "light",
+      "reducedMotion": false,
+      "gutterFocus": {
+        "gutter": {
+          "label": "Due",
+          "accessible": "Deadlines",
+          "left": 396,
+          "right": 460,
+          "textLeft": 416.046875,
+          "textRight": 438.9375,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "width": 64,
+          "textWidth": 22.890625
+        },
+        "focus": {
+          "id": "38ea0528-0000-4000-8000-000000000007",
+          "name": "scheduledDate",
+          "date": "2026-11-20",
+          "time": "16:00"
+        },
+        "tabFocus": {
+          "tag": "INPUT",
+          "name": "scheduledDate"
+        },
+        "earlyInteraction": {
+          "status": "PASS",
+          "chosen": {
+            "id": "close-task-modal",
+            "name": "",
+            "key": {
+              "trusted": true,
+              "motion": "opening"
+            }
+          },
+          "after": {
+            "id": "close-task-modal",
+            "name": ""
+          }
+        },
+        "cancelDuringOpen": {
+          "status": "PASS"
+        }
+      },
+      "marker": {
+        "status": "NOT RUN IN FOCUS PHASE",
+        "reason": "Covered by final6-client marker matrix"
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "allSyntheticContextsClosed": true,
+  "scope": "Bounded frontend follow-up; real isolated APIs in signed-in cases. Chromium touch emulation does not establish native/physical Safari behavior."
+}

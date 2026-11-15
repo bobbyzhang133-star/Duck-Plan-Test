@@ -1182,6 +1182,45 @@ function currentCalendarDrag() {
 
 let modalAnchor = null;
 let modalClosing = false;
+let cancelModalFocus = () => {};
+function openTaskEditorWithFocus(reschedule, editorVersion, ownerVersion) {
+  cancelModalFocus();
+  let cancelled = false, interacted = false, armed = false;
+  const intent = () => { interacted = true; };
+  const focused = () => { if (armed) interacted = true; };
+  const cleanup = () => {
+    if (cancelled) return;
+    cancelled = true;
+    for (const type of ["pointerdown", "keydown", "input"]) els.modal.removeEventListener(type, intent, true);
+    els.modal.removeEventListener("focusin", focused, true);
+    if (cancelModalFocus === cleanup) cancelModalFocus = () => {};
+  };
+  for (const type of ["pointerdown", "keydown", "input"]) els.modal.addEventListener(type, intent, true);
+  els.modal.addEventListener("focusin", focused, true);
+  cancelModalFocus = cleanup;
+  DuckPopupMotion.open(els.modal, modalAnchor, () => {
+    if (cancelled) return;
+    const untouched = !interacted;
+    cleanup();
+    if (!untouched || modalClosing || !els.modal.open || editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion) return;
+    const active = document.activeElement;
+    if (!els.modal.contains(active) || active === els.modal || active === els.form || active === els.form.elements.title || active?.id === "close-task-modal") {
+      const target = reschedule ? els.form.elements.scheduledDate : els.form.elements.title;
+      target.focus({ preventScroll: true });
+      if (modalClosing || !els.modal.open || editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion || document.activeElement !== target) return;
+      const form = els.form, bounds = form.getBoundingClientRect?.(), field = target.getBoundingClientRect?.();
+      if (!bounds || !field || !(form.clientHeight > 0)) return;
+      const top = bounds.top + (form.clientTop || 0), bottom = top + form.clientHeight;
+      const inset = Math.min(8, Math.max(0, (form.clientHeight - (field.bottom - field.top)) / 2));
+      const delta = field.top < top + inset ? field.top - top - inset : field.bottom > bottom - inset ? field.bottom - bottom + inset : 0;
+      const next = Math.max(0, Math.min(form.scrollHeight - form.clientHeight, form.scrollTop + delta));
+      if (delta && next !== form.scrollTop) form.scrollTop = next;
+    }
+  });
+  // showModal focuses a native default control synchronously. Later focus changes
+  // represent a user's chosen control and must survive the animation finishing.
+  armed = true;
+}
 function taskAlertDraft() {
   const form = els.form.elements;
   return { ...(tasks.find(task => task.id === editingTaskId) || pendingTaskDraft || {}),
@@ -1278,6 +1317,7 @@ els.form.addEventListener("click", event => {
   renderTaskAlertFields();
 });
 function openModal(prefill = {}) {
+  cancelModalFocus();
   calendarTaskPreview.close({ immediate: true, restoreFocus: false });
   viewTransitions.settle();
   const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
@@ -1332,18 +1372,18 @@ function openModal(prefill = {}) {
   }) : Promise.resolve();
   document.querySelector('#task-alarm-save-error').textContent='';
   document.querySelector("#task-alarm-options").open = Boolean(taskAlertDraft().scheduledStart || values.workAlerts);
+  // Set this before synchronous reduced-motion focus measures the form; the
+  // clarity observer applies the same state after the dialog opens.
+  document.querySelector("#task-detail-options").open = Boolean(editingTaskId);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value || prefill.reschedule);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
   taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   DuckPopupMotion.mark(modalAnchor, "fields");
-  DuckPopupMotion.open(els.modal, modalAnchor, () => {
-    if (!modalClosing && els.modal.open && (!els.modal.contains(document.activeElement) || document.activeElement === els.modal || (prefill.reschedule && document.activeElement === els.form.elements.title))) {
-      (prefill.reschedule ? els.form.elements.scheduledDate : els.form.elements.title).focus({ preventScroll: true });
-    }
-  });
+  openTaskEditorWithFocus(Boolean(prefill.reschedule), editorVersion, ownerVersion);
 }
 function closeModal() {
   if (!els.modal.open || modalClosing) return;
+  cancelModalFocus();
   modalClosing = true;
   els.modal.inert = true;
   DuckPopupMotion.close(els.modal, modalAnchor, () => {
@@ -1358,6 +1398,7 @@ function closeModal() {
 els.modal.addEventListener("cancel", (event) => { event.preventDefault(); closeModal(); });
 els.modal.addEventListener("close", () => {
   if (els.modal.open) return;
+  cancelModalFocus();
   DuckPopupMotion.reset(els.modal);
   editingTaskId = null;
   pendingTaskDraft = null;

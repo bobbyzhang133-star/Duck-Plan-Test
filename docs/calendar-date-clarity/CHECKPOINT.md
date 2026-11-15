@@ -1,5 +1,7 @@
 # Safe checkpoint — November 14, 2026
 
+Historical pause record. The user resumed on November 15; subsequent corrections and verification are recorded in [the follow-up](RESUME-2026-11-15.md).
+
 Stopped at the user's explicit request. Implementation and evidence are preserved on `codex/calendar-date-clarity-20261114`, based on `567d6c2cd59c177460849607bea7ee46d19c5578`. This is a local website checkpoint and TEST feature-branch backup, not a release certification.
 
 ## Completed
