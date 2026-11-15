@@ -1,0 +1,25 @@
+[
+  {
+    "action": "shutdown",
+    "device": "480153F4-90AF-42F0-A703-D124E76671BA",
+    "exit": 0,
+    "message": ""
+  },
+  {
+    "action": "delete",
+    "device": "BE0EB000-07DE-48B6-B694-0D44CB864396",
+    "exit": 0,
+    "message": ""
+  },
+  {
+    "action": "delete",
+    "device": "480153F4-90AF-42F0-A703-D124E76671BA",
+    "exit": 0,
+    "message": ""
+  },
+  {
+    "action": "stop collector8795 and remove private QA accounts/commands/results and owned QA app copy",
+    "status": "PASS",
+    "sharedWorker8796": "left running for parent"
+  }
+]

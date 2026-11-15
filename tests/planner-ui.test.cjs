@@ -20,19 +20,27 @@ test("account identity handles missing names and Unicode without guessing anothe
   assert.equal(UI.accountIdentity({ displayName: "Stale name" }).signedIn, false);
 });
 
-test("calendar slot navigation moves by hour and day with bounded edges", () => {
+test("calendar slot navigation covers midnight through the final hour with bounded edges", () => {
   const dates = ["2026-11-02", "2026-11-03", "2026-11-04"];
   assert.deepEqual(UI.nextSlot({ date: dates[1], time: "09:00" }, "ArrowUp", dates), { date: dates[1], time: "08:00" });
   assert.deepEqual(UI.nextSlot({ date: dates[1], time: "09:00" }, "ArrowRight", dates), { date: dates[2], time: "09:00" });
-  assert.deepEqual(UI.nextSlot({ date: dates[0], time: "07:00" }, "ArrowUp", dates), { date: dates[0], time: "07:00" });
-  assert.deepEqual(UI.nextSlot({ date: dates[2], time: "21:00" }, "ArrowRight", dates), { date: dates[2], time: "21:00" });
+  assert.deepEqual(UI.nextSlot({ date: dates[0], time: "00:00" }, "ArrowUp", dates), { date: dates[0], time: "00:00" });
+  assert.deepEqual(UI.nextSlot({ date: dates[2], time: "23:00" }, "ArrowDown", dates), { date: dates[2], time: "23:00" });
+  assert.deepEqual(UI.nextSlot({ date: dates[2], time: "23:00" }, "ArrowRight", dates), { date: dates[2], time: "23:00" });
+  for (let hour = 0; hour < 23; hour += 1) {
+    assert.deepEqual(UI.nextSlot({ date: dates[1], time: `${String(hour).padStart(2, "0")}:00` }, "ArrowDown", dates), { date: dates[1], time: `${String(hour + 1).padStart(2, "0")}:00` });
+  }
+  assert.deepEqual(UI.nextSlot({ date: dates[1], time: "07:00" }, "ArrowUp", dates, 7, 22), { date: dates[1], time: "07:00" }, "explicit narrower ranges remain supported");
 });
 
-test("calendar auto-scroll keeps the target inside scroll bounds", () => {
-  const afternoon = UI.timelineScrollTop({ targetMinutes: 15 * 60 + 30, viewportHeight: 500, scrollHeight: 1100 });
-  assert.ok(afternoon > 400 && afternoon <= 600);
-  assert.equal(UI.timelineScrollTop({ targetMinutes: 7 * 60, viewportHeight: 500, scrollHeight: 1100 }), 0);
-  assert.equal(UI.timelineScrollTop({ targetMinutes: 22 * 60, viewportHeight: 500, scrollHeight: 700 }), 200);
+test("calendar auto-scroll positions early and late targets from midnight within scroll bounds", () => {
+  const viewport = { viewportHeight: 500, scrollHeight: 2000 };
+  assert.equal(UI.timelineScrollTop({ ...viewport, targetMinutes: 0 }), 0);
+  assert.equal(UI.timelineScrollTop({ ...viewport, targetMinutes: 7 * 60 }), 398);
+  assert.equal(UI.timelineScrollTop({ ...viewport, targetMinutes: 15 * 60 + 30 }), 925);
+  assert.equal(UI.timelineScrollTop({ ...viewport, targetMinutes: 23 * 60 + 45 }), 1436.5);
+  assert.equal(UI.timelineScrollTop({ targetMinutes: 24 * 60, viewportHeight: 500, scrollHeight: 700 }), 200);
+  assert.equal(UI.timelineScrollTop({ ...viewport, targetMinutes: 7 * 60, startHour: 7 }), 0);
 });
 
 test("undo restoration preserves the deleted task position without duplicates", () => {
@@ -42,31 +50,38 @@ test("undo restoration preserves the deleted task position without duplicates", 
   assert.deepEqual(UI.restoreDeletedTask(restored, deleted, 1).map((task) => task.id), ["a", "b", "c"]);
 });
 
-test("calendar dragging snaps to quarter hours and stays inside the visible day", () => {
+test("calendar dragging snaps to quarter hours throughout the full day and retains duration at its edges", () => {
   assert.deepEqual(UI.snapCalendarDrop({
     date: "2026-11-04", pointerY: 165, columnTop: 10, hourHeight: 62, durationMinutes: 45,
-  }), { date: "2026-11-04", minutes: 570, time: "09:30" });
+  }), { date: "2026-11-04", minutes: 150, time: "02:30" });
   assert.deepEqual(UI.snapCalendarDrop({
     date: "2026-11-04", pointerY: -200, columnTop: 10, hourHeight: 62, durationMinutes: 45,
-  }), { date: "2026-11-04", minutes: 420, time: "07:00" });
+  }), { date: "2026-11-04", minutes: 0, time: "00:00" });
   assert.deepEqual(UI.snapCalendarDrop({
     date: "2026-11-04", pointerY: 2000, columnTop: 10, hourHeight: 62, durationMinutes: 90,
-  }), { date: "2026-11-04", minutes: 1230, time: "20:30" });
+  }), { date: "2026-11-04", minutes: 1350, time: "22:30" });
+  assert.deepEqual(UI.snapCalendarDrop({
+    date: "2026-11-04", pointerY: 2000, columnTop: 10, hourHeight: 62, durationMinutes: 15,
+  }), { date: "2026-11-04", minutes: 1425, time: "23:45" });
+  assert.deepEqual(UI.snapCalendarDrop({
+    date: "2026-11-04", pointerY: 2000, columnTop: 10, hourHeight: 62, durationMinutes: 1440,
+  }), { date: "2026-11-04", minutes: 0, time: "00:00" });
 });
 
 test("template drops snap normally and keep a custom duration on-grid at the bottom", () => {
   const options = Object.freeze({ date: "2026-11-13", pointerY: 165, columnTop: 10, hourHeight: 62, durationMinutes: 35 });
-  assert.deepEqual(UI.snapTemplateDrop(options), { date: "2026-11-13", minutes: 570, time: "09:30" });
-  assert.deepEqual(UI.snapTemplateDrop({ ...options, pointerY: 2000 }), { date: "2026-11-13", minutes: 1275, time: "21:15" });
+  assert.deepEqual(UI.snapTemplateDrop(options), { date: "2026-11-13", minutes: 150, time: "02:30" });
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, pointerY: 2000 }), { date: "2026-11-13", minutes: 1395, time: "23:15" });
   assert.equal(options.durationMinutes, 35);
-  assert.equal(UI.snapCalendarDrop({ ...options, pointerY: 2000 }).time, "21:25", "existing calendar drag behavior remains unchanged");
-  assert.deepEqual(UI.snapTemplateDrop({ ...options, pointerY: -200 }), { date: "2026-11-13", minutes: 420, time: "07:00" });
+  assert.equal(UI.snapCalendarDrop({ ...options, pointerY: 2000 }).time, "23:25", "existing off-grid task clamping remains unchanged");
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, pointerY: -200 }), { date: "2026-11-13", minutes: 0, time: "00:00" });
 });
 
 test("template drops fit a full visible day and reject oversized durations without shortening them", () => {
   const options = { date: "2026-11-13", pointerY: 2000, columnTop: 10, hourHeight: 62 };
-  assert.deepEqual(UI.snapTemplateDrop({ ...options, durationMinutes: 900 }), { date: "2026-11-13", minutes: 420, time: "07:00" });
-  for (const durationMinutes of [4, 901, 1440, 35.5, "35", NaN, Infinity]) assert.equal(UI.snapTemplateDrop({ ...options, durationMinutes }), null);
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, durationMinutes: 900 }), { date: "2026-11-13", minutes: 540, time: "09:00" });
+  assert.deepEqual(UI.snapTemplateDrop({ ...options, durationMinutes: 1440 }), { date: "2026-11-13", minutes: 0, time: "00:00" });
+  for (const durationMinutes of [4, 1441, 35.5, "35", NaN, Infinity]) assert.equal(UI.snapTemplateDrop({ ...options, durationMinutes }), null);
   assert.equal(UI.snapTemplateDrop({ ...options, startHour: 8, endHour: 17, durationMinutes: 541 }), null);
 });
 
@@ -79,7 +94,7 @@ test("template drops honor custom visible hours and grid while retaining their r
 test("template drops reject impossible dates and invalid geometry before generating a time", () => {
   const options = { date: "2026-11-13", pointerY: 100, columnTop: 10, hourHeight: 62, durationMinutes: 45 };
   for (const date of ["2026-02-29", "2026-02-30", "2026-13-01", "0000-01-01", "2026-11-3", "", null]) assert.equal(UI.snapTemplateDrop({ ...options, date }), null);
-  for (const fields of [{ pointerY: NaN }, { pointerY: Infinity }, { pointerY: "100" }, { columnTop: Infinity }, { hourHeight: 0 }, { hourHeight: -1 }, { hourHeight: NaN }, { startHour: -1 }, { endHour: 25 }, { startHour: 22, endHour: 7 }, { snapMinutes: 0 }, { snapMinutes: 1.5 }, { snapMinutes: 1000 }]) assert.equal(UI.snapTemplateDrop({ ...options, ...fields }), null);
+  for (const fields of [{ pointerY: NaN }, { pointerY: Infinity }, { pointerY: "100" }, { columnTop: Infinity }, { hourHeight: 0 }, { hourHeight: -1 }, { hourHeight: NaN }, { startHour: -1 }, { endHour: 25 }, { startHour: 22, endHour: 7 }, { snapMinutes: 0 }, { snapMinutes: 1.5 }, { snapMinutes: 1441 }]) assert.equal(UI.snapTemplateDrop({ ...options, ...fields }), null);
   assert.equal(UI.snapTemplateDrop(null), null);
 });
 

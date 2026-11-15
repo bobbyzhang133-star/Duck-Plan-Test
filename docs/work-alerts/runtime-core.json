@@ -1,0 +1,212 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "test": "scheduled-work-defaults-two-enabled-linked-channels",
+      "mode": "local browser storage",
+      "width": 1280,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "defaults": {
+        "alarmEnabled": true,
+        "notificationEnabled": true,
+        "alarmAt": "2026-11-16T10:15",
+        "notificationAt": "2026-11-16T10:15",
+        "start": "10:15",
+        "alarmStatus": "Follows work start",
+        "notificationStatus": "Follows alarm time",
+        "storageWarning": false
+      },
+      "record": null
+    },
+    {
+      "test": "manual-overrides-follow-restoration-independent-switches-reload",
+      "mode": "local browser storage",
+      "width": 1280,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "taskId": "90ce94f8-3bd4-4260-ba93-6dad2d05f91a"
+    },
+    {
+      "test": "clear-alarm-cancels-job-without-inventing-time-and-relink-restores-chain",
+      "mode": "local browser storage",
+      "width": 1280,
+      "status": "PASS"
+    },
+    {
+      "test": "manual-past-and-DST-gap-rejected-without-task-mutation",
+      "mode": "local browser storage",
+      "status": "PASS"
+    },
+    {
+      "test": "keyboard-reschedule-and-Undo-reconcile-linked-notification",
+      "mode": "local browser storage",
+      "width": 1280,
+      "status": "PASS"
+    },
+    {
+      "test": "scheduled-work-defaults-two-enabled-linked-channels",
+      "mode": "real current local Worker",
+      "width": 1280,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "defaults": {
+        "alarmEnabled": true,
+        "notificationEnabled": true,
+        "alarmAt": "2026-11-16T10:15",
+        "notificationAt": "2026-11-16T10:15",
+        "start": "10:15",
+        "alarmStatus": "Follows work start",
+        "notificationStatus": "Follows alarm time",
+        "storageWarning": false
+      },
+      "record": {
+        "item_id": "27714815-6956-48af-91c0-02679e682598",
+        "fire_at": 1794852900000
+      }
+    },
+    {
+      "test": "manual-overrides-follow-restoration-independent-switches-reload",
+      "mode": "real current local Worker",
+      "width": 1280,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "taskId": "27714815-6956-48af-91c0-02679e682598"
+    },
+    {
+      "test": "clear-alarm-cancels-job-without-inventing-time-and-relink-restores-chain",
+      "mode": "real current local Worker",
+      "width": 1280,
+      "status": "PASS"
+    },
+    {
+      "test": "manual-past-and-DST-gap-rejected-without-task-mutation",
+      "mode": "real current local Worker",
+      "status": "PASS"
+    },
+    {
+      "test": "keyboard-reschedule-and-Undo-reconcile-linked-notification",
+      "mode": "real current local Worker",
+      "width": 1280,
+      "status": "PASS"
+    },
+    {
+      "test": "scheduled-work-defaults-two-enabled-linked-channels",
+      "mode": "real legacy local Worker / device-only preferences",
+      "width": 835,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "defaults": {
+        "alarmEnabled": true,
+        "notificationEnabled": true,
+        "alarmAt": "2026-11-16T10:15",
+        "notificationAt": "2026-11-16T10:15",
+        "start": "10:15",
+        "alarmStatus": "Follows work start",
+        "notificationStatus": "Follows alarm time",
+        "storageWarning": true
+      },
+      "record": {
+        "item_id": "722fc04d-a690-415f-8345-46e0b8ec21eb",
+        "fire_at": 1794852900000
+      }
+    },
+    {
+      "test": "manual-overrides-follow-restoration-independent-switches-reload",
+      "mode": "real legacy local Worker / device-only preferences",
+      "width": 835,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "taskId": "722fc04d-a690-415f-8345-46e0b8ec21eb"
+    },
+    {
+      "test": "clear-alarm-cancels-job-without-inventing-time-and-relink-restores-chain",
+      "mode": "real legacy local Worker / device-only preferences",
+      "width": 835,
+      "status": "PASS"
+    },
+    {
+      "test": "keyboard-reschedule-and-Undo-reconcile-linked-notification",
+      "mode": "real legacy local Worker / device-only preferences",
+      "width": 835,
+      "status": "PASS"
+    },
+    {
+      "test": "scheduled-work-defaults-two-enabled-linked-channels",
+      "mode": "local browser storage",
+      "width": 390,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "defaults": {
+        "alarmEnabled": true,
+        "notificationEnabled": true,
+        "alarmAt": "2026-11-16T10:15",
+        "notificationAt": "2026-11-16T10:15",
+        "start": "10:15",
+        "alarmStatus": "Follows work start",
+        "notificationStatus": "Follows alarm time",
+        "storageWarning": false
+      },
+      "record": null
+    },
+    {
+      "test": "manual-overrides-follow-restoration-independent-switches-reload",
+      "mode": "local browser storage",
+      "width": 390,
+      "zone": "America/Los_Angeles",
+      "status": "PASS",
+      "taskId": "d02d3f9e-d728-4458-add3-bf837761a33d"
+    },
+    {
+      "test": "clear-alarm-cancels-job-without-inventing-time-and-relink-restores-chain",
+      "mode": "local browser storage",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "test": "scheduled-work-defaults-two-enabled-linked-channels",
+      "mode": "real current local Worker",
+      "width": 768,
+      "zone": "UTC",
+      "status": "PASS",
+      "defaults": {
+        "alarmEnabled": true,
+        "notificationEnabled": true,
+        "alarmAt": "2026-11-17T10:15",
+        "notificationAt": "2026-11-17T10:15",
+        "start": "10:15",
+        "alarmStatus": "Follows work start",
+        "notificationStatus": "Follows alarm time",
+        "storageWarning": false
+      },
+      "record": {
+        "item_id": "5b224a1b-b9c0-43d2-9088-fecf3996d497",
+        "fire_at": 1794910500000
+      }
+    },
+    {
+      "test": "manual-overrides-follow-restoration-independent-switches-reload",
+      "mode": "real current local Worker",
+      "width": 768,
+      "zone": "UTC",
+      "status": "PASS",
+      "taskId": "5b224a1b-b9c0-43d2-9088-fecf3996d497"
+    },
+    {
+      "test": "clear-alarm-cancels-job-without-inventing-time-and-relink-restores-chain",
+      "mode": "real current local Worker",
+      "width": 768,
+      "status": "PASS"
+    },
+    {
+      "test": "keyboard-reschedule-and-Undo-reconcile-linked-notification",
+      "mode": "real current local Worker",
+      "width": 768,
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Real local store/current+legacy local Workers. Notification API acceptance is not OS delivery; ringing is unavailable on web. Touch emulation is not native or physical Safari acceptance."
+}

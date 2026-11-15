@@ -4,8 +4,10 @@ The current outline uses the user's original duck pixels, copied and rotated wit
 the deterministic Swift compositor. Facial features are composited inside that
 protected contour. Earlier generated versions and their prompts are retained below.
 
-Current master: duckplan-sigma-head-v11.png. Current app exports:
+Current opaque artwork master: duckplan-sigma-head-v11.png. Native/platform exports:
 duckplan-sigma-icon-v11-192.png and duckplan-sigma-icon-v11-512.png.
+
+November13,2026: background-only web derivative `duckplan-sigma-head-v11-transparent.png`, with `duckplan-sigma-icon-v11-transparent-192.png` and `duckplan-sigma-icon-v11-transparent-512.png` for ordinary website branding/favicon/notifications. Preserve the approved drawing and opaque body. Background extraction/verification is documented in [transparent web icon](../../docs/transparent-web-icon/README.md). The opaque master and native icon are not replaced.
 Earlier icons are retained for comparison.
 
 ## Earlier Sigma facial group restored together (v11, November 12, 2026)

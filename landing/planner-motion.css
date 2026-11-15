@@ -3,11 +3,10 @@
    Remove the old always-up entrance so it cannot compete or retain a transform. */
 .motion-preview .view,
 .motion-preview .view.active { animation: none; }
-.motion-preview .view[data-view-motion] { will-change: transform, opacity; }
 
 .motion-preview .unified-shell {
-  --sidebar-width: 232px;
-  --sidebar-rail-width: 64px;
+  --sidebar-width: 268px;
+  --sidebar-rail-width: 76px;
   display: grid;
   grid-template-columns: var(--sidebar-rail-width) minmax(0,1fr);
   align-items: start;
@@ -16,7 +15,7 @@
 .motion-preview.sidebar-open .unified-shell { grid-template-columns: var(--sidebar-width) minmax(0,1fr); }
 .motion-preview .unified-shell .sidebar {
   position: sticky; inset: 0 auto auto 0; grid-column: 1; grid-row: 1;
-  width: var(--sidebar-width); height: 100dvh; padding: 18px 8px 16px;
+  width: var(--sidebar-width); height: 100dvh; padding: 18px 14px 16px;
   transform: none; overflow: hidden auto; contain: layout paint;
   clip-path: inset(0 calc(100% - var(--sidebar-rail-width)) 0 0);
   transition: clip-path var(--motion-layout) var(--motion-ease);
@@ -27,8 +26,9 @@
   grid-column: 2; grid-row: 1; min-width: 0; width: 100%;
   container-name: workspace; container-type: inline-size;
 }
-.motion-preview .unified-shell .brand { justify-content: flex-start; gap: 12px; margin: 0 8px 14px; white-space: nowrap; }
-.motion-preview .brand-mark { flex: 0 0 32px; width: 32px; height: 36px; }
+.motion-preview .unified-shell .brand { justify-content: flex-start; gap: 12px; margin: 0 8px 14px; white-space: nowrap; width: fit-content; }
+.motion-preview:not(.sidebar-open) .sidebar .brand { width: 36px; }
+.motion-preview .brand-mark { flex: 0 0 36px; width: 36px; height: 36px; }
 .motion-preview .drawer-close { display: none; }
 .motion-preview .topbar-nav-open-button { display: grid; flex: 0 0 40px; }
 .motion-preview .sidebar .sidebar-rail-toggle {

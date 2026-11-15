@@ -1,0 +1,93 @@
+{
+  "baseCommit": "4dee05227eadb8cb3caeeebc951579715ac81b5e",
+  "canonicalChecks": {
+    "status": "PASS",
+    "tests": 433,
+    "javascriptSyntaxFiles": 55,
+    "diffCheck": "PASS",
+    "testLog": "/private/tmp/duckplan-work-alerts-tests-final.log"
+  },
+  "workerDryRuns": {
+    "development": "PASS",
+    "production": "PASS",
+    "deployment": false,
+    "logs": [
+      "/private/tmp/duckplan-work-alerts-dry-run-dev.log",
+      "/private/tmp/duckplan-work-alerts-dry-run-production.log"
+    ],
+    "reuse": "Worker/config/schema unchanged after dry-runs; later static JS guarded-race changes separately syntax/runtime verified."
+  },
+  "preservedFiles": {
+    "ios/App/Info.plist": {
+      "sha256": "85ae55e8c0e63a98d334d1f5d7daa4466a5443d52f25ef89e11a0ef9386306d2",
+      "unchangedFromBase": true
+    },
+    "ios/Widgets/Info.plist": {
+      "sha256": "0def9024c53b98d6eea695557ec2e7ad065cb5e388c2d0a6133000c90b658dc5",
+      "unchangedFromBase": true
+    },
+    "ios/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png": {
+      "sha256": "7714bd8afc68d05399841291712d57cfcb62ad729eec3cd58e570670156501f5",
+      "unchangedFromBase": true
+    }
+  },
+  "installedPhysicalPhoneUpdated": false,
+  "productionWrites": false,
+  "finalSourceSha256": {
+    "landing/formation-surface.js": "71f1f4cf6e1d1ebe5c4e7285e5546b645ac09b4f13d1565b5de89ee828dfad66",
+    "landing/task-matrix.js": "ed94286bcbc8c5ad1e2a6f64e04e311a3205972abeddbc808e469bf0653bda7b",
+    "landing/planner-clarity.js": "91128b816036a0eb183c80cf3ba1fede431971f503b3ebe13849d4e5492571cc",
+    "landing/fur-dispersal.js": "34c68a8b4c83ecbdfcbfbb3d2cd8f8096c167ddcfb436a39cb9a35c9023cff88",
+    "landing/fur-material.js": "d6309d8a94e0f325d2b4daddd2b215745b4b6bbae5dbdd21fb56ea0e502a276e",
+    "landing/duck-interactions.js": "a19a3db005918d29e9b6eb6508a3868c819212c44094052890947c90e27fa1a6",
+    "landing/cloud-config.js": "0979e867feaf260d0ff656d069ee6851885d26f614ca71220760988eb5bc3543",
+    "landing/planner-library.js": "453767437e43af8a59dbc8b9eaf3675eff032d7d2c8fdf8e6683d2135adf8d62",
+    "landing/page-navigation-feedback.js": "a15eb73e59eb14ed045c12f42bdfde0af149c8d25a5a5d7b3bb937a24a6e337b",
+    "landing/planner-store.js": "468abe572269c2ac1f9f8cc1608b32d4e18a6d3de7389bcb4f32bfbbbd7b03a6",
+    "landing/wave-lab.js": "607f2e4aec6c702bcda3d829c426b72b3513121a2a8fa42d6c5464f4a230ccf0",
+    "landing/planner-presentation.js": "b357fed36a78e000273760a255c3245f6d8c25bb30c9aba19c3f70cd69b527e5",
+    "landing/view-transitions.js": "c3769ef831ef0ddf07bc9ca45b342c9023d694c9ee320564a030a4f5f5140f70",
+    "landing/fur-sheet.js": "5f053727fe7b098c37607a553a3a6617b50c6a1ac66576394e0236fe747e007c",
+    "landing/calendar-library-tabs.js": "29981d18c02092cb7fd0f9047ce7a741b6600725c465008b7b914f624da80f16",
+    "landing/browser-notifications.js": "995aa576b7dbe61c607d0fa004ac655eaffae086049a5f4a9e07714b71535ef0",
+    "landing/motion-tokens.js": "6bdf0a8df4b6e7cd266cd6d7544dc280f167cb2f324f6ff2d6719bd6948c2772",
+    "landing/native-task-alarms.js": "7e512e010696c7833ddbef296ab22dcba03a47cac35caa17e613bbca8422bf82",
+    "landing/ical-parser.js": "041a2f2abf6a148da3fd888eafd1a7bf93cbaeff85a1ec4b890b4fdb7da76483",
+    "landing/sheet-lab.js": "3b10d04a0ffe6fbd0f76b3197f4ec653288960e92fefe1ef3b97871a652a6e08",
+    "landing/fur-response.js": "8851c3da3b37c89c17cff7cb0abc61009f0dad2aee7dd213eef01ff02f0d35ca",
+    "landing/button-interactions.js": "9acab5e3ca9330e41cb1673e634ab44df1d602f6848d362c9420b1ece2a3965a",
+    "landing/work-alert-controller.js": "3ce4f6344dee19d92e46a7586291da45236228421970b58f625f8c19742e139a",
+    "landing/work-alerts.js": "d6d0daa437e6efd5b9dd55e24fde24cefbd9ca04bbb47a6a9202b8ebe14e8bf2",
+    "landing/native-task-notifications.js": "8f657cda684c7aab1d7751d9e1edc32605251470824c999e1a6e31c3c56c8d73",
+    "landing/fur-pile.js": "dc06eb3fda3efb2b6d78dc207ccd53245c84c9c24bebac522b1dfa7258ca41c1",
+    "landing/material-transitions.js": "d2f2ec05570a329156ccd47b47477a2cf9da942eac9c372a99647d93e37b8358",
+    "landing/fur-recording.js": "1a0ff35301a8d26c8d5c432dc5d530defac310028e0cfe03b089d4a6beb37a56",
+    "landing/reminder-domain.js": "3bf88f0e0be683cd98fd6bf8be11bde862ae7f522e8cc3f4500e8738193a4ae8",
+    "landing/fur-ribbon.js": "12d17420828540cddb2aee4778a6e2ab2cda5caab37b845c93f147718fb422f6",
+    "landing/planner-model.js": "8db1a870752e0733a1e9f658e544e754265fca1deedd6fdc2d24ca9618368f43",
+    "landing/task-list-drag.js": "92880204ec3bee0757d9d4ec2ee4fe95e6ec1af1b026fe9f0957c6eaccfdd3f2",
+    "landing/planner-ui.js": "a92a4017d9e7f55bdbcf86bf7bf8f763544d6e0ea67a20d160bb2cc9846eb34c",
+    "landing/service-worker.js": "d472d1da4626fa8b7a06db8ee8f6ff087d06280d34c16e2d16abd7e2c5af07ba",
+    "landing/personal-notes.js": "fdb22c35e7706e12d96b0b8ced1ec63d0dfe60867ce626a4a9470b12912b313d",
+    "landing/task-alarms.js": "e0be40e93016d8a4d026f05e0ea2133838e9d5f6e94b67031124b7737f67bc1e",
+    "landing/popup-motion.js": "3b87e434eed14d1b310eb9e5611b8155dfc86dfbc7befddbdfb6acbe65d5a625",
+    "landing/fur-physics-lab.js": "4fa97f3a4b1a8ae8f81f0d587e40c9a0a2134c934120355ab42a9574cedda7ad",
+    "landing/phone-navigation.js": "16a0e234d2537b70e626fce9d3aa8a5925dcba1ffd76d75a1582124d9aa1f71c",
+    "landing/fur-lab.js": "b8e6a60ede443b9f09056fedc4a16c4f10735ba696ad8cface5c6afd6b934744",
+    "landing/duck-mascot.js": "5f7973011c0f8d154bad122c5494dc4eca3e425f436d7ccc37206fb57a2248ee",
+    "landing/personal-goals.js": "114b07f77834c3ab0f32e6083811f9fda4bf82bbed142666caa5f7f04962935e",
+    "landing/app.js": "368555d1da888f67f835c1e3b187584b440b833e15be032c959202e96d9fe845",
+    "landing/app-install.js": "40be35c99fedd8d783f18e1f3ffdbb1c87e82e7098ad3113e50526e01ffe9e32",
+    "landing/reminder-ledger.js": "ab8dc7af80af1928c2a8aa86e5a99c7425ec4701222f2e92781e6f46296202a3",
+    "cloudflare/src/organization.js": "209b2dbfb7d9d2c73d72dfde542f781636fc5314efe9c89f21b948ee5bdf5957",
+    "cloudflare/src/axis.js": "554ee63ed5ca0424f8574d5ffaefe32ec258a0864aed103a6a2a428e2b44910b",
+    "cloudflare/src/planner.js": "bb627ec0f1c36c5f2823d97254c494987386acec4c8eb9225bdf65fe76506bf6",
+    "cloudflare/src/auth.js": "bb1e8e15f90c8fc08f735ee8a43a9dd75756f50fb84561b5623b663fcff2904d",
+    "cloudflare/src/index.js": "f5abe1810a175dafc673855b67ee214b14a9d82091569a561563414e6a11d4af",
+    "cloudflare/src/work-alerts.js": "00158dd0d14ef2ea49eba89e848ee890f2965c6377f51adb2d0b2aae68a0006d",
+    "cloudflare/src/alarms.js": "8facc61cecbe5e2e7fcb827a909d084896f860f024a0bca6a432f247d6136383",
+    "cloudflare/src/personal.js": "95a319e082e849b2ead52e9eea30dba3c208a54578535a8e5e6d507f1e4797ce",
+    "cloudflare/src/live.js": "296786b0bb42811379b8c572469955de9a91bff1aaed1a39bd11ef2977965896",
+    "cloudflare/src/http.js": "0a051d5ecec1a0cebdc33da8c0487551ce75c34ef9aa7ff082e08bb1a83659f0"
+  }
+}

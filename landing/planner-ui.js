@@ -3,6 +3,8 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.DuckPlannerUI = api;
 })(typeof window !== "undefined" ? window : globalThis, function buildPlannerUi() {
+  const TIMELINE_START_HOUR = 0;
+  const TIMELINE_END_HOUR = 24;
   function pad(value) { return String(value).padStart(2, "0"); }
 
   function accountIdentity(user) {
@@ -15,7 +17,7 @@
     return { name, initials, signedIn: true };
   }
 
-  function nextSlot(current, key, dates, startHour = 7, endHour = 22) {
+  function nextSlot(current, key, dates, startHour = TIMELINE_START_HOUR, endHour = TIMELINE_END_HOUR) {
     if (!current || !Array.isArray(dates) || !dates.length) return current;
     const dateIndex = Math.max(0, dates.indexOf(current.date));
     const hour = Number(String(current.time || `${startHour}:00`).split(":")[0]);
@@ -33,7 +35,7 @@
 
   function timelineScrollTop({
     targetMinutes,
-    startHour = 7,
+    startHour = TIMELINE_START_HOUR,
     hourHeight = 62,
     headerOffset = 114,
     viewportHeight = 0,
@@ -57,8 +59,8 @@
     pointerY,
     columnTop,
     hourHeight = 62,
-    startHour = 7,
-    endHour = 22,
+    startHour = TIMELINE_START_HOUR,
+    endHour = TIMELINE_END_HOUR,
     snapMinutes = 15,
     durationMinutes = 45,
   }) {
@@ -74,7 +76,7 @@
 
   function snapTemplateDrop(options = {}) {
     if (!options || typeof options !== "object") return null;
-    const { date, pointerY, columnTop, hourHeight = 62, startHour = 7, endHour = 22, snapMinutes = 15, durationMinutes = 45 } = options;
+    const { date, pointerY, columnTop, hourHeight = 62, startHour = TIMELINE_START_HOUR, endHour = TIMELINE_END_HOUR, snapMinutes = 15, durationMinutes = 45 } = options;
     if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
     const [year, month, day] = date.split("-").map(Number);
     const calendarDate = new Date(0);
@@ -84,7 +86,7 @@
     const startMinutes = startHour * 60, endMinutes = endHour * 60;
     if (!Number.isInteger(startMinutes) || !Number.isInteger(endMinutes) || startMinutes < 0 || endMinutes > 1440 || endMinutes <= startMinutes) return null;
     if (!Number.isInteger(snapMinutes) || snapMinutes < 1 || snapMinutes > endMinutes - startMinutes) return null;
-    if (!Number.isInteger(durationMinutes) || durationMinutes < 5 || durationMinutes > 900 || durationMinutes > endMinutes - startMinutes) return null;
+    if (!Number.isInteger(durationMinutes) || durationMinutes < 5 || durationMinutes > 1440 || durationMinutes > endMinutes - startMinutes) return null;
     if (!Number.isFinite(startMinutes + ((pointerY - columnTop) / hourHeight) * 60)) return null;
     const earliest = Math.ceil(startMinutes / snapMinutes) * snapMinutes;
     const latest = Math.floor((endMinutes - durationMinutes) / snapMinutes) * snapMinutes;
@@ -98,5 +100,5 @@
     return { date, minutes, time: `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}` };
   }
 
-  return { accountIdentity, nextSlot, restoreDeletedTask, snapCalendarDrop, snapTemplateDrop, timelineScrollTop };
+  return { TIMELINE_START_HOUR, TIMELINE_END_HOUR, accountIdentity, nextSlot, restoreDeletedTask, snapCalendarDrop, snapTemplateDrop, timelineScrollTop };
 });

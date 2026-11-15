@@ -1,0 +1,26 @@
+{
+  "runtime": "157.0.8103.78",
+  "origin": "http://127.0.0.1:8796",
+  "cases": [
+    {
+      "test": "save-during-real-held-legacy-refresh-merges-untouched-channel-and-keeps-edited-channel",
+      "status": "PASS",
+      "heldReads": 1
+    },
+    {
+      "test": "late-legacy-hydration-cannot-replace-new-editor-or-its-channel-edit",
+      "status": "PASS"
+    },
+    {
+      "test": "switch-only-edit-retains-legacy-time-within-the-same-channel",
+      "status": "PASS"
+    },
+    {
+      "test": "late-legacy-hydration-cannot-contaminate-new-guest-editor-or-Save-after-session-expiry",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "allSyntheticContextsClosed": true,
+  "scope": "Actual current Worker API with synthetic pre-metadata tasks and existing real ordinary notification records. Only response timing is controlled; no native/OS delivery claim."
+}

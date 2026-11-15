@@ -67,7 +67,26 @@ test("an immediately scheduled template copy preserves saved settings and adds o
   for (const field of ["title", "classId", "durationMinutes", "priority", "notes", "reminderChoice"]) assert.equal(task[field], template[field]);
   assert.equal(task.dueDate, ""); assert.equal(task.dueTime, ""); assert.equal(task.scheduledEnd, null); assert.equal(task.completed, false);
   assert.deepEqual(template, before);
-  for (const schedule of [{ date: "2026-02-30", time: "10:30" }, { date: "2026-11-13", time: "25:00" }, { date: "2026-11-13", time: "21:45" }]) assert.throws(() => Library.instantiateScheduledTemplate(template, schedule));
+  for (const schedule of [{ date: "2026-02-30", time: "10:30" }, { date: "2026-11-13", time: "25:00" }, { date: "2026-11-13", time: "23:45" }]) assert.throws(() => Library.instantiateScheduledTemplate(template, schedule));
+});
+
+test("template copies can start at midnight or finish at midnight without changing reusable settings", () => {
+  const before = structuredClone(template);
+  for (const time of ["00:00", "03:15", "21:45", "23:25"]) {
+    const task = Library.instantiateScheduledTemplate(template, { date: "2026-11-13", time, makeId: () => `copy-${time}` });
+    assert.equal(task.scheduledStart, `2026-11-13T${time}`);
+    assert.equal(task.durationMinutes, 35);
+    assert.equal(task.dueDate, "");
+    assert.equal(task.dueTime, "");
+    for (const field of ["title", "classId", "priority", "notes", "reminderChoice"]) assert.equal(task[field], template[field]);
+  }
+  assert.deepEqual(template, before);
+  assert.equal(Library.instantiateScheduledTemplate({ ...template, durationMinutes: 5 }, { date: "2026-11-13", time: "23:55" }).scheduledStart, "2026-11-13T23:55");
+  assert.equal(Library.instantiateScheduledTemplate({ ...template, durationMinutes: 1440 }, { date: "2026-11-13", time: "00:00" }).durationMinutes, 1440);
+  for (const [durationMinutes, time] of [[35, "23:26"], [5, "23:56"], [1440, "00:01"]]) {
+    assert.throws(() => Library.instantiateScheduledTemplate({ ...template, durationMinutes }, { date: "2026-11-13", time }), error => error.field === "durationMinutes");
+  }
+  assert.throws(() => Library.instantiateScheduledTemplate(template, { date: "2026-11-13", time: "24:00" }), error => error.field === "scheduledTime");
 });
 
 test("calendar drop saves once immediately, keeps Schedule as an editor action, and permits later independent copies", async () => {
@@ -178,4 +197,81 @@ test("an old account's pending template copy cannot report errors or clear the n
   assert.equal(toasts.length, 1);
   assert.equal(errors.length, 0);
   library.destroy();
+});
+
+test("Add to tasks reveals each durable unscheduled copy once and permits another use from the reveal callback", async () => {
+  const document = { querySelector: () => null, addEventListener() {}, removeEventListener() {} };
+  const requests = [], revealed = [];
+  let nextUse;
+  const store = {
+    mode: "local", listTemplates: () => [template],
+    upsertItem: task => new Promise(resolve => requests.push({ task, resolve })),
+  };
+  const library = Library.create({ store, document, onTaskAdded: task => {
+    revealed.push(task);
+    if (revealed.length === 1) nextUse = library.addToTasks(template.id);
+  } });
+  const first = library.addToTasks(template.id);
+  await library.addToTasks(template.id);
+  assert.equal(requests.length, 1, "Pending repeated clicks must not create another copy");
+  assert.equal(revealed.length, 0, "An optimistic task must not be revealed as a successful save");
+  requests[0].resolve();
+  const saved = await first;
+  assert.deepEqual(revealed, [saved]);
+  assert.equal(requests.length, 2, "The completed action is usable again before revealing its result");
+  assert.notEqual(saved.id, template.id);
+  assert.equal(saved.dueDate, ""); assert.equal(saved.dueTime, "");
+  assert.equal(saved.scheduledStart, null); assert.equal(saved.scheduledEnd, null);
+  for (const field of ["title", "classId", "durationMinutes", "priority", "notes", "reminderChoice"]) assert.equal(saved[field], template[field]);
+  requests[1].resolve();
+  const second = await nextUse;
+  assert.deepEqual(revealed, [saved, second]);
+  assert.notEqual(saved.id, second.id);
+  assert.deepEqual(template, { id: "template-1", title: "Weekly reading", classId: "class-1", durationMinutes: 35, priority: "High", notes: "Read chapters 1–2", reminderChoice: "60" });
+  library.destroy();
+});
+
+test("scheduled template drops and failed Add to tasks saves never invoke the unscheduled reveal callback", async () => {
+  const document = { querySelector: () => null, addEventListener() {}, removeEventListener() {} };
+  const revealed = [], errors = [], saved = [];
+  let rejectNext = false;
+  const store = {
+    mode: "local", listTemplates: () => [template],
+    upsertItem: async task => { if (rejectNext) throw new Error("Save failed"); saved.push(task); return task; },
+  };
+  const library = Library.create({ store, document, onTaskAdded: task => revealed.push(task), reportError: error => errors.push(error) });
+  await library.handleTemplateDrop({ target: {}, dataTransfer: { getData: () => template.id }, preventDefault() {}, stopPropagation() {} }, { date: "2026-11-14", time: "10:30" });
+  assert.equal(saved.length, 1);
+  assert.equal(revealed.length, 0, "Scheduling already has its own calendar destination");
+  rejectNext = true;
+  await library.addToTasks(template.id);
+  assert.equal(saved.length, 1); assert.equal(revealed.length, 0);
+  assert.equal(errors.length, 1); assert.equal(errors[0].message, "Save failed");
+  rejectNext = false;
+  const retried = await library.addToTasks(template.id);
+  assert.equal(saved.length, 2);
+  assert.deepEqual(revealed, [retried], "A failed save must release its guard so a retry can reveal its saved copy");
+  library.destroy();
+});
+
+test("a completed Add to tasks operation cannot reveal a previous owner or destroyed library's task", async () => {
+  for (const transition of ["switch", "switch-back", "destroy"]) {
+    const document = { querySelector: () => null, addEventListener() {}, removeEventListener() {} };
+    const revealed = [];
+    let owner = "A", finish;
+    const store = {
+      mode: "cloud", get user() { return { id: owner }; }, listTemplates: () => [template],
+      upsertItem: task => new Promise(resolve => { finish = () => resolve(task); }),
+    };
+    const library = Library.create({ store, document, onTaskAdded: task => revealed.push(task) });
+    const operation = library.addToTasks(template.id);
+    if (transition === "destroy") library.destroy();
+    else {
+      owner = "B"; library.render();
+      if (transition === "switch-back") { owner = "A"; library.render(); }
+    }
+    finish(); await operation;
+    assert.equal(revealed.length, 0, transition);
+    library.destroy();
+  }
 });

@@ -1,0 +1,8 @@
+#task-alarm-options > .form-section + .form-section { margin-top: 18px; }
+#task-alarm-options .work-alert-toggle { display: flex; align-items: center; flex-direction: row; gap: 10px; margin-bottom: 10px; font-weight: 650; }
+#task-alarm-options .work-alert-toggle input { flex: 0 0 22px; width: 22px; height: 22px; min-height: 22px; margin: 0; accent-color: var(--accent); }
+.work-alert-link { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.work-alert-link small, .work-alert-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.work-alert-link button { min-height: 36px; padding: 6px 12px; font-size: 12px; }
+.work-alert-note:empty { display: none; }
+@media (pointer: coarse) { .work-alert-link button { min-height: 44px; } #task-alarm-options .work-alert-toggle { min-height: 44px; } }

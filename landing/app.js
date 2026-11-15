@@ -1,5 +1,8 @@
 const Model = window.DuckPlannerModel;
 const PlannerUI = window.DuckPlannerUI;
+const CALENDAR_START_HOUR = PlannerUI.TIMELINE_START_HOUR;
+const CALENDAR_END_HOUR = PlannerUI.TIMELINE_END_HOUR;
+const CALENDAR_HOURS = CALENDAR_END_HOUR - CALENDAR_START_HOUR;
 const ReminderDomain = window.DuckReminderDomain;
 const ReminderLedger = window.DuckReminderLedger;
 const BrowserNotifications = window.DuckBrowserNotifications;
@@ -68,6 +71,27 @@ let calendarProgrammaticScroll = false;
 let calendarDrag = null;
 let templateDrag = null;
 let suppressCalendarEventClickUntil = 0;
+let taskAlertPreferences = null;
+let taskAlertEditorVersion = 0;
+let taskAlertHydration = Promise.resolve();
+let taskAlertHydrationError = null;
+let workAlertContextReady = false;
+const taskAlertTimeChanges = new Set();
+const taskAlertTouchedFields = new Set();
+const workAlerts = window.DuckWorkAlertController.create({
+  store, alarms: window.DuckTaskAlarms, notifications: window.DuckTaskNotifications,
+  timeZone: () => ReminderDomain.browserTimeZone(), storage: localStorage,
+  onError: reportError,
+  onForeground: task => {
+    showToast(`Time to start: ${task.title}`);
+    displayBrowserNotification({ title: task.title, options: {
+      body: "It's time to start this task.", tag: `work:${store.user?.id || "local"}:${task.id}`,
+      data: { taskId: task.id, view: "calendar" },
+    } }, task.id).catch(reportError);
+  },
+});
+
+function saveTaskWithAlerts(task) { return workAlerts.save(task); }
 
 const els = {
   navItems: [...document.querySelectorAll("[data-view]")],
@@ -96,10 +120,12 @@ const els = {
   dailyPanelDate: document.querySelector("#daily-panel-date"), dailyPanelProgress: document.querySelector("#daily-panel-progress"),
   lists: {
     overdue: document.querySelector("#overdue-task-list"), scheduled: document.querySelector("#scheduled-task-list"),
+    backlog: document.querySelector("#backlog-task-list"),
     unscheduled: document.querySelector("#unscheduled-task-list"), completed: document.querySelector("#completed-task-list"),
   },
   counts: {
     overdue: document.querySelector("#overdue-count"), scheduled: document.querySelector("#scheduled-count"),
+    backlog: document.querySelector("#backlog-count"),
     unscheduled: document.querySelector("#unscheduled-count"), completed: document.querySelector("#completed-count"),
   },
 };
@@ -107,6 +133,8 @@ const els = {
 const taskLibrary = window.DuckPlanLibrary?.create({
   store, getSelectedDate: () => selectedDate, showToast, reportError,
   setupButtons: setupButtonMaterial,
+  onTaskAdded: revealAddedTask,
+  saveTask: saveTaskWithAlerts,
   openTask: (options) => openModal({ ...options, id: options.id || options.task?.id || null }),
 });
 const calendarLibraryTabs = window.DuckCalendarLibraryTabs?.create({
@@ -137,11 +165,39 @@ const workspace = document.querySelector(".workspace");
 const viewTransitions = window.DuckViewTransitions.create({
   window, workspace,
   order: [...sidebar.querySelectorAll(".nav-item[data-view]")].map((item) => item.dataset.view),
+  getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
+});
+const taskListDrag = window.DuckTaskListDrag?.create({
+  window, document,
+  getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
+  getTask: id => store.listItems().find(task => task.id === id && !task.completed),
+  getPlacement: (event, task) => {
+    if (!event.target.closest("#planner-calendar")) return null;
+    const placement = templateCalendarPlacement(event, task);
+    return placement ? { ...placement, pointerX: event.clientX, pointerY: event.clientY } : null;
+  },
+  showPreview: (task, placement) => {
+    if (!templateDrag) beginCalendarDropPreview(task);
+    syncCalendarDropPreview(task);
+    updateTemplatePreview({ target: placement.source, clientX: placement.pointerX, clientY: placement.pointerY });
+  },
+  showFreePreview: (task, event) => {
+    if (!templateDrag) beginCalendarDropPreview(task, event);
+    syncCalendarDropPreview(task);
+    updateTemplatePreview(event);
+  },
+  clearPreview: clearTemplateDrag,
+  schedule: scheduleListTask,
+  openCalendar: () => {
+    if (document.body.dataset.view !== "calendar") setView("calendar", true);
+    setTaskPanel(false, false);
+  },
 });
 const compactPlannerQuery = window.matchMedia("(max-width: 1000px)");
 let taskPanelLauncher = null;
 
 function setSidebar(open) {
+  viewTransitions.settle();
   const wasOpen = document.body.classList.contains("sidebar-open");
   document.body.classList.toggle("sidebar-open", open);
   sidebar.inert = false;
@@ -260,6 +316,23 @@ function focusReminderTask(task) {
   });
 }
 
+function revealAddedTask(task) {
+  if (document.body.dataset.view !== "calendar") return;
+  const current = store.listItems().find(item => item.id === task.id && !item.completed);
+  if (!current) return;
+  tasks = store.listItems();
+  selectTask(current.id);
+  calendarLibraryTabs?.select("tasks");
+  setTaskPanel(true, false);
+  const control = [...els.lists.backlog.querySelectorAll(".task-select")]
+    .find(item => item.dataset.editTask === String(current.id));
+  if (!control) return;
+  const panel = els.taskPanel, row = control.getBoundingClientRect(), frame = panel.getBoundingClientRect();
+  panel.scrollTop += row.top - frame.top - Math.max(0, (panel.clientHeight - row.height) / 2);
+  control.focus({ preventScroll: true });
+  els.calendarStatus.textContent = `${current.title} added to Unscheduled.`;
+}
+
 function openNotificationTarget(taskId = null, view = "settings") {
   window.focus();
   if (taskId) {
@@ -299,7 +372,7 @@ async function displayBrowserNotification(payload, taskId = null) {
 }
 
 function notifyForTask(task, occurrence) {
-  const icon = new URL("./assets/duckplan-sigma-icon-v11-512.png", location.href).href;
+  const icon = new URL("./assets/duckplan-sigma-icon-v11-transparent-512.png", location.href).href;
   return displayBrowserNotification(
     BrowserNotifications.taskNotification({ ...task, className: classInfo(task).name }, occurrence, { icon }),
     task.id,
@@ -307,6 +380,7 @@ function notifyForTask(task, occurrence) {
 }
 
 window.addEventListener("duckplan:notification-open", (event) => {
+  if (event.detail?.scope && event.detail.scope !== (store.user?.id || "local")) return;
   openNotificationTarget(event.detail?.taskId || null, event.detail?.view || "home");
 });
 
@@ -423,7 +497,7 @@ function taskCardMarkup(task, mode = "daily") {
   const due = task.dueDate ? `${formatShortDate(task.dueDate)}${task.dueTime ? ` · ${formatTime(task.dueTime)}` : ""}` : "No deadline";
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${task.id}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span> · ${mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${priorityBadge(task)}</span></button>
+    <button class="task-select" type="button" data-edit-task="${task.id}" ${task.completed ? "" : `draggable="true" data-drag-task="${task.id}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span> · ${mode === "backlog" ? "Unscheduled" : mode === "scheduled" ? taskScheduleText(task) : `Due ${due}`}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}${priorityBadge(task)}</span></button>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
 }
@@ -439,19 +513,19 @@ function renderDailyPlan() {
   els.dailyProgressCopy.textContent = todayItems.length ? `${completed} of ${todayItems.length} tasks completed` : "No tasks planned yet";
   els.dailyPanelDate.textContent = formatLongDate(selectedDate);
   els.dailyPanelProgress.textContent = todayItems.length ? `${completed} of ${todayItems.length} completed` : "No tasks planned yet";
-  const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled].map((task) => task.id)).size;
-  if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${groups.overdue.length ? ` · ${groups.overdue.length} overdue` : ""}`;
+  const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled, ...groups.backlog].map((task) => task.id)).size;
+  if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${groups.overdue.length ? ` · ${groups.overdue.length} overdue` : ""}${groups.backlog.length ? ` · ${groups.backlog.length} unscheduled` : ""}`;
   if (els.phoneTaskSummary) els.phoneTaskSummary.setAttribute("aria-label", `Open tasks for ${formatLongDate(selectedDate)}, ${remaining} remaining`);
   els.taskPanelToggle.textContent = phonePlannerQuery.matches ? `Tasks (${remaining})` : "Tasks";
   els.completionPercent.textContent = `${percent}%`;
   els.completionRing.style.setProperty("--completion", `${percent * 3.6}deg`);
   for (const name of Object.keys(els.lists)) {
     els.counts[name].textContent = groups[name].length;
-    els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, name === "scheduled" ? "scheduled" : "daily")).join("");
+    els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, ["scheduled", "backlog"].includes(name) ? name : "daily")).join("");
     els.lists[name].hidden = collapsed[name] || groups[name].length === 0;
     els.lists[name].closest(".task-section").classList.toggle("is-empty", groups[name].length === 0);
   }
-  els.dailyEmpty.hidden = groups.overdue.length + todayItems.length > 0;
+  els.dailyEmpty.hidden = groups.overdue.length + todayItems.length + groups.backlog.length > 0;
   document.querySelectorAll("[data-collapse]").forEach((button) => {
     button.setAttribute("aria-expanded", String(!collapsed[button.dataset.collapse]));
     button.closest(".task-section").classList.toggle("collapsed", collapsed[button.dataset.collapse]);
@@ -464,7 +538,7 @@ function allTaskMarkup(task) {
   const scheduled = Model.scheduledParts(task);
   return `<article class="all-task-row ${task.completed ? "completed" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
     <input class="task-check" type="checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeText(task.title)} complete" />
-    <button class="task-select" type="button" data-select-task="${task.id}"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}</span></button>
+    <button class="task-select" type="button" data-edit-task="${task.id}" ${task.completed ? "" : `draggable="true" data-drag-task="${task.id}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${scheduled ? ` · Work ${formatShortDate(scheduled.date)} at ${formatTime(scheduled.time)}` : " · Unscheduled"}${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}</span></button>
     <span class="task-due"><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${formatTime(task.dueTime)}</small></span>
     <button class="task-edit" type="button" data-edit-task="${task.id}" aria-label="Edit ${safeText(task.title)}">•••</button>
   </article>`;
@@ -632,8 +706,8 @@ function layoutEvents(dayTasks) {
   return sorted;
 }
 function renderTimeline(dates) {
-  const startHour = 7;
-  const endHour = 22;
+  const startHour = CALENDAR_START_HOUR;
+  const endHour = CALENDAR_END_HOUR;
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
@@ -659,7 +733,7 @@ function renderTimeline(dates) {
     }).join("");
     return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}</div>`;
   }).join("");
-  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Due</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
+  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label">Due</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
 }
 function renderMonth(dates) {
   const currentMonth = dateObject(selectedDate).getMonth();
@@ -788,6 +862,7 @@ function openPrimaryAction(source) {
 }
 
 function openClassEditor(source) {
+  viewTransitions.settle();
   if (classEditor) { classEditor.querySelector("input")?.focus(); return; }
   const dialog = document.createElement("dialog");
   dialog.className = "personal-note-dialog";
@@ -851,8 +926,7 @@ function openClassEditor(source) {
   DuckPopupMotion.open(dialog, anchor, () => { if (current() && !closing) dialog.querySelector("input").focus(); });
 }
 
-function setView(name, preserveDrawer = false) {
-  viewTransitions.cancel();
+function applyView(name, preserveDrawer = false) {
   const requested = name === "today" ? "home" : name;
   const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
   const normalized = next.id.replace("view-", "");
@@ -867,16 +941,24 @@ function setView(name, preserveDrawer = false) {
   if (!preserveDrawer) setSidebar(false);
   workspace.scrollTo({ top: 0, left: 0, behavior: "instant" });
   window.scrollTo({ top: 0, behavior: "instant" });
-  requestAnimationFrame(() => setupButtonMaterial());
+  // Routing reuses already-normalized controls; only renders need a new scan.
 }
 
-function navigateView(name, preserveDrawer = false) {
+function setView(name, preserveDrawer = false) {
+  viewTransitions.cancel();
+  applyView(name, preserveDrawer);
+}
+
+function navigateView(name, preserveDrawer = false, source = null) {
   const previous = document.body.dataset.view;
   const moveFocus = els.views.find((view) => view.id === `view-${previous}`)?.contains(document.activeElement);
-  setView(name, preserveDrawer);
-  const current = document.body.dataset.view;
-  if (previous !== current && moveFocus) workspace.focus({ preventScroll: true });
-  viewTransitions.enter(previous, current, els.views.find((view) => view.id === `view-${current}`));
+  const requested = name === "today" ? "home" : name;
+  const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
+  const current = next.id.replace("view-", "");
+  viewTransitions.navigate({ from: previous, to: current, source, update: () => {
+    applyView(current, preserveDrawer);
+    if (previous !== current && moveFocus) workspace.focus({ preventScroll: true });
+  } });
 }
 function hideToast() {
   clearTimeout(toastTimer);
@@ -913,6 +995,9 @@ function focusMovedCalendarTask(taskId) {
 }
 
 function moveCalendarTask(task, drop, { focus = false } = {}) {
+  const owner = `${store.mode}:${store.user?.id || "local"}`;
+  const ownerVersion = plannerOwnerVersion;
+  const currentOwner = () => ownerVersion === plannerOwnerVersion && owner === `${store.mode}:${store.user?.id || "local"}`;
   const previousStart = task.scheduledStart;
   const previousSelectedDate = selectedDate;
   const nextStart = `${drop.date}T${drop.time}`;
@@ -922,16 +1007,19 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
   }
   selectedDate = drop.date;
   selectedTaskId = task.id;
-  store.upsertItem({ ...task, scheduledStart: nextStart, scheduledEnd: null }).catch(reportError);
+  saveTaskWithAlerts({ ...task, scheduledStart: nextStart, scheduledEnd: null }).catch(error => { if (currentOwner()) reportError(error); });
   const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
   els.calendarStatus.textContent = `${task.title} moved to ${destination}.`;
   showToast(`Moved to ${destination}.`, {
     actionLabel: "Undo",
     duration: 5000,
     onAction: () => {
+      if (!currentOwner()) return;
+      const current = store.listItems().find(item => item.id === task.id);
+      if (!current || current.scheduledStart !== nextStart) { showToast("This task has changed since it was moved."); return; }
       selectedDate = previousStart?.slice(0, 10) || previousSelectedDate;
       selectedTaskId = task.id;
-      store.upsertItem({ ...task, scheduledStart: previousStart, scheduledEnd: null }).catch(reportError);
+      saveTaskWithAlerts({ ...current, scheduledStart: previousStart, scheduledEnd: null }).catch(error => { if (currentOwner()) reportError(error); });
       els.calendarStatus.textContent = `${task.title} returned to its previous time.`;
       showToast("Calendar move undone.");
       if (focus) focusMovedCalendarTask(task.id);
@@ -939,6 +1027,36 @@ function moveCalendarTask(task, drop, { focus = false } = {}) {
   });
   if (focus) focusMovedCalendarTask(task.id);
   return true;
+}
+
+async function scheduleListTask(task, drop) {
+  const owner = `${store.mode}:${store.user?.id || "local"}`;
+  const ownerVersion = plannerOwnerVersion;
+  const currentOwner = () => ownerVersion === plannerOwnerVersion && owner === `${store.mode}:${store.user?.id || "local"}`;
+  const previousStart = task.scheduledStart || null, previousEnd = task.scheduledEnd || null;
+  const scheduledStart = `${drop.date}T${drop.time}`;
+  if (previousStart === scheduledStart) return;
+  selectedDate = drop.date; selectedTaskId = task.id;
+  try {
+    await saveTaskWithAlerts({ ...task, scheduledStart, scheduledEnd: null });
+    if (!currentOwner()) return;
+    const destination = `${formatLongDate(drop.date)} at ${formatTime(drop.time)}`;
+    els.calendarStatus.textContent = `${task.title} scheduled for ${destination}.`;
+    showToast(`Scheduled for ${destination}.`, {
+      actionLabel: "Undo", duration: 5000,
+      onAction: async () => {
+        if (!currentOwner()) return;
+        const current = store.listItems().find(item => item.id === task.id);
+        if (!current || current.scheduledStart !== scheduledStart) {
+          showToast("This task has changed since it was scheduled."); return;
+        }
+        try {
+          await saveTaskWithAlerts({ ...current, scheduledStart: previousStart, scheduledEnd: previousEnd });
+          if (currentOwner()) showToast("Task scheduling undone.");
+        } catch (error) { if (currentOwner()) reportError(error); }
+      },
+    });
+  } catch (error) { if (currentOwner()) reportError(error); }
 }
 
 function calendarColumnAt(clientX) {
@@ -961,7 +1079,7 @@ function updateCalendarDragPosition(clientX, clientY) {
   }
   const rect = column.getBoundingClientRect();
   const durationMinutes = Number(calendarDrag.task.durationMinutes || 45);
-  const hourHeight = rect.height / 15;
+  const hourHeight = rect.height / CALENDAR_HOURS;
   const drop = PlannerUI.snapCalendarDrop({
     date: column.dataset.columnDate,
     pointerY: clientY - calendarDrag.offsetY,
@@ -969,7 +1087,7 @@ function updateCalendarDragPosition(clientX, clientY) {
     hourHeight,
     durationMinutes,
   });
-  const top = rect.top + ((drop.minutes - 7 * 60) / 60) * hourHeight;
+  const top = rect.top + ((drop.minutes - CALENDAR_START_HOUR * 60) / 60) * hourHeight;
   calendarDrag.drop = drop;
   column.classList.add("calendar-drop-target");
   calendarDrag.ghost.hidden = false;
@@ -984,6 +1102,7 @@ function updateCalendarDragPosition(clientX, clientY) {
 
 function runCalendarDragAutoscroll() {
   if (!calendarDrag?.started) return;
+  if (!currentCalendarDrag()) return;
   if (calendarDrag.scrollVelocity) {
     const before = els.calendar.scrollTop;
     els.calendar.scrollTop += calendarDrag.scrollVelocity;
@@ -1029,9 +1148,113 @@ function cancelCalendarDrag({ announce = false } = {}) {
   if (announce) showToast("Calendar move cancelled.");
 }
 
+function currentCalendarDrag() {
+  if (!calendarDrag) return false;
+  if (calendarDrag.owner !== `${store.mode}:${store.user?.id || "local"}` || calendarDrag.source.isConnected === false) {
+    cancelCalendarDrag(); return false;
+  }
+  return true;
+}
+
 let modalAnchor = null;
 let modalClosing = false;
+function taskAlertDraft() {
+  const form = els.form.elements;
+  return { ...(tasks.find(task => task.id === editingTaskId) || pendingTaskDraft || {}),
+    scheduledStart: form.scheduledDate.value && form.scheduledTime.value ? `${form.scheduledDate.value}T${form.scheduledTime.value}` : null,
+    workAlerts: taskAlertPreferences };
+}
+function renderTaskAlertFields() {
+  if (!taskAlertPreferences) return;
+  const domain = window.DuckWorkAlerts, draft = taskAlertDraft(), times = domain.resolve(draft, taskAlertPreferences);
+  for (const channel of ["alarm", "notification"]) {
+    const pref = taskAlertPreferences[channel], field = els.form.elements[`${channel}At`];
+    els.form.elements[`${channel}Enabled`].checked = pref.enabled;
+    field.value = times[`${channel}At`] || "";
+    field.disabled = !pref.enabled;
+    document.querySelector(`#${channel}-link-status`).textContent = pref.mode === "manual" ? "Custom time" : channel === "alarm" ? "Follows work start" : "Follows alarm time";
+    document.querySelector(`[data-follow-alert="${channel}"]`).disabled = pref.mode !== "manual";
+  }
+  els.form.elements.alarmSound.value = taskAlertPreferences.alarm.sound;
+  els.form.elements.alarmSnooze.value = String(taskAlertPreferences.alarm.snoozeMinutes);
+  document.querySelector("#task-alarm-help").textContent = window.DuckTaskAlarms.native
+    ? "Rings on this iPhone. Alarm permission is separate from normal notifications."
+    : "Ringing alarms are available in the iPhone app. This preference is saved for it.";
+  document.querySelector("#task-notification-help").textContent = window.DuckTaskNotifications.native
+    ? "Shows a normal banner, separately from the ringing alarm. Allow notifications on this device."
+    : window.DuckTaskNotifications.canSave()
+      ? "Enable notifications on this device to receive a banner while DuckPlan is closed. Delivery depends on device and connection settings."
+      : "Local reminders appear while this page is open. Enable notifications for browser banners; sign in on the hosted app for closed-page delivery.";
+  const deliveries = domain.deliveries(draft), pending = Object.values(deliveries).filter(item => !["disabled", "unconfigured"].includes(item.status));
+  document.querySelector("#task-alert-time-help").textContent = !times.alarmAt && !times.notificationAt
+    ? "Choose a work start or custom alert time. Enabled alerts will follow it."
+    : pending.some(item => ["past", "too-soon"].includes(item.status))
+      ? "Past start times are kept on the calendar; their alerts are not scheduled."
+      : pending.some(item => item.status === "too-far") ? "Device alerts can be scheduled up to one year ahead." : "Each alert can be turned off or given its own time.";
+  const current = tasks.find(task => task.id === editingTaskId);
+  document.querySelector("#task-alert-storage-help").hidden = !(store.mode === "cloud" && (store.supportsWorkAlerts === false || current?.workAlertsDeviceOnly));
+  document.querySelector("#task-alarm-account").hidden = Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
+  document.querySelector("#task-alarm-signup").href = store.configured ? new URL("#settings", location.href).href : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
+}
+function validateEditedTaskAlerts(task) {
+  const prefs = window.DuckWorkAlerts.normalize(task.workAlerts);
+  const alarmChanged = taskAlertTimeChanges.has("alarm"), notificationChanged = taskAlertTimeChanges.has("notification");
+  if (!alarmChanged) {
+    prefs.alarm = { ...prefs.alarm, enabled: false, mode: "work", at: null };
+    if (prefs.notification.mode === "alarm") prefs.notification.enabled = false;
+  }
+  if (!notificationChanged && !(alarmChanged && prefs.notification.mode === "alarm")) prefs.notification.enabled = false;
+  window.DuckWorkAlerts.validate({ ...task, workAlerts: prefs });
+}
+function hydrateTaskAlertEditor(values, editorVersion, ownerVersion) {
+  return workAlerts.refresh().then(() => {
+    if (editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion || !els.modal.open || modalClosing) return;
+    const hydrated = workAlerts.preferences({ ...values, scheduledStart: taskAlertDraft().scheduledStart });
+    for (const field of taskAlertTouchedFields) {
+      const [channel, key] = field.split(".");
+      hydrated[channel][key] = taskAlertPreferences[channel][key];
+    }
+    taskAlertPreferences = hydrated;
+    renderTaskAlertFields();
+  });
+}
+els.form.addEventListener("input", event => {
+  if (["scheduledDate", "scheduledTime"].includes(event.target.name)) renderTaskAlertFields();
+});
+els.form.addEventListener("change", event => {
+  if (!taskAlertPreferences) return;
+  const name = event.target.name;
+  for (const channel of ["alarm", "notification"]) {
+    if (name === `${channel}At`) {
+      taskAlertPreferences = window.DuckWorkAlerts.editTime(taskAlertPreferences, channel, event.target.value);
+      taskAlertTouchedFields.add(`${channel}.mode`); taskAlertTouchedFields.add(`${channel}.at`);
+      if (!event.target.value) taskAlertTouchedFields.add(`${channel}.enabled`);
+      taskAlertTimeChanges.add(channel);
+    }
+    if (name === `${channel}Enabled`) {
+      const previous = taskAlertPreferences[channel];
+      taskAlertPreferences = window.DuckWorkAlerts.setEnabled(taskAlertPreferences, channel, event.target.checked);
+      taskAlertTouchedFields.add(`${channel}.enabled`);
+      if (event.target.checked && previous.mode === "manual" && previous.at === null) {
+        taskAlertTouchedFields.add(`${channel}.mode`); taskAlertTouchedFields.add(`${channel}.at`);
+      }
+      if (event.target.checked) taskAlertTimeChanges.add(channel); else taskAlertTimeChanges.delete(channel);
+    }
+  }
+  if (name === "alarmSound") { taskAlertPreferences.alarm.sound = event.target.value; taskAlertTouchedFields.add("alarm.sound"); }
+  if (name === "alarmSnooze") { taskAlertPreferences.alarm.snoozeMinutes = Number(event.target.value); taskAlertTouchedFields.add("alarm.snoozeMinutes"); }
+  renderTaskAlertFields();
+});
+els.form.addEventListener("click", event => {
+  const button = event.target.closest("[data-follow-alert]");
+  if (!button || !taskAlertPreferences) return;
+  taskAlertTouchedFields.add(`${button.dataset.followAlert}.mode`); taskAlertTouchedFields.add(`${button.dataset.followAlert}.at`);
+  taskAlertPreferences = window.DuckWorkAlerts.follow(taskAlertPreferences, button.dataset.followAlert);
+  taskAlertTimeChanges.add(button.dataset.followAlert);
+  renderTaskAlertFields();
+});
 function openModal(prefill = {}) {
+  viewTransitions.settle();
   const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
     ? document.activeElement : document.querySelector("#open-task-modal"));
   modalAnchor = DuckPopupMotion.capture(source);
@@ -1047,6 +1270,7 @@ function openModal(prefill = {}) {
   els.modalTitle.textContent = task ? "Edit task" : "Add task";
   els.modalKicker.textContent = task ? "Task details" : "Plan your work";
   els.saveTask.textContent = task ? "Save changes" : "Add to DuckPlan";
+  els.saveTask.disabled = false;
   els.deleteTask.hidden = !task;
   els.form.elements.title.value = values.title || "";
   els.form.elements.classId.value = values.classId !== undefined ? values.classId || "" : store.listClasses()[0]?.id || "";
@@ -1069,23 +1293,20 @@ function openModal(prefill = {}) {
   const choice = values.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
-  const alarm = window.DuckTaskAlarms.get(task?.id);
-  const alarmInput=els.form.elements.alarmAt;
-  alarmInput.disabled=!window.DuckTaskAlarms.canSave();
-  alarmInput.value=alarm ? new Date(alarm.fire_at-new Date(alarm.fire_at).getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
-  document.querySelector('#task-alarm-help').textContent=alarmInput.disabled?'Sign in on the hosted app to set a task notification.':'Choose when to start this task. Clear the time to cancel. Your device controls notification delivery and sound.';
-  const alarmAccount = document.querySelector("#task-alarm-account");
-  alarmAccount.hidden = !alarmInput.disabled || Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
-  document.querySelector("#task-alarm-signup").href = store.configured
-    ? new URL("#settings", location.href).href
-    : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
-  if (window.DuckTaskAlarms.native) {
-    document.querySelector('#task-alarm-help').textContent='Rings on this iPhone even while DuckPlan is closed. Clear the time to cancel. Changing scheduled work time does not move this alarm automatically.';
-    els.form.elements.alarmSound.value=alarm?.sound || 'system';
-    els.form.elements.alarmSnooze.value=String(alarm?.snoozeMinutes ?? 5);
-  }
+  const editorVersion = ++taskAlertEditorVersion;
+  const ownerVersion = plannerOwnerVersion;
+  taskAlertHydrationError = null;
+  taskAlertTimeChanges.clear();
+  taskAlertTouchedFields.clear();
+  taskAlertPreferences = workAlerts.preferences({ ...values, scheduledStart: els.form.elements.scheduledDate.value && els.form.elements.scheduledTime.value ? `${els.form.elements.scheduledDate.value}T${els.form.elements.scheduledTime.value}` : null });
+  renderTaskAlertFields();
+  taskAlertHydration = workAlertContextReady ? hydrateTaskAlertEditor(values, editorVersion, ownerVersion).catch(error => {
+    if (editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion || !els.modal.open || modalClosing) return;
+    taskAlertHydrationError = error;
+    reportError(error);
+  }) : Promise.resolve();
   document.querySelector('#task-alarm-save-error').textContent='';
-  document.querySelector("#task-alarm-options").open = Boolean(alarm);
+  document.querySelector("#task-alarm-options").open = Boolean(taskAlertDraft().scheduledStart || values.workAlerts);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
   taskLibrary?.renderTaskResources(els.form.elements.classId.value);
@@ -1131,8 +1352,8 @@ document.addEventListener("click", (event) => {
     return;
   }
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
-  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) commitMaterialAction(viewButton,()=>navigateView(viewButton.dataset.view,sidebar.contains(viewButton)),event);
-  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); commitMaterialAction(goButton,()=>navigateView(goButton.dataset.go,sidebar.contains(goButton)),event); }
+  const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) navigateView(viewButton.dataset.view, sidebar.contains(viewButton), viewButton);
+  const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
   const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
@@ -1168,43 +1389,116 @@ function templateCalendarPlacement(event, template) {
   const date = target?.dataset.slotDate || target?.dataset.date || target?.dataset.deadlineDate || column?.dataset.columnDate;
   if (!date || !template) return null;
   const rect = column?.getBoundingClientRect();
-  const hourHeight = rect ? rect.height / 15 : 62;
-  const drop = PlannerUI.snapTemplateDrop({ date, pointerY: rect ? event.clientY : 2 * hourHeight, columnTop: rect?.top ?? 0, hourHeight, durationMinutes: template.durationMinutes });
+  const hourHeight = rect ? rect.height / CALENDAR_HOURS : 62;
+  const drop = PlannerUI.snapTemplateDrop({ date, pointerY: rect ? event.clientY : (9 - CALENDAR_START_HOUR) * hourHeight, columnTop: rect?.top ?? 0, hourHeight, durationMinutes: template.durationMinutes });
   return drop ? { ...drop, column, rect, hourHeight, source: target || column } : null;
 }
 
 function hideTemplatePreview() {
   if (!templateDrag) return;
   templateDrag.preview.hidden = true;
-  templateDrag.column?.classList.remove("calendar-drop-target");
-  templateDrag.column = null; templateDrag.velocity = 0;
+  clearTemplateTarget();
+}
+
+function clearTemplateTarget() {
+  if (!templateDrag) return;
+  templateDrag.target?.classList.remove("calendar-drop-target");
+  templateDrag.column = null; templateDrag.target = null; templateDrag.velocity = 0;
 }
 
 function clearTemplateDrag() {
   if (!templateDrag) return;
   hideTemplatePreview(); cancelAnimationFrame(templateDrag.raf);
-  templateDrag.preview.remove(); templateDrag = null;
+  templateDrag.preview.remove(); templateDrag.nativeImage?.remove(); templateDrag = null;
+}
+
+function syncCalendarDropPreview(item) {
+  if (!templateDrag) return;
+  templateDrag.template = item;
+  const title = templateDrag.preview.querySelector("strong");
+  if (title.textContent !== item.title) title.textContent = item.title;
+  const color = classInfo(item).color;
+  const value = /^#[0-9a-f]{6}$/i.test(color) ? color : "#8f8a7d";
+  if (templateDrag.preview.style.getPropertyValue("--course-color") !== value) templateDrag.preview.style.setProperty("--course-color", value);
+}
+
+function refreshCalendarDropItem() {
+  if (!templateDrag) return false;
+  if (templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}`) { clearTemplateDrag(); return false; }
+  const item = templateDrag.libraryId ? taskLibrary?.draftForTemplate(templateDrag.libraryId)
+    : store.listItems().find(task => task.id === templateDrag.template.id && !task.completed);
+  if (!item) { clearTemplateDrag(); return false; }
+  syncCalendarDropPreview(item);
+  return true;
+}
+
+function showFreeCalendarPreview(clientX, clientY, time = null) {
+  if (!templateDrag || !Number.isFinite(clientX) || !Number.isFinite(clientY)) return;
+  clearTemplateTarget();
+  const preview = templateDrag.preview;
+  const columnRect = els.calendar.querySelector(".timeline-column")?.getBoundingClientRect();
+  const width = Math.min(180, Math.max(88, columnRect?.width > 6 ? columnRect.width - 6 : 148));
+  const height = Math.min(156, Math.max(30, Number(templateDrag.template.durationMinutes || 45) * 62 / 60));
+  const left = Math.max(4, Math.min(window.innerWidth - width - 4, clientX + 12));
+  const top = Math.max(4, Math.min(window.innerHeight - height - 4, clientY + 12));
+  Object.assign(preview.style, { left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, clipPath: "none" });
+  preview.dataset.dragPlacement = "free";
+  preview.querySelector("small").textContent = `${time ? `${formatTime(time)} · ` : ""}${templateDrag.template.durationMinutes} min`;
+  preview.hidden = false;
+}
+
+function fitCalendarDropPreview({ left, top, width, height }, mode) {
+  const preview = templateDrag.preview, viewport = els.calendar.getBoundingClientRect();
+  Object.assign(preview.style, {
+    left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`,
+    clipPath: `inset(${Math.max(0, viewport.top - top)}px ${Math.max(0, left + width - viewport.right)}px ${Math.max(0, top + height - viewport.bottom)}px ${Math.max(0, viewport.left - left)}px)`,
+  });
+  preview.dataset.dragPlacement = mode;
+  preview.hidden = false;
 }
 
 function updateTemplatePreview(event) {
   if (!templateDrag) return null;
+  if (templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}`) { clearTemplateDrag(); return null; }
   templateDrag.pointer = { x: event.clientX, y: event.clientY };
   const placement = event.target.closest("#planner-calendar") && templateCalendarPlacement(event, templateDrag.template);
-  hideTemplatePreview();
-  if (!placement?.column) return placement;
-  const { rect, hourHeight, column, minutes, time } = placement;
+  clearTemplateTarget();
+  if (!placement) { showFreeCalendarPreview(event.clientX, event.clientY); return null; }
+  const { minutes, time } = placement;
   const preview = templateDrag.preview;
-  column.classList.add("calendar-drop-target"); templateDrag.column = column;
-  Object.assign(preview.style, { left: `${rect.left + 3}px`, top: `${rect.top + (minutes - 7 * 60) * hourHeight / 60}px`, width: `${Math.max(32, rect.width - 6)}px`, height: `${Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60)}px` });
   preview.querySelector("small").textContent = `${formatTime(time)} · ${templateDrag.template.durationMinutes} min`;
-  preview.hidden = false;
+  const monthDay = placement.source.closest(".month-day");
+  if (monthDay) {
+    const rect = monthDay.getBoundingClientRect(), top = rect.top + 34;
+    monthDay.classList.add("calendar-drop-target"); templateDrag.target = monthDay;
+    fitCalendarDropPreview({ left: rect.left + 5, top, width: Math.max(24, rect.width - 10), height: Math.max(24, Math.min(46, rect.bottom - top - 5)) }, "month");
+    return placement;
+  }
+  const column = placement.column || [...els.calendar.querySelectorAll(".timeline-column")].find(item => item.dataset.columnDate === placement.date);
+  if (!column) { showFreeCalendarPreview(event.clientX, event.clientY, time); return placement; }
+  const rect = column.getBoundingClientRect(), hourHeight = rect.height / CALENDAR_HOURS;
+  const top = rect.top + (minutes - CALENDAR_START_HOUR * 60) * hourHeight / 60;
+  const height = Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60);
   const viewport = els.calendar.getBoundingClientRect();
-  templateDrag.velocity = event.clientY < viewport.top + 52 ? -12 : event.clientY > viewport.bottom - 52 ? 12 : 0;
+  // Date/deadline headers keep their existing 09:00 default. If that time is
+  // offscreen, show an honest labeled block by the pointer rather than a false slot.
+  if (!placement.column && (top + height <= viewport.top || top >= viewport.bottom)) {
+    showFreeCalendarPreview(event.clientX, event.clientY, time); return placement;
+  }
+  column.classList.add("calendar-drop-target"); templateDrag.column = column; templateDrag.target = column;
+  fitCalendarDropPreview({ left: rect.left + 3, top, width: Math.max(32, rect.width - 6), height }, "timeline");
+  if (placement.column) templateDrag.velocity = event.clientY < viewport.top + 52 ? -12 : event.clientY > viewport.bottom - 52 ? 12 : 0;
   return placement;
 }
 
 function scrollTemplatePreview() {
   if (!templateDrag) return;
+  if (templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}` || templateDrag.source?.isConnected === false) {
+    const movingTask = !templateDrag.libraryId;
+    clearTemplateDrag();
+    if (movingTask) taskListDrag?.cancel();
+    return;
+  }
   if (templateDrag.velocity) {
     const previous = els.calendar.scrollTop;
     els.calendar.scrollTop += templateDrag.velocity;
@@ -1214,44 +1508,70 @@ function scrollTemplatePreview() {
       if (target) updateTemplatePreview({ target, clientX: x, clientY: y });
     }
   }
-  templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
+  if (templateDrag) templateDrag.raf = requestAnimationFrame(scrollTemplatePreview);
 }
 
-document.addEventListener("dragstart", event => {
-  const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
-  const template = id && taskLibrary.draftForTemplate(id);
-  if (!template || event.defaultPrevented) return;
+function beginCalendarDropPreview(template, event = null) {
   clearTemplateDrag();
   const preview = document.createElement("div");
   preview.className = "calendar-event-block calendar-drag-ghost template-drop-preview";
   preview.setAttribute("aria-hidden", "true"); preview.hidden = true;
   preview.innerHTML = `<strong>${safeText(template.title)}</strong><small></small>`;
-  const info = classInfo(template);
-  preview.style.setProperty("--course-color", /^#[0-9a-f]{6}$/i.test(info.color) ? info.color : "#8f8a7d");
   document.body.append(preview);
-  templateDrag = { template, preview, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+  // The browser's immutable source bitmap would otherwise be a second, larger
+  // drag image. Keep a transparent bitmap attached for the whole native gesture.
+  let nativeImage = null;
+  if (typeof event?.dataTransfer?.setDragImage === "function") {
+    nativeImage = document.createElement("canvas"); nativeImage.width = 1; nativeImage.height = 1;
+    nativeImage.className = "calendar-native-drag-image"; nativeImage.setAttribute("aria-hidden", "true");
+    document.body.append(nativeImage);
+    try { event.dataTransfer.setDragImage(nativeImage, 0, 0); } catch { nativeImage.remove(); nativeImage = null; }
+  }
+  templateDrag = { template, preview, nativeImage, source: event?.target?.closest?.('[draggable="true"]') || event?.target || null, owner: `${store.mode}:${store.user?.id || "local"}`, target: null, column: null, velocity: 0, pointer: null, raf: requestAnimationFrame(scrollTemplatePreview) };
+  syncCalendarDropPreview(template);
+  if (event) showFreeCalendarPreview(event.clientX, event.clientY);
+}
+document.addEventListener("dragstart", event => {
+  const id = taskLibrary?.readTemplateDrop(event.dataTransfer);
+  const template = id && taskLibrary.draftForTemplate(id);
+  if (!template || event.defaultPrevented) return;
+  beginCalendarDropPreview(template, event);
+  templateDrag.libraryId = id;
 });
 document.addEventListener("dragend", clearTemplateDrag);
 window.addEventListener("blur", clearTemplateDrag);
 window.addEventListener("pagehide", clearTemplateDrag);
 
-document.addEventListener("dragover", (event) => {
+function updateNativeTemplateDrag(event) {
   if (![...(event.dataTransfer?.types || [])].includes(window.DuckPlanLibrary?.TEMPLATE_MIME)) return;
+  if (!refreshCalendarDropItem()) return;
   const placement = updateTemplatePreview(event);
   if (event.target.closest("#planner-calendar, #all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
     event.preventDefault();
     event.dataTransfer.dropEffect = templateDrag && event.target.closest("#planner-calendar") && !placement ? "none" : "copy";
   }
+}
+document.addEventListener("dragenter", updateNativeTemplateDrag);
+document.addEventListener("dragover", updateNativeTemplateDrag);
+document.addEventListener("drag", event => {
+  if (!templateDrag || (!event.clientX && !event.clientY)) return;
+  if (!refreshCalendarDropItem()) return;
+  const target = document.elementFromPoint(event.clientX, event.clientY);
+  if (target) updateTemplatePreview({ target, clientX: event.clientX, clientY: event.clientY });
 });
 document.addEventListener("drop", (event) => {
-  if (!taskLibrary?.readTemplateDrop(event.dataTransfer)) { clearTemplateDrag(); return; }
+  const templateId = taskLibrary?.readTemplateDrop(event.dataTransfer);
+  if (!templateId) { clearTemplateDrag(); return; }
+  if (!templateDrag || templateDrag.libraryId !== templateId || templateDrag.owner !== `${store.mode}:${store.user?.id || "local"}`) {
+    event.preventDefault(); clearTemplateDrag(); return;
+  }
   const calendar = event.target.closest("#planner-calendar");
   if (calendar) {
     event.preventDefault();
     const template = taskLibrary.draftForTemplate(taskLibrary.readTemplateDrop(event.dataTransfer));
     const placement = templateCalendarPlacement(event, template);
     if (placement) taskLibrary.handleTemplateDrop(event, placement);
-    else if (template) showToast(template.durationMinutes > 900 ? "This template does not fit the visible day. Choose Schedule to set a work time." : "Drop onto a calendar day or time to schedule this template.");
+    else if (template) showToast(template.durationMinutes > CALENDAR_HOURS * 60 ? "This template does not fit the visible day. Choose Schedule to set a work time." : "Drop onto a calendar day or time to schedule this template.");
   } else if (event.target.closest("#all-task-list, #daily-task-panel") && !event.target.closest("#calendar-assignment-templates")) {
     event.preventDefault();
     taskLibrary.addToTasks(taskLibrary.readTemplateDrop(event.dataTransfer));
@@ -1301,6 +1621,7 @@ els.calendar.addEventListener("pointerdown", (event) => {
   if (!task) return;
   const sourceRect = source.getBoundingClientRect();
   calendarDrag = {
+    owner: `${store.mode}:${store.user?.id || "local"}`,
     pointerId: event.pointerId,
     source,
     sourceRect,
@@ -1320,6 +1641,7 @@ els.calendar.addEventListener("pointerdown", (event) => {
 });
 els.calendar.addEventListener("pointermove", (event) => {
   if (!calendarDrag || event.pointerId !== calendarDrag.pointerId) return;
+  if (!currentCalendarDrag()) return;
   const distance = Math.hypot(event.clientX - calendarDrag.startX, event.clientY - calendarDrag.startY);
   if (!calendarDrag.started && distance < 5) return;
   event.preventDefault();
@@ -1328,12 +1650,14 @@ els.calendar.addEventListener("pointermove", (event) => {
 });
 els.calendar.addEventListener("pointerup", (event) => {
   if (!calendarDrag || event.pointerId !== calendarDrag.pointerId) return;
+  if (!currentCalendarDrag()) return;
   if (!calendarDrag.started) { calendarDrag = null; return; }
   event.preventDefault();
-  const { task, drop } = calendarDrag;
+  const { drop } = calendarDrag;
+  const task = store.listItems().find(item => item.id === calendarDrag.task.id && !item.completed);
   suppressCalendarEventClickUntil = performance.now() + 650;
   clearCalendarDrag();
-  if (drop) moveCalendarTask(task, drop);
+  if (drop && task) moveCalendarTask(task, drop);
 });
 els.calendar.addEventListener("pointercancel", (event) => {
   if (calendarDrag && event.pointerId === calendarDrag.pointerId) cancelCalendarDrag();
@@ -1346,8 +1670,8 @@ els.calendar.addEventListener("keydown", (event) => {
     if (!task || !parts) return;
     event.preventDefault();
     const duration = Number(task.durationMinutes || 45);
-    const minimum = 7 * 60;
-    const maximum = 22 * 60 - duration;
+    const minimum = CALENDAR_START_HOUR * 60;
+    const maximum = CALENDAR_END_HOUR * 60 - duration;
     let date = parts.date;
     let minutes = parts.minutes;
     if (event.key === "ArrowUp") minutes -= 15;
@@ -1384,6 +1708,17 @@ els.modal.addEventListener("click", event => {
 els.search.addEventListener("input", () => { searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
 els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (els.saveTask.disabled) return;
+  const hydrationEditorVersion = taskAlertEditorVersion, hydrationOwnerVersion = plannerOwnerVersion;
+  const currentHydration = () => hydrationEditorVersion === taskAlertEditorVersion && hydrationOwnerVersion === plannerOwnerVersion && els.modal.open && !modalClosing;
+  els.saveTask.disabled = true;
+  await taskAlertHydration;
+  if (!currentHydration()) return;
+  els.saveTask.disabled = false;
+  if (taskAlertHydrationError) {
+    document.querySelector("#task-alarm-save-error").textContent = "Couldn't load your saved alert settings. Close this editor and try again.";
+    return;
+  }
   const form = new FormData(els.form); const title = form.get("title").trim(); if (!title) return;
   const wasEditing = Boolean(editingTaskId);
   const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
@@ -1393,28 +1728,29 @@ els.form.addEventListener("submit", async (event) => {
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");
   next.actualMinutes = loggedMinutes === "" ? null : Number(loggedMinutes);
-  const alarmAt=form.get('alarmAt');
-  if(alarmAt && (!Number.isFinite(new Date(alarmAt).getTime()) || new Date(alarmAt).getTime()<Date.now()+5000)) {
-    document.querySelector('#task-alarm-save-error').textContent=window.DuckTaskAlarms.native?'Choose a future alarm time.':'Choose a future notification time.'; return;
-  }
+  next.workAlerts = window.DuckWorkAlerts.normalize(taskAlertPreferences);
+  try { validateEditedTaskAlerts(next); }
+  catch (error) { document.querySelector("#task-alarm-save-error").textContent = error.message; els.form.elements[error.field]?.focus(); return; }
   els.saveTask.disabled=true;
+  const saveOwnerVersion = plannerOwnerVersion, saveEditorVersion = taskAlertEditorVersion;
+  const currentSave = () => saveOwnerVersion === plannerOwnerVersion && saveEditorVersion === taskAlertEditorVersion && els.modal.open && !modalClosing;
   let taskWasSaved = false;
   try {
-    const saved=await store.upsertItem(next);
+    const saved=await saveTaskWithAlerts(next);
+    if (!currentSave()) return;
     taskWasSaved = true;
     editingTaskId=saved.id;
-    if(window.DuckTaskAlarms.canSave()) await window.DuckTaskAlarms.save(saved.id,alarmAt,{
-      title:saved.title, sound:form.get('alarmSound') || 'system', snoozeMinutes:Number(form.get('alarmSnooze') ?? 5),
-    });
     closeModal();
-    showToast(alarmAt?(window.DuckTaskAlarms.native?'Task and iPhone alarm saved.':'Task and notification saved.'):wasEditing?'Task updated.':'Task added to your plan.');
+    showToast(wasEditing ? "Task and alert settings updated." : "Task and alert settings saved.");
   } catch(error) {
-    if (taskWasSaved) document.querySelector('#task-alarm-save-error').textContent=`Task saved, but the ${window.DuckTaskAlarms.native?'alarm':'notification'} was not updated: ${error.message}`;
+    if (!currentSave()) return;
+    if (error.savedTask) { editingTaskId = error.savedTask.id; pendingTaskDraft = null; }
+    if (taskWasSaved || error.savedTask || error.taskSaved) document.querySelector('#task-alarm-save-error').textContent = error.message;
     else {
       const message = document.querySelector("#task-form-error");
       message.hidden = false; message.textContent = error.message || "Couldn't save this task. Please try again.";
     }
-  } finally { els.saveTask.disabled=false; }
+  } finally { if (currentSave()) els.saveTask.disabled=false; }
 });
 els.deleteTask.addEventListener("click", () => {
   if (!editingTaskId) return;
@@ -1431,7 +1767,7 @@ document.querySelector("#notification-button").addEventListener("click", () => {
 notificationPermissionButton.addEventListener("click", async () => {
   const state = notificationCapability();
   if (state === "granted") {
-    const icon = new URL("./assets/duckplan-sigma-icon-v11-512.png", location.href).href;
+    const icon = new URL("./assets/duckplan-sigma-icon-v11-transparent-512.png", location.href).href;
     const result = await displayBrowserNotification(BrowserNotifications.testNotification({ icon }));
     showToast(result.status === "submitted"
       ? "Test submitted to your browser; device display is not confirmed."
@@ -1496,7 +1832,7 @@ els.accountSettings.addEventListener("click", (event) => {
   if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
   if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
   if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
-  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await window.DuckTaskAlarms.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
+  if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await workAlerts.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
   if (button.id === "import-local") runAction(button, async () => { await store.importLocalTasks(); showToast("Local planner data imported."); await refreshAccountState(); });
 });
@@ -1538,6 +1874,9 @@ function refreshPlannerClock() {
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPlannerClock(); });
 window.addEventListener("focus", () => { updateNotificationPermission(); refreshPlannerClock(); });
+window.addEventListener("duckplan:work-alert-capability", () => {
+  if (workAlertContextReady) workAlerts.reconcile({ refresh: true }).catch(reportError);
+});
 setInterval(refreshPlannerClock, 60000);
 // Native sessions belong to URLSession, so foreground refresh replaces browser WebSockets.
 if (window.DUCKPLAN_CLOUD?.native) {
@@ -1561,9 +1900,12 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); }
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
+    viewTransitions.cancel();
     renderedPlannerOwner = owner;
+    taskListDrag?.cancel();
     clearTemplateDrag();
     plannerOwnerVersion += 1;
     accountStateVersion += 1;
@@ -1579,14 +1921,13 @@ store.subscribe(({ reason }) => {
     renderAxis();
   }
   renderAll();
-  if (window.DuckTaskAlarms.native && ['load','auth','remote','persisted'].includes(reason)) {
-    window.DuckTaskAlarms.setContext(store.user?.id || 'local', store.listItems()).catch(reportError);
-  } else if (reason === 'load' || reason === 'auth') window.DuckTaskAlarms.refresh();
+  if (["load", "auth"].includes(reason)) workAlertContextReady = true;
+  if (workAlertContextReady && ["load", "auth", "remote", "persisted", "context"].includes(reason)) workAlerts.reconcile({ refresh: ["load", "auth"].includes(reason) }).catch(reportError);
   if (reason === "load" || reason === "auth") refreshAccountState();
 });
 store.init().then(() => {
-  if (window.DuckTaskAlarms.native) window.DuckTaskAlarms.setContext(store.user?.id || 'local',store.listItems()).catch(reportError);
-  else window.DuckTaskAlarms.refresh();
+  workAlertContextReady = true;
+  workAlerts.reconcile({ refresh: true }).catch(reportError);
   const alarmTarget=new URL(location.href).searchParams.get('alarmTask');
   if(alarmTarget) { openNotificationTarget(alarmTarget,'home'); const url=new URL(location.href); url.searchParams.delete('alarmTask'); history.replaceState(null,'',url); }
   const problem = store.takeAuthError();

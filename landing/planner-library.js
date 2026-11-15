@@ -111,7 +111,7 @@
     if (!day || !Number.isFinite(day.getTime()) || Number(date.slice(0, 4)) < 1 || day.toISOString().slice(0, 10) !== date) throw invalid("scheduledDate", "Drop onto a calendar day.");
     if (typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) throw invalid("scheduledTime", "Choose a valid work time.");
     const [hour, minute] = time.split(":").map(Number);
-    if (hour * 60 + minute < 7 * 60 || hour * 60 + minute + template.durationMinutes > 22 * 60) throw invalid("durationMinutes", "This template does not fit the visible day. Choose Schedule to set a work time.");
+    if (hour * 60 + minute + template.durationMinutes > 24 * 60) throw invalid("durationMinutes", "This template does not fit the visible day. Choose Schedule to set a work time.");
     return { ...instantiateTemplate(template, { makeId }), scheduledStart: `${date}T${time}` };
   }
 
@@ -207,7 +207,7 @@
             <div class="library-template-block-heading"><h3 title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h3><span class="library-drag-hint" aria-hidden="true" title="Drag onto a calendar time">⠿</span></div>
             <p class="library-template-block-meta"><span class="library-template-duration">${minutes} min</span><span aria-hidden="true">·</span><span class="library-template-class" title="${escapeHtml(label)}">${escapeHtml(label)}</span></p>
           </div>
-          <div class="library-actions library-template-actions">${button("schedule-template", item.id, "Schedule", { context, extra: `aria-label="Schedule ${escapeHtml(item.title)}"` })}${button("add-template", item.id, "Add to tasks", { context, extra: `aria-label="Add ${escapeHtml(item.title)} to tasks"` })}${button("template-menu", item.id, '<span aria-hidden="true">⋯</span>', { context, extra: `aria-label="Manage ${escapeHtml(item.title)}" aria-haspopup="menu" aria-expanded="false" aria-controls="template-management-menu"` })}</div>
+          <div class="library-actions library-template-actions">${button("schedule-template", item.id, '<svg class="library-schedule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 2v4m8-4v4M3 10h18M12 21H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6m-5 7h6m-3-3v6"/></svg><span>Schedule</span>', { context, extra: `aria-label="Schedule ${escapeHtml(item.title)}"` })}${button("add-template", item.id, "Add to tasks", { context, extra: `aria-label="Add ${escapeHtml(item.title)} to tasks"` })}${button("template-menu", item.id, '<span aria-hidden="true">⋯</span>', { context, extra: `aria-label="Manage ${escapeHtml(item.title)}" aria-haspopup="menu" aria-expanded="false" aria-controls="template-management-menu"` })}</div>
         </article>`;
       }).join("")}</div>`;
     }
@@ -504,16 +504,19 @@
       const operationOwner = captureOwner();
       pending.set(id, operationOwner);
       render();
+      let addedTask;
       try {
         const task = schedule ? instantiateScheduledTemplate(item, schedule) : instantiateTemplate(item);
-        await store.upsertItem(task);
+        const saved = await (host.saveTask ? host.saveTask(task) : store.upsertItem(task));
+        addedTask = saved || task;
         if (isCurrentOwner(operationOwner)) host.showToast?.(schedule ? "Task scheduled. The template is ready to use again." : "Added a new task. The template is ready to use again.");
-        return task;
-      } catch (error) { if (isCurrentOwner(operationOwner)) fail(error); }
+      } catch (error) { if (error.savedTask) addedTask = error.savedTask; if (isCurrentOwner(operationOwner)) fail(error); }
       finally {
         if (pending.get(id) === operationOwner) pending.delete(id);
         if (isCurrentOwner(operationOwner)) render();
       }
+      if (addedTask && !schedule && isCurrentOwner(operationOwner)) host.onTaskAdded?.(addedTask);
+      return addedTask;
     }
 
     function onClick(event) {

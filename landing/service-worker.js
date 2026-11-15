@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-motion-preview-v36";
+const CACHE_VERSION = "duckplan-app-motion-preview-v55";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const APP_SHELL = [
   "./duck-theme.css",
   "./planner-clarity.css",
   "./planner-motion.css",
+  "./page-stack.css",
   "./phone-navigation.css",
   "./phone-navigation.js",
   "./duck-mascot.js",
@@ -17,6 +18,8 @@ const APP_SHELL = [
   "./assets/duckplan-mark.svg",
   "./assets/duckplan-sigma-icon-v11-192.png",
   "./assets/duckplan-sigma-icon-v11-512.png",
+  "./assets/duckplan-sigma-icon-v11-transparent-192.png",
+  "./assets/duckplan-sigma-icon-v11-transparent-512.png",
   "./assets/duckplan-mascot-v8.png",
   "./planner-model.js",
   "./planner-ui.js",
@@ -24,6 +27,7 @@ const APP_SHELL = [
   "./native-cloud.js",
   "./cloud-config.js",
   "./planner-store.js",
+  "./task-list-drag.js",
   "./planner-library.js",
   "./planner-library.css",
   "./calendar-library-tabs.js",
@@ -36,6 +40,9 @@ const APP_SHELL = [
   "./personal-goals.js",
   "./personal-goals.css",
   "./reminder-domain.js",
+  "./work-alerts.js",
+  "./work-alerts.css",
+  "./work-alert-controller.js",
   "./reminder-ledger.js",
   "./browser-notifications.js",
   "./motion-tokens.js",
@@ -46,6 +53,7 @@ const APP_SHELL = [
   "./app-install.js",
   "./task-alarms.js",
   "./native-task-alarms.js",
+  "./native-task-notifications.js",
   "./app.js"
 ];
 
@@ -139,7 +147,7 @@ self.addEventListener('push',event=>{
       const {alarms}=await response.json();
       for(const alarm of alarms) {
         await self.registration.showNotification('Time to start your task',{
-          body:alarm.title,icon:'./assets/duckplan-sigma-icon-v11-192.png',tag:`duckplan-alarm-${alarm.id}`,
+          body:alarm.title,icon:'./assets/duckplan-sigma-icon-v11-transparent-192.png',tag:`duckplan-alarm-${alarm.id}`,
           requireInteraction:true,data:{taskId:alarm.item_id,view:'home'},
         });
         displayed=true;
@@ -148,7 +156,7 @@ self.addEventListener('push',event=>{
     } catch { /* Always show a visible fallback for a payload-free push. */ }
     if(!displayed) await self.registration.showNotification('DuckPlan task reminder',{
       body:'Open DuckPlan to check your tasks. Sign in if your session has expired.',
-      icon:'./assets/duckplan-sigma-icon-v11-192.png',tag:'duckplan-alarm-check',data:{view:'home'},
+      icon:'./assets/duckplan-sigma-icon-v11-transparent-192.png',tag:'duckplan-alarm-check',data:{view:'home'},
     });
   })());
 });

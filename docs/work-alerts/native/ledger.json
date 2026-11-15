@@ -1,0 +1,210 @@
+{
+  "source": "definitive canonical app.js368555d1da888f67f835c1e3b187584b440b833e15be032c959202e96d9fe845 with documented native overlays",
+  "automated": {
+    "nativeNode": {
+      "status": "PASS",
+      "tests": 438,
+      "fail": 0
+    },
+    "compiledSwiftNotificationAndRestorationBoundary": {
+      "status": "PASS",
+      "cases": 12,
+      "realOSDelivery": false
+    },
+    "nativeCloudBoundary": {
+      "status": "PASS",
+      "reuse": "Swift NativeCloudClient is byte-for-byte unchanged from original8334d6e"
+    }
+  },
+  "builds": {
+    "normalSimulator": "PASS",
+    "unsignedPhysicalIPhone": "PASS",
+    "sourceSimulatorDeviceLandingParity": {
+      "status": "PASS",
+      "files": 114
+    }
+  },
+  "nativeOS": {
+    "status": "BLOCKED",
+    "alarmPermission": "denied",
+    "normalPermission": "authorized",
+    "normalAddError": "Repository could not save notification. Source is not authorized.",
+    "normalXcodePackagingRetest": "Same OS rejection after normal Sign to Run Locally build. No security/permission-database workaround.",
+    "appFeedback": "Task/settings persisted; UI displayed alerts need attention."
+  },
+  "runtimeCases": [
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "local-baseline",
+      "status": "PASS",
+      "runId": "phone-local-baseline-1794718313684227000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "local-baseline-relaunch",
+      "status": "PASS",
+      "runId": "phone-local-baseline-relaunch-1794718368429444000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "local-preferences",
+      "status": "PASS",
+      "runId": "phone-local-preferences-1794718943026288000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "local-preferences-relaunch",
+      "status": "PASS",
+      "runId": "phone-local-preferences-relaunch-1794718962777609000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "local-extended",
+      "status": "PASS",
+      "runId": "phone-local-extended-1794718578735915000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "cloud-baseline",
+      "status": "PASS",
+      "runId": "phone-cloud-baseline-1794718630240795000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "cloud-baseline-relaunch",
+      "status": "PASS",
+      "runId": "phone-cloud-baseline-relaunch-1794718662265033000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "cloud-preferences",
+      "status": "PASS",
+      "runId": "phone-cloud-preferences-1794718686558899000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "cloud-preferences-relaunch",
+      "status": "PASS",
+      "runId": "phone-cloud-preferences-relaunch-1794718717243844000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "cloud-isolation",
+      "status": "PASS",
+      "runId": "phone-cloud-isolation-1794718885097445000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPhone18Pro iOS27.2 Simulator WKWebView",
+      "mode": "cloud-extended",
+      "status": "PASS",
+      "runId": "phone-cloud-extended-1794718915627427000",
+      "input": "scripted DOM actions, not trusted touch",
+      "backend": "local signed-out or fixture-backed real Worker8796/schema1\u20136",
+      "reuse": "Earlier normal positive paths reused where definitive code changes only affect old-backend hydration, device Pause or late native restoration; final-source preference and owner/extended follow-ups also pass."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "local-baseline",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "local-baseline-relaunch",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "local-preferences",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "local-preferences-relaunch",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "local-extended",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "cloud-baseline",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "cloud-baseline-relaunch",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "cloud-preferences",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "cloud-preferences-relaunch",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "cloud-isolation",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    },
+    {
+      "platform": "iPadPro11M5 iOS27.2 Simulator WKWebView",
+      "mode": "cloud-extended",
+      "status": "BLOCKED",
+      "reason": "Fresh QA iPad boot completed59s; install took over2min, then actual app launch hit45s subprocess timeout before any WK report. One attempt; no broad restarts."
+    }
+  ],
+  "notRun": [
+    "Actual trusted phone/iPad touch or OS drag-layer input",
+    "Native iPad functional assertions (launch dependency blocked)",
+    "Native legacy-hosted-backend functional run; current fixture backend1\u20136 only",
+    "Physical device installation, alarm/notification delivery, sound, lockscreen, Stop/Snooze",
+    "Native offline/failure queue full baseline beyond validated honest denied-state feedback"
+  ],
+  "scope": "No physical/user simulator record mutations; no hosted deployment or remote migrations; only disposable QA accounts on local Worker."
+}

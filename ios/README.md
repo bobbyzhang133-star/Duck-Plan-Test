@@ -8,7 +8,8 @@ web audio or silently replace alarms with notifications.
 ## Implemented
 
 - Native AlarmKit authorization with clear denied-permission feedback.
-- Task alarm date/time independent of the deadline and scheduled work.
+- Separate ringing-alarm and normal-notification switches, both on by default.
+- Alarm time follows scheduled work; normal notification time follows the alarm until each is customized. Deadlines stay independent.
 - System alarm sound, original Gentle chime, or original Bright bells.
 - Stop and optional 5/10/15-minute Snooze in the system alarm presentation.
 - Live Activity widget extension for snooze countdowns (required by AlarmKit).
@@ -18,9 +19,7 @@ web audio or silently replace alarms with notifications.
 - Permission refresh when returning to the app; no success message on native failure.
 - The approved duck app icon; locally bundled planner works without a web deployment.
 
-Native alarm times are absolute instants. Changing a work session does not silently
-move an alarm; edit the alarm explicitly. Once scheduled, iOS handles the alarm
-while DuckPlan is closed or offline. The user can revoke alarm permission at any time.
+Scheduled native requests use absolute instants. While their follow links are active, changing the work start updates the alarm and its linked normal notification. A manually chosen time stays fixed until the user restores its follow link. Once scheduled, iOS handles requests while DuckPlan is closed or offline. AlarmKit and normal-notification permissions are independent and can be revoked in Settings.
 
 ## Duck alarm appearance
 
@@ -127,3 +126,13 @@ lock-screen/Stop/Snooze behavior still require testing and are not claimed verif
 - https://developer.apple.com/documentation/AlarmKit/scheduling-an-alarm-with-alarmkit
 - https://developer.apple.com/videos/play/wwdc2025/230/
 - https://developer.apple.com/xcode/system-requirements
+
+## Separate message notifications
+
+The native app now exposes a second device-local channel through `DuckNativeNotifications`, independent of AlarmKit's permission, ringing, Stop and Snooze. It uses Apple's [User Notifications scheduling API](https://developer.apple.com/documentation/usernotifications/scheduling-a-notification-locally-from-your-app) and a launch-installed [notification-center delegate](https://developer.apple.com/documentation/usernotifications/unusernotificationcenterdelegate) for foreground banners/sound and task taps. Time defaults and on/off controls belong to the bundled web coordinator; this native source addition alone does not update the installed app or enable notifications.
+
+The bundled main frame may call `request({action, ...})`. Supported actions are `status`/`authorize` → `{permission}`, `list` → `{notifications:[{item_id,title,fire_at,time_zone}]}`, `context` with `{scope,activeTaskIDs}`, `schedule` with `{scope?,taskID,title,fireAt}` → `{notification}`, `cancel` with `{scope?,taskID}` and `cancelAll` with `{scope?}`. `fireAt`/`fire_at` are milliseconds since the epoch. New callers should supply `scope` on operations; mismatched owners are rejected. Notifications use stable scoped task identifiers. Same-identifier replacement does not cancel the previous pending request before adding its replacement, so a failed add retains the previous request. Completing/deleting tasks or changing accounts cancels this channel's pending/delivered requests.
+
+A tap waits for a confirmed matching planner context and active task, then dispatches `duckplan:notification-open` with `{taskId,scope}`. The bundled JavaScript must also check the scope when consuming that event. Native cloud cookies and destination restrictions stay in their existing protected transport. Both notification and alarm saves capture and revalidate scope/active task ownership across authorization or scheduling waits.
+
+Run `node ios/scripts/test-notification-boundary.mjs` for 12 compiled Swift boundary scenarios using a fake notification center and in-memory persistence—no device requests or user defaults are changed. These cover replacement failure, relaunch/recovery, task/owner cancellation, permission/add races, queued taps, denied/invalid requests, channel-only cancellation and account changes during a prior alarm’s restoration. The simulator build verifies app/widget compilation. Actual WKWebView action/persistence checks and physical permission/delivery/lock-screen/sound checks remain separate acceptance gates.

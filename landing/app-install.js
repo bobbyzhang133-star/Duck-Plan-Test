@@ -19,8 +19,8 @@
     if (!installRow) return;
     if (window.DuckNativeAlarms) {
       installCopy.textContent = window.DuckNativeCloud
-        ? 'DuckPlan iPhone app. Sign in below to sync tasks. Ringing alarms are scheduled on this device.'
-        : 'DuckPlan iPhone app. Tasks and ringing alarms are saved on this device.';
+        ? 'DuckPlan iPhone app. Sign in below to sync tasks. Alarms and task notifications are scheduled on this device.'
+        : 'DuckPlan iPhone app. Tasks, alarms and task notifications are saved on this device.';
       installButton.hidden = true;
       return;
     }

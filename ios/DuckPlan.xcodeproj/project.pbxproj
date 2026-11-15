@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B159DE20CE984957A4AB0101 /* NativeScopeGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B159DE20CE984957A4AB0102 /* NativeScopeGuard.swift */; };
+		A04C2979BD5E47E9A48001A1 /* TaskNotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04C2979BD5E47E9A48001A2 /* TaskNotificationStore.swift */; };
 		178D47CDE5C9957EA8BD0FEA /* TaskAlarmWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1427811ED5A055F32DAABE63 /* TaskAlarmWidget.swift */; };
 		384F2C0B6E13D26703564B39 /* bright.wav in Resources */ = {isa = PBXBuildFile; fileRef = 47D5491506010387D782E267 /* bright.wav */; };
 		39D836FDC941766D04590282 /* gentle.wav in Resources */ = {isa = PBXBuildFile; fileRef = CDAED2CD530B2310CB00EA72 /* gentle.wav */; };
@@ -45,6 +47,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B159DE20CE984957A4AB0102 /* NativeScopeGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeScopeGuard.swift; sourceTree = "<group>"; };
+		A04C2979BD5E47E9A48001A2 /* TaskNotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskNotificationStore.swift; sourceTree = "<group>"; };
 		0B89D50BD37B8C11ADB9243D /* DuckPlan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckPlan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DC38D6C46FFD40C706A5CB0 /* TaskAlarmMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAlarmMetadata.swift; sourceTree = "<group>"; };
 		1427811ED5A055F32DAABE63 /* TaskAlarmWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAlarmWidget.swift; sourceTree = "<group>"; };
@@ -91,6 +95,8 @@
 				CC5A77C451E16B1FDE063D19 /* Info.plist */,
 				6286DF86D432C342E232DC0D /* PlannerWebView.swift */,
 				2E7B73937E25901078870A2C /* TaskAlarmStore.swift */,
+				A04C2979BD5E47E9A48001A2 /* TaskNotificationStore.swift */,
+				B159DE20CE984957A4AB0102 /* NativeScopeGuard.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -229,6 +235,8 @@
 				F258831A7DF1CC5DE413CCCE /* PlannerWebView.swift in Sources */,
 				DD0F2C24359A3C297F8623A5 /* TaskAlarmMetadata.swift in Sources */,
 				CB75077ABFF1481AA270963A /* TaskAlarmStore.swift in Sources */,
+				A04C2979BD5E47E9A48001A1 /* TaskNotificationStore.swift in Sources */,
+				B159DE20CE984957A4AB0101 /* NativeScopeGuard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

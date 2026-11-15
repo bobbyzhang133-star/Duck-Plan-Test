@@ -83,6 +83,7 @@
         .sort((a, b) => scheduledParts(a).minutes - scheduledParts(b).minutes),
       unscheduled: unfinished.filter((task) => task.dueDate === selectedDate && !task.scheduledStart)
         .sort((a, b) => (a.dueTime || "99:99").localeCompare(b.dueTime || "99:99")),
+      backlog: unfinished.filter((task) => !task.dueDate && !task.scheduledStart),
       completed: tasks.filter((task) => task.completed && (task.dueDate === selectedDate || scheduledParts(task)?.date === selectedDate)),
     };
   }

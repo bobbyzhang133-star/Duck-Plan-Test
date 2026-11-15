@@ -4,11 +4,12 @@ import CryptoKit
 import SwiftUI
 
 enum TaskAlarmError: LocalizedError {
-    case invalid, denied, replacementFailed
+    case invalid, denied, replacementFailed, contextChanged
     var errorDescription: String? {
         switch self {
         case .invalid: "Choose a task, a future alarm time, and a valid sound."
         case .denied: "Allow DuckPlan alarms in iPhone Settings, then try again."
+        case .contextChanged: "The planner account changed. Open the task again before saving its alarm."
         case .replacementFailed: "The alarm could not be replaced or restored. Please set it again."
         }
     }
@@ -24,6 +25,8 @@ final class TaskAlarmStore: ObservableObject {
     private let storageKey = "duckplan.native.task-alarms.v1"
     private var observation: Task<Void, Never>?
     private var replacements = Set<UUID>()
+    private var activeTaskIDs = Set<String>()
+    private var contextGeneration = 0
 
     init() {
         if let data = UserDefaults.standard.data(forKey: storageKey),
@@ -91,6 +94,10 @@ final class TaskAlarmStore: ObservableObject {
     }
 
     func context(scope: String, activeTaskIDs: Set<String>) throws {
+        guard !scope.isEmpty, scope.count <= 300, activeTaskIDs.count <= 10000,
+              activeTaskIDs.allSatisfy({ !$0.isEmpty && $0.count <= 200 }) else { throw TaskAlarmError.invalid }
+        if scope != currentScope || activeTaskIDs != self.activeTaskIDs { contextGeneration &+= 1 }
+        self.activeTaskIDs = activeTaskIDs
         // Changing account or signing out clears the previous account's local alarms.
         for record in records where record.scope != scope || !activeTaskIDs.contains(record.taskID) {
             try cancel(id: record.id)
@@ -99,28 +106,63 @@ final class TaskAlarmStore: ObservableObject {
         refreshRingingAlarms()
     }
 
-    func save(taskID: String, title: String, fireAt: Date, sound: String, snoozeMinutes: Int) async throws -> TaskAlarmRecord {
+    func requireScope(_ expectedScope: String?) throws {
+        if let expectedScope, expectedScope != currentScope { throw TaskAlarmError.contextChanged }
+    }
+
+    private func validContext(_ generation: Int, scope: String, taskID: String) -> Bool {
+        generation == contextGeneration && scope == currentScope && activeTaskIDs.contains(taskID)
+    }
+
+    func save(taskID: String, title: String, fireAt: Date, sound: String, snoozeMinutes: Int,
+              expectedScope: String? = nil) async throws -> TaskAlarmRecord {
         guard !taskID.isEmpty, taskID.count <= 200, !title.isEmpty, title.count <= 300,
               fireAt.timeIntervalSinceNow >= 5, fireAt.timeIntervalSinceNow <= 366 * 86400,
               ["system", "gentle", "bright"].contains(sound), [0, 5, 10, 15].contains(snoozeMinutes) else {
             throw TaskAlarmError.invalid
         }
+        try requireScope(expectedScope)
+        let operationScope = currentScope, generation = contextGeneration
+        guard validContext(generation, scope: operationScope, taskID: taskID) else { throw TaskAlarmError.contextChanged }
         if manager.authorizationState != .authorized { try await authorize() }
-        let digest = Array(SHA256.hash(data: Data((currentScope + ":" + taskID).utf8)))
+        guard validContext(generation, scope: operationScope, taskID: taskID) else { throw TaskAlarmError.contextChanged }
+        let digest = Array(SHA256.hash(data: Data((operationScope + ":" + taskID).utf8)))
         let id = UUID(uuid: (digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15]))
         let previous = records.first { $0.id == id }
         replacements.insert(id)
         defer { replacements.remove(id) }
-        let record = TaskAlarmRecord(id: id, scope: currentScope, taskID: taskID, title: title,
+        let record = TaskAlarmRecord(id: id, scope: operationScope, taskID: taskID, title: title,
                                      fireAt: fireAt, sound: sound, snoozeMinutes: snoozeMinutes)
         if try manager.alarms.contains(where: { $0.id == id }) { try manager.cancel(id: id) }
         do { try await schedule(record) }
         catch {
+            guard validContext(generation, scope: operationScope, taskID: taskID) else {
+                try? manager.cancel(id: id)
+                records.removeAll { $0.id == id }; persist()
+                throw TaskAlarmError.contextChanged
+            }
             if let previous, previous.fireAt > Date() {
-                do { try await schedule(previous) }
-                catch { records.removeAll { $0.id == id }; persist(); throw TaskAlarmError.replacementFailed }
+                do {
+                    try await NativeScopeGuard.restore(
+                        current: { self.validContext(generation, scope: operationScope, taskID: taskID) },
+                        operation: { try await self.schedule(previous) },
+                        retire: {
+                            try? self.manager.cancel(id: id)
+                            self.records.removeAll { $0.id == id }; self.persist()
+                        }, staleError: TaskAlarmError.contextChanged)
+                } catch {
+                    guard validContext(generation, scope: operationScope, taskID: taskID) else {
+                        throw TaskAlarmError.contextChanged
+                    }
+                    records.removeAll { $0.id == id }; persist(); throw TaskAlarmError.replacementFailed
+                }
             }
             throw error
+        }
+        guard validContext(generation, scope: operationScope, taskID: taskID) else {
+            try? manager.cancel(id: id)
+            records.removeAll { $0.id == id }; persist()
+            throw TaskAlarmError.contextChanged
         }
         records.removeAll { $0.id == id }
         records.append(record)

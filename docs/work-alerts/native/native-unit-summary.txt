@@ -1,0 +1,9 @@
+✔ the resolver injection is deterministic and invalid clocks never schedule (0.672041ms)
+ℹ tests 438
+ℹ suites 0
+ℹ pass 438
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36529.294791
