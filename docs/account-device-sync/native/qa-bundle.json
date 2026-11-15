@@ -1,0 +1,13 @@
+{
+  "baseBundle": "/private/tmp/duckplan-native-sync-default/Build/Products/Debug-iphonesimulator/DuckPlan.app",
+  "qaBundle": "/private/tmp/duckplan-account-device-qa-20261115/native/DuckPlan-QA.app",
+  "instrumentationOnlyChanges": [
+    "landing/index.html: appended QA runner script",
+    "landing/native-functional-qa.js: temporary test instrumentation"
+  ],
+  "pushBuild": false,
+  "productionWrites": false,
+  "sourceBinarySha256": "c53d4e93402fcd0b81b657664b8ae6e5ed38b099636273faeb63fa82158d89a2",
+  "instrumentedAdhocSignedBinarySha256": "2f0de95ff709d15b45d9063ffd64d0a4249147ba48724597f1209bed390b9b23",
+  "signingException": "Private QA clone re-signed ad hoc after adding test resources; product Swift code unchanged"
+}

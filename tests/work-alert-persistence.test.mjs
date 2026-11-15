@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { handleRequest } from "../cloudflare/src/index.js";
 import { cleanWorkAlerts } from "../cloudflare/src/work-alerts.js";
+import { cleanTaskDetails } from "../cloudflare/src/task-details.js";
 import { ORIGIN, createCtx, createFakeEnv } from "./support/fake-cloudflare.mjs";
 
 const require = createRequire(import.meta.url);
-const Store = require("../landing/planner-store.js"), Model = require("../landing/planner-model.js");
+const Store = require("../landing/planner-store.js"), Model = require("../landing/planner-model.js"), Controller = require("../landing/work-alert-controller.js");
 const uuid = n => `60000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const preferences = () => ({ version: 1, timeZone: "America/Los_Angeles",
   alarm: { enabled: true, mode: "work", at: null, sound: "gentle", snoozeMinutes: 5 },
@@ -41,12 +42,15 @@ function browser(app, { storage = memoryStorage(), jar = { value: null }, legacy
     requests.push({ path: url.pathname, method, body });
     await before({ path: url.pathname, method, body });
     const result = await app.call(url.pathname, { method, cookie: cookieAtStart, body });
-    await after({ path: url.pathname, method, body, result });
+    const replacement = await after({ path: url.pathname, method, body, result });
     const cookie = result.response.headers.get("set-cookie");
     if (cookie?.startsWith("duckplan_session=")) jar.value = cookie.includes("Max-Age=0") ? null : cookie.split(";")[0];
+    if (replacement instanceof Response) return replacement;
     if (legacy && url.pathname === "/api/planner" && result.status === 200) {
       delete result.data.work_alerts_supported;
-      result.data.items.forEach(row => delete row.work_alerts);
+      delete result.data.task_details_supported;
+      delete result.data.settings_adoption_supported;
+      result.data.items.forEach(row => { delete row.work_alerts; delete row.task_details; delete row.sync_revision; });
       return new Response(JSON.stringify(result.data), { status: 200, headers: { "Content-Type": "application/json" } });
     }
     return result.response;
@@ -138,8 +142,9 @@ test("capable cloud stores sync alert JSON while old servers retain it only in o
   const other = browser(fixture, { storage: legacy.storage, jar: { value: b.cookie }, legacy: true }); await other.store.init();
   assert.equal(other.store.listItems().length, 0);
   const upgraded = browser(fixture, { storage: legacy.storage, jar: { value: a.cookie } }); await upgraded.store.init();
-  const pending = upgraded.store.listItems().find(t => t.id === uuid(11)); assert.equal(pending.workAlertsDeviceOnly, true);
-  await upgraded.store.upsertItem(pending); await upgraded.store.refresh();
+  const pending = upgraded.store.listItems().find(t => t.id === uuid(11)); assert.equal(pending.workAlertsDeviceOnly, undefined);
+  assert.equal(upgraded.requests.some(request => request.method === "POST" && request.path.endsWith("/adopt-settings")), true);
+  await upgraded.store.refresh();
   assert.deepEqual(upgraded.store.listItems().find(t => t.id === uuid(11)).workAlerts, localPrefs);
   assert.equal(upgraded.store.listItems().find(t => t.id === uuid(11)).workAlertsDeviceOnly, undefined);
 });
@@ -240,4 +245,173 @@ test("a device-cache failure after task commit reports the saved identity so ret
   assert.equal(fixture.env.DB.raw.prepare("SELECT COUNT(*) AS n FROM items").get().n, 1);
   const reopened = browser(fixture, { storage, jar: { value: a.cookie }, legacy: true }); await reopened.store.init();
   assert.deepEqual(reopened.store.listItems()[0].workAlerts, preferences());
+});
+
+test("all saved task detail fields and work alert preferences roundtrip between independent signed-in clients", async () => {
+  const fixture = app(), a = await fixture.account("all-task-details@example.test");
+  const first = browser(fixture, { jar: { value: a.cookie } }), second = browser(fixture, { jar: { value: a.cookie } });
+  await first.store.init(); await second.store.init();
+  assert.equal(first.store.supportsTaskDetails, true); assert.equal(first.store.supportsSettingsAdoption, true);
+  const prefs = preferences(); prefs.alarm.mode = "manual"; prefs.alarm.at = "2026-11-20T08:15";
+  const id = uuid(60);
+  await first.store.upsertItem({ id, title: "Shared", workAlerts: prefs, actualMinutes: 95, reminderChoice: "60", scheduledStart: "2026-11-20T09:00" });
+  await second.store.refresh(); const received = second.store.listItems()[0];
+  assert.deepEqual(received.workAlerts, prefs); assert.equal(received.actualMinutes, 95); assert.equal(received.reminderChoice, "60");
+  assert.ok(Number.isSafeInteger(received.syncRevision)); assert.equal(Object.hasOwn(Store.taskToRow(received), "sync_revision"), false);
+  await second.store.upsertItem({ id, title: "Edited on second", actualMinutes: 110, reminderChoice: "off" });
+  await first.store.refresh(); const back = first.store.listItems()[0];
+  assert.equal(back.actualMinutes, 110); assert.equal(back.reminderChoice, "off"); assert.deepEqual(back.workAlerts, prefs);
+  await second.store.upsertItem({ id, title: "Only logged time changed", actualMinutes: 120 });
+  await first.store.refresh(); assert.equal(first.store.listItems()[0].reminderChoice, "off", "an omitted detail preserves its canonical sibling");
+  assert.equal(first.storage.data.has("duckplan-device-task-extras-v1"), false, "new saves do not write unscoped caches");
+});
+
+test("client task detail validation matches server bounds and preserves explicit clears versus omitted fields", () => {
+  for (const actualMinutes of [null, 0, 10080]) for (const reminderChoice of ["default", "off", "15", "60", "1440"]) {
+    const value = { version: 1, actualMinutes, reminderChoice };
+    assert.deepEqual(Store.normalizeTaskDetails(value), cleanTaskDetails(value));
+    assert.deepEqual(Store.rowToTask({ id: "task", task_details: JSON.stringify(value) }).taskDetails, value);
+  }
+  for (const value of [{ version: 1, actualMinutes: -1, reminderChoice: "off" }, { version: 1, actualMinutes: 10081, reminderChoice: "60" }, { version: 1, actualMinutes: 10, reminderChoice: "30" }, { version: 1, actualMinutes: "25", reminderChoice: "60" }, { version: 1, actualMinutes: null, reminderChoice: "off", extra: true }, " ".repeat(513), "null"]) {
+    assert.throws(() => Store.normalizeTaskDetails(value)); assert.throws(() => cleanTaskDetails(value));
+  }
+  assert.equal(Object.hasOwn(Store.taskToRow({ title: "Older client" }), "task_details"), false);
+  assert.equal(Store.taskToRow({ title: "Explicit clear", taskDetails: null }).task_details, null);
+});
+
+test("old-server detail fallback is owner scoped and automatically adopts both metadata fields after upgrade", async () => {
+  const fixture = app(), a = await fixture.account("details-upgrade@example.test");
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id: uuid(61), title: "Pending metadata", workAlerts: preferences(), actualMinutes: 30, reminderChoice: "15" });
+  assert.equal(old.store.listItems()[0].taskDetailsDeviceOnly, true);
+  const fresh = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await fresh.store.init();
+  assert.equal(fresh.store.listItems()[0].actualMinutes, undefined);
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie } }); await upgraded.store.init();
+  const task = upgraded.store.listItems()[0];
+  assert.equal(task.actualMinutes, 30); assert.equal(task.reminderChoice, "15"); assert.equal(task.taskDetailsDeviceOnly, undefined); assert.equal(task.workAlertsDeviceOnly, undefined);
+  const posts = upgraded.requests.filter(r => r.path.endsWith("/adopt-settings"));
+  assert.equal(posts.length, 1); assert.deepEqual(posts[0].body.task_details, { version: 1, actualMinutes: 30, reminderChoice: "15" });
+  assert.equal(upgraded.requests.some(r => r.method === "PUT"), false, "adoption must not rewrite task content");
+  const independent = browser(fixture, { jar: { value: a.cookie } }); await independent.store.init();
+  assert.equal(independent.store.listItems()[0].actualMinutes, 30); assert.deepEqual(independent.store.listItems()[0].workAlerts, preferences());
+});
+
+test("canonical cloud metadata wins over older device values and stale legacy caches cannot revive it", async () => {
+  const fixture = app(), a = await fixture.account("details-canonical@example.test");
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id: uuid(62), title: "Same task", workAlerts: preferences(), actualMinutes: 12, reminderChoice: "60" });
+  const cloud = browser(fixture, { jar: { value: a.cookie } }); await cloud.store.init();
+  const canonical = preferences(); canonical.alarm.enabled = false;
+  await cloud.store.upsertItem({ id: uuid(62), title: "New cloud title", workAlerts: canonical, actualMinutes: 70, reminderChoice: "off" });
+  const reopened = browser(fixture, { storage: old.storage, jar: { value: a.cookie } }); await reopened.store.init();
+  assert.equal(reopened.store.listItems()[0].title, "New cloud title"); assert.deepEqual(reopened.store.listItems()[0].workAlerts, canonical);
+  assert.equal(reopened.store.listItems()[0].actualMinutes, 70); assert.equal(reopened.requests.some(r => r.path.endsWith("/adopt-settings")), false);
+  await cloud.store.upsertItem({ id: uuid(62), title: "Cleared", workAlerts: null, taskDetails: null }); await reopened.store.refresh();
+  assert.equal(reopened.store.listItems()[0].workAlerts, undefined); assert.equal(reopened.store.listItems()[0].actualMinutes, undefined);
+});
+
+test("legacy unscoped details are claimed only by the account whose loaded task ids match", async () => {
+  const fixture = app(), a = await fixture.account("details-claim-a@example.test"), b = await fixture.account("details-claim-b@example.test"), id = uuid(63);
+  await fixture.call(`/api/items/${id}`, { method: "PUT", cookie: a.cookie, body: { title: "Owned by A" } });
+  const storage = memoryStorage(); storage.setItem("duckplan-device-task-extras-v1", JSON.stringify({ [id]: { actualMinutes: 25, reminderChoice: "1440" }, absent: { actualMinutes: 90, reminderChoice: "off" } }));
+  const other = browser(fixture, { storage, jar: { value: b.cookie } }); await other.store.init();
+  assert.equal(other.store.listItems().length, 0); assert.equal(other.requests.some(r => r.path.endsWith("/adopt-settings")), false);
+  const owner = browser(fixture, { storage, jar: { value: a.cookie } }); await owner.store.init();
+  assert.equal(owner.store.listItems()[0].actualMinutes, 25); assert.equal(owner.store.listItems()[0].reminderChoice, "1440");
+  assert.deepEqual(JSON.parse(storage.getItem("duckplan-device-task-extras-v1:claims")), { [id]: `cloud:${a.user.id}` });
+  assert.equal(JSON.parse(storage.getItem("duckplan-device-task-extras-v1")).absent.actualMinutes, 90, "unmatched legacy data remains intact");
+});
+
+test("failed automatic adoption retains device metadata and retries without duplicate tasks or a full PUT", async () => {
+  const fixture = app(), a = await fixture.account("details-retry@example.test"), id = uuid(64);
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id, title: "Retry", workAlerts: preferences(), actualMinutes: 40, reminderChoice: "off" });
+  let fail = true;
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie }, before: r => { if (fail && r.path.endsWith("/adopt-settings")) throw new Error("offline"); } });
+  await upgraded.store.init(); assert.equal(upgraded.store.listItems()[0].workAlertsDeviceOnly, true); assert.equal(upgraded.store.listItems()[0].taskDetailsDeviceOnly, true);
+  assert.match(upgraded.store.settingsSyncError, /reach DuckPlan/); fail = false; await upgraded.store.refresh();
+  assert.equal(upgraded.store.listItems()[0].workAlertsDeviceOnly, undefined); assert.equal(upgraded.store.settingsSyncError, null);
+  assert.equal(upgraded.requests.some(r => r.method === "PUT"), false); assert.equal((await fixture.call("/api/planner", { cookie: a.cookie })).data.items.length, 1);
+});
+
+test("a concurrent canonical edit wins an automatic adoption CAS without losing either task title or preference changes", async () => {
+  const fixture = app(), a = await fixture.account("details-cas@example.test"), id = uuid(65);
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id, title: "Old", workAlerts: preferences(), actualMinutes: 5, reminderChoice: "15" });
+  const canonical = preferences(); canonical.notification.enabled = false;
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie }, before: async r => {
+    if (r.path.endsWith("/adopt-settings")) await fixture.call(`/api/items/${id}`, { method: "PUT", cookie: a.cookie, body: { title: "New from other device", work_alerts: canonical, task_details: { version: 1, actualMinutes: 80, reminderChoice: "60" } } });
+  } });
+  await upgraded.store.init(); const saved = upgraded.store.listItems()[0];
+  assert.equal(saved.title, "New from other device"); assert.equal(saved.actualMinutes, 80); assert.deepEqual(saved.workAlerts, canonical);
+  assert.equal(saved.workAlertsDeviceOnly, undefined); assert.equal(saved.taskDetailsDeviceOnly, undefined);
+});
+
+test("old-owner adoption responses cannot replace a newly signed-out planner", async () => {
+  const fixture = app(), a = await fixture.account("details-owner-race@example.test"), id = uuid(66);
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id, title: "Private A", workAlerts: preferences() });
+  let release;
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie }, after: r => r.path.endsWith("/adopt-settings") ? new Promise(resolve => { release = resolve; }) : Promise.resolve() });
+  const pending = upgraded.store.init(); while (!release) await new Promise(resolve => setImmediate(resolve));
+  await upgraded.store.signOut(); release(); await pending;
+  assert.equal(upgraded.store.mode, "local"); assert.equal(upgraded.store.listItems().length, 0);
+});
+
+test("a local edit during pending adoption stays newer than its delayed canonical response", async () => {
+  const fixture = app(), a = await fixture.account("details-local-race@example.test"), id = uuid(67);
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id, title: "Old", workAlerts: preferences(), actualMinutes: 10, reminderChoice: "15" });
+  let release;
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie }, after: r => r.path.endsWith("/adopt-settings") ? new Promise(resolve => { release = resolve; }) : Promise.resolve() });
+  const pending = upgraded.store.init(); while (!release) await new Promise(resolve => setImmediate(resolve));
+  const newer = preferences(); newer.notification.enabled = false;
+  await upgraded.store.upsertItem({ id, title: "Local newer", workAlerts: newer, actualMinutes: 90, reminderChoice: "off" });
+  release(); await pending; await upgraded.store.refresh();
+  const saved = upgraded.store.listItems()[0];
+  assert.equal(saved.title, "Local newer"); assert.equal(saved.actualMinutes, 90); assert.deepEqual(saved.workAlerts, newer);
+});
+
+test("a deleted canonical adoption result removes the stale local task rather than resurrecting it", async () => {
+  const fixture = app(), a = await fixture.account("details-delete-race@example.test"), id = uuid(68);
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  await old.store.upsertItem({ id, title: "Delete me", workAlerts: preferences() });
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie }, after: async r => {
+    if (!r.path.endsWith("/adopt-settings")) return;
+    await fixture.call(`/api/items/${id}`, { method: "DELETE", cookie: a.cookie });
+    const row = fixture.env.DB.raw.prepare("SELECT * FROM items WHERE id=?").get(id);
+    return new Response(JSON.stringify({ item: row, adopted: false }), { status: 200, headers: { "Content-Type": "application/json" } });
+  } });
+  // The API can return a deleted authoritative row after its initial ownership
+  // read loses a CAS race; the backend suite exercises that exact interleaving.
+  await upgraded.store.init();
+  assert.equal(upgraded.store.listItems().length, 0);
+});
+
+test("completed legacy tasks share cached manual alert history and logged details without scheduling an active alarm", async () => {
+  const fixture = app(), a = await fixture.account("details-completed@example.test"), id = uuid(69);
+  const old = browser(fixture, { jar: { value: a.cookie }, legacy: true }); await old.store.init();
+  const prefs = preferences(); prefs.alarm.mode = "manual"; prefs.alarm.at = "2026-11-20T08:15";
+  prefs.notification.mode = "manual"; prefs.notification.at = "2026-11-20T08:10";
+  await old.store.upsertItem({ id, title: "Completed work", workAlerts: prefs, actualMinutes: 85, reminderChoice: "60" });
+  await old.store.toggleComplete(id, true);
+  const upgraded = browser(fixture, { storage: old.storage, jar: { value: a.cookie } }); await upgraded.store.init();
+  const posts = upgraded.requests.filter(request => request.path.endsWith("/adopt-settings"));
+  assert.equal(posts.length, 1); assert.deepEqual(posts[0].body.work_alerts, prefs);
+  assert.deepEqual(posts[0].body.task_details, { version: 1, actualMinutes: 85, reminderChoice: "60" });
+  const saved = upgraded.store.listItems()[0];
+  assert.equal(saved.completed, true); assert.equal(saved.actualMinutes, 85); assert.equal(saved.taskDetailsDeviceOnly, undefined);
+  assert.equal(saved.workAlertsDeviceOnly, undefined); assert.deepEqual(saved.workAlerts, prefs);
+  const other = browser(fixture, { jar: { value: a.cookie } }); await other.store.init();
+  assert.equal(other.store.listItems()[0].actualMinutes, 85); assert.equal(other.store.listItems()[0].reminderChoice, "60");
+  assert.deepEqual(other.store.listItems()[0].workAlerts, prefs); assert.equal(other.store.listItems()[0].completed, true);
+  const deliveries = [];
+  const provider = channel => ({ native: true, available: true, canSave: () => true, get: () => undefined,
+    async setContext() {}, async refresh() {}, async save(taskID, at) { deliveries.push({ channel, taskID, at }); } });
+  const controller = Controller.create({ store: other.store, alarms: provider("alarm"), notifications: provider("notification"), timeZone: "America/Los_Angeles", now: () => Date.UTC(2026, 10, 15), timers: {} });
+  await controller.reconcile({ refresh: true });
+  assert.equal(deliveries.filter(delivery => delivery.at).length, 0, "completed metadata is history, never an active OS request");
+  controller.destroy();
+  const attempted = await upgraded.store.adoptItemSettings(id, { workAlerts: preferences() });
+  assert.equal(attempted.adopted, false); assert.equal(upgraded.requests.filter(request => request.path.endsWith("/adopt-settings")).length, 1);
 });

@@ -56,13 +56,13 @@
   }
   enable.addEventListener('click', async () => {
     const token = generation;
-    try { await request({ action: 'authorize' }); if (token !== generation) return; setEnabled(true); await refresh(); changed(); }
+    try { await request({ action: 'authorize', scope, deviceEnabled: true }); if (token !== generation) return; setEnabled(true); await refresh(); changed(); }
     catch (error) { if (token === generation) copy.textContent = String(error.message || error); }
   });
   disable.addEventListener('click', async () => {
     const token = ++generation;
     setEnabled(false); records.clear(); render();
-    try { await request({ action: 'cancelAll' }, token); if (token !== generation) return; await refresh(); }
+    try { await request({ action: 'cancelAll', scope, deviceEnabled: false }, token); if (token !== generation) return; await refresh(); }
     catch (error) { if (token === generation) copy.textContent = String(error.message || error); }
     finally { if (token === generation) changed(); }
   });
@@ -73,7 +73,7 @@
       if (nextScope !== scope) { scope = nextScope; generation += 1; records.clear(); deviceEnabled = readEnabled(); }
       knownTasks = new Map(tasks.map(task => [task.id, task]));
       const token = generation;
-      await request({ action: 'context', scope, activeTaskIDs: tasks.filter(task => !task.completed).map(task => task.id) }, token);
+      await request({ action: 'context', scope, deviceEnabled, activeTaskIDs: tasks.filter(task => !task.completed && !task.deleted && !task.deleted_at).map(task => task.id) }, token);
       if (token !== generation) return;
       await refresh();
     },

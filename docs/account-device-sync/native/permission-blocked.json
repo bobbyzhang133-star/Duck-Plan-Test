@@ -1,0 +1,8 @@
+{
+  "status": "BLOCKED",
+  "platform": "iPhone17 Simulator27.2",
+  "actualObservation": "Native notification Allow prompt appeared; Mac locked prevents CUA native-app control",
+  "alarmAndNormalDelivery": "NOT RUN \u2014 awaiting OS permission interaction",
+  "syntheticProbeAlertsDisabled": 1,
+  "noUserDataChanged": true
+}

@@ -1,0 +1,63 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "case": "two-client UI create and edit",
+      "status": "PASS",
+      "independentSessions": true,
+      "realLiveUpdate": true,
+      "reload": true,
+      "exactPeerFields": {
+        "actualMinutes": "37",
+        "reminderChoice": "15",
+        "alarmAt": "2026-11-17T09:15",
+        "notificationAt": "2026-11-17T09:20",
+        "scheduledDate": "2026-11-17",
+        "scheduledTime": "09:00"
+      }
+    },
+    {
+      "case": "new account sync status and Refresh account",
+      "status": "PASS",
+      "currentBackend": true
+    },
+    {
+      "case": "legacy cache auto-adopts metadata only and peer receives all settings",
+      "status": "PASS",
+      "revision": 1,
+      "fullTaskRewrite": false
+    },
+    {
+      "case": "canonical settings win over conflicting device cache",
+      "status": "PASS"
+    },
+    {
+      "case": "competing actual clients CAS adopt one canonical winner",
+      "status": "PASS",
+      "canonicalRevision": 1,
+      "bothClientsConverged": true
+    },
+    {
+      "case": "completed historical details and alarm preferences share without delivery",
+      "status": "PASS",
+      "completedPreserved": true,
+      "noNotificationJobs": true
+    },
+    {
+      "case": "late old-owner CAS response cannot hydrate a new account",
+      "status": "PASS",
+      "capturedOwnerPersisted": true,
+      "newOwnerIsolated": true
+    },
+    {
+      "case": "actual schema0005 server preserves owner-scoped device fallback and honest status",
+      "status": "PASS",
+      "schema": "0001–0005",
+      "unsupportedMetadataNotClaimedShared": true
+    }
+  ],
+  "passed": true,
+  "pageErrors": [],
+  "productionWrites": false,
+  "physicalOrInstalledPwaClaims": false
+}

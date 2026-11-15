@@ -157,6 +157,7 @@
             <button type="button" class="secondary-button" id="install-app-button" hidden>Install app</button>
           </section>
           <div id="account-settings" class="settings-group"></div>
+          <section class="settings-row" id="account-sync-settings" hidden aria-labelledby="account-sync-heading"><div><h2 id="account-sync-heading">Across your devices</h2><p id="account-sync-copy" role="status"></p><p id="native-background-sync-status" hidden></p></div><button type="button" class="secondary-button" id="refresh-account-sync">Refresh account</button></section>
           <div id="axis-settings" class="settings-group"></div>
           <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Ringing task alarms</h2><p id="task-alarm-status" role="status">Ringing alarms are available in the iPhone app.</p><p id="task-alarms-description">Alarm time follows scheduled work until you choose a custom time. Each task has its own on/off switch.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms" disabled>Allow iPhone alarms</button><button type="button" class="secondary-button" id="disable-task-alarms" hidden>Cancel device alarms</button></div></section>
           <section class="settings-row" aria-labelledby="task-notifications-heading"><div><h2 id="task-notifications-heading">Normal notifications</h2><p id="task-notification-status" role="status">Checking notification availability…</p><p>A normal banner is separate from a ringing alarm. Its time follows the alarm until you choose a custom time.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-notifications">Enable notifications</button><button type="button" class="secondary-button" id="disable-task-notifications" hidden>Disable on this device</button></div></section>
@@ -223,7 +224,7 @@
       <details class="schedule-disclosure" id="task-schedule-options"><summary>Schedule time to work <span>Optional</span></summary><fieldset class="form-section"><legend>Scheduled work</legend><p>When you plan to work on it. This is independent from the deadline.</p><div class="form-grid schedule-grid"><label>Work date<input name="scheduledDate" type="date" /></label><label>Start time<input name="scheduledTime" type="time" /></label><label>Duration<select name="durationMinutes"><option value="30">30 min</option><option value="45" selected>45 min</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option></select></label></div></fieldset></details>
       <details class="plain-disclosure" id="actual-time-options"><summary>Log time spent</summary><fieldset class="form-section">
         <legend>Actual time spent</legend>
-        <p>Log the total time you worked on this task. It saves on this device.</p>
+        <p id="task-actual-time-help">Log the total time you worked on this task. It saves on this device.</p>
         <label>Minutes spent<input name="actualMinutes" type="number" min="0" max="10080" step="1" inputmode="numeric" /></label>
         <p id="class-time-estimate">Class average becomes available when shared Axis assignment data is connected.</p>
       </fieldset></details>
@@ -242,7 +243,7 @@
     <script src="./planner-ui.js?v=full-day-calendar-20261114"></script>
     <script src="./ical-parser.js"></script>
     <script src="./cloud-config.js"></script>
-    <script src="./planner-store.js?v=work-alerts-20261114"></script>
+    <script src="./planner-store.js?v=account-sync-20261115"></script>
     <script src="./planner-library.js?v=work-alerts-20261114"></script>
     <script src="./calendar-library-tabs.js?v=template-library-20261113"></script>
     <script src="./task-matrix.js?v=product-feedback-20261112"></script>
@@ -250,7 +251,7 @@
     <script src="./personal-goals.js?v=contextual-add-20261112"></script>
     <script src="./reminder-domain.js?v=2"></script>
     <script src="./work-alerts.js?v=work-alerts-20261114"></script>
-    <script src="./work-alert-controller.js?v=work-alerts-20261114"></script>
+    <script src="./work-alert-controller.js?v=account-sync-20261115"></script>
     <script src="./reminder-ledger.js?v=2"></script>
     <script src="./browser-notifications.js?v=app-1"></script>
     <script src="./motion-tokens.js?v=drawer-polish-20261112"></script>
@@ -262,10 +263,10 @@
     <script src="./phone-navigation.js?v=phone-navigation-20261112"></script>
     <script src="./app-install.js?v=app-1"></script>
     <script src="./task-alarms.js?v=work-alerts-20261114"></script>
-    <script src="./native-task-alarms.js?v=work-alerts-20261114"></script>
-    <script src="./native-task-notifications.js?v=work-alerts-20261114"></script>
+    <script src="./native-task-alarms.js?v=account-sync-20261115"></script>
+    <script src="./native-task-notifications.js?v=account-sync-20261115"></script>
     <script src="./task-list-drag.js?v=calendar-drag-preview-20261114"></script>
-    <script src="./app.js?v=calendar-focus-visible-20261115c"></script>
+    <script src="./app.js?v=account-sync-20261115"></script>
     <script src="./duck-mascot.js?v=transparent-icon-20261113"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>
     <script src="./duck-interactions.js"></script>

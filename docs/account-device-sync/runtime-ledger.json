@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-11-15T21:05:52.840830+00:00",
+  "browserRuntime": "Chromium157.0.8103.78",
+  "browserBaseline": {
+    "local": "PASS3/3",
+    "signedIn": "PASS3/3 with bounded iPad retest after waiting PATCH durability",
+    "initialIpadDiagnostic": "Reopen PATCH raced immediate DELETE because old harness waited optimistic state; retained original result; no product change required",
+    "evidence": [
+      "runtime-baseline-local.json",
+      "runtime-baseline-cloud.json",
+      "runtime-baseline-cloud-ipad-retest.json"
+    ]
+  },
+  "sharedSettings": "PASS8/8 actual independent authenticated clients/current0008 and real legacy0005",
+  "sharedEvidence": "runtime-shared-clients.json",
+  "reuseReason": "Final completed-history CAS rule/new Settings status do not change ordinary baseline feature paths; dedicated final8cases exercise them. Six baseline outcomes are not claimed rerun after copy-only status changes.",
+  "native": {
+    "status": "PASS \u201427unique fixture-backed device\u00d7mode outcomes;28successful runs",
+    "platform": "iOS27.2 Simulator24B8117/Xcode27.2(27B52)",
+    "defaultBuildBackgroundPush": false,
+    "physicalAPNsDelivery": "BLOCKED \u2014 Personal Team/free signing and no APNs keys; simulator delegate injection cannot prove APNs delivery",
+    "qaPhone": "919D2D60-8576-4327-A978-9D02456A9A28",
+    "qaIpad": "012D11BE-1C33-4C7C-B0F5-5242467F447F",
+    "phoneUniquePassModes": 14,
+    "ipadUniquePassModes": 13,
+    "evidence": "native/runtime-results.json",
+    "actualSharedSettings": "PASS \u2014phone37min/reminder15\u2192iPad92min/reminder60\u2192phone restored after relaunch; manual alarm/normal times preserved",
+    "permissionInteraction": "BLOCKED \u2014 actual iOS Allow notification prompt, Mac locked prevents native app control",
+    "simulatorSilentInvalidation": "BLOCKED \u2014simctl UNErrorDomain1401 no user-visible content",
+    "physicalRingNormalDeliveryStopSnooze": "NOT RUN \u2014physical/permission acceptance still required"
+  },
+  "dataSafety": {
+    "user8034Preserved": true,
+    "existingUserSimulatorPreserved": true,
+    "productionMutations": false,
+    "noCredentialsInEvidence": true,
+    "ownedServicesStillRunning": [],
+    "allSyntheticBrowserContextsClosed": true,
+    "qaDevicesRemoved": true,
+    "privateCredentialAndCommandFilesRemoved": true
+  },
+  "finalBackendReuseNote": "Final backend-only native device-cap atomic-admission regression does not change metadata/CAS/UI/ACK paths exercised here. Root owns final backend hash and focused admission tests; no frontend/native binary change."
+}

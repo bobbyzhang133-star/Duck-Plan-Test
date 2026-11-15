@@ -659,6 +659,57 @@ function setAccountMode(mode, { focus = true } = {}) {
   renderAccount();
   if (focus) requestAnimationFrame(() => els.accountSettings.querySelector("form input")?.focus());
 }
+let nativeAccountSyncState = null;
+let nativeSyncStatusRequest = 0;
+let nativeSnapshotRefresh = null;
+function renderAccountSyncStatus() {
+  const row = document.querySelector("#account-sync-settings");
+  if (!row) return;
+  row.hidden = store.mode !== "cloud";
+  const pending = store.listItems().some(task => task.workAlertsDeviceOnly || task.taskDetailsDeviceOnly);
+  document.querySelector("#account-sync-copy").textContent = store.settingsSyncError
+    ? "Some settings could not finish syncing. Your device copy is preserved. Refresh while online to retry."
+    : !store.supportsWorkAlerts || !store.supportsTaskDetails
+      ? "Tasks sync, but some alarm and reminder settings stay on this device until the account server is updated."
+      : pending ? "Some older settings are waiting to upload. Keep this device online while they finish syncing."
+        : "Task details, alarm settings, logged time and reminder choices are shared with devices signed into this account. Alarm and notification access is allowed separately on each device.";
+  const native = document.querySelector("#native-background-sync-status");
+  native.hidden = !window.DuckNativeSync;
+  native.textContent = nativeAccountSyncState
+    ? `${nativeAccountSyncState.reason || (nativeAccountSyncState.enabled && nativeAccountSyncState.registered ? "Background updates are enabled; iOS controls their delivery." : "Background updates are not active on this device.")}${Number.isFinite(nativeAccountSyncState.lastSyncAt) ? ` Last account refresh: ${new Date(nativeAccountSyncState.lastSyncAt).toLocaleString()}.` : ""}`
+    : "Checking this device's background sync…";
+}
+async function readNativeAccountSyncStatus(action = "status") {
+  if (!window.DuckNativeSync) return;
+  const ownerVersion = plannerOwnerVersion, request = ++nativeSyncStatusRequest;
+  try {
+    const result = await window.DuckNativeSync.request({ action });
+    if (ownerVersion !== plannerOwnerVersion || request !== nativeSyncStatusRequest) return;
+    nativeAccountSyncState = result;
+  } catch {
+    if (ownerVersion !== plannerOwnerVersion || request !== nativeSyncStatusRequest) return;
+    nativeAccountSyncState = { reason: "This device could not check background sync. Open DuckPlan while online to retry." };
+  }
+  renderAccountSyncStatus();
+}
+document.querySelector("#refresh-account-sync").addEventListener("click", event => runAction(event.currentTarget, async () => {
+  const ownerVersion = plannerOwnerVersion;
+  if (window.DuckNativeSync) await readNativeAccountSyncStatus("refresh");
+  if (ownerVersion !== plannerOwnerVersion) return;
+  await store.refresh();
+  if (ownerVersion !== plannerOwnerVersion) return;
+  await workAlerts.reconcile({ refresh: true });
+  if (ownerVersion === plannerOwnerVersion) { renderAccountSyncStatus(); showToast("Checked for account updates."); }
+}));
+window.addEventListener("duckplan:native-sync-updated", () => {
+  if (!window.DuckNativeSync || document.hidden || nativeSnapshotRefresh) return;
+  const ownerVersion = plannerOwnerVersion;
+  nativeSnapshotRefresh = (async () => {
+    await store.refresh();
+    if (ownerVersion === plannerOwnerVersion) await readNativeAccountSyncStatus();
+  })().catch(reportError).finally(() => { nativeSnapshotRefresh = null; });
+});
+window.addEventListener("duckplan:native-sync-status", () => { readNativeAccountSyncStatus(); });
 function renderAxis() {
   let body;
   if (store.mode !== "cloud") body = `<div><h2>Axis connection</h2><p>Sign in, then paste your Axis calendar feed link to import classes and assignments.</p></div><button type="button" class="secondary-button" id="connect-axis">Sign in first</button>`;
@@ -857,6 +908,7 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   calendarLibraryTabs?.render();
   personalGoals?.render(); personalNotes?.render();
   calendarTaskPreview.sync();
+  renderAccountSyncStatus();
   updatePrimaryAction(document.body.dataset.view || "calendar");
   if (els.modal.open) taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   refreshReminders();
@@ -1256,6 +1308,9 @@ function renderTaskAlertFields() {
       : pending.some(item => item.status === "too-far") ? "Device alerts can be scheduled up to one year ahead." : "Each alert can be turned off or given its own time.";
   const current = tasks.find(task => task.id === editingTaskId);
   document.querySelector("#task-alert-storage-help").hidden = !(store.mode === "cloud" && (store.supportsWorkAlerts === false || current?.workAlertsDeviceOnly));
+  document.querySelector("#task-actual-time-help").textContent = store.mode === "cloud" && store.supportsTaskDetails && !current?.taskDetailsDeviceOnly
+    ? "Log the total time you worked on this task. It is saved with your account and shared across your devices."
+    : "Log the total time you worked on this task. It is saved on this device.";
   document.querySelector("#task-alarm-account").hidden = Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
   document.querySelector("#task-alarm-signup").href = store.configured ? new URL("#settings", location.href).href : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
 }
@@ -1981,6 +2036,7 @@ store.subscribe(({ reason }) => {
     calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear();
     viewTransitions.cancel();
     renderedPlannerOwner = owner;
+    nativeAccountSyncState = null; nativeSyncStatusRequest += 1;
     taskListDrag?.cancel();
     clearTemplateDrag();
     plannerOwnerVersion += 1;
@@ -2000,6 +2056,7 @@ store.subscribe(({ reason }) => {
   if (["load", "auth"].includes(reason)) workAlertContextReady = true;
   if (workAlertContextReady && ["load", "auth", "remote", "persisted", "context"].includes(reason)) workAlerts.reconcile({ refresh: ["load", "auth"].includes(reason) }).catch(reportError);
   if (reason === "load" || reason === "auth") refreshAccountState();
+  if (["load", "auth", "context"].includes(reason)) readNativeAccountSyncStatus();
 });
 store.init().then(() => {
   workAlertContextReady = true;

@@ -11,11 +11,19 @@ const configured = value => Domain.forSave(value || plain(), { timeZone: "UTC" }
 const deferred = () => { let resolve, reject; const promise = new Promise((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; };
 const settle = async () => { for (let i = 0; i < 20; i += 1) await Promise.resolve(); };
 
-function fixture({ items = [], mode = "local", user = null, timeZone = "UTC", normalAvailable = true, normalCanSave = true, alarmCanSave = true, normalNative = true, storage = new Map() } = {}) {
+function fixture({ items = [], mode = "local", user = null, timeZone = "UTC", normalAvailable = true, normalCanSave = true, alarmCanSave = true, normalNative = true, storage = new Map(), supportsAdoption = false } = {}) {
   let clock = now, tasks = structuredClone(items), failStore = null, holdStore = null;
-  const writes = [], contexts = [], foreground = [], errors = [], timerCalls = [];
+  const writes = [], contexts = [], foreground = [], errors = [], timerCalls = [], adoptions = [];
   const store = {
-    mode, user, listItems: () => structuredClone(tasks),
+    mode, user, supportsSettingsAdoption: supportsAdoption, listItems: () => structuredClone(tasks),
+    async adoptItemSettings(id, { workAlerts }) {
+      adoptions.push({ id, workAlerts: structuredClone(workAlerts) });
+      const task = tasks.find(item => item.id === id);
+      if (!task || task.completed || task.workAlerts) return { item: structuredClone(task), adopted: false };
+      const next = { ...task, workAlerts: structuredClone(workAlerts) };
+      tasks = tasks.map(item => item.id === id ? next : item);
+      return { item: structuredClone(next), adopted: true };
+    },
     async upsertItem(task) {
       writes.push(structuredClone(task));
       if (failStore) { const message = failStore; failStore = null; throw new Error(message); }
@@ -59,7 +67,7 @@ function fixture({ items = [], mode = "local", user = null, timeZone = "UTC", no
   const localStorage = { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) };
   const controller = Controller.create({ store, alarms, notifications, timeZone, now: () => clock, timers, storage: localStorage, onForeground: task => foreground.push(task), onError: error => errors.push(error) });
   return {
-    controller, store, alarms, notifications, writes, contexts, foreground, errors, timerCalls, storage,
+    controller, store, alarms, notifications, writes, contexts, foreground, errors, timerCalls, storage, adoptions,
     setClock(value) { clock = value; }, setTasks(value) { tasks = structuredClone(value); },
     setOwner(id) { store.mode = id ? "cloud" : "local"; store.user = id ? { id } : null; },
     failStore(message) { failStore = message; },
@@ -225,4 +233,67 @@ test("detach and destroy clear foreground work and provider contexts without fut
   assert.equal(f.alarms.calls.at(-1).action, "detach"); assert.equal(f.notifications.calls.at(-1).action, "detach");
   f.setClock(Date.UTC(2026, 10, 15, 9)); f.controller.tick(); assert.equal(f.foreground.length, 0);
   f.controller.destroy(); f.controller.tick(); assert.equal(f.foreground.length, 0);
+});
+
+test("signed-in legacy alarm promotion preserves exact native time and never enables an absent notification", async () => {
+  const f = fixture({ items: [plain()], mode: "cloud", user: { id: "A" }, timeZone: "America/Los_Angeles", supportsAdoption: true });
+  const fireAt = Date.UTC(2026, 10, 15, 16, 30);
+  f.alarms.source.set("essay", { item_id: "essay", fire_at: fireAt, sound: "bright", snoozeMinutes: 10 });
+  await f.controller.reconcile({ refresh: true });
+  assert.equal(f.adoptions.length, 1); assert.equal(f.writes.length, 0, "migration must not upload a full stale task");
+  const prefs = f.store.listItems()[0].workAlerts;
+  assert.deepEqual(prefs.alarm, { enabled: true, mode: "manual", at: "2026-11-15T08:30", sound: "bright", snoozeMinutes: 10 });
+  assert.equal(prefs.notification.enabled, false);
+  assert.equal(f.alarms.records.get("essay").fire_at, fireAt);
+  assert.equal(f.notifications.records.has("essay"), false);
+  await f.controller.reconcile(); assert.equal(f.adoptions.length, 1);
+  f.controller.destroy();
+});
+
+test("legacy notification-only promotion keeps its recorded timezone and leaves ringing disabled", async () => {
+  const f = fixture({ items: [plain()], mode: "cloud", user: { id: "A" }, timeZone: "UTC", supportsAdoption: true });
+  f.notifications.source.set("essay", { item_id: "essay", fire_at: Date.UTC(2026, 10, 15, 16, 15), time_zone: "America/Los_Angeles" });
+  await f.controller.reconcile({ refresh: true });
+  const prefs = f.store.listItems()[0].workAlerts;
+  assert.equal(prefs.timeZone, "America/Los_Angeles"); assert.equal(prefs.alarm.enabled, false);
+  assert.deepEqual(prefs.notification, { enabled: true, mode: "manual", at: "2026-11-15T08:15" });
+  f.controller.destroy();
+});
+
+test("legacy promotion ignores expired, wrong-task, browser and absent records and leaves unconfigured tasks alone", async () => {
+  for (const kind of ["expired", "wrong-task", "browser", "absent"]) {
+    const f = fixture({ items: [plain()], mode: "cloud", user: { id: "A" }, supportsAdoption: true, normalNative: kind !== "browser" });
+    if (kind !== "absent") f.notifications.source.set("essay", { item_id: kind === "wrong-task" ? "other" : "essay", fire_at: kind === "expired" ? now - 60000 : Date.UTC(2026, 10, 15, 9) });
+    await f.controller.reconcile({ refresh: true });
+    assert.equal(f.adoptions.length, 0, kind); assert.equal(f.store.listItems()[0].workAlerts, undefined, kind);
+    assert.equal(savedCalls(f.alarms).length, 0, kind); f.controller.destroy();
+  }
+});
+
+test("canonical preferences returned by a lost legacy adoption race win over device-native records", async () => {
+  const f = fixture({ items: [plain()], mode: "cloud", user: { id: "A" }, supportsAdoption: true });
+  f.alarms.source.set("essay", { item_id: "essay", fire_at: Date.UTC(2026, 10, 15, 8) });
+  const canonical = configured(); canonical.workAlerts.alarm.enabled = false; canonical.workAlerts.notification.enabled = false;
+  f.store.adoptItemSettings = async () => { f.setTasks([canonical]); return { item: canonical, adopted: false }; };
+  await f.controller.reconcile({ refresh: true });
+  assert.equal(f.alarms.records.has("essay"), false); assert.equal(f.store.listItems()[0].workAlerts.alarm.enabled, false);
+  f.controller.destroy();
+});
+
+test("an owner change while legacy adoption is pending cannot schedule the previous account's alarms", async () => {
+  const f = fixture({ items: [plain()], mode: "cloud", user: { id: "A" }, supportsAdoption: true });
+  f.alarms.source.set("essay", { item_id: "essay", fire_at: Date.UTC(2026, 10, 15, 8) });
+  const started = deferred(), release = deferred();
+  f.store.adoptItemSettings = async () => { started.resolve(); await release.promise; return { item: configured(), adopted: true }; };
+  const pending = f.controller.reconcile({ refresh: true }); await started.promise;
+  f.setOwner("B"); f.setTasks([]); const next = f.controller.reconcile(); release.resolve(); await pending; await next;
+  assert.equal(savedCalls(f.alarms).length, 0); assert.equal(f.errors.length, 0); f.controller.destroy();
+});
+
+test("completed legacy tasks never promote native alarm times or schedule a new ringing occurrence", async () => {
+  const f = fixture({ items: [{ ...plain(), completed: true }], mode: "cloud", user: { id: "A" }, supportsAdoption: true });
+  f.alarms.source.set("essay", { item_id: "essay", fire_at: Date.UTC(2026, 10, 15, 8), sound: "bright", snoozeMinutes: 10 });
+  await f.controller.reconcile({ refresh: true });
+  assert.equal(f.adoptions.length, 0); assert.equal(savedCalls(f.alarms).filter(call => call.wallTime).length, 0);
+  assert.equal(f.store.listItems()[0].workAlerts, undefined); f.controller.destroy();
 });

@@ -32,23 +32,29 @@
     return { id: item.id, name: item.name, teacher: item.teacher || null, period: item.period || null, color: item.color, code: item.code || null, archived: Boolean(item.archived) };
   }
   function rowToTask(row) {
+    const details = row.task_details != null ? normalizeTaskDetails(row.task_details) : null;
     return {
       id: row.id, title: row.title, classId: row.class_id || null, type: row.type, notes: row.notes || "",
       priority: capitalize(row.priority) || "Medium", dueDate: row.due_date || "", dueTime: row.due_time ? row.due_time.slice(0, 5) : "",
       scheduledStart: row.scheduled_start ? row.scheduled_start.slice(0, 16) : null, scheduledEnd: null,
       durationMinutes: Number(row.duration_minutes || 45), completed: Boolean(row.completed), source: row.source || "manual",
       axisMissing: Boolean(row.axis_missing), schemaVersion: 2,
+      ...(row.deleted_at ? { deleted_at: row.deleted_at } : {}),
       importance: row.importance || null, urgency: row.urgency || "auto",
       ...(row.work_alerts != null ? { workAlerts: normalizeWorkAlerts(row.work_alerts) } : {}),
+      ...(details ? { taskDetails: details, actualMinutes: details.actualMinutes, reminderChoice: details.reminderChoice } : {}),
+      ...(Number.isSafeInteger(row.sync_revision) && row.sync_revision >= 0 ? { syncRevision: row.sync_revision } : {}),
     };
   }
   function taskToRow(task) {
+    const details = taskDetailsForTask(task);
     return {
       id: task.id, class_id: task.classId || null, type: task.type || "task", title: task.title, notes: task.notes || "",
       priority: String(task.priority || "Medium").toLowerCase(), due_date: task.dueDate || null, due_time: task.dueTime || null,
       scheduled_start: task.scheduledStart || null, duration_minutes: Number(task.durationMinutes || 45), completed: Boolean(task.completed),
       importance: task.importance || null, urgency: task.urgency || "auto",
       ...(Object.hasOwn(task, "workAlerts") && task.workAlerts !== undefined ? { work_alerts: task.workAlerts === null ? null : JSON.stringify(normalizeWorkAlerts(task.workAlerts)) } : {}),
+      ...(details !== undefined ? { task_details: details === null ? null : JSON.stringify(details) } : {}),
     };
   }
   function rowToTemplate(row) {
@@ -116,6 +122,21 @@
     return { version: 1, timeZone: value.timeZone,
       alarm: { enabled: alarm.enabled, mode: alarm.mode, at: alarmAt, sound: alarm.sound, snoozeMinutes: alarm.snoozeMinutes },
       notification: { enabled: notification.enabled, mode: notification.mode, at: notificationAt } };
+  }
+  function normalizeTaskDetails(value) {
+    const invalid = () => { throw new Error("Choose valid logged time and deadline reminder settings."); };
+    if (value === null) return null;
+    if (typeof value === "string") { if (value.length > 512) invalid(); try { value = JSON.parse(value); } catch { invalid(); } }
+    if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).length !== 3 || value.version !== 1 || !Object.hasOwn(value, "actualMinutes") || !Object.hasOwn(value, "reminderChoice")) invalid();
+    if (value.actualMinutes !== null && (!Number.isInteger(value.actualMinutes) || value.actualMinutes < 0 || value.actualMinutes > 10080)) invalid();
+    if (!["default", "off", "15", "60", "1440"].includes(value.reminderChoice)) invalid();
+    return { version: 1, actualMinutes: value.actualMinutes, reminderChoice: value.reminderChoice };
+  }
+  function taskDetailsForTask(task) {
+    if (task.taskDetails === null) return null;
+    if (task.taskDetails === undefined && !Object.hasOwn(task, "actualMinutes") && !Object.hasOwn(task, "reminderChoice")) return undefined;
+    const base = task.taskDetails === undefined ? { version: 1, actualMinutes: null, reminderChoice: "default" } : normalizeTaskDetails(task.taskDetails);
+    return normalizeTaskDetails({ ...base, ...(Object.hasOwn(task, "actualMinutes") ? { actualMinutes: task.actualMinutes ?? null } : {}), ...(Object.hasOwn(task, "reminderChoice") ? { reminderChoice: task.reminderChoice } : {}) });
   }
   function normalizeGoal(item) {
     const targetCount = Number(item.targetCount ?? 5), currentCount = Number(item.currentCount ?? 0);
@@ -336,15 +357,17 @@
       mode: "cloud",
       user,
       async load() {
-        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported } = await api("GET", "/planner");
+        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported, task_details_supported, settings_adoption_supported } = await api("GET", "/planner");
         return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization),
-          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true };
+          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true, taskDetailsAvailable: task_details_supported === true, settingsAdoptionAvailable: settings_adoption_supported === true };
       },
       saveTask: (task, state) => {
         const row = taskToRow(task);
         if (state.workAlertsAvailable !== true) delete row.work_alerts;
+        if (state.taskDetailsAvailable !== true) delete row.task_details;
         return api("PUT", `/items/${encodeURIComponent(task.id)}`, row);
       },
+      adoptSettings: (id, body) => api("POST", `/items/${encodeURIComponent(id)}/adopt-settings`, body),
       setCompleted: (id, completed) => api("PATCH", `/items/${encodeURIComponent(id)}`, { completed }),
       // Soft delete on the server, so the deletion reaches every device.
       deleteTask: (id) => api("DELETE", `/items/${encodeURIComponent(id)}`),
@@ -395,6 +418,7 @@
     let state = { classes: [], tasks: [], templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true };
     let unwatch = () => {};
     let authError = null;
+    let settingsSyncError = null;
     let providers = { password: true, google: false };
     let deviceAlertSequence = 0;
     const deviceAlertCommits = new Map();
@@ -409,14 +433,33 @@
       try { storage.setItem(`${IMPORTED_KEY}:${userId}`, value); } catch { /* Server receipt and this session still prevent duplicate imports. */ }
     }
 
-    function readDeviceExtras() {
-      try { return JSON.parse(storage.getItem(DEVICE_EXTRAS_KEY)) || {}; }
+    function readObject(key) {
+      try { const value = JSON.parse(storage.getItem(key)); return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
       catch { return {}; }
+    }
+    function deviceDetailsKey(target = backend) { return `${DEVICE_EXTRAS_KEY}:task-details:${target.mode}:${target.user?.id || "local"}`; }
+    function readDeviceExtras(target = backend, tasks = []) {
+      const values = readObject(deviceDetailsKey(target));
+      // Old releases used one id-keyed map. Claim only ids found in this owner's
+      // loaded planner; never offer another account's cached settings for adoption.
+      const legacy = readObject(DEVICE_EXTRAS_KEY), claims = readObject(`${DEVICE_EXTRAS_KEY}:claims`);
+      const owner = `${target.mode}:${target.user?.id || "local"}`;
+      for (const task of tasks) {
+        if (Object.hasOwn(values, task.id) || !Object.hasOwn(legacy, task.id) || (claims[task.id] && claims[task.id] !== owner)) continue;
+        try {
+          const details = taskDetailsForTask(legacy[task.id]);
+          if (!details) continue;
+          storage.setItem(`${DEVICE_EXTRAS_KEY}:claims`, JSON.stringify({ ...claims, [task.id]: owner }));
+          claims[task.id] = owner;
+          storage.setItem(deviceDetailsKey(target), JSON.stringify({ ...values, [task.id]: details }));
+          values[task.id] = details;
+        } catch { /* Keep legacy data intact when it cannot be safely claimed. */ }
+      }
+      return values;
     }
     function deviceAlertsKey(target = backend) { return `${DEVICE_EXTRAS_KEY}:work-alerts:${target.mode}:${target.user?.id || "local"}`; }
     function readDeviceAlerts(target = backend) {
-      try { const value = JSON.parse(storage.getItem(deviceAlertsKey(target))); return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
-      catch { return {}; }
+      return readObject(deviceAlertsKey(target));
     }
     function persistDeviceAlerts(task, target, available) {
       const values = readDeviceAlerts(target);
@@ -427,28 +470,31 @@
       }
       storage.setItem(deviceAlertsKey(target), JSON.stringify(values));
     }
-    function writeDeviceExtras(task) {
-      const extras = readDeviceExtras();
-      extras[task.id] = {
-        reminderChoice: task.reminderChoice || "default",
-        actualMinutes: Number.isInteger(task.actualMinutes) ? task.actualMinutes : null,
-      };
-      try { storage.setItem(DEVICE_EXTRAS_KEY, JSON.stringify(extras)); } catch { /* storage unavailable */ }
+    function writeDeviceExtras(task, target, available) {
+      const extras = readDeviceExtras(target), details = taskDetailsForTask(task);
+      if (details === undefined) return;
+      if (available && !Object.hasOwn(extras, task.id) && !Object.hasOwn(readObject(DEVICE_EXTRAS_KEY), task.id)) return;
+      // A null tombstone also prevents the unscoped legacy entry from returning.
+      extras[task.id] = !available ? details : null;
+      storage.setItem(deviceDetailsKey(target), JSON.stringify(extras));
     }
     function hydrateDeviceExtras(next) {
-      const extras = readDeviceExtras();
+      const extras = readDeviceExtras(backend, next.tasks);
       const alerts = backend.mode === "cloud" ? readDeviceAlerts() : {};
       return { ...next, tasks: next.tasks.map((task) => {
-        let fallback;
+        let fallback, details;
+        if (task.workAlerts != null && alerts[task.id] != null) { try { persistDeviceAlerts(task, backend, true); } catch { /* Canonical settings still win. */ } }
+        if (task.taskDetails != null && extras[task.id] != null) { try { writeDeviceExtras(task, backend, true); } catch { /* Canonical settings still win. */ } }
         try { if (task.workAlerts == null && alerts[task.id] != null) fallback = normalizeWorkAlerts(alerts[task.id]); } catch { /* Invalid local metadata must not hide the rest of the account. */ }
-        return { ...task, ...(extras[task.id] || {}), ...(fallback ? { workAlerts: fallback, workAlertsDeviceOnly: true } : {}) };
+        try { if (task.taskDetails == null && extras[task.id] != null) details = normalizeTaskDetails(extras[task.id]); } catch { /* Preserve other valid settings. */ }
+        return { ...task, ...(details ? { taskDetails: details, actualMinutes: details.actualMinutes, reminderChoice: details.reminderChoice, ...(backend.mode === "cloud" ? { taskDetailsDeviceOnly: true } : {}) } : {}), ...(fallback ? { workAlerts: fallback, workAlertsDeviceOnly: true } : {}) };
       }) };
     }
 
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
-    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, workAlertsAvailable: backend.mode === "local", ...next }; }
+    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, workAlertsAvailable: backend.mode === "local", taskDetailsAvailable: backend.mode === "local", settingsAdoptionAvailable: false, ...next }; }
     function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
-    function createSynchronization() { return { revision: 0, pendingWrites: 0, writeWaiters: new Set(), reloadRequested: false, reloadPromise: null }; }
+    function createSynchronization() { return { revision: 0, pendingWrites: 0, writeWaiters: new Set(), reloadRequested: false, reloadPromise: null, adoptions: new Map() }; }
     function wakeWrites(context) { for (const resolve of context.writeWaiters) resolve(); context.writeWaiters.clear(); }
     function waitForWrites(context) { return context.pendingWrites ? new Promise((resolve) => context.writeWaiters.add(resolve)) : Promise.resolve(); }
     async function persistCloudChange(context, work) {
@@ -457,6 +503,68 @@
       try { return await work(); }
       finally { context.pendingWrites -= 1; if (!context.pendingWrites) wakeWrites(context); }
     }
+    async function adoptItemSettings(id, settings = {}) {
+      const target = backend, generation = backendGeneration, context = synchronization;
+      const current = () => generation === backendGeneration && target === backend && context === synchronization;
+      const run = (context.adoptions.get(id) || Promise.resolve()).catch(() => {}).then(async () => {
+        await waitForWrites(context);
+        if (!current()) throw new Error("Your account changed. Please try again.");
+        if (target.mode !== "cloud" || !state.settingsAdoptionAvailable) throw new Error("This server hasn't added task settings sync yet. Your settings remain on this device.");
+        const task = state.tasks.find(item => item.id === id);
+        if (!task) return { item: null, adopted: false };
+        const body = { expected_revision: task.syncRevision };
+        if (!Number.isSafeInteger(body.expected_revision) || body.expected_revision < 0) throw new Error("Refresh your planner before syncing saved task settings.");
+        if (state.workAlertsAvailable && Object.hasOwn(settings, "workAlerts") && (task.workAlerts == null || task.workAlertsDeviceOnly)) {
+          const value = normalizeWorkAlerts(settings.workAlerts);
+          if (value != null) body.work_alerts = value;
+        }
+        if (state.taskDetailsAvailable && Object.hasOwn(settings, "taskDetails") && (task.taskDetails == null || task.taskDetailsDeviceOnly)) {
+          const value = normalizeTaskDetails(settings.taskDetails);
+          if (value != null) body.task_details = value;
+        }
+        if (!Object.hasOwn(body, "work_alerts") && !Object.hasOwn(body, "task_details")) return { item: task, adopted: false };
+        const revision = context.revision + 1;
+        const result = await persistCloudChange(context, () => target.adoptSettings(id, body));
+        if (!current()) return { item: result.item ? rowToTask(result.item) : null, adopted: result.adopted === true };
+        if (!result.item || result.item.id !== id) throw new Error("The server could not confirm the saved task settings. Refresh and try again.");
+        const canonical = rowToTask(result.item);
+        // Clear only the exact candidate acknowledged by this response. A newer
+        // device save must retain its own pending values until that save commits.
+        if (canonical.workAlerts != null && Object.hasOwn(body, "work_alerts")) {
+          const cached = readDeviceAlerts(target)[id];
+          if (JSON.stringify(cached) === JSON.stringify(body.work_alerts)) persistDeviceAlerts({ id }, target, true);
+        }
+        if (canonical.taskDetails != null && Object.hasOwn(body, "task_details")) {
+          const cached = readDeviceExtras(target)[id];
+          if (JSON.stringify(cached) === JSON.stringify(body.task_details)) writeDeviceExtras({ id, taskDetails: canonical.taskDetails }, target, true);
+        }
+        if (context.revision === revision && !context.pendingWrites) {
+          state = { ...state, tasks: canonical.deleted_at ? state.tasks.filter(item => item.id !== id) : state.tasks.map(item => item.id === id ? hydrateDeviceExtras({ tasks: [canonical] }).tasks[0] : item) };
+        } else {
+          // A live row or a user's edit arrived while CAS was pending. Reload
+          // after writes settle rather than replacing that newer task locally.
+          context.reloadRequested = true;
+          Promise.resolve().then(() => { if (current()) reloadCloud(); });
+        }
+        settingsSyncError = null;
+        notify("persisted");
+        return { item: canonical, adopted: result.adopted === true };
+      });
+      context.adoptions.set(id, run);
+      try { return await run; }
+      finally { if (context.adoptions.get(id) === run) context.adoptions.delete(id); }
+    }
+    async function adoptCachedSettings() {
+      if (backend.mode !== "cloud" || !state.settingsAdoptionAvailable) return;
+      const generation = backendGeneration;
+      for (const task of [...state.tasks]) {
+        if (generation !== backendGeneration) return;
+        if ((state.workAlertsAvailable && task.workAlertsDeviceOnly) || (state.taskDetailsAvailable && task.taskDetailsDeviceOnly)) {
+          try { await adoptItemSettings(task.id, { ...(state.workAlertsAvailable && task.workAlertsDeviceOnly ? { workAlerts: task.workAlerts } : {}), ...(state.taskDetailsAvailable && task.taskDetailsDeviceOnly ? { taskDetails: task.taskDetails } : {}) }); }
+          catch (error) { if (generation === backendGeneration) settingsSyncError = error.message; }
+        }
+      }
+    }
 
     async function activate(nextBackend) {
       const generation = ++backendGeneration;
@@ -464,6 +572,7 @@
       const context = synchronization = createSynchronization();
       unwatch();
       backend = nextBackend;
+      settingsSyncError = null;
       replaceState({ classes: [], tasks: [], organizationAvailable: nextBackend.mode === "local", personalAvailable: nextBackend.mode === "local" });
       notify("context");
       const next = await nextBackend.load();
@@ -473,6 +582,8 @@
         ? nextBackend.watch((value) => { if (generation === backendGeneration) { replaceState(value); notify("remote"); } })
         : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) applyRowChange(table, row); }, onReload: () => { if (generation === backendGeneration) reloadCloud(); } });
       if (nextBackend.mode === "cloud" && (context.revision || context.pendingWrites)) await reloadCloud();
+      if (generation !== backendGeneration) return;
+      await adoptCachedSettings();
       if (generation !== backendGeneration) return;
       notify("load");
     }
@@ -495,7 +606,9 @@
               context.reloadRequested = true;
               continue;
             }
-            replaceState(hydrateDeviceExtras(next)); notify("remote");
+            replaceState(hydrateDeviceExtras(next));
+            await adoptCachedSettings();
+            if (current()) notify("remote");
           } catch (error) {
             if (!current()) return;
             if (error.status === 401) { await activate(local); notify("auth"); return; }
@@ -630,6 +743,10 @@
       get supportsOrganization() { return state.organizationAvailable !== false; },
       get supportsPersonal() { return state.personalAvailable !== false; },
       get supportsWorkAlerts() { return backend.mode === "local" || state.workAlertsAvailable === true; },
+      get supportsTaskDetails() { return backend.mode === "local" || state.taskDetailsAvailable === true; },
+      get supportsSettingsAdoption() { return backend.mode === "cloud" && state.settingsAdoptionAvailable === true; },
+      get settingsSyncError() { return settingsSyncError; },
+      adoptItemSettings,
       // Which sign-in methods the Worker has set up (Google needs its client id and secret).
       get providers() { return providers; },
       // A sign-in problem from the last redirect (a cancelled Google sign-in), shown once.
@@ -739,16 +856,30 @@
       },
 
       async upsertItem(task) {
-        const activeBackend = backend, generation = backendGeneration, available = this.supportsWorkAlerts;
+        const activeBackend = backend, generation = backendGeneration, available = this.supportsWorkAlerts, detailsAvailable = this.supportsTaskDetails;
         const existing = state.tasks.find(item => item.id === task.id);
         const next = { completed: false, importance: null, urgency: "auto", ...task, id: task.id || newId(), schemaVersion: 2 };
+        if (task.taskDetails === undefined && existing?.taskDetails != null) next.taskDetails = existing.taskDetails;
         if (!Object.hasOwn(task, "workAlerts") && existing?.workAlerts !== undefined) next.workAlerts = existing.workAlerts;
+        if (taskDetailsForTask(task) === undefined && existing?.taskDetails !== undefined) {
+          next.taskDetails = existing.taskDetails;
+          next.actualMinutes = existing.actualMinutes;
+          next.reminderChoice = existing.reminderChoice;
+        }
         if (next.workAlerts !== undefined) next.workAlerts = normalizeWorkAlerts(next.workAlerts);
+        const details = taskDetailsForTask(next);
+        if (details !== undefined) {
+          next.taskDetails = details;
+          if (details) Object.assign(next, { actualMinutes: details.actualMinutes, reminderChoice: details.reminderChoice });
+          else { delete next.actualMinutes; delete next.reminderChoice; }
+        }
+        if (activeBackend.mode === "cloud") { delete next.syncRevision; if (existing?.syncRevision !== undefined) next.syncRevision = existing.syncRevision; }
         delete next.workAlertsDeviceOnly;
+        delete next.taskDetailsDeviceOnly;
         if (activeBackend.mode === "cloud" && !available && next.workAlerts != null) next.workAlertsDeviceOnly = true;
+        if (activeBackend.mode === "cloud" && !detailsAvailable && details != null) next.taskDetailsDeviceOnly = true;
         if (![null, "important", "not_important"].includes(next.importance) || !["auto", "urgent", "not_urgent"].includes(next.urgency)) throw new Error("Choose valid importance and urgency settings.");
         if (!this.supportsOrganization && (next.importance || next.urgency !== "auto")) throw new Error("Task organization isn't available on this server yet.");
-        writeDeviceExtras(next);
         const sequence = ++deviceAlertSequence;
         const commitKey = `${deviceAlertsKey(activeBackend)}:${next.id}`;
         deviceAlertAttempts.set(commitKey, sequence);
@@ -762,24 +893,44 @@
             catch { throw new Error("This server hasn't added work alert sync yet, and this device couldn't save the alert settings. Try again after freeing browser storage."); }
             finally { try { storage.removeItem(key); } catch { /* No settings were activated from the temporary write check. */ } }
           }
+          if (target.mode === "cloud" && !detailsAvailable && details != null) {
+            const key = `${deviceDetailsKey(target)}:check`;
+            try { storage.setItem(key, JSON.stringify({ ...readDeviceExtras(target), [next.id]: details })); }
+            catch { throw new Error("This server hasn't added task detail sync yet, and this device couldn't retain your logged time and reminder settings. Free browser storage and try again."); }
+            finally { try { storage.removeItem(key); } catch { /* Temporary storage check only. */ } }
+          }
           const saveResult = await target.saveTask(next, current);
-          if (Object.hasOwn(next, "workAlerts") && activeBackend.mode === "cloud" && sequence >= (deviceAlertCommits.get(commitKey) || 0)) {
-            try { persistDeviceAlerts(next, activeBackend, available); }
+          if (generation === backendGeneration && activeBackend === backend && saveResult?.item && state.tasks.find(item => item.id === next.id) === next) {
+            state = { ...state, tasks: state.tasks.map(item => item === next ? { ...next, ...rowToTask(saveResult.item) } : item) };
+          }
+          if (activeBackend.mode === "cloud" && sequence >= (deviceAlertCommits.get(commitKey) || 0)) {
+            try {
+              if (Object.hasOwn(next, "workAlerts")) persistDeviceAlerts(next, activeBackend, available);
+              if (details !== undefined) writeDeviceExtras(next, activeBackend, detailsAvailable);
+            }
             catch {
-              const error = new Error("Task saved, but this device couldn't retain its work alert settings. Free browser storage and save it again.");
+              const error = new Error("Task saved, but this device couldn't retain its work alert or task detail settings. Free browser storage and save it again.");
               error.taskSaved = true;
               error.savedTask = saveResult?.item ? { ...next, ...rowToTask(saveResult.item) } : next;
               throw error;
             }
             deviceAlertCommits.set(commitKey, sequence);
-            if (!available && generation === backendGeneration && activeBackend === backend && deviceAlertAttempts.get(commitKey) === sequence) {
+            if ((!available || !detailsAvailable) && generation === backendGeneration && activeBackend === backend && deviceAlertAttempts.get(commitKey) === sequence) {
               // The server's live echo can arrive before this device-only cache commit.
               // Restore only metadata, retaining canonical row fields and newer saves.
               state = { ...state, tasks: state.tasks.map(item => {
                 if (item.id !== next.id) return item;
-                const restored = { ...item, workAlerts: next.workAlerts };
-                if (next.workAlerts != null) restored.workAlertsDeviceOnly = true;
-                else delete restored.workAlertsDeviceOnly;
+                const restored = { ...item };
+                if (!available && Object.hasOwn(next, "workAlerts")) {
+                  restored.workAlerts = next.workAlerts;
+                  if (next.workAlerts != null) restored.workAlertsDeviceOnly = true;
+                  else delete restored.workAlertsDeviceOnly;
+                }
+                if (!detailsAvailable && details !== undefined) {
+                  restored.taskDetails = details;
+                  if (details) Object.assign(restored, { actualMinutes: details.actualMinutes, reminderChoice: details.reminderChoice, taskDetailsDeviceOnly: true });
+                  else delete restored.taskDetailsDeviceOnly;
+                }
                 return restored;
               }) };
             }
@@ -864,6 +1015,7 @@
         if (generation !== backendGeneration) throw new Error("Your account changed. Please start the import again.");
         const organizationTasks = localState.tasks.some((task) => task.importance || (task.urgency && task.urgency !== "auto"));
         if (!this.supportsWorkAlerts && localState.tasks.some(task => task.workAlerts != null)) throw new Error("This server can't import your work alarm and notification settings yet. They will stay safely in this browser.");
+        if (!this.supportsTaskDetails && localState.tasks.some(task => taskDetailsForTask(task) != null)) throw new Error("This server can't import your logged time and deadline reminder settings yet. They will stay safely in this browser.");
         if (!this.supportsPersonal && (localState.goals.length || localState.habits.length || localState.habitCheckins.length || localState.notes.length)) throw new Error("This server can't import your saved goals, habits and notes yet. They will stay safely in this browser.");
         if (!this.supportsOrganization && (localState.templates.length || localState.resources.length || organizationTasks || localState.organizationConfigured)) throw new Error("This server can't import your organization data yet. It will stay safely in this browser.");
         const plan = planLocalImport({ localTasks: localState.tasks, localClasses: localState.classes, cloudClasses: state.classes, localTemplates: localState.templates, localResources: localState.resources, localOrganization: localState.organizationConfigured ? localState.organization : undefined, localGoals: localState.goals, localHabits: localState.habits, localHabitCheckins: localState.habitCheckins, localNotes: localState.notes });
@@ -904,5 +1056,5 @@
     };
   }
 
-  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote, normalizeWorkAlerts };
+  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote, normalizeWorkAlerts, normalizeTaskDetails };
 });

@@ -24,6 +24,12 @@
 	<string>DuckPlan rings at the task times you choose, with Stop and Snooze controls.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>DuckPlanAPNSEnvironment</key>
+	<string>$(DUCKPLAN_APNS_API_ENVIRONMENT)</string>
+	<key>DuckPlanBackgroundSyncEnabled</key>
+	<string>$(DUCKPLAN_BACKGROUND_SYNC_ENABLED)</string>
+	<key>UIBackgroundModes</key>
+	<array><string>remote-notification</string></array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

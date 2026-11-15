@@ -13,6 +13,9 @@ targets:
   DuckPlan:
     type: application
     platform: iOS
+    configFiles:
+      Debug: Config/Debug.xcconfig
+      Release: Config/Release.xcconfig
     sources:
       - path: App
       - path: Shared
@@ -28,6 +31,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.duckplan.app
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: $(DUCKPLAN_PUSH_ENTITLEMENTS)
     info:
       path: App/Info.plist
       properties:
@@ -46,6 +50,10 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         NSAlarmKitUsageDescription: DuckPlan rings at the task times you choose, with Stop and Snooze controls.
         NSSupportsLiveActivities: true
+        DuckPlanAPNSEnvironment: $(DUCKPLAN_APNS_API_ENVIRONMENT)
+        DuckPlanBackgroundSyncEnabled: $(DUCKPLAN_BACKGROUND_SYNC_ENABLED)
+        UIBackgroundModes:
+          - remote-notification
     dependencies:
       - target: DuckPlanAlarmWidget
   DuckPlanAlarmWidget:

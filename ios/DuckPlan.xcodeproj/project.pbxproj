@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DACCBACCFB00000000000032 /* NativeBackgroundSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACCBACCFB00000000000031 /* NativeBackgroundSync.swift */; };
+		DACCBACCFB00000000000022 /* NativeSyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACCBACCFB00000000000021 /* NativeSyncEngine.swift */; };
+		DACCBACCFB00000000000012 /* NativeSyncDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACCBACCFB00000000000011 /* NativeSyncDomain.swift */; };
 		B159DE20CE984957A4AB0101 /* NativeScopeGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B159DE20CE984957A4AB0102 /* NativeScopeGuard.swift */; };
 		A04C2979BD5E47E9A48001A1 /* TaskNotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04C2979BD5E47E9A48001A2 /* TaskNotificationStore.swift */; };
 		178D47CDE5C9957EA8BD0FEA /* TaskAlarmWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1427811ED5A055F32DAABE63 /* TaskAlarmWidget.swift */; };
@@ -47,6 +50,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DACCBACCFB000000000000D2 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/Release.xcconfig; sourceTree = SOURCE_ROOT; };
+		DACCBACCFB000000000000D1 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/Debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		DACCBACCFB00000000000031 /* NativeBackgroundSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBackgroundSync.swift; sourceTree = "<group>"; };
+		DACCBACCFB00000000000021 /* NativeSyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSyncEngine.swift; sourceTree = "<group>"; };
+		DACCBACCFB00000000000011 /* NativeSyncDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSyncDomain.swift; sourceTree = "<group>"; };
 		B159DE20CE984957A4AB0102 /* NativeScopeGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeScopeGuard.swift; sourceTree = "<group>"; };
 		A04C2979BD5E47E9A48001A2 /* TaskNotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskNotificationStore.swift; sourceTree = "<group>"; };
 		0B89D50BD37B8C11ADB9243D /* DuckPlan.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DuckPlan.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +105,9 @@
 				2E7B73937E25901078870A2C /* TaskAlarmStore.swift */,
 				A04C2979BD5E47E9A48001A2 /* TaskNotificationStore.swift */,
 				B159DE20CE984957A4AB0102 /* NativeScopeGuard.swift */,
+				DACCBACCFB00000000000031 /* NativeBackgroundSync.swift */,
+				DACCBACCFB00000000000021 /* NativeSyncEngine.swift */,
+				DACCBACCFB00000000000011 /* NativeSyncDomain.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -239,6 +250,9 @@
 				CB75077ABFF1481AA270963A /* TaskAlarmStore.swift in Sources */,
 				A04C2979BD5E47E9A48001A1 /* TaskNotificationStore.swift in Sources */,
 				B159DE20CE984957A4AB0101 /* NativeScopeGuard.swift in Sources */,
+				DACCBACCFB00000000000032 /* NativeBackgroundSync.swift in Sources */,
+				DACCBACCFB00000000000022 /* NativeSyncEngine.swift in Sources */,
+				DACCBACCFB00000000000012 /* NativeSyncDomain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,8 +437,10 @@
 		};
 		C3E8638505486A0801239453 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DACCBACCFB000000000000D2 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "$(DUCKPLAN_PUSH_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -439,8 +455,10 @@
 		};
 		D76EAC5EE14FDB546CD136DE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DACCBACCFB000000000000D1 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "$(DUCKPLAN_PUSH_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

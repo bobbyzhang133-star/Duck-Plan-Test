@@ -21,6 +21,10 @@ web audio or silently replace alarms with notifications.
 
 Scheduled native requests use absolute instants. While their follow links are active, changing the work start updates the alarm and its linked normal notification. A manually chosen time stays fixed until the user restores its follow link. Once scheduled, iOS handles requests while DuckPlan is closed or offline. AlarmKit and normal-notification permissions are independent and can be revoked in Settings.
 
+## Cross-device settings
+
+The compatible account backend shares alarm/notification preferences, logged minutes and reminder choices. The default free Personal Team build refreshes these while the app is open. Receiving new changes while closed needs the separate push-enabled configuration, compatible provisioning and activated APNs server; iOS controls delivery. See the [implementation and verification record](../docs/account-device-sync/README.md) and [owner activation guide](../docs/account-device-sync/OWNER-ACTIVATION.md). Source synchronization or a successful build does not update an installed phone.
+
 ## Duck alarm appearance
 
 - System alerts use duck-yellow accents and a dark Snooze label for contrast.

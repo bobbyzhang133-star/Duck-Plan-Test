@@ -52,6 +52,7 @@ test('native reconciliation removes completed/deleted tasks and sign-out cancels
   await api.setContext('user-a', [{ id: 'essay', completed: false }, { id: 'quiz', completed: true }]);
   const context = calls.find(call => call.action === 'context');
   assert.deepEqual(Array.from(context.activeTaskIDs), ['essay']);
+  assert.equal(context.deviceEnabled, true, 'native background sync must receive this owner’s device choice');
   saved.set('essay', { item_id: 'essay' });
   await api.setContext('user-a', []);
   assert.equal(api.get('essay'), undefined);
@@ -76,13 +77,14 @@ test('native alarm adapter leaves ordinary web browsers unchanged', () => {
 });
 
 test('canceling device alarms stays paused across reconciliation and is isolated to its owner', async () => {
-  const { api, window, elements, saved } = setup();
+  const { api, window, elements, saved, calls } = setup();
   const preferences = new Map();
   window.localStorage = { getItem: key => preferences.get(key) ?? null, setItem: (key, value) => preferences.set(key, value) };
   const tasks = [{ id: 'essay', title: 'Essay' }];
   await api.setContext('owner-a', tasks);
   await api.save('essay', '2030-05-02T14:00', { title: 'Essay' });
   await elements.get('#disable-task-alarms').events.click();
+  assert.equal(calls.find(call => call.action === 'cancelAll').deviceEnabled, false);
   assert.equal(saved.size, 0);
   assert.equal(api.canSave(), false);
   await api.setContext('owner-a', tasks);
@@ -93,6 +95,9 @@ test('canceling device alarms stays paused across reconciliation and is isolated
   assert.equal(api.canSave(), false);
   await elements.get('#enable-task-alarms').events.click();
   assert.equal(api.canSave(), true);
+  const resumed = calls.find(call => call.action === 'authorize');
+  assert.equal(resumed.scope, 'owner-a');
+  assert.equal(resumed.deviceEnabled, true);
 });
 
 test('native alarm scheduling carries the owner and selected alert time zone', async () => {
