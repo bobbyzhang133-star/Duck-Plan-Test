@@ -1,13 +1,13 @@
 # AI recommended schedule first version plan
 
-Status: proposed implementation plan for Chat Check. Product source remains at `7c76aa616b831bda00401ce3e46160d8b2c260d7`. This planning branch changes documentation only. The existing [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c) is the review destination.
+Status: first implementation proposal refined after the completed Chat Check. Product source remains at `7c76aa616b831bda00401ce3e46160d8b2c260d7`. This planning branch changes documentation only. Review completed in the existing [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c); [returned review](ai-schedule-chat-response-2026-11-14.txt).
 
 ## User experience
 
-Add **Recommend schedule** to Calendar, beside the existing task actions without crowding the phone toolbar. A phone sheet and desktop/iPad side panel use the same steps:
+Add **Recommend schedule** to Calendar, beside the existing task actions without crowding the phone toolbar. Use the existing phone Tasks-sheet interaction pattern and the existing desktop/iPad task-column area, without a permanent third column. Both use the same steps:
 
-1. **Choose work.** Select unfinished, unscheduled tasks. Show each saved duration and deadline; allow editing an estimate before planning. Existing scheduled work remains fixed.
-2. **Choose available time.** Select Today or a date range, available hours for each day, break spacing and a daily work limit. Propose seven days as the initial range; this is a design recommendation, not a confirmed user requirement. Do not infer availability from free-text class periods. The 24-hour timetable remains available.
+1. **Choose work.** Select unfinished, unscheduled tasks. Show each saved duration and deadline. Use saved durations in V1; if an estimate needs changing, use the existing task editor first and generate a fresh proposal afterward. Existing scheduled work remains fixed.
+2. **Choose available time.** Select Today or a date range, available hours for each day, break spacing and a daily work limit. Propose seven days as the editable initial range, not a hard limit; this is a design recommendation, not a confirmed user requirement. Keep availability session-only initially. Do not infer it from free-text class periods. The 24-hour timetable remains available.
 3. **Generate a proposal.** Fit selected tasks around all existing scheduled items. Show proposed blocks in their existing class colors, clearly marked Suggested, with a short factual placement reason. Suggestions remain separate from saved tasks and scheduled alert requests.
 4. **Review.** Accept or exclude individual suggestions, adjust planning preferences and regenerate. Explain tasks that do not fit rather than dropping them or silently shortening their duration. Cancel changes nothing.
 5. **Apply selected.** Save the accepted work times to the same task IDs. Preserve deadlines, durations, class/color, notes, completion state and manual alert choices. Offer a guarded Undo for this applied batch.
@@ -19,7 +19,7 @@ Preserve the approved Calendar homepage, desktop/iPad task column, collapsed pho
 - Treat existing calendar blocks as occupied; V1 does not move them automatically.
 - Place complete tasks in one contiguous block, within explicitly chosen availability and the planning horizon, with no overlap or placement in the past. Overnight availability must be normalized correctly across dates and time-zone/DST boundaries.
 - Keep the saved duration. A task that needs more contiguous time than is available remains unplaced with an explanation.
-- Honor feasible deadlines using existing date-only deadline semantics. Explain overdue/impossible deadlines and offer a clearly identified recovery proposal after explicit selection; never change the original deadline to make a proposal look feasible.
+- Honor an explicit due time when present, and use the existing end-of-day semantics for date-only deadlines. Explain overdue/impossible deadlines and offer a clearly identified recovery proposal after explicit selection; never change the original deadline to make a proposal look feasible.
 - Order work using deadline pressure and the existing priority/importance/urgency fields. Missing importance stays unknown. Define tie-breaking deterministically so unchanged inputs yield stable proposals.
 - Count already scheduled work when enforcing a selected daily cap. Treat configurable breaks as unavailable spacing, not new tasks or invented alarms.
 - Revalidate each edited/regenerated proposal. A snapshot changed by another tab, account switch, task completion, deletion or a newly occupied interval invalidates the old proposal.
@@ -39,8 +39,10 @@ External AI is explicitly opt-in. Show the fields being sent and the chosen prov
 - `landing/app.js:93` routes task writes through `saveTaskWithAlerts`. The new batch integration must preserve that controller's work→alarm→notification links, independent switches, legacy/manual choices and owner guards. Preview generation must not schedule alerts.
 - `cloudflare/src/planner.js` currently supports per-item writes. A reliable whole-plan Apply requires a dedicated validated batch operation, an idempotency key and an atomic stale-snapshot check. Expose version/revision metadata to the client; include changes to occupied blocks, not only the selected tasks, in conflict detection. Do not call a loop of existing PUTs atomic.
 - For cloud Apply, commit the calendar changes together, then reconcile device alarms/notifications independently. An OS alert failure reports saved work plus the affected alert errors; it must not claim the task batch failed or retry by duplicating tasks.
-- For local Apply, validate first and persist the entire changed item collection once with rollback on storage failure. Undo restores only fields this batch changed, only while the task/owner versions still match; preserve later user edits.
-- Availability/break/cap preferences need an owner-scoped persistence contract and migration where cloud sync is supported. Free-text class periods and device-only `actualMinutes` do not establish class meeting times or cross-device learned estimates.
+- Before that commit, use the current alert controller's legacy-loading/default preparation logic for each selected task and persist the prepared alert preferences with its new work start atomically. Calling per-task Save would break atomicity; changing only starts then calling reconciliation would miss tasks whose preferences were previously absent. Preparation happens during Apply, with current-owner guards, and a failed legacy read aborts Apply without overwriting unknown settings. Keep the pre-batch preference presence/values and applicable legacy provider state for Undo; restore or cancel resulting device requests explicitly, since ordinary reconciliation skips tasks with absent preferences.
+- For local Apply, validate first and persist the entire changed item collection once with rollback on storage failure. A single localStorage write does not provide cross-tab compare-and-swap: define a shared owner-scoped lock/revision protocol for all participating task writers, or a transactional storage strategy, before promising conflict-safe local Apply. Test the supported fallback explicitly. Undo restores only fields this batch changed, only while the task/owner versions still match; preserve later user edits.
+- Cloud Undo is a separate owner-scoped, idempotent atomic operation with expected post-Apply versions. Reject a conflicting Undo as a batch, rather than restoring a subset through individual PUTs. Never roll back a later edit or recreate an expired/delivered alert while restoring calendar state.
+- If a later Save availability option is added, its break/cap preferences need an owner-scoped persistence contract and migration where cloud sync is supported. Session-only V1 inputs avoid silently persisting preferences. Free-text class periods and device-only `actualMinutes` do not establish class meeting times or cross-device learned estimates.
 - Add the new batch/AI requests to the existing restricted native transport contract and tests as needed; retain its origin, authentication, body-size and method limits. An older backend should explain which actions are unavailable without losing the preview or task data.
 
 ## Implementation sequence
@@ -65,8 +67,14 @@ External AI is explicitly opt-in. Show the fields being sent and the chosen prov
 
 Automatic background rescheduling, moving existing commitments, recurring-task generation, multi-session task splitting, external calendar imports and learned duration predictions are separate follow-ups. This plan does not deploy a website, migrate a production database, call a model with user task data or update the installed physical app.
 
-## Review request
+## Chat Check outcome
 
-Ask Repository Overview to reconcile this proposal with its earlier AI scheduling advice, distinguish confirmed user requirements from suggested defaults, inspect the exact TEST planning commit, and identify concrete scope gaps, unsafe assumptions, source causes and priority changes. Request a compact implementation order and acceptance list; return the first plan before product implementation.
+Repository Overview reports inspecting exact TEST planning commit `bd7f03e0abcf270389bdfa1de517adb2d1bdf06f`, the product feedback and current task/store/alert source. It supports the proposed user journey and confirms its earlier recommendation was an Organize my day/schedule-suggestion action with understandable changes and user confirmation. The detailed V1 constraints and seven-day default remain proposals, not historical user approvals. The review did not independently execute runtime tests.
+
+The review's main gates are atomic Apply/Undo, calendar-wide conflict revisions and separate post-commit alert reconciliation. Its P0 labels mean prerequisites for the proposed new capability; they do not establish a P0 incident in today's application. The revised plan also resolves duration editing, explicit due times, local cross-tab concurrency and legacy alert initialization/preservation.
+
+The reviewer recommends a rule-based first usable release, then optional model ranking. The user has been asked whether actual connected AI is required in the first release; until answered, the two release variants remain explicit. The shared scheduling/preview/persistence foundation is required by either variant.
 
 Relevant earlier local requirement: `docs/product-feedback-2026-11-12.md:37–39` calls for opt-in suggestions, explanations, user confirmation and a deterministic baseline before AI organization.
+
+The first local prototype is rule-based. The AI-enhanced V1 includes step5 only after provider/configuration and data-sharing choices are settled; a rule-based prototype must not be reported as completed AI integration. The original draft reviewed externally is TEST commit `bd7f03e0abcf270389bdfa1de517adb2d1bdf06f`; these duration/alert/Undo clarifications follow the independent source review.

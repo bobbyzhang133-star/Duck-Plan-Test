@@ -1,0 +1,633 @@
+DuckPlan — AI Recommend Schedule V1 Review
+Exact source accessible
+
+TEST commit bd7f03e · Planning review only
+
+I accessed the exact planning commit, its AI scheduling draft, the earlier product-feedback document, and the latest plans.md and AGENTS.md instructions.
+
+My overall recommendation is to approve the proposed user experience in principle, but not begin implementation until the batch-save and conflict-handling architecture is specified. A scheduling recommendation is useful only if applying it cannot corrupt the user's existing calendar.
+
+1. Recommended first-release experience
+
+The feature should be named Recommend Schedule and live inside the existing Calendar, not in a separate AI chatbot or independent task-management page.
+
+Choose assignments
+
+Select unfinished, unscheduled tasks. Show their estimated durations, deadlines and priorities. Let users exclude tasks.
+
+Choose available hours
+
+Explicitly identify when they are willing to work. Keep existing scheduled blocks fixed.
+
+Generate a suggested schedule
+
+Place complete assignments into free intervals. Show class-colored blocks and concise explanations, such as “Fits your 60-minute availability before Thursday's deadline.”
+
+Review and adjust
+
+Preview suggestions on the Calendar. Allow users to change a proposed time, exclude an assignment or regenerate. Explain why anything could not fit.
+
+Apply, with Undo
+
+Explicitly confirm the selected suggestions. Update the existing assignments rather than creating copies. Offer a safe Undo for that applied batch.
+
+The strongest part of the draft is separating recommendation from commitment. Previewing or rejecting a schedule must not change tasks, deadlines or alarms.
+
+What was previously requested versus recommended
+
+Category
+
+
+
+Status
+
+
+
+
+AI organization and scheduling assistance
+
+
+
+Expressed as a desired future DuckPlan feature
+
+
+
+
+User approval rather than silent automatic edits
+
+
+
+Consistent with my earlier recommendation and the planning feedback
+
+
+
+
+Deterministic baseline before AI
+
+
+
+My earlier recommendation, not an independently confirmed user requirement
+
+
+
+
+Seven-day scheduling horizon
+
+
+
+New proposal; not user-confirmed
+
+
+
+
+Whole-task scheduling, existing blocks fixed
+
+
+
+Proposed V1 constraints
+
+
+
+
+Optional external AI ranking
+
+
+
+Proposed architecture, not an approved provider or model
+
+
+
+
+No automatic background rescheduling
+
+
+
+Recommended V1 scope boundary
+
+My earlier advice was to start with an “Organize my day” or schedule-suggestion action, offer understandable changes, and require confirmation rather than introducing an AI chatbot or silently rearranging work. The new draft is consistent with that direction.
+
+2. Source-level mismatches and unsafe assumptions
+
+I checked the task store, model, backend write handlers, Calendar rendering and work-alert controller at the planning commit.
+
+Priority
+
+
+
+Finding
+
+
+
+Source and correction
+
+
+
+
+P0 — Must fix
+
+
+
+No atomic multi-task Apply
+
+
+
+cloudflare/src/planner.js:163–191 handles individual item writes. planner-store.js:343–346, 741–782 persists individual tasks. Introduce one validated, conflict-aware batch endpoint; do not loop through existing PUTs.
+
+
+
+
+P0 — Must fix
+
+
+
+No reliable conflict-version contract
+
+
+
+Tasks expose updated_at from D1, but the client mapping does not expose a dedicated item version or calendar revision. Changes to other occupied blocks can invalidate a preview even when selected tasks are unchanged.
+
+
+
+
+P0 — Must fix
+
+
+
+Batch scheduling cannot simply reuse individual alert saves
+
+
+
+app.js:93 uses workAlerts.save(), which calls store.upsertItem() per task before reconciliation. Applying a plan this way would lose atomicity.
+
+
+
+
+P1 — Clarify in design
+
+
+
+Duration editing contradicts preservation
+
+
+
+The draft permits editing an estimate before planning but promises unchanged saved durations. For V1, display saved durations read-only; offer a separate task edit that invalidates and regenerates the proposal.
+
+
+
+
+P1 — Correct scheduling rule
+
+
+
+Deadlines are not always date-only
+
+
+
+planner-store.js:34–51 preserves both dueDate and dueTime. Respect due time when present; for date-only deadlines, use the relevant local calendar day's end.
+
+
+
+
+P1 — Availability limitation
+
+
+
+Class periods are not reliable occupancy
+
+
+
+planner-store.js:26–33 maps period as text. A string such as “Period 7” cannot safely become a class meeting interval. Require explicit availability rather than inventing class times.
+
+
+
+
+P1 — Local concurrency
+
+
+
+One localStorage write is not a cross-tab compare-and-swap
+
+
+
+planner-store.js:255–258 writes the entire tasks array, but a separate tab could modify it between validation and saving. Local Apply needs a tested concurrency strategy.
+
+
+
+
+P2 — Avoid invented intelligence
+
+
+
+Actual time spent is not a trained duration model
+
+
+
+planner-store.js:428–440 stores actualMinutes as device extras. V1 should use the user's saved estimated duration rather than claiming to have learned their work speed.
+
+The most important architectural correction
+
+Applying a recommended schedule must be one logical transaction.
+
+For example, imagine the planner recommends:
+
+Proposed schedule
+
+Preview only
+
+Calculus practice
+
+3:00–4:00 PM
+
+Physics review
+
+4:15–5:00 PM
+
+English reading
+
+6:00–6:45 PM
+
+If Physics is scheduled by another device while this preview is open, DuckPlan must not apply the other two assignments while silently failing Physics. The default V1 behavior should be to reject the stale batch, refresh conflicts and ask the user to review again.
+
+3. Recommended data and API changes
+Cloud scheduling contract
+
+Introduce a single authenticated endpoint, conceptually:
+
+POST /api/schedule-plans/apply
+
+Its request should contain the owner-authenticated planning context, unique idempotency key, expected revision, accepted task IDs and proposed scheduled starts.
+
+The server must verify ownership, task eligibility, durations, available intervals, deadlines, occupied intervals and stale revisions. It must commit all accepted starts together or reject the entire batch.
+
+I recommend these supporting records:
+
+Data
+
+
+
+Purpose
+
+
+
+
+Task revision
+
+
+
+Detect edits, completion, deletion or rescheduling of selected assignments
+
+
+
+
+Owner-scoped calendar revision
+
+
+
+Detect newly occupied or changed intervals outside the selected tasks
+
+
+
+
+Apply receipt
+
+
+
+Make retries idempotent and distinguish confirmed success from an uncertain network result
+
+
+
+
+Undo receipt
+
+
+
+Record previous starts and guard a later inverse operation
+
+
+
+
+Optional saved availability
+
+
+
+Store user preferences only when explicitly chosen
+
+These are proposed new contracts, not existing capabilities.
+
+Cloudflare D1 supports transactional batch() execution and rollback when a statement fails. However, a precondition query followed by updates is not automatically safe against a concurrent write. Revision validation and task updates must be enforced within the same atomic operation, with a real failure on precondition mismatch—not merely a query that updates zero rows.
+Cloudflare D1 docs
+
+Every relevant task write path, including normal edits, imports and calendar rescheduling, must update the revision used for conflict detection.
+
+Undo design
+
+Undo should be a guarded inverse batch operation, not a blind restoration of an earlier calendar snapshot.
+
+It should restore only the scheduled-start fields changed by that Apply, and only when the tasks and affected intervals still satisfy the required revisions and conflict checks.
+
+If another device has already modified one assignment, DuckPlan should explain that the original batch can no longer be safely undone as a whole. It must never overwrite a later manual edit to make Undo succeed.
+
+Local/offline mode
+
+Local recommendations should work offline without sending task information to a server.
+
+The local store can persist a complete task array in one write, but current localStorage does not provide a cross-tab transactional comparison. For strict multi-tab safety, either introduce a supported shared-write locking strategy across all task mutations or use transactional storage such as IndexedDB.
+
+Until that is tested, do not claim that local Apply is fully race-safe simply because it writes one array.
+
+4. AI's role in V1
+
+I recommend a deliberately limited role for the model.
+
+Optional AI assistance
+
+The model may suggest which eligible assignments to prioritize when several valid schedules are possible.
+
+Deterministic scheduling engine
+
+The rules engine chooses and validates all actual time slots, enforces user availability, prevents conflicts and generates factual explanations.
+
+User
+
+The user reviews, edits, excludes and explicitly approves the schedule.
+
+I would not allow an LLM to generate arbitrary calendar writes. It should not be able to invent assignment IDs, choose times outside availability or change deadlines.
+
+The server-side AI ranking request should use minimum necessary scheduling metadata: task IDs, duration, deadlines, existing priority and importance, and the chosen planning constraints. Assignment titles should be optional, not required; notes, class resources, account details and unrelated personal data should be excluded.
+
+The fallback must be labeled Rule-based recommendation, while an actual model-assisted proposal can be labeled AI-assisted. The product should not present a heuristic as if a model generated it.
+
+No model, provider, budget or external data-sharing choice has been approved.
+
+5. Preserve the new alarm and notification system
+
+This is an especially important dependency because the current source now has two distinct work-alert channels.
+
+work-alerts.js:51–56 defines default-on ringing alarms following work starts, and default-on normal notifications following alarm times. work-alert-controller.js:98–131 reconciles delivery after individual task saves.
+
+The scheduler must therefore follow this order:
+
+Preview a new scheduledStart without scheduling any alert.
+
+Atomically commit the accepted work times.
+
+Update local task state from the confirmed result.
+
+Reconcile ringing alarms and normal notifications independently.
+
+Report any device alert errors separately from calendar-save success.
+
+A default linked alarm should follow the new work start. A manually chosen alarm or notification time must remain manual, and disabled channels and device pause must remain respected.
+
+If native scheduling fails after Apply, the message should say that the schedule saved but the device alert failed. It must not retry the schedule write in a way that creates duplicate or unintended changes.
+
+The same reconciliation is required after a successful Undo.
+
+6. Practical implementation order
+
+Phase
+
+
+
+Deliverable
+
+
+
+Gate to proceed
+
+
+
+
+1. Scheduling domain
+
+
+
+Pure availability, occupancy, deadline, priority and placement validator
+
+
+
+Deterministic tests pass for impossible inputs, midnight, DST and conflicts
+
+
+
+
+2. Preview UI
+
+
+
+Calendar entry, task selection, availability settings, class-colored ghost blocks and explanations
+
+
+
+Preview, regenerate and cancel produce zero task/alert writes
+
+
+
+
+3. Revision and batch persistence
+
+
+
+Owner-scoped revisions, transactional Apply, idempotency and guarded Undo
+
+
+
+Concurrent edits, partial failures and retries cannot produce partial plans
+
+
+
+
+4. Alerts and native integration
+
+
+
+Bulk post-commit alert reconciliation, native API allowlist updates, accurate errors
+
+
+
+Existing manual/off/paused alert behavior remains intact
+
+
+
+
+5. Optional AI ranking
+
+
+
+Consent screen, authenticated server request, validated ranking, rule-based fallback
+
+
+
+Invalid output, opt-out, timeout and offline modes remain safe
+
+
+
+
+6. Platform certification
+
+
+
+Browser, PWA, Worker/D1, iPhone WKWebView and supported iPad checks
+
+
+
+Each platform has independently recorded PASS, FAIL, BLOCKED or NOT RUN evidence
+
+I would place the desktop/iPad scheduling steps inside the existing task-column area, not add a permanent third column. On phones, the flow should use the existing Tasks-sheet interaction pattern while the Calendar remains full-width. Suggested blocks should look like existing calendar events with a distinct Suggested indicator; they should never look like already saved commitments.
+
+For V1, a seven-day horizon is a reasonable editable default, but I would avoid making it a hard limit. Similarly, availability could remain session-only initially, with an explicit option to save it later. These are reversible product choices, not implementation blockers.
+
+7. Required acceptance checks
+
+The most important cases are:
+
+Category
+
+
+
+Pass condition
+
+
+
+
+Scheduling correctness
+
+
+
+No overlap, no past slots, no placement outside availability, no silent task splitting
+
+
+
+
+Deadline correctness
+
+
+
+Date-only and timed deadlines handled correctly, with impossible work explained
+
+
+
+
+Preview isolation
+
+
+
+Zero task, alarm or notification writes before Apply
+
+
+
+
+Existing data
+
+
+
+Same task IDs and saved durations, notes, classes, priorities and deadlines
+
+
+
+
+Atomic failure
+
+
+
+One invalid or stale task rejects the complete Apply
+
+
+
+
+Occupancy conflict
+
+
+
+New calendar events in another tab/device invalidate overlapping proposals
+
+
+
+
+Idempotency
+
+
+
+Retrying a successful or uncertain request cannot apply twice
+
+
+
+
+Undo
+
+
+
+Restores only eligible starts and refuses to overwrite later changes
+
+
+
+
+Owner isolation
+
+
+
+Account switching invalidates proposals and pending callbacks; no cross-account data
+
+
+
+
+Alarm channels
+
+
+
+Follow-work and manual times, independent switches, pauses and failures preserved
+
+
+
+
+AI consent
+
+
+
+No external task metadata transmitted without opt-in; rejected/malformed output never writes
+
+
+
+
+Offline
+
+
+
+Rule-based previews remain usable; cloud writes cannot falsely claim success
+
+
+
+
+Native
+
+
+
+Actual WKWebView/API compatibility verified; OS delivery separately tested
+
+The current documentation records BLOCKED native iPad launch and simulator OS scheduling. Those are not passes. A successful compilation or simulated phone browser layout would not establish actual alarm delivery or iPad functionality.
+
+For release readiness, test both signed-in and local modes, stale backend compatibility, interrupted connectivity, installed PWA behavior, and real native task-saving flows. Keep deployment and physical-device claims explicitly separate from local validation.
+
+8. The one decision I would ask you to make
+
+The draft contains one genuine strategic choice that affects the first release.
+
+Should the first release include external model AI?
+
+Start with rule-based Recommend Schedule
+
+Ship the scheduling engine first, then add optional AI ranking after privacy, provider and budget decisions.
+
+Include optional model AI in V1
+
+Build the same safe scheduling engine plus a consent-based server AI integration before release.
+
+Use this direction
+
+I recommend the first option. It produces a useful scheduling feature sooner, builds the safety foundation that AI also needs, and avoids claiming model intelligence before a provider is actually connected.
+
+Overall verdict
+
+The existing draft is a strong first foundation. I would retain its core user journey and scope, while making four changes before it becomes implementation-ready: enforce timed deadlines correctly, remove the duration-edit ambiguity, specify atomic conflict-aware Apply/Undo, and separate schedule persistence from alert reconciliation.
+
+Plan status: Exact current source and planning documents inspected. This is a source-based review, not an independent runtime test. No code, repository, database, live tasks, model-service data or native app was changed.
