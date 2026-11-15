@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-11-15T23:44:20.489337+00:00",
+  "baseCommit": "c304e494f347ca979ee023215c6c931c742c45f5",
+  "branch": "codex/task-date-cards-20261115",
+  "scope": "User confirmed task cards only; keep exact-time deadline markers",
+  "sourceSha256": {
+    "landing/app.js": "2e797a7980cb306a168fb8893362b73f1a658745de40ebf912fc20a0ff368be7",
+    "landing/calendar-date-clarity.css": "ea8d1e3a0934f4e815951e6bd0b4a080059157a5f4ca8fe691cb498712bbc975",
+    "landing/index.html": "f363f0b50335da6558cb962a3ecf2759a73ac614ffe7b7200ef869f6537c90c3",
+    "landing/service-worker.js": "fb98254aab9b698d6fc51f387aafe74d3803d308d105d8e4ee11261a18ec6c5d"
+  },
+  "assetKey": "task-date-cards-20261115-final2",
+  "cacheVersion": 65,
+  "nodeChecks": {
+    "status": "PASS",
+    "count": 103,
+    "log": "/private/tmp/duckplan-task-date-cards-verification.log"
+  },
+  "runtime": {
+    "status": "PASS",
+    "viewportAccountCases": 8,
+    "browser": "Chromium157 viewport/touch emulation; local and real fixture Worker",
+    "offlineCardEditReconnect": "PASS",
+    "ledger": "runtime-ledger.json"
+  },
+  "nativeOrProductionChanges": false
+}

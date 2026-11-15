@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "surface": "fresh normal browser tab, not installed PWA",
+  "cacheProof": {
+    "keys": [
+      "duckplan-app-motion-preview-v65"
+    ],
+    "digests": {
+      "app.js": "2e797a7980cb306a168fb8893362b73f1a658745de40ebf912fc20a0ff368be7",
+      "calendar-date-clarity.css": "ea8d1e3a0934f4e815951e6bd0b4a080059157a5f4ca8fe691cb498712bbc975",
+      "index.html": "f363f0b50335da6558cb962a3ecf2759a73ac614ffe7b7200ef869f6537c90c3"
+    },
+    "scope": "http://127.0.0.1:8034/"
+  },
+  "offlineAssets": [
+    {
+      "name": "index.html",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "calendar-date-clarity.css",
+      "status": 200,
+      "fromServiceWorker": true
+    },
+    {
+      "name": "app.js",
+      "status": 200,
+      "fromServiceWorker": true
+    }
+  ],
+  "cardProof": {
+    "due": "DueThu, Nov 19 · 5:00 PM",
+    "work": "WorkToday · 3:00 PM–4:00 PM",
+    "icons": 2,
+    "overdue": true,
+    "after": true,
+    "text": "\n    \n    Offline card with independent datesNo classHigh · 0 min spentDueThu, Nov 19 · 5:00 PMWorkToday · 3:00 PM–4:00 PMPast deadlineWork after deadline\n    •••\n    Reschedule work\n  "
+  },
+  "offlineCardEdit": true,
+  "onlineReconnect": true,
+  "preservedIdDatesWorkAndPreferences": true,
+  "errors": [],
+  "productionWrites": false
+}

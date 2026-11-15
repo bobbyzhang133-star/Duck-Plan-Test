@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-11-15T23:38:19.934438+00:00",
+  "checkout": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-motion-preview",
+  "baseCommit": "c304e494f347ca979ee023215c6c931c742c45f5",
+  "sourceSha256": {
+    "landing/app.js": "2e797a7980cb306a168fb8893362b73f1a658745de40ebf912fc20a0ff368be7",
+    "landing/calendar-date-clarity.css": "ea8d1e3a0934f4e815951e6bd0b4a080059157a5f4ca8fe691cb498712bbc975",
+    "landing/index.html": "f363f0b50335da6558cb962a3ecf2759a73ac614ffe7b7200ef869f6537c90c3",
+    "landing/service-worker.js": "fb98254aab9b698d6fc51f387aafe74d3803d308d105d8e4ee11261a18ec6c5d",
+    "landing/calendar-date-presentation.js": "4400193757d2af291bca21562f46963aec96111e6e037b09160d7b980bbee48b",
+    "landing/planner-model.js": "faecc982b7a8676c47ecee91c7c678a2d5407690d96a9df57e1f08d2ae41f314",
+    "landing/planner-store.js": "3cf0456df6b828ac752c585954f8fcfd3f1bfcef495adb450f9f921c3b10f5d3",
+    "cloudflare/src/planner.js": "ba4bdfd6c8dc291bbd72f5df1584be9fbcd1668d4066feab69616558e6fd2c88"
+  },
+  "runtime": "Chromium 157.0.8103.78",
+  "fixtureBackend": "real isolated local Worker8796, fresh D1 schema0001\u20130008",
+  "cache": "duckplan-app-motion-preview-v65",
+  "assetKeys": "task-date-cards-20261115-final2",
+  "productionMutation": false,
+  "nativeProjectChanged": false
+}

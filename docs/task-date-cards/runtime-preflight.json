@@ -1,0 +1,2221 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "width": 835,
+      "cloud": false,
+      "reduce": true,
+      "status": "PASS",
+      "calendar": {
+        "checked": [
+          {
+            "n": 1,
+            "title": "Past deadline with work today",
+            "due": "Thu, Nov 19 · 5:00 PM",
+            "work": "Today · 3:00 PM–3:45 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": "Work after deadline",
+            "overdueClass": true,
+            "afterClass": true,
+            "completed": false,
+            "text": "\n    \n    Past deadline with work todayCalculusHigh · 0 min spentDueThu, Nov 19 · 5:00 PMWorkToday · 3:00 PM–3:45 PMPast deadlineWork after deadline\n    •••\n    Reschedule work\n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 2,
+            "title": "Future deadline with earlier work",
+            "due": "Sat, Nov 21 · 5:00 PM",
+            "work": "Today · 10:00 AM–11:00 AM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Future deadline with earlier workCalculusMediumDueSat, Nov 21 · 5:00 PMWorkToday · 10:00 AM–11:00 AM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 3,
+            "title": "Date-only due today without a work slot",
+            "due": "Fri, Nov 20 · End of day",
+            "work": null,
+            "dueCount": 1,
+            "workCount": 0,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": null,
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Date-only due today without a work slotCalculusMediumDueFri, Nov 20 · End of day\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": null,
+            "dueWeight": "400",
+            "workWeight": null,
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 4,
+            "title": "Earlier timed deadline today",
+            "due": "Fri, Nov 20 · 9:00 AM",
+            "work": "Today · 8:00 AM–8:30 AM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": null,
+            "overdueClass": true,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Earlier timed deadline todayCalculusHighDueFri, Nov 20 · 9:00 AMWorkToday · 8:00 AM–8:30 AMPast deadline\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 6,
+            "title": "Overnight work crosses deadline",
+            "due": "Sat, Nov 21 · 12:15 AM",
+            "work": "Today · 11:30 PM–1:00 AM (Nov 21)",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": "Work after deadline",
+            "overdueClass": false,
+            "afterClass": true,
+            "completed": false,
+            "text": "\n    \n    Overnight work crosses deadlineCalculusHighDueSat, Nov 21 · 12:15 AMWorkToday · 11:30 PM–1:00 AM (Nov 21)Work after deadline\n    •••\n    Reschedule work\n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 7,
+            "title": "Completed past deadline has no warning",
+            "due": "Thu, Nov 19 · 5:00 PM",
+            "work": "Today · 7:00 AM–7:45 AM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": true,
+            "text": "\n    \n    Completed past deadline has no warningCalculusMediumDueThu, Nov 19 · 5:00 PMWorkToday · 7:00 AM–7:45 AM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(104, 103, 94)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 8,
+            "title": "Inbox task without dates",
+            "due": "No deadline",
+            "work": "Not scheduled",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Inbox task without datesCalculusMediumDueNo deadlineWorkNot scheduled\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 9,
+            "title": "Long \"quoted\" <span data-fixture-injected=\"yes\"> title & clear dates without HTML injection",
+            "due": "Fri, Nov 20 · 7:00 PM",
+            "work": "Today · 5:00 PM–6:00 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Long \"quoted\" <span data-fixture-injected=\"yes\"> title & clear dates without HTML injectionComputer Science and a long course titleLowDueFri, Nov 20 · 7:00 PMWorkToday · 5:00 PM–6:00 PM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Low",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 10,
+            "title": "Scheduled work without a deadline",
+            "due": "No deadline",
+            "work": "Today · 2:00 PM–2:45 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Scheduled work without a deadlineCalculusMediumDueNo deadlineWorkToday · 2:00 PM–2:45 PM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          {
+            "n": 11,
+            "title": "Past work is not Today",
+            "due": "Thu, Nov 19 · End of day",
+            "work": "Thu, Nov 19 · 8:30 PM–9:15 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": null,
+            "overdueClass": true,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Past work is not TodayCalculusMediumDueThu, Nov 19 · End of dayWorkThu, Nov 19 · 8:30 PM–9:15 PMPast deadline\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          }
+        ],
+        "selectedFutureDoesNotRedefineToday": {
+          "todayWork": {
+            "title": "Past deadline with work today",
+            "due": "Thu, Nov 19 · 5:00 PM",
+            "work": "Today · 3:00 PM–3:45 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": "Work after deadline",
+            "overdueClass": true,
+            "afterClass": true,
+            "completed": false,
+            "text": "\n    \n    Past deadline with work todayCalculusHigh · 0 min spentDueThu, Nov 19 · 5:00 PMWorkToday · 3:00 PM–3:45 PMPast deadlineWork after deadline\n    •••\n    Reschedule work\n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          "futureWork": {
+            "title": "Work tomorrow is not Today",
+            "due": "Sat, Nov 21 · 6:00 PM",
+            "work": "Sat, Nov 21 · 4:00 PM–4:45 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Work tomorrow is not TodayCalculusMediumDueSat, Nov 21 · 6:00 PMWorkSat, Nov 21 · 4:00 PM–4:45 PM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          },
+          "pastWork": {
+            "title": "Past work is not Today",
+            "due": "Thu, Nov 19 · End of day",
+            "work": "Thu, Nov 19 · 8:30 PM–9:15 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": null,
+            "overdueClass": true,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Past work is not TodayCalculusMediumDueThu, Nov 19 · End of dayWorkThu, Nov 19 · 8:30 PM–9:15 PMPast deadline\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 7,
+                "right": 31,
+                "width": 24,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-select",
+                "left": 38,
+                "right": 220,
+                "width": 182,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 41,
+                "right": 220,
+                "width": 179,
+                "cardWidth": 227
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 182,
+                "right": 222,
+                "width": 40,
+                "cardWidth": 227
+              }
+            ]
+          }
+        }
+      },
+      "controls": {
+        "clickEditor": true,
+        "ellipsis": true,
+        "reschedule": true,
+        "completeReopenPersisted": true
+      },
+      "dashboard": {
+        "activeCards": [
+          {
+            "n": 1,
+            "title": "Past deadline with work today",
+            "due": "Thu, Nov 19 · 5:00 PM",
+            "work": "Today · 3:00 PM–3:45 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": "Work after deadline",
+            "overdueClass": true,
+            "afterClass": true,
+            "completed": false,
+            "text": "\n    \n    Today’s focusPast deadline with work todayCalculusHigh · 0 min spentDueThu, Nov 19 · 5:00 PMWorkToday · 3:00 PM–3:45 PMPast deadlineWork after deadline\n    Open task ↗\n    Reschedule work\n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit focus-open glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          },
+          {
+            "n": 2,
+            "title": "Future deadline with earlier work",
+            "due": "Sat, Nov 21 · 5:00 PM",
+            "work": "Today · 10:00 AM–11:00 AM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Future deadline with earlier workCalculusMediumDueSat, Nov 21 · 5:00 PMWorkToday · 10:00 AM–11:00 AM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          },
+          {
+            "n": 3,
+            "title": "Date-only due today without a work slot",
+            "due": "Fri, Nov 20 · End of day",
+            "work": null,
+            "dueCount": 1,
+            "workCount": 0,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": null,
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Date-only due today without a work slotCalculusMediumDueFri, Nov 20 · End of day\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": null,
+            "dueWeight": "400",
+            "workWeight": null,
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          },
+          {
+            "n": 4,
+            "title": "Earlier timed deadline today",
+            "due": "Fri, Nov 20 · 9:00 AM",
+            "work": "Today · 8:00 AM–8:30 AM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": "Past deadline",
+            "after": null,
+            "overdueClass": true,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Earlier timed deadline todayCalculusHighDueFri, Nov 20 · 9:00 AMWorkToday · 8:00 AM–8:30 AMPast deadline\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          },
+          {
+            "n": 6,
+            "title": "Overnight work crosses deadline",
+            "due": "Sat, Nov 21 · 12:15 AM",
+            "work": "Today · 11:30 PM–1:00 AM (Nov 21)",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": "Work after deadline",
+            "overdueClass": false,
+            "afterClass": true,
+            "completed": false,
+            "text": "\n    \n    Overnight work crosses deadlineCalculusHighDueSat, Nov 21 · 12:15 AMWorkToday · 11:30 PM–1:00 AM (Nov 21)Work after deadline\n    •••\n    Reschedule work\n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "High",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-timing-badges",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          },
+          {
+            "n": 9,
+            "title": "Long \"quoted\" <span data-fixture-injected=\"yes\"> title & clear dates without HTML injection",
+            "due": "Fri, Nov 20 · 7:00 PM",
+            "work": "Today · 5:00 PM–6:00 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Long \"quoted\" <span data-fixture-injected=\"yes\"> title & clear dates without HTML injectionComputer Science and a long course titleLowDueFri, Nov 20 · 7:00 PMWorkToday · 5:00 PM–6:00 PM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Low",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          },
+          {
+            "n": 10,
+            "title": "Scheduled work without a deadline",
+            "due": "No deadline",
+            "work": "Today · 2:00 PM–2:45 PM",
+            "dueCount": 1,
+            "workCount": 1,
+            "dueIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "workIcon": {
+              "hidden": "true",
+              "focusable": "false",
+              "width": 14
+            },
+            "past": null,
+            "after": null,
+            "overdueClass": false,
+            "afterClass": false,
+            "completed": false,
+            "text": "\n    \n    Scheduled work without a deadlineCalculusMediumDueNo deadlineWorkToday · 2:00 PM–2:45 PM\n    •••\n    \n  ",
+            "dueColumnCount": 0,
+            "dueColumnText": null,
+            "dot": 6,
+            "priority": "Medium",
+            "dueColor": "rgb(152, 80, 70)",
+            "workColor": "rgb(104, 103, 94)",
+            "dueWeight": "400",
+            "workWeight": "400",
+            "overflow": false,
+            "childBounds": [
+              {
+                "className": "task-check",
+                "left": 9,
+                "right": 33,
+                "width": 24,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-select",
+                "left": 39,
+                "right": 288.15625,
+                "width": 249.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-due",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-date-line task-date-work",
+                "left": 42,
+                "right": 288.15625,
+                "width": 246.15625,
+                "cardWidth": 297.15625
+              },
+              {
+                "className": "task-edit glass-button",
+                "left": 252.15625,
+                "right": 292.15625,
+                "width": 40,
+                "cardWidth": 297.15625
+              }
+            ]
+          }
+        ],
+        "completedHasNoOverdueWarning": true
+      },
+      "tasks": [
+        {
+          "n": 1,
+          "title": "Past deadline with work today",
+          "due": null,
+          "work": "Today · 3:00 PM–3:45 PM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": "Past deadline",
+          "after": "Work after deadline",
+          "overdueClass": true,
+          "afterClass": true,
+          "completed": false,
+          "text": "\n    \n    Past deadline with work todayCalculusHigh · 0 min spentWorkToday · 3:00 PM–3:45 PMPast deadlineWork after deadline\n    Nov 195:00 PM\n    •••\n    Reschedule work\n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 195:00 PM",
+          "dot": 6,
+          "priority": "High",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-timing-badges",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "title": "Future deadline with earlier work",
+          "due": null,
+          "work": "Today · 10:00 AM–11:00 AM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Future deadline with earlier workCalculusMediumWorkToday · 10:00 AM–11:00 AM\n    Nov 215:00 PM\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 215:00 PM",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "title": "Date-only due today without a work slot",
+          "due": null,
+          "work": "Not scheduled",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Date-only due today without a work slotCalculusMediumWorkNot scheduled\n    Nov 20End of day\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 20End of day",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Earlier timed deadline today",
+          "due": null,
+          "work": "Today · 8:00 AM–8:30 AM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": "Past deadline",
+          "after": null,
+          "overdueClass": true,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Earlier timed deadline todayCalculusHighWorkToday · 8:00 AM–8:30 AMPast deadline\n    Nov 209:00 AM\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 209:00 AM",
+          "dot": 6,
+          "priority": "High",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-timing-badges",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Work tomorrow is not Today",
+          "due": null,
+          "work": "Sat, Nov 21 · 4:00 PM–4:45 PM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Work tomorrow is not TodayCalculusMediumWorkSat, Nov 21 · 4:00 PM–4:45 PM\n    Nov 216:00 PM\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 216:00 PM",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 6,
+          "title": "Overnight work crosses deadline",
+          "due": null,
+          "work": "Today · 11:30 PM–1:00 AM (Nov 21)",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": "Work after deadline",
+          "overdueClass": false,
+          "afterClass": true,
+          "completed": false,
+          "text": "\n    \n    Overnight work crosses deadlineCalculusHighWorkToday · 11:30 PM–1:00 AM (Nov 21)Work after deadline\n    Nov 2112:15 AM\n    •••\n    Reschedule work\n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 2112:15 AM",
+          "dot": 6,
+          "priority": "High",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-timing-badges",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 7,
+          "title": "Completed past deadline has no warning",
+          "due": null,
+          "work": "Today · 7:00 AM–7:45 AM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": true,
+          "text": "\n    \n    Completed past deadline has no warningCalculusMediumWorkToday · 7:00 AM–7:45 AM\n    Nov 195:00 PM\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 195:00 PM",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 8,
+          "title": "Inbox task without dates",
+          "due": null,
+          "work": "Not scheduled",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Inbox task without datesCalculusMediumWorkNot scheduled\n    No due date\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "No due date",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 9,
+          "title": "Long \"quoted\" <span data-fixture-injected=\"yes\"> title & clear dates without HTML injection",
+          "due": null,
+          "work": "Today · 5:00 PM–6:00 PM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Long \"quoted\" <span data-fixture-injected=\"yes\"> title & clear dates without HTML injectionComputer Science and a long course titleLowWorkToday · 5:00 PM–6:00 PM\n    Nov 207:00 PM\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 207:00 PM",
+          "dot": 6,
+          "priority": "Low",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 10,
+          "title": "Scheduled work without a deadline",
+          "due": null,
+          "work": "Today · 2:00 PM–2:45 PM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Scheduled work without a deadlineCalculusMediumWorkToday · 2:00 PM–2:45 PM\n    No due date\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "No due date",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 11,
+          "title": "Past work is not Today",
+          "due": null,
+          "work": "Thu, Nov 19 · 8:30 PM–9:15 PM",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": "Past deadline",
+          "after": null,
+          "overdueClass": true,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Past work is not TodayCalculusMediumWorkThu, Nov 19 · 8:30 PM–9:15 PMPast deadline\n    Nov 19End of day\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 19End of day",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-timing-badges",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        },
+        {
+          "n": 12,
+          "title": "Future date-only deadline",
+          "due": null,
+          "work": "Not scheduled",
+          "dueCount": 0,
+          "workCount": 1,
+          "dueIcon": null,
+          "workIcon": {
+            "hidden": "true",
+            "focusable": "false",
+            "width": 14
+          },
+          "past": null,
+          "after": null,
+          "overdueClass": false,
+          "afterClass": false,
+          "completed": false,
+          "text": "\n    \n    Future date-only deadlineCalculusMediumWorkNot scheduled\n    Nov 22End of day\n    •••\n    \n  ",
+          "dueColumnCount": 1,
+          "dueColumnText": "Nov 22End of day",
+          "dot": 6,
+          "priority": "Medium",
+          "dueColor": null,
+          "workColor": "rgb(104, 103, 94)",
+          "dueWeight": null,
+          "workWeight": "400",
+          "overflow": false,
+          "childBounds": [
+            {
+              "className": "task-check",
+              "left": 9,
+              "right": 33,
+              "width": 24,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-select",
+              "left": 55,
+              "right": 500,
+              "width": 445,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-date-line task-date-work",
+              "left": 58,
+              "right": 497,
+              "width": 439,
+              "cardWidth": 665
+            },
+            {
+              "className": "task-edit glass-button",
+              "left": 620,
+              "right": 660,
+              "width": 40,
+              "cardWidth": 665
+            }
+          ]
+        }
+      ],
+      "persistence": {
+        "trustedDesktopDragAndUndo": false,
+        "exactDueWorkPrefsAfterReload": true,
+        "timedDeadlinePinsUnchanged": [
+          {
+            "minute": 540,
+            "y": 558
+          },
+          {
+            "minute": 1140,
+            "y": 1178
+          }
+        ]
+      }
+    }
+  ],
+  "passed": true,
+  "productionWrites": false,
+  "nativeOperations": false
+}
