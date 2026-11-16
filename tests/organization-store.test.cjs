@@ -19,7 +19,7 @@ const defaultClasses = () => [
 function localStore(storage = memoryStorage(), options = {}) {
   return Store.createPlannerStore({ storage, model: Model, defaultClasses, defaultTasks: () => [], documentRef: null, ...options });
 }
-async function cloudHarness({ storage = memoryStorage(), legacyPlanner = false } = {}) {
+async function cloudHarness({ storage = memoryStorage(), legacyPlanner = false, native = false, apiUrl = "/api" } = {}) {
   const [{ handleRequest }, { createFakeEnv, createCtx, ORIGIN }] = await Promise.all([
     import("../cloudflare/src/index.js"), import("./support/fake-cloudflare.mjs"),
   ]);
@@ -48,9 +48,9 @@ async function cloudHarness({ storage = memoryStorage(), legacyPlanner = false }
       const { classes, items } = await response.json();
       return new Response(JSON.stringify({ classes, items }), { headers: { "Content-Type": "application/json" } });
     }
-    return response;
+    return network.afterResponse ? network.afterResponse(request, response) : response;
   };
-  const makeStore = () => localStore(storage, { config: { apiUrl: "/api" }, fetchImpl, WebSocketImpl: Socket, locationRef: { href: `${ORIGIN}/#calendar` } });
+  const makeStore = () => localStore(storage, { config: { apiUrl, native }, fetchImpl, WebSocketImpl: Socket, locationRef: { href: `${ORIGIN}/#calendar` } });
   const store = makeStore();
   await store.init();
   return { ...fake, ctx, jar, requests, sockets, storage, store, makeStore, network };
@@ -533,4 +533,155 @@ test("refresh after a server upgrade enables saved features without losing exist
   assert.equal(reloaded.listItems()[0].id, task.id);
   await reloaded.signOut();
   assert.equal(reloaded.listTemplates()[0].id, localTemplate.id, "cloud upgrade preserves the separate local library");
+});
+
+
+test("native legacy templates persist per account, never call missing routes, and leave guest/resources separate", async () => {
+  const app = await cloudHarness({ legacyPlanner: true, native: true }), { store, storage } = app;
+  await store.upsertTemplate({ title: "Guest only" });
+  await store.signUp("native-a@store.test", "planner test password");
+  assert.equal(store.supportsOrganization, false);
+  assert.equal(store.supportsTemplates, true);
+  assert.equal(store.templatesDeviceOnly, true);
+  const subject = await store.upsertClass({ name: "Native class", color: "#538fc5" });
+  let template = await store.upsertTemplate({ title: "Device copy", classId: subject.id, durationMinutes: 55, notes: "Keep notes", reminderChoice: "60", priority: "High" });
+  template = await store.upsertTemplate({ ...template, title: "Edited device copy" });
+  assert.deepEqual(store.listTemplates(), [template]);
+  const reloaded = app.makeStore(); await reloaded.init();
+  assert.deepEqual(reloaded.listTemplates(), [template]);
+  await assert.rejects(store.upsertResource({ title: "No resource fallback", classId: subject.id, url: "https://school.test/" }), /available on this server/);
+  assert.equal(app.requests.filter(r => /task-templates|\/import|class-resources/.test(r.path)).length, 0);
+  await store.signOut();
+  assert.deepEqual(store.listTemplates().map(t => t.title), ["Guest only"]);
+  await store.signUp("native-b@store.test", "planner test password");
+  assert.deepEqual(store.listTemplates(), []);
+  await store.upsertTemplate({ title: "Other owner" });
+  await store.signIn("native-a@store.test", "planner test password");
+  assert.deepEqual(store.listTemplates(), [template]);
+  storage.full = true;
+  await assert.rejects(store.upsertTemplate({ ...template, title: "Failed write" }), /Quota/);
+  await assert.rejects(store.deleteTemplate(template.id), /Quota/);
+  assert.deepEqual(store.listTemplates(), [template]);
+  storage.full = false;
+  await store.deleteTemplate(template.id);
+  const empty = app.makeStore(); await empty.init(); assert.deepEqual(empty.listTemplates(), []);
+  // Corrupt storage is preserved and cannot be overwritten by a new save.
+  const key = [...storage.data.keys()].find(k => k.startsWith("duckplan-device-templates-v1:") && k.endsWith(encodeURIComponent(store.user.id)));
+  storage.data.set(key, "{broken");
+  await store.refresh();
+  assert.match(store.templateSyncError, /could not be read/);
+  await assert.rejects(store.upsertTemplate({ title: "Cannot erase broken cache" }), /could not be read/);
+  assert.equal(storage.data.get(key), "{broken");
+});
+
+test("native local fallback automatically imports once on capability upgrade and follows later cloud edits/deletion", async () => {
+  let legacy = true;
+  const app = await cloudHarness({ legacyPlanner: () => legacy, native: true }), { store } = app;
+  await store.signUp("native-upgrade@store.test", "planner test password");
+  const template = await store.upsertTemplate({ title: "Upgrade me", durationMinutes: 35, notes: "Saved on phone" });
+  legacy = false;
+  await store.refresh();
+  assert.equal(store.templatesDeviceOnly, false);
+  assert.equal(store.templateSyncError, null);
+  assert.deepEqual(store.listTemplates(), [template]);
+  const imports = app.requests.filter(r => r.path === "/api/import");
+  assert.equal(imports.length, 1);
+  assert.deepEqual(imports[0].body.templateRows, [Store.templateToRow(template)]);
+  const second = app.makeStore(); await second.init();
+  assert.deepEqual(second.listTemplates(), [template]);
+  await second.upsertTemplate({ ...template, title: "Changed on another client" });
+  await store.refresh(); assert.equal(store.listTemplates()[0].title, "Changed on another client");
+  await second.deleteTemplate(template.id);
+  await store.refresh(); await store.refresh();
+  assert.deepEqual(store.listTemplates(), []);
+  assert.equal(app.requests.filter(r => r.path === "/api/import").length, 1);
+});
+
+test("lost import acknowledgement keeps a retry receipt and cannot resurrect a remotely deleted template", async () => {
+  let legacy = true;
+  const app = await cloudHarness({ legacyPlanner: () => legacy, native: true }), { store } = app;
+  await store.signUp("native-lost@store.test", "planner test password");
+  const template = await store.upsertTemplate({ title: "Lost acknowledgement" });
+  let lose = true;
+  app.network.afterResponse = (request, response) => {
+    if (lose && request.path === "/api/import") { lose = false; throw new Error("Connection lost after commit"); }
+    return response;
+  };
+  legacy = false; await store.refresh();
+  assert.match(store.templateSyncError, /remain on this device/);
+  assert.deepEqual(store.listTemplates(), [template]);
+  // Separate website client edits/deletes the committed row before the app retries.
+  const website = Store.createPlannerStore({ storage: memoryStorage(), model: Model, defaultClasses, defaultTasks: () => [], config: { apiUrl: "/api" }, documentRef: null, fetchImpl: async (url, init = {}) => {
+    const [{ handleRequest }, { ORIGIN }] = await Promise.all([import("../cloudflare/src/index.js"), import("./support/fake-cloudflare.mjs")]);
+    return handleRequest(new Request(new URL(url, ORIGIN), { ...init, headers: { ...init.headers, Cookie: app.jar.value, Origin: ORIGIN } }), app.env, app.ctx);
+  } });
+  await website.init(); await website.deleteTemplate(template.id);
+  await store.refresh();
+  assert.deepEqual(store.listTemplates(), []);
+  assert.equal(store.templateSyncError, null);
+  const imports = app.requests.filter(r => r.path === "/api/import");
+  assert.equal(imports.length, 2);
+  assert.deepEqual(imports[0].body, imports[1].body);
+});
+
+test("edits and deletes during fallback adoption survive refresh without duplicate rows", async () => {
+  for (const remove of [false, true]) {
+    let legacy = true;
+    const app = await cloudHarness({ legacyPlanner: () => legacy, native: true }), { store } = app;
+    await store.signUp(`native-race-${remove}@store.test`, "planner test password");
+    const template = await store.upsertTemplate({ title: "Before upload" });
+    let release, started;
+    const waiting = new Promise(resolve => { release = resolve; });
+    const ready = new Promise(resolve => { started = resolve; });
+    app.network.intercept = async request => { if (request.path === "/api/import") { started(); await waiting; } };
+    legacy = false;
+    const refresh = store.refresh(); await ready;
+    if (remove) await store.deleteTemplate(template.id);
+    else await store.upsertTemplate({ ...template, title: "Edited during upload" });
+    release(); await refresh; await store.refresh();
+    assert.deepEqual(store.listTemplates().map(t => t.title), remove ? [] : ["Edited during upload"]);
+    const reloaded = app.makeStore(); await reloaded.init();
+    assert.deepEqual(reloaded.listTemplates(), store.listTemplates());
+    assert.equal(app.requests.filter(r => r.path === "/api/import").length, 1);
+  }
+});
+
+
+test("a previous owner's pending adoption cannot upload later templates into the next account", async () => {
+  let legacy = true;
+  const app = await cloudHarness({ native: true, legacyPlanner: () => legacy }), { store } = app;
+  await store.signUp("native-old-owner@store.test", "planner test password");
+  const first = await store.upsertTemplate({ title: "First old owner" });
+  await store.upsertTemplate({ title: "Second old owner" });
+  let release, started;
+  const waiting = new Promise(resolve => { release = resolve; });
+  const ready = new Promise(resolve => { started = resolve; });
+  app.network.afterResponse = async (request, response) => { if (request.path === "/api/import") { started(); await waiting; } return response; };
+  legacy = false; const refresh = store.refresh(); await ready;
+  await store.signOut(); await store.signUp("native-new-owner@store.test", "planner test password");
+  release(); await refresh;
+  assert.deepEqual(store.listTemplates(), []);
+  assert.equal(app.requests.filter(r => r.path === "/api/import").length, 1);
+  assert.equal(store.templateSyncError, null);
+  app.network.afterResponse = null;
+  await store.signIn("native-old-owner@store.test", "planner test password");
+  assert.deepEqual(store.listTemplates().map(t => t.title).sort(), ["First old owner", "Second old owner"]);
+  assert.equal(store.listTemplates().filter(t => t.id === first.id).length, 1);
+});
+
+test("a full device store after an acknowledged import stops retrying and preserves the immutable receipt", async () => {
+  let legacy = true;
+  const app = await cloudHarness({ native: true, legacyPlanner: () => legacy }), { store, storage } = app;
+  await store.signUp("native-quota-ack@store.test", "planner test password");
+  const template = await store.upsertTemplate({ title: "Receipt survives quota" });
+  app.network.afterResponse = (request, response) => { if (request.path === "/api/import") storage.full = true; return response; };
+  legacy = false; await store.refresh();
+  assert.match(store.templateSyncError, /Quota/);
+  assert.deepEqual(store.listTemplates(), [template]);
+  assert.equal(app.requests.filter(r => r.path === "/api/import").length, 1);
+  storage.full = false; app.network.afterResponse = null;
+  await store.refresh();
+  assert.equal(store.templateSyncError, null);
+  assert.deepEqual(store.listTemplates(), [template]);
+  assert.equal(app.requests.filter(r => r.path === "/api/import").length, 2);
 });

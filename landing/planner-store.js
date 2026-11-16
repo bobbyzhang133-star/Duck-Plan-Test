@@ -432,6 +432,7 @@
     let unwatch = () => {};
     let authError = null;
     let settingsSyncError = null;
+    let templateSyncError = null;
     let providers = { password: true, google: false };
     let deviceAlertSequence = 0;
     const deviceAlertCommits = new Map();
@@ -450,6 +451,112 @@
       try { const value = JSON.parse(storage.getItem(key)); return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
       catch { return {}; }
     }
+    // A signed-in native fallback is separate from both guest data and other
+    // accounts/API origins. Never discard the outbox until the server acknowledges it.
+    function nativeTemplateOwner(target = backend) {
+      return config.native === true && target.mode === "cloud" && target.user?.id;
+    }
+    function deviceTemplatesKey(target = backend) {
+      const origin = new URL(apiUrl, locationRef?.href || "https://duckplan.invalid/").href;
+      return `duckplan-device-templates-v1:${encodeURIComponent(origin)}:${encodeURIComponent(target.user.id)}`;
+    }
+    function readDeviceTemplates(target = backend) {
+      if (!nativeTemplateOwner(target)) return {};
+      const raw = storage.getItem(deviceTemplatesKey(target));
+      if (raw == null) return {};
+      try {
+        const value = JSON.parse(raw);
+        if (value?.version !== 1 || !Array.isArray(value.entries)) throw new Error();
+        const entries = {};
+        for (const entry of value.entries) {
+          if (!entry?.item?.id || !entry.revision || !["new", "importing", "linked"].includes(entry.phase)) throw new Error();
+          const item = normalizeTemplate(entry.item);
+          if (entries[item.id] || (entry.phase !== "new" && (!/^[a-f0-9]{64}$/.test(entry.importKey || "") || !entry.importRow))) throw new Error();
+          entries[item.id] = { ...entry, item };
+        }
+        return entries;
+      } catch { throw new Error("Saved device templates could not be read. They have been kept safely; please contact support before resetting app data."); }
+    }
+    function writeDeviceTemplates(entries, target = backend) {
+      storage.setItem(deviceTemplatesKey(target), JSON.stringify({ version: 1, entries: Object.values(entries) }));
+    }
+    function hydrateDeviceTemplates(next) {
+      if (!nativeTemplateOwner()) return next;
+      try {
+        const entries = readDeviceTemplates();
+        const ids = new Set(Object.keys(entries));
+        return { ...next, templates: [...(next.templates || []).filter(item => !ids.has(item.id)), ...Object.values(entries).filter(entry => !entry.deleted).map(entry => entry.item)] };
+      } catch (error) { templateSyncError = error.message; return next; }
+    }
+    function cacheTemplate(item, deleted = false) {
+      const entries = readDeviceTemplates(), previous = entries[item.id];
+      if (deleted && (!previous || previous.phase === "new")) delete entries[item.id];
+      else entries[item.id] = { ...(previous || { phase: "new" }), item, deleted, revision: crypto.randomUUID() };
+      // Commit first: a full/unavailable device store must never report success.
+      writeDeviceTemplates(entries);
+      synchronization.revision += 1;
+      state = { ...state, templates: [...state.templates.filter(value => value.id !== item.id), ...(deleted ? [] : [item])] };
+      templateSyncError = null;
+      notify("persisted");
+      if (state.organizationAvailable !== false) void reloadCloud();
+    }
+    async function adoptDeviceTemplates() {
+      if (!nativeTemplateOwner() || state.organizationAvailable === false) return false;
+      const target = backend, generation = backendGeneration, context = synchronization;
+      const current = () => generation === backendGeneration && target === backend;
+      if (context.templateAdoption) return context.templateAdoption;
+      const run = async () => {
+        let changed = false;
+        try {
+          await waitForWrites(context);
+          if (!current()) return false;
+          const ids = Object.keys(readDeviceTemplates(target));
+          for (const id of ids) {
+            if (!current()) break;
+            let entry = readDeviceTemplates(target)[id];
+            if (!entry) continue;
+            if (entry.phase === "new") {
+              // Persist an immutable retry plan before sending. Server import receipts
+              // prevent a lost response from duplicating or reviving a deleted row.
+              entry = { ...entry, phase: "importing", importKey: (crypto.randomUUID() + crypto.randomUUID()).replaceAll("-", ""), importRow: templateToRow(entry.item) };
+              const entries = readDeviceTemplates(target);
+              entries[id] = entry;
+              writeDeviceTemplates(entries, target);
+            }
+            if (entry.phase === "importing") {
+              await persistCloudChange(context, () => target.importRows({ classRows: [], itemRows: [], templateRows: [entry.importRow], resourceRows: [], idempotencyKey: entry.importKey }));
+              changed = true;
+              // Retain edits/deletions made while the request was in flight.
+              const entries = readDeviceTemplates(target);
+              if (!entries[id]) continue;
+              entries[id] = { ...entries[id], phase: "linked" };
+              writeDeviceTemplates(entries, target);
+              entry = entries[id];
+            }
+            if (!current()) break;
+            const revision = entry.revision;
+            if (entry.deleted) {
+              try { await persistCloudChange(context, () => target.deleteTemplate(id)); }
+              catch (error) { if (error.status !== 404) throw error; }
+            } else if (JSON.stringify(templateToRow(entry.item)) !== JSON.stringify(entry.importRow)) {
+              await persistCloudChange(context, () => target.saveTemplate(entry.item));
+            }
+            const entries = readDeviceTemplates(target);
+            if (entries[id]?.revision === revision) {
+              delete entries[id];
+              writeDeviceTemplates(entries, target);
+            }
+            changed = true;
+          }
+          if (current()) templateSyncError = null;
+        } catch (error) { if (current()) templateSyncError = `Templates remain on this device. Sync will retry when the planner refreshes. ${error.message}`; return false; }
+        return changed;
+      };
+      const pending = run().finally(() => { if (context.templateAdoption === pending) context.templateAdoption = null; });
+      context.templateAdoption = pending;
+      return pending;
+    }
+
     function deviceDetailsKey(target = backend) { return `${DEVICE_EXTRAS_KEY}:task-details:${target.mode}:${target.user?.id || "local"}`; }
     function readDeviceExtras(target = backend, tasks = []) {
       const values = readObject(deviceDetailsKey(target));
@@ -505,7 +612,7 @@
     }
 
     function notify(reason) { listeners.forEach((listener) => listener({ reason, mode: backend.mode })); }
-    function replaceState(next) { state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, workAlertsAvailable: backend.mode === "local", taskDetailsAvailable: backend.mode === "local", settingsAdoptionAvailable: false, ...next }; }
+    function replaceState(next) { next = hydrateDeviceTemplates(next); state = { templates: [], resources: [], organization: { urgencyDays: 2 }, organizationAvailable: true, goals: [], habits: [], habitCheckins: [], notes: [], personalAvailable: true, workAlertsAvailable: backend.mode === "local", taskDetailsAvailable: backend.mode === "local", settingsAdoptionAvailable: false, ...next }; }
     function cloudFor(user) { return createCloudBackend({ api, user, liveUrl: liveSocketUrl(apiUrl, locationRef), WebSocketImpl }); }
     function createSynchronization() { return { revision: 0, pendingWrites: 0, writeWaiters: new Set(), reloadRequested: false, reloadPromise: null, adoptions: new Map() }; }
     function wakeWrites(context) { for (const resolve of context.writeWaiters) resolve(); context.writeWaiters.clear(); }
@@ -586,6 +693,7 @@
       unwatch();
       backend = nextBackend;
       settingsSyncError = null;
+      templateSyncError = null;
       replaceState({ classes: [], tasks: [], organizationAvailable: nextBackend.mode === "local", personalAvailable: nextBackend.mode === "local" });
       notify("context");
       const next = await nextBackend.load();
@@ -597,6 +705,8 @@
       if (nextBackend.mode === "cloud" && (context.revision || context.pendingWrites)) await reloadCloud();
       if (generation !== backendGeneration) return;
       await adoptCachedSettings();
+      if (generation !== backendGeneration) return;
+      if (await adoptDeviceTemplates()) await reloadCloud();
       if (generation !== backendGeneration) return;
       notify("load");
     }
@@ -621,6 +731,7 @@
             }
             replaceState(hydrateDeviceExtras(next));
             await adoptCachedSettings();
+            if (current() && await adoptDeviceTemplates()) context.reloadRequested = true;
             if (current()) notify("remote");
           } catch (error) {
             if (!current()) return;
@@ -644,7 +755,7 @@
         const key = table === "task_templates" ? "templates" : "resources";
         const convert = table === "task_templates" ? rowToTemplate : rowToResource;
         const others = state[key].filter((item) => item.id !== row.id);
-        state = { ...state, [key]: row.deleted_at ? others : [...others, convert(row)] };
+        state = hydrateDeviceTemplates({ ...state, [key]: row.deleted_at ? others : [...others, convert(row)] });
       } else if (table === "planner_preferences") {
         state = { ...state, organization: organizationPreferences(row) };
       } else if (["goals", "habits", "notes"].includes(table)) {
@@ -754,6 +865,9 @@
       get configured() { return configured; },
       get user() { return backend.user || null; },
       get supportsOrganization() { return state.organizationAvailable !== false; },
+      get supportsTemplates() { return state.organizationAvailable !== false || Boolean(nativeTemplateOwner()); },
+      get templatesDeviceOnly() { return Boolean(nativeTemplateOwner()) && state.organizationAvailable === false; },
+      get templateSyncError() { return templateSyncError; },
       get supportsPersonal() { return state.personalAvailable !== false; },
       get supportsWorkAlerts() { return backend.mode === "local" || state.workAlertsAvailable === true; },
       get supportsTaskDetails() { return backend.mode === "local" || state.taskDetailsAvailable === true; },
@@ -840,14 +954,23 @@
       },
 
       async upsertTemplate(item) {
-        if (!this.supportsOrganization) throw new Error("Templates aren't available on this server yet. Your local templates are safe.");
+        if (!this.supportsTemplates) throw new Error("Templates aren't available on this server yet. Your local templates are safe.");
         const next = normalizeTemplate(item);
         if (next.classId && !state.classes.some((info) => info.id === next.classId)) throw new Error("Choose a class from your planner.");
+        if (nativeTemplateOwner() && (state.organizationAvailable === false || readDeviceTemplates()[next.id])) {
+          cacheTemplate(next);
+          return next;
+        }
         await mutate((current) => ({ ...current, templates: [...current.templates.filter((value) => value.id !== next.id), next] }), (current, target) => target.saveTemplate(next, current));
         return next;
       },
       async deleteTemplate(id) {
-        if (!this.supportsOrganization) throw new Error("Templates aren't available on this server yet.");
+        if (!this.supportsTemplates) throw new Error("Templates aren't available on this server yet.");
+        if (nativeTemplateOwner() && (state.organizationAvailable === false || readDeviceTemplates()[id])) {
+          const item = state.templates.find(value => value.id === id) || readDeviceTemplates()[id]?.item;
+          if (item) cacheTemplate(item, true);
+          return;
+        }
         return mutate((current) => ({ ...current, templates: current.templates.filter((item) => item.id !== id) }), (current, target) => target.deleteTemplate(id, current));
       },
       async upsertResource(item) {

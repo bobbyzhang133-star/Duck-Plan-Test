@@ -1,0 +1,33 @@
+✔ local templates and class resources survive editing/reload and stay empty after their last deletion (43.295708ms)
+✔ local urgency preferences accept both range boundaries and reject invalid changes without altering the saved value (1.355208ms)
+✔ task organization metadata round-trips through row conversion, reload and completion (1.191917ms)
+✔ local import maps class names once and assigns fresh IDs to tasks, templates and resources (0.373541ms)
+✔ storage exhaustion rejects template/resource/preference/task writes and rolls back the visible planner (0.798584ms)
+✔ cloud organization CRUD uses the real API row mappings and reloads persisted organization data (66.0355ms)
+✔ cloud import preserves local library data with remapped classes and fresh identifiers (41.181333ms)
+✔ a full import-marker store does not turn a committed import into failure or duplicate its rows on reload/retry (25.068417ms)
+✔ live library rows update and remove entries, while account switching clears private cloud data (28.279417ms)
+✔ a delayed failed library write from the previous account cannot restore its private snapshot after an account switch (55.541458ms)
+✔ a failed new-account planner load clears the previous account's private data before reporting failure (30.74825ms)
+✔ a stale session refresh cannot reactivate the previous account after a newer sign-in (27.532834ms)
+✔ pending initialization and its failure fallback cannot overwrite a newer account activation (52.349792ms)
+✔ delayed password/recovery responses cannot expose the previous account's recovery code after switching accounts (54.613875ms)
+✔ late sign-up/sign-in/recovery responses cannot activate an old owner or return its recovery code (89.205375ms)
+✔ auth activation finishing after an account switch cannot return a stale sign-up/recovery result (108.176834ms)
+✔ a delayed Axis response or its planner reload cannot overwrite a newer account's planner (59.40875ms)
+✔ old-server capability detection blocks organization writes and local imports without discarding local data (70.349667ms)
+✔ refresh after a server upgrade enables saved features without losing existing tasks or local data (20.540333ms)
+✔ native legacy templates persist per account, never call missing routes, and leave guest/resources separate (38.806875ms)
+✔ native local fallback automatically imports once on capability upgrade and follows later cloud edits/deletion (25.240584ms)
+✔ lost import acknowledgement keeps a retry receipt and cannot resurrect a remotely deleted template (21.346459ms)
+✔ edits and deletes during fallback adoption survive refresh without duplicate rows (43.229833ms)
+✔ a previous owner's pending adoption cannot upload later templates into the next account (38.76425ms)
+✔ a full device store after an acknowledged import stops retrying and preserves the immutable receipt (20.31425ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1165.914208

@@ -992,7 +992,7 @@ function updatePrimaryAction(view) {
   button.textContent = `＋ ${labels[view] || "Add task"}`;
   button.hidden = view === "settings";
   button.disabled = (["goals", "notes"].includes(view) && store.supportsPersonal === false)
-    || (view === "calendar" && calendarLibraryTabs?.selected === "templates" && store.supportsOrganization === false);
+    || (view === "calendar" && calendarLibraryTabs?.selected === "templates" && (store.supportsTemplates ?? store.supportsOrganization) === false);
   button.setAttribute("aria-haspopup", "dialog");
   els.search.closest(".search-box").hidden = !["calendar", "home", "tasks"].includes(view);
 }
