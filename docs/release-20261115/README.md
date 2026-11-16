@@ -22,3 +22,5 @@ All test accounts and planner records were synthetic. Your existing simulator an
 ## Update the installed iPhone app
 
 Open the existing local Xcode project, choose your connected iPhone as the run destination and click Run. Xcode installs the rebuilt app over the existing installation. A source synchronization, GitHub push or unsigned build alone does not update the installed phone. Test device-specific permissions and delivery after installation. Server-backed features additionally require the matching owner-deployed backend/schema described in `docs/account-device-sync/OWNER-ACTIVATION.md`.
+
+Portable app export: based on native source commit `132844ec0731225b769bfcecb46f3b61ca6d44a2`. The only project-setting export difference is clearing four personal `DEVELOPMENT_TEAM` selections. The existing local Xcode checkout retains all four original selections.
