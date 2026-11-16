@@ -1,0 +1,11 @@
+{
+  "reviewedCommit": "ca0a00e5e20da741498a63397b760b3961b6f3ea",
+  "files": {
+    "landing/app.js": "64af6a73d9ef6c51d67309dfaefe5a93ce60f02414570eda715a6852252e43f6",
+    "landing/index.html": "f44574c4723a7bdee35c7cb1cee1f052bd75a66e73cf84c5c134feaafa8bab84",
+    "landing/planner-model.js": "faecc982b7a8676c47ecee91c7c678a2d5407690d96a9df57e1f08d2ae41f314",
+    "landing/calendar-date-presentation.js": "4400193757d2af291bca21562f46963aec96111e6e037b09160d7b980bbee48b",
+    "landing/calendar-date-clarity.css": "ea8d1e3a0934f4e815951e6bd0b4a080059157a5f4ca8fe691cb498712bbc975",
+    "landing/calendar-task-preview.js": "e2d2a3d12e50c42f22d875c452b43039636b3cc9d0434d74ace7b79b82c94f50"
+  }
+}

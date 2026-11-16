@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "case": "fresh local URL without route opens Calendar",
+  "view": "calendar",
+  "hash": "#calendar"
+}
