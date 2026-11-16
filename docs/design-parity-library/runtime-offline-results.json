@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "mode": "isolated browser SW67; not installed PWA",
+  "versions": {
+    "caches": [
+      "duckplan-app-motion-preview-v67"
+    ],
+    "assets": [
+      {
+        "file": "planner-store.js",
+        "matches": true
+      },
+      {
+        "file": "planner-library.js",
+        "matches": true
+      },
+      {
+        "file": "planner-library.css",
+        "matches": true
+      },
+      {
+        "file": "app.js",
+        "matches": true
+      }
+    ]
+  },
+  "offlineTemplateCreateReloadReconnect": true,
+  "paint": "rgb(255, 243, 191)",
+  "errors": []
+}

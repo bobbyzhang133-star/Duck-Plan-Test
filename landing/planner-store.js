@@ -13,7 +13,20 @@
   const RESOURCES_KEY = "duckplan-demo-resources-v1";
   const ORGANIZATION_KEY = "duckplan-demo-organization-v1";
   const PERSONAL_KEY = "duckplan-demo-personal-v1";
-  const NO_CLASS = { id: null, name: "No class", color: "#8f8a7d", soft: "#efede7", code: "•", teacher: "", period: "", archived: false };
+  const DEFAULT_TASK_COLOR = "#d2a31f";
+  const DEFAULT_TASK_SOFT = "#fff3bf";
+  const NO_CLASS = { id: null, name: "No class", color: DEFAULT_TASK_COLOR, soft: DEFAULT_TASK_SOFT, defaultWorkFill: DEFAULT_TASK_SOFT, code: "•", teacher: "", period: "", archived: false };
+
+  // Resolve the original built-in Personal material without rewriting saved class
+  // records. Imported built-ins retain the original metadata after UUID remapping.
+  function presentedClass(item) {
+    if (!item) return NO_CLASS;
+    const builtInPersonal = item.id === "personal" || (item.name === "Personal" && item.code === "★" && item.teacher === "Personal" && item.period === "Anytime");
+    if (builtInPersonal && ["#c48b34", DEFAULT_TASK_COLOR].includes(item.color?.toLowerCase())) {
+      return { ...item, color: DEFAULT_TASK_COLOR, soft: DEFAULT_TASK_SOFT, defaultWorkFill: DEFAULT_TASK_SOFT };
+    }
+    return item;
+  }
 
   function newId() { return globalThis.crypto.randomUUID(); }
   function softColor(hex) {
@@ -778,7 +791,7 @@
 
       listItems(range) { return state.tasks.filter((task) => taskInRange(task, range)); },
       listClasses({ includeArchived = false } = {}) { return state.classes.filter((item) => includeArchived || !item.archived); },
-      classById(id) { return state.classes.find((item) => item.id === id) || NO_CLASS; },
+      classById(id) { return presentedClass(state.classes.find((item) => item.id === id)); },
       listTemplates() { return [...state.templates]; },
       listResources({ classId } = {}) { return state.resources.filter((item) => !classId || item.classId === classId); },
       organizationPreferences() { return { ...state.organization }; },
@@ -1057,5 +1070,5 @@
     };
   }
 
-  return { NO_CLASS, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote, normalizeWorkAlerts, normalizeTaskDetails };
+  return { NO_CLASS, DEFAULT_TASK_COLOR, DEFAULT_TASK_SOFT, attachClassIds, classToRow, createPlannerStore, planLocalImport, localImportFingerprint, rowToClass, rowToTask, softColor, taskInRange, taskToRow, rowToTemplate, templateToRow, rowToResource, resourceToRow, normalizeTemplate, normalizeResource, organizationPreferences, rowToGoal, goalToRow, rowToHabit, habitToRow, rowToHabitCheckin, habitCheckinToRow, rowToNote, noteToRow, normalizeGoal, normalizeHabit, normalizeNote, normalizeWorkAlerts, normalizeTaskDetails };
 });

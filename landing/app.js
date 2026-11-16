@@ -11,7 +11,7 @@ const DEFAULT_CLASSES = [
   { id: "english", name: "English", color: "#d96f63", code: "E", teacher: "Mr. Ramirez", period: "Period 4" },
   { id: "physics", name: "Physics", color: "#7d6fbd", code: "P", teacher: "Dr. Shah", period: "Period 5" },
   { id: "computer-science", name: "Computer Science", color: "#3e946d", code: "CS", teacher: "Ms. Chen", period: "Period 7" },
-  { id: "personal", name: "Personal", color: "#c48b34", code: "★", teacher: "Personal", period: "Anytime" },
+  { id: "personal", name: "Personal", color: "#d2a31f", code: "★", teacher: "Personal", period: "Anytime" },
 ];
 const nowKey = () => Model.todayKey();
 const relativeDate = (amount) => Model.addDays(nowKey(), amount);
@@ -864,7 +864,7 @@ function renderTimeline(dates) {
     const events = workEvents.map(({ task, start, end, lane, lanes, top, height, availableWidth }) => {
       const info = classInfo(task);
       const timing = Model.taskTiming(task);
-      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * availableWidth}% + 3px);width:calc(${availableWidth / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
+      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};--course-default-fill:${info.defaultWorkFill || 'initial'};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * availableWidth}% + 3px);width:calc(${availableWidth / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
     }).join("");
     const timedDeadlines = deadlineGroups.map(group => {
       const overlapsWork = workEvents.some(event => overlapsDeadline(event, group));
@@ -1638,7 +1638,9 @@ function syncCalendarDropPreview(item) {
   templateDrag.template = item;
   const title = templateDrag.preview.querySelector("strong");
   if (title.textContent !== item.title) title.textContent = item.title;
-  const color = classInfo(item).color;
+  const info = classInfo(item);
+  const color = info.color;
+  templateDrag.preview.style.setProperty("--course-default-fill", info.defaultWorkFill || "initial");
   const value = /^#[0-9a-f]{6}$/i.test(color) ? color : "#8f8a7d";
   if (templateDrag.preview.style.getPropertyValue("--course-color") !== value) templateDrag.preview.style.setProperty("--course-color", value);
 }

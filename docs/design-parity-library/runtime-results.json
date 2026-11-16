@@ -1,0 +1,117 @@
+{
+  "runtime": "157.0.8103.78",
+  "results": [
+    {
+      "width": 390,
+      "mode": "isolated local",
+      "status": "PASS",
+      "colors": [
+        "rgb(255, 243, 191)",
+        "rgb(255, 243, 191)",
+        "color(srgb 0.898823 0.934118 0.965882)"
+      ],
+      "deadlines": {
+        "inTimeline": 3,
+        "topBandTitles": [
+          "Date-only deadlineEnd of day"
+        ],
+        "minutes": [
+          915,
+          1020,
+          1200
+        ]
+      },
+      "ghost": {
+        "default": "rgb(255, 243, 191)",
+        "custom": "color(srgb 0.898823 0.934118 0.965882)"
+      },
+      "darkTemplateMatches": true,
+      "templateScheduleReload": true,
+      "errors": []
+    },
+    {
+      "width": 835,
+      "mode": "isolated local",
+      "status": "PASS",
+      "colors": [
+        "rgb(255, 243, 191)",
+        "rgb(255, 243, 191)",
+        "color(srgb 0.898823 0.934118 0.965882)"
+      ],
+      "deadlines": {
+        "inTimeline": 3,
+        "topBandTitles": [
+          "Date-only deadlineEnd of day"
+        ],
+        "minutes": [
+          915,
+          1020,
+          1200
+        ]
+      },
+      "ghost": {
+        "default": "rgb(255, 243, 191)",
+        "custom": "color(srgb 0.898823 0.934118 0.965882)"
+      },
+      "darkTemplateMatches": true,
+      "templateScheduleReload": true,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "mode": "synthetic signed-in / real localhost Worker0001-0008",
+      "status": "PASS",
+      "colors": [
+        "rgb(255, 243, 191)",
+        "rgb(255, 243, 191)",
+        "color(srgb 0.898823 0.934118 0.965882)"
+      ],
+      "deadlines": {
+        "inTimeline": 3,
+        "topBandTitles": [
+          "Date-only deadlineEnd of day"
+        ],
+        "minutes": [
+          915,
+          1020,
+          1200
+        ]
+      },
+      "ghost": {
+        "default": "rgb(255, 243, 191)",
+        "custom": "color(srgb 0.898823 0.934118 0.965882)"
+      },
+      "darkTemplateMatches": true,
+      "templateScheduleReload": true,
+      "errors": []
+    },
+    {
+      "width": 835,
+      "mode": "synthetic signed-in / real localhost Worker0001-0008",
+      "status": "PASS",
+      "colors": [
+        "rgb(255, 243, 191)",
+        "rgb(255, 243, 191)",
+        "color(srgb 0.898823 0.934118 0.965882)"
+      ],
+      "deadlines": {
+        "inTimeline": 3,
+        "topBandTitles": [
+          "Date-only deadlineEnd of day"
+        ],
+        "minutes": [
+          915,
+          1020,
+          1200
+        ]
+      },
+      "ghost": {
+        "default": "rgb(255, 243, 191)",
+        "custom": "color(srgb 0.898823 0.934118 0.965882)"
+      },
+      "darkTemplateMatches": true,
+      "templateScheduleReload": true,
+      "errors": []
+    }
+  ]
+}
