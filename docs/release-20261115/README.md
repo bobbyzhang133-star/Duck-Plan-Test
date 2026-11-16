@@ -4,7 +4,7 @@ The user authorized uploading the latest website to the shared main GitHub repos
 
 ## GitHub and app sources
 
-The website release is prepared for a fast-forward update of [shared main](https://github.com/m-mcnicholas/group-project-michael-bobby-priya/tree/main), preserving all newer website history. The matching native source is published separately on [`codex/ios-main-release-20261115`](https://github.com/m-mcnicholas/group-project-michael-bobby-priya/tree/codex/ios-main-release-20261115), retaining the native transport and its six bounded web overlays. The portable app branch removes personal development-team selections; the user's existing local Xcode project retains them.
+The website release was published as a fast-forward update of [shared main](https://github.com/m-mcnicholas/group-project-michael-bobby-priya/tree/main), preserving all newer website history. The matching native source is published separately on [`codex/ios-main-release-20261115`](https://github.com/m-mcnicholas/group-project-michael-bobby-priya/tree/codex/ios-main-release-20261115), retaining the native transport and its six bounded web overlays. The portable app branch removes personal development-team selections; the user's existing local Xcode project retains them.
 
 The local app project is `/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-iOS/ios/DuckPlan.xcodeproj`. Its117 canonical website files plus `native-cloud.js` are synchronized. Native code, original signing configuration, icon and alarm/notification implementation match their pre-sync hashes. The app branch and website branch intentionally use different `landing/` configurations; copying one over the other without the documented sync overlays loses the native account transport.
 
