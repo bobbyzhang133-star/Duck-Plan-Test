@@ -140,10 +140,11 @@
     const templates = () => store.listTemplates();
     const resources = classId => store.listResources(classId ? { classId } : undefined);
     const className = id => classes().find(item => item.id === id)?.name || "No class";
-    const available = () => store.supportsOrganization !== false;
+    const available = () => (store.supportsTemplates ?? store.supportsOrganization) !== false;
     const organizationAction = action => action === "template-menu" || action.endsWith("template") || action.endsWith("resource");
-    const unavailableNotice = () => available() ? "" : '<p class="library-unavailable" role="status">Templates and resources are not available on this server yet. Your saved local library stays safe on this device.</p>';
-    const button = (action, id, label, { primary = false, context = "", extra = "" } = {}) => `<button type="button" class="${primary ? "primary-button" : "secondary-button"} library-button" data-library-action="${action}" data-library-id="${escapeHtml(id)}" data-library-focus="${context}:${action}:${escapeHtml(id)}" ${!available() && organizationAction(action) ? "disabled" : ""} ${pending.has(id) && action === "add-template" ? 'aria-disabled="true" aria-busy="true"' : ""} ${extra}>${label}</button>`;
+    const actionAvailable = action => !organizationAction(action) || (action.endsWith("resource") ? store.supportsOrganization !== false : available());
+    const unavailableNotice = (resources = false) => store.templateSyncError && !resources ? `<p class="library-unavailable" role="status">${escapeHtml(store.templateSyncError)}</p>` : store.templatesDeviceOnly && !resources ? '<p class="library-unavailable" role="status">Templates are saved on this device for this account. They will sync automatically when this server supports templates.</p>' : (resources ? store.supportsOrganization !== false : available()) ? "" : '<p class="library-unavailable" role="status">This library is not available on this server yet. Your saved local library stays safe on this device.</p>';
+    const button = (action, id, label, { primary = false, context = "", extra = "" } = {}) => `<button type="button" class="${primary ? "primary-button" : "secondary-button"} library-button" data-library-action="${action}" data-library-id="${escapeHtml(id)}" data-library-focus="${context}:${action}:${escapeHtml(id)}" ${!actionAvailable(action) ? "disabled" : ""} ${pending.has(id) && action === "add-template" ? 'aria-disabled="true" aria-busy="true"' : ""} ${extra}>${label}</button>`;
 
     function currentOwnerKey() { return `${store.mode}:${store.user?.id || "local"}`; }
     function captureOwner() { return { key: ownerKey, generation: ownerGeneration }; }
@@ -332,7 +333,7 @@
         const incomplete = classTasks.filter(item => !item.completed).length;
         content = `<h3 class="library-overview-name">${escapeHtml(selected.name)}</h3><dl class="library-overview">${selected.teacher ? `<div><dt>Teacher</dt><dd>${escapeHtml(selected.teacher)}</dd></div>` : ""}${selected.period ? `<div><dt>Period</dt><dd>${escapeHtml(selected.period)}</dd></div>` : ""}<div><dt>Open assignments</dt><dd>${incomplete}</dd></div><div><dt>Completed assignments</dt><dd>${classTasks.length - incomplete}</dd></div><div><dt>Saved templates</dt><dd>${classTemplates.length}</dd></div><div><dt>Resources</dt><dd>${classResources.length}</dd></div></dl>${selected.archived ? '<p class="library-footnote">This class is archived.</p>' : ""}`;
       }
-      replace(target, `<section class="library-section" aria-labelledby="library-class-heading"><div class="library-heading"><div><h2 id="library-class-heading">Class library</h2><p>Assignments and useful links, organized by class.</p></div><label class="library-class-picker">Class<select id="library-class-select" data-library-focus="class:select" ${allClasses.length ? "" : "disabled"}>${allClasses.length ? allClasses.map(item => `<option value="${escapeHtml(item.id)}" ${item.id === selectedClassId ? "selected" : ""}>${escapeHtml(item.name)}${item.archived ? " (archived)" : ""}</option>`).join("") : '<option>No classes yet</option>'}</select></label></div>${unavailableNotice()}<div class="library-tabs" role="tablist" aria-label="Class library sections">${["assignments", "resources", "overview"].map(tab => `<button type="button" id="library-tab-${tab}" role="tab" aria-controls="library-class-panel" aria-selected="${selectedTab === tab}" tabindex="${selectedTab === tab ? "0" : "-1"}" data-library-tab="${tab}" data-library-focus="class:tab:${tab}">${tab[0].toUpperCase() + tab.slice(1)}</button>`).join("")}</div><div id="library-class-panel" class="library-tab-panel" role="tabpanel" aria-labelledby="library-tab-${selectedTab}" tabindex="0">${content}</div></section>`);
+      replace(target, `<section class="library-section" aria-labelledby="library-class-heading"><div class="library-heading"><div><h2 id="library-class-heading">Class library</h2><p>Assignments and useful links, organized by class.</p></div><label class="library-class-picker">Class<select id="library-class-select" data-library-focus="class:select" ${allClasses.length ? "" : "disabled"}>${allClasses.length ? allClasses.map(item => `<option value="${escapeHtml(item.id)}" ${item.id === selectedClassId ? "selected" : ""}>${escapeHtml(item.name)}${item.archived ? " (archived)" : ""}</option>`).join("") : '<option>No classes yet</option>'}</select></label></div>${unavailableNotice(selectedTab === "resources")}<div class="library-tabs" role="tablist" aria-label="Class library sections">${["assignments", "resources", "overview"].map(tab => `<button type="button" id="library-tab-${tab}" role="tab" aria-controls="library-class-panel" aria-selected="${selectedTab === tab}" tabindex="${selectedTab === tab ? "0" : "-1"}" data-library-tab="${tab}" data-library-focus="class:tab:${tab}">${tab[0].toUpperCase() + tab.slice(1)}</button>`).join("")}</div><div id="library-class-panel" class="library-tab-panel" role="tabpanel" aria-labelledby="library-tab-${selectedTab}" tabindex="0">${content}</div></section>`);
     }
 
     function renderTaskResources(classId) {
@@ -448,8 +449,8 @@
         if (!isCurrentDialog(current, dialogOwner)) { render(); return; }
         if (dialogBusy) return;
         const errorBox = current.querySelector(".library-form-error");
-        if (!available()) {
-          errorBox.textContent = "Templates and resources are not available on this server yet. Close this editor and try again when they are available.";
+        if (!(isTemplate ? available() : store.supportsOrganization !== false)) {
+          errorBox.textContent = "This library is not available on this server yet. Close this editor and try again when they are available.";
           errorBox.hidden = false;
           return;
         }
@@ -526,7 +527,7 @@
       if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return;
       const { libraryAction: action, libraryId: id } = control.dataset;
       if (action === "template-menu") { openTemplateMenu(control); return; }
-      if (organizationAction(action) && !available()) return;
+      if (!actionAvailable(action)) return;
       if (action === "add-template") { addTemplate(id); return; }
       if (action === "schedule-template") { scheduleTemplate(id, { source: control }); return; }
       if (action === "new-class-task") { host.openTask({ source: control, draft: { classId: id, type: "assignment" }, dueDate: "" }); return; }

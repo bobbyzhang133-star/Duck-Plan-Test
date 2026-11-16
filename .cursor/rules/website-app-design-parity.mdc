@@ -14,3 +14,5 @@ alwaysApply: true
 - Verify cache updates and reload/relaunch persistence. Do not claim an installed phone update until that build is installed and checked.
 - A server-capability warning requires checking the actual deployed API contract and required migrations on the existing account/origin. Repair or prepare the compatible backend within deployment authorization; do not hide the warning, fake availability, discard local data or silently redirect to a replacement server.
 - Report website, local app source, built/installed app and deployed backend versions separately. Preserve user records and the public-deployment approval boundary.
+
+- Explicit native exception (November 15, 2026): when a signed-in app server lacks the library contract, enable account/API-scoped device template CRUD and task creation/scheduling. Label it device-only and automatically import into the same account once support is detected. Preserve retry receipts, ownership and saved data; resources remain server-gated. This does not authorize a replacement backend.

@@ -1,0 +1,96 @@
+{
+  "runtime": "157.0.8103.78",
+  "origin": "http://127.0.0.1:8034",
+  "source": "native-template-fallback working tree; recorded hashes alongside results",
+  "mode": "local browser storage",
+  "cases": [
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "checks": {
+        "startupModeAndComposition": true,
+        "classCreateAndResourceCreateEditOpen": true,
+        "desktopNativeDrag": true,
+        "templateCreateEditScheduleCopyRetainReload": true,
+        "taskCrudAndFailureGuard": "localCRUD",
+        "noteGoalEditHabitCheckinReloadCorrectTypes": true,
+        "deleteReloadCascadeAndCopiesRetained": true
+      },
+      "pageErrors": [],
+      "blocked": [],
+      "unexpectedResponses": [],
+      "finalCounts": {
+        "tasks": 10,
+        "templates": 0,
+        "resources": 0,
+        "goals": 0,
+        "habits": 0,
+        "notes": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "checks": {
+        "startupModeAndComposition": true,
+        "classCreateAndResourceCreateEditOpen": true,
+        "templateCreateEditScheduleCopyRetainReload": true,
+        "taskCrudAndFailureGuard": "localCRUD",
+        "noteGoalEditHabitCheckinReloadCorrectTypes": true,
+        "deleteReloadCascadeAndCopiesRetained": true
+      },
+      "pageErrors": [],
+      "blocked": [],
+      "unexpectedResponses": [],
+      "finalCounts": {
+        "tasks": 9,
+        "templates": 0,
+        "resources": 0,
+        "goals": 0,
+        "habits": 0,
+        "notes": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "touchEmulated": true,
+      "checks": {
+        "startupModeAndComposition": true,
+        "classCreateAndResourceCreateEditOpen": true,
+        "templateCreateEditScheduleCopyRetainReload": true,
+        "taskCrudAndFailureGuard": "localCRUD",
+        "noteGoalEditHabitCheckinReloadCorrectTypes": true,
+        "deleteReloadCascadeAndCopiesRetained": true
+      },
+      "pageErrors": [],
+      "blocked": [],
+      "unexpectedResponses": [],
+      "finalCounts": {
+        "tasks": 9,
+        "templates": 0,
+        "resources": 0,
+        "goals": 0,
+        "habits": 0,
+        "notes": 0
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "productionWrites": false,
+  "physicalDeviceClaims": false
+}

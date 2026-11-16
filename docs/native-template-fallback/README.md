@@ -1,0 +1,25 @@
+# Native template fallback — November 15, 2026
+
+The user confirmed device-local template fallback in the installed mobile app while its server lacks template support, with automatic upload to the same account after server support becomes available.
+
+## Behavior
+
+- Only a signed-in native app on an older server receives this fallback. Browser accounts remain server-gated; guest/local templates stay in their existing separate library. Resources and matrix preferences retain their server capability gates.
+- Template create/edit/delete commits to device storage scoped by API URL and account ID before reporting success. The template can create an independent unscheduled task or scheduled copy through the existing task-saving flow. Its class/color, duration, priority, notes and reminder choice are retained.
+- A visible notice explains device-only storage. On an authenticated planner load/refresh that detects library support, the app automatically imports the saved templates into the same account. This is foreground/refresh synchronization, not a background-push claim.
+- Immutable per-template import plans and server receipts retain the same IDs across retries. The outbox remains until acknowledgement; edits/deletes during upload are retained. Later remote edits/deletions win after adoption; an unchanged retry cannot resurrect a remotely deleted template. Failures retain device data with a retry explanation. Full or malformed storage cannot silently overwrite a library or report a false save.
+- Shared source is synchronized into the existing Xcode project. Cache68 and new script keys invalidate the modified assets. No native Swift, signing, icon, API origin or production backend changes were made.
+
+## Evidence
+
+- **PASS:** initial full539 website and544 native-checkout tests. One additional quota-after-ack regression was then added and passed in both checkouts' complete25-test organization suite. Includes account separation, last deletion, corruption/quota, automatic migration, immutable retry after response loss, in-flight edit/delete, account switch and protection of remote deletion. See test output files.
+- **PASS:** actual iPhone27.2 simulator WKWebView with native URLSession, scripted DOM actions. A separate QA bundle/sandbox preserves the user's existing app/data. Old backend revision `ef15191^` and migrations0001–0003: create template, Add to tasks visibly in Unscheduled, Schedule with retained settings, relaunch and edit. The same API/database upgraded through migrations0004–0008: automatic upload with unchanged ID, no duplicate on refresh, device-only label removed. Independent authenticated HTTP client reads exactly one uploaded row with all reusable fields intact. See `native-runtime.json`, `independent-client.json` and screenshot.
+- **PASS:** six current actual WKWebView baseline modes: local/signed-in CRUD, relaunch, extended template edit/Schedule/delete, tasks, classes/resources, notes, goals, habits/check-ins and calendar modes. No OS permission/delivery claims.
+- **PASS:** six actual Chromium157 browser clients: desktop1280, phone390 and iPad835 in local/signed-in modes, real current localhost backend. Feature baseline includes desktop drag, template create/edit/Schedule/Add/reload, task failure/retry, resources and personal features. Actual old-server browser remains gated. See browser scripts/results and screenshots.
+- **PASS:** actual service-worker cache68 hashes match all three changed modules; isolated guest-template create/reload persists offline. This is browser SW evidence, not an installed-PWA claim. See `cache68.json`.
+- **PASS:** unsigned Debug Simulator and Release iPhone app/widget builds. All118 bundled landing files match source in both builds; six native overlays and all protected native/signing/icon files are unchanged. See `build-manifest.json`.
+- **Harness corrections:** the first legacy fixture extraction omitted its existing iCal parser dependency, so startup failed before product testing. Restored the original dependency. One relaunch harness used an obsolete Edit selector; corrected it to the existing template menu action and reran successfully. The retained native evidence records that harness failure explicitly.
+- **NOT RUN:** physical phone/iPad installation/touch; actual native iPad instance; Safari/Firefox; installed PWA lifecycle; actual OS alarm/notification/APNs delivery. Existing unchanged implementation evidence may be reused only for unchanged inputs; these are not passes for this change.
+- **NOT RUN:** authenticated production migration/adoption. The public server/account remains unchanged; automatic adoption is verified against the isolated upgraded real backend. No public deployment or remote migration was performed.
+
+Native QA uses the existing already-booted simulator with a separate app ID. Only the separate QA app, collector and owned localhost Worker are cleaned up. The original simulator app, user data and local8034 preview remain untouched. Build/source updates do not install an update on the physical phone; Xcode Run is required.

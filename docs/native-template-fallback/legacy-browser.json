@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "case": "browser on actual legacy backend remains server-gated",
+  "native": false,
+  "supportsTemplates": false,
+  "organization": false,
+  "deviceOnly": false
+}

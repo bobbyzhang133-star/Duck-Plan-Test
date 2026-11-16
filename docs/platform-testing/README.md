@@ -93,3 +93,7 @@ Run the matching existing automated tests and relevant native boundary/build che
 Before telling the user to Run Xcode, verify the existing project contains the intended web files and that its successful built bundle matches them. Before claiming the phone is updated, verify installation of that specific build on the phone. A GitHub push does not update either the installed phone app or the hosted backend.
 
 Keep the existing local-first authorization boundary: prepare and verify the concrete release locally before seeking any required public-deployment or remote-migration approval. This procedure does not authorize deployment, account creation, production mutation, signing changes or broader access by itself.
+
+## Native legacy-server template fallback
+
+Test account/API-scoped device template create/edit/delete, Add to tasks, Schedule/drop and relaunch against a real older backend. Guest data and other accounts must remain separate; resources stay gated. Upgrade the same fixture server/schema and verify automatic same-account import with unchanged IDs/settings. Cover lost acknowledgements, repeated refresh, migration failure/retry, concurrent edit/delete, full or corrupt storage, account changes and remote edits/deletion after migration. Never discard cache before a durable server acknowledgement or claim cross-device sharing while the template is still device-only.

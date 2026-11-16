@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "case": "independent HTTP client reads native fallback upload after server upgrade",
+  "templateId": "c59dde86-b4cc-49c1-a708-db8976c0ebc3",
+  "count": 1,
+  "durationMinutes": 35,
+  "priority": "High",
+  "notesPreserved": true,
+  "reminderChoice": "60",
+  "source": "real local backend and same account/database upgraded from legacy schema"
+}
