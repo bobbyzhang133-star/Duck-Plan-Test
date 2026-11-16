@@ -314,3 +314,37 @@
 @media (prefers-reduced-motion: reduce) {
   .motion-preview #view-calendar button:is(.deadline-overflow,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item) { transition: none !important; animation: none !important; }
 }
+
+/* The time gutter keeps full labels; scrolling never leaves half a glyph/dot. */
+.motion-preview #view-calendar .timeline-calendar {
+  --calendar-axis-width: 72px;
+  grid-template-columns: var(--calendar-axis-width) minmax(0,1fr);
+}
+.motion-preview #view-calendar .timeline-calendar.has-timed-deadline-work-overlap {
+  min-width: calc(var(--calendar-axis-width) + var(--day-count) * 112px);
+}
+.motion-preview #view-calendar .time-axis > span {
+  position: relative; min-width: 0; padding: 0; transform: none;
+}
+.motion-preview #view-calendar .time-axis .time-axis-label {
+  position: absolute; top: 0; right: 8px; display: block;
+  padding: 0; transform: translateY(-50%); font-size: inherit; line-height: 1.25; white-space: nowrap;
+}
+.motion-preview #view-calendar .time-axis > span:first-child .time-axis-label { top: 3px; transform: none; }
+.motion-preview #view-calendar .current-time-line { left: 5px; right: 4px; }
+.motion-preview #view-calendar .current-time-line > span { left: -4px; }
+.motion-preview #view-calendar :is(.time-axis-label,.current-time-line).is-viewport-clipped { opacity: 0; }
+@media (max-width: 700px) {
+  .motion-preview #view-calendar .timeline-calendar { --calendar-axis-width: 64px; }
+}
+/* In short phone landscape the toolbar/weekday selector already identifies the
+   selected day. Reclaim its duplicate grid header so full hour labels can fit. */
+@media (min-width: 560px) and (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar .timeline-calendar {
+    --calendar-axis-width: 64px; --calendar-day-header-height: 0px;
+    grid-template-rows: 0 auto auto;
+  }
+  .motion-preview #view-calendar :is(.timeline-days,.timeline-corner) {
+    height: 0; min-height: 0; overflow: hidden; visibility: hidden; border-bottom-width: 0;
+  }
+}

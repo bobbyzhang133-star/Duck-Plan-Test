@@ -130,6 +130,8 @@ const els = {
   },
 };
 
+const calendarViewport = window.DuckCalendarViewport?.create({ calendar: els.calendar });
+
 const calendarDates = window.DuckCalendarDatePresentation.create({
   model: Model, classInfo, safeText, formatTime, formatLongDate, nowKey,
   selectedTaskId: () => selectedTaskId,
@@ -830,7 +832,7 @@ function renderTimeline(dates) {
   const dateOnlyDeadlines = dates.map(date => deadlineChips(date));
   const deadlineRows = dateOnlyDeadlines.some(Boolean)
     ? `<div class="timeline-deadline-label" aria-label="Deadlines without a time">Due</div><div class="timeline-deadlines">${dates.map((date, index) => `<div class="deadline-cell" data-deadline-date="${date}">${dateOnlyDeadlines[index]}</div>`).join("")}</div>` : "";
-  const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span>${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span>`).join("");
+  const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span><span class="time-axis-label">${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span></span>`).join("");
   let hasTimedDeadlineWorkOverlap = false;
   const columns = dates.map((date) => {
     const current = new Date();
