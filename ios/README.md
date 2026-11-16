@@ -79,11 +79,7 @@ xcodegen generate --spec ios/project.yml
 xcodebuild -project ios/DuckPlan.xcodeproj -scheme DuckPlan -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
 ```
 
-The native app currently bundles the local planner. Browser/PWA storage is separate
-from native app storage; existing website tasks are not automatically imported.
-Remote-account/cloud-native sync and remote completion cancellation while this app
-is closed are not implemented. The web version retains its separate push-notification
-feature. No production cloud migration or VAPID key is required for local AlarmKit alarms.
+The native app bundles this checkout’s `landing/` files. Updating the separate website or GitHub does not update that copy or an installed phone. The existing `DuckPlan-iOS` project includes native account transport and preserves independent alarm/normal-notification support. Sign in to share supported planner details with a compatible backend; production backend activation and background push remain separate owner-controlled steps. Browser/PWA and native local-only storage are separate.
 
 ## Mandatory physical-device verification before calling this finished
 
