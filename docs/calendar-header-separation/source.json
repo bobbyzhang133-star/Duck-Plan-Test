@@ -1,0 +1,10 @@
+{
+  "baseline": "8ddab9f",
+  "scope": "current local website only",
+  "cacheVersion": 72,
+  "files": {
+    "landing/calendar-date-clarity.css": "0d1aab859750cbea2d9c3739aac88fe7d9c9604bcc8dfe9ea4fdfe446cd255ce",
+    "landing/index.html": "fa7fcd162d818bb291db690fc9b69b2c991d2b054208800f5c51cbff478c712f",
+    "landing/service-worker.js": "61afb64a615a2bc04416c137b2a8712c940cbddfa2a45dd57903d4ccf99af9b9"
+  }
+}

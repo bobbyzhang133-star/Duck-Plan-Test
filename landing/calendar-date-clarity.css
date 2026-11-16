@@ -1,17 +1,18 @@
 /* Work blocks and deadlines are separate calendar layers of the same task. */
 .motion-preview #view-calendar .timeline-calendar {
   --calendar-day-header-height: 66px;
+  --calendar-header-surface: #faf8f4;
   --calendar-hour-line: color-mix(in srgb,var(--line) 78%,transparent);
   --calendar-half-hour-line: color-mix(in srgb,var(--line) 38%,transparent);
 }
 .motion-preview #view-calendar .timeline-days,
 .motion-preview #view-calendar .timeline-corner {
-  position: sticky; top: 0; z-index: 8; background: var(--card,#fffdf8); backdrop-filter: none;
+  position: sticky; top: 0; z-index: 8; background: var(--calendar-header-surface); backdrop-filter: none;
 }
 .motion-preview #view-calendar .timeline-deadlines,
 .motion-preview #view-calendar .timeline-deadline-label {
   position: sticky; top: var(--calendar-day-header-height); z-index: 7;
-  background: var(--card,#fffdf8); border-bottom-color: var(--line);
+  background: var(--calendar-header-surface); border-bottom-color: var(--line);
 }
 .motion-preview #view-calendar .timeline-corner { z-index: 10; }
 .motion-preview #view-calendar .timeline-deadline-label { left: 0; z-index: 9; align-content: start; padding-top: 12px; font-size: 11px; }
@@ -57,8 +58,12 @@
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) - 1px),var(--calendar-hour-line) calc(var(--hour-height) - 1px),var(--calendar-hour-line) var(--hour-height)),
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2));
 }
-.motion-preview #view-calendar .calendar-date-button { background-color: var(--card); }
-.motion-preview #view-calendar .calendar-date-button.selected { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
+/* Keep the whole sticky header a neutral band, including the selected date.
+   Its badge carries selection; the yellow wash belongs to the timetable. */
+.motion-preview #view-calendar .calendar-date-button,
+.motion-preview #view-calendar .calendar-date-button.selected { background-color: var(--calendar-header-surface); }
+.motion-preview #view-calendar .timeline-deadlines,
+.motion-preview #view-calendar .timeline-deadline-label { box-shadow: 0 1px 0 var(--line); }
 .motion-preview #view-calendar .timeline-column.selected-day { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
 /* One continuous surface across the time gutter and timetable. Other day
    separators remain; the gutter must not read as a separate bordered panel. */
@@ -284,7 +289,7 @@
 .motion-preview #view-calendar button:is(.deadline-overflow,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item):is(:active,.interaction-pressed) { filter: brightness(.94); transform: none; box-shadow: inset 0 0 0 1px var(--line); }
 .motion-preview #view-calendar button:is(.deadline-overflow,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item):focus-visible { outline: 2px solid var(--accent,#d5aa23); outline-offset: -2px; }
 
-:root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar { --calendar-hour-line: var(--calendar-grid-line-strong); --calendar-half-hour-line: color-mix(in srgb,var(--calendar-grid-line) 60%,transparent); }
+:root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar { --calendar-header-surface: color-mix(in srgb,var(--surface) 65%,var(--card)); --calendar-hour-line: var(--calendar-grid-line-strong); --calendar-half-hour-line: color-mix(in srgb,var(--calendar-grid-line) 60%,transparent); }
 :root[data-theme="dark"] .motion-preview #view-calendar :is(.month-work-entry,.calendar-agenda-work) { color: var(--ink-deep); background: color-mix(in srgb,var(--course-color) 26%,var(--card)); }
 :root[data-theme="dark"] .motion-preview #view-calendar :is(.month-entry,.calendar-agenda-item).is-completed { color: var(--muted); border-color: var(--line); background: color-mix(in srgb,var(--course-color) 4%,var(--card)); }
 :root[data-theme="dark"] :is(.task-overdue-label,.task-plan-warning),
