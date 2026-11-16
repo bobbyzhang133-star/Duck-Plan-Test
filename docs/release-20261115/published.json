@@ -1,0 +1,13 @@
+{
+  "status": "PUBLISHED and verified with git ls-remote",
+  "repository": "https://github.com/m-mcnicholas/group-project-michael-bobby-priya",
+  "websiteApplicationCommit": "0870d7249c0c20197f70737a0859db8170d63a76",
+  "websiteBranch": "main",
+  "portableAppApplicationCommit": "d9690e7a9b8e4aa60a54fed8dd1d84042df0ba51",
+  "portableAppBranch": "codex/ios-main-release-20261115",
+  "localAppProject": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-iOS/ios/DuckPlan.xcodeproj",
+  "localAppSigningPreserved": true,
+  "installedOnPhysicalPhone": false,
+  "hostedDeploymentPerformed": false,
+  "remainingNativeRuntimeGate": "BLOCKED: disposable simulators stalled at permission-status probe; source sync/builds verified separately"
+}
