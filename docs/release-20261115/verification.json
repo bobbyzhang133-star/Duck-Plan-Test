@@ -1,0 +1,91 @@
+{
+  "status": "Source/build PASS; native runtime baseline BLOCKED",
+  "websiteInput": "f74879969db4a0ed33d55915c45697a227e48923",
+  "websiteTests": {
+    "passed": 532,
+    "failed": 0
+  },
+  "nativeTests": {
+    "passed": 537,
+    "failed": 0
+  },
+  "browserBaseline": "PASS six isolated local/real signed-in localhost clients, desktop/phone/iPad",
+  "nativeBuilds": "PASS unsigned Debug Simulator and Release iPhone app/widget; all118 web files match",
+  "nativeRuntime": {
+    "status": "BLOCKED",
+    "expected": "Full local and signed-in native WKWebView baseline",
+    "actual": "Both disposable apps reported started in actual WKWebView; neither finished its following native permission-status probe or reached CRUD cases within180seconds. Initial simulator terminate calls also timed out. Disk was exhausted during the fresh simulator run; both owned devices were subsequently removed.",
+    "reports": {
+      "phone": [
+        {
+          "runId": "phone-local-baseline-1794790001924526000",
+          "mode": "local-baseline",
+          "stage": "started",
+          "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+          "native": true,
+          "api": "http://127.0.0.1:8796/api",
+          "viewport": [
+            402,
+            778
+          ],
+          "scope": "local"
+        },
+        {
+          "runId": "phone-local-baseline-1794790001924526000",
+          "mode": "local-baseline",
+          "stage": "permission-state",
+          "alarm": {
+            "permission": "notDetermined"
+          },
+          "notification": {
+            "permission": "notDetermined"
+          }
+        }
+      ],
+      "ipad": [
+        {
+          "runId": "ipad-local-baseline-1794790006109757000",
+          "mode": "local-baseline",
+          "stage": "started",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+          "native": true,
+          "api": "http://127.0.0.1:8796/api",
+          "viewport": [
+            834,
+            1158
+          ],
+          "scope": "local"
+        },
+        {
+          "runId": "ipad-local-baseline-1794790006109757000",
+          "mode": "local-baseline",
+          "stage": "permission-state",
+          "alarm": {
+            "permission": "notDetermined"
+          },
+          "notification": {
+            "permission": "notDetermined"
+          }
+        }
+      ]
+    },
+    "input": "Scripted DOM instrumentation in a temporary QA bundle; not trusted touch",
+    "notRun": [
+      "native local/cloud CRUD and relaunch baseline for this build",
+      "physical phone installation",
+      "physical alarm delivery/Stop/Snooze",
+      "Safari/Firefox/installed-PWA release baseline"
+    ]
+  },
+  "cleanup": {
+    "removedOnlyOwnedDevices": [
+      "AFC47602-ED14-4A19-B70C-5A6A457187FD",
+      "76ACECA8-C6ED-4D94-8AA5-BEF516A29F60"
+    ],
+    "userSimulator": "E8481E77-386B-4C54-BE35-BC1293ECE255 preserved",
+    "userPreview": "8034 preserved",
+    "productionMutations": false,
+    "collectorAndQAWorkerStopped": true
+  },
+  "publicDeployment": false
+}

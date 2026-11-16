@@ -137,3 +137,105 @@ test("completed Month occurrences cannot hide unfinished work within the three-i
   assert.match(entries, /\+2 more/);
   assert.match(html, /2 deadlines · 3 work sessions, 5 tasks/);
 });
+
+test("date-only strip option removes timed milestones while retaining undated-time and invalid legacy fallbacks", () => {
+  const ui = Presentation.create({ formatTime: value => { assert.match(value, /^([01]\d|2[0-3]):[0-5]\d$/); return value; } });
+  const tasks = [task("timed"), task("date-only", { dueTime: "" }), task("invalid-time", { dueTime: "25:70" })];
+  const defaultHtml = ui.deadlineChips(tasks, "2030-05-02", { expanded: true });
+  assert.match(defaultHtml, /data-edit-task="timed"/);
+  const dateOnly = ui.deadlineChips(tasks, "2030-05-02", { dateOnly: true });
+  assert.doesNotMatch(dateOnly, /data-edit-task="timed"/);
+  assert.match(dateOnly, /data-edit-task="date-only"/); assert.match(dateOnly, /End of day/);
+  assert.match(dateOnly, /data-edit-task="invalid-time"/); assert.match(dateOnly, /Time unavailable/);
+});
+
+test("timed deadline groups use only explicit valid active deadlines without deriving work sessions or end-of-day markers", () => {
+  const ui = setup();
+  const tasks = [task("timed", { dueTime: "17:00", scheduledStart: "2030-05-01T09:00" }),
+    task("date-only", { dueTime: "" }), task("done", { completed: true }), task("deleted", { deleted_at: "2030-05-02" }),
+    task("invalid-hour", { dueTime: "24:00" }), task("invalid-minute", { dueTime: "12:60" }), task("invalid-shape", { dueTime: "9:00" }),
+    task("different-date", { dueDate: "2030-05-03" }), task("work-only", { dueDate: "", dueTime: "", scheduledStart: "2030-05-02T15:00" })];
+  const before = structuredClone(tasks), groups = ui.timedDeadlineGroups(tasks, "2030-05-02");
+  assert.deepEqual(groups.flatMap(group => group.tasks.map(item => item.id)), ["timed"]);
+  assert.equal(groups[0].minutes, 17 * 60); assert.equal(groups[0].key, "2030-05-02-1020");
+  assert.deepEqual(tasks, before, "presentation must not modify deadline, work or alert fields");
+  assert.deepEqual(ui.timedDeadlineGroups([task("bad-date", { dueDate: "2030-02-30" })], "2030-02-30"), []);
+});
+
+test("midnight and late-night diamonds stay at their exact minute while only label boxes clamp inside the day", () => {
+  const ui = setup(), groups = ui.timedDeadlineGroups([task("midnight", { dueTime: "00:00" }), task("late", { dueTime: "23:59" })], "2030-05-02");
+  assert.equal(groups.length, 2);
+  assert.equal(groups[0].markerTop, 0); assert.equal(groups[0].top, 0); assert.equal(groups[0].height, 44);
+  assert.equal(groups[0].dayHeight, 24 * 62);
+  assert.match(ui.timedDeadlineMarker(groups[0]), /timed-deadline-point is-day-start/);
+  const last = groups[1]; assert.equal(last.top, 24 * 62 - 44);
+  assert.equal(last.entries[0].minutes, 1439); assert.equal(last.markerTop, 1439 * 62 / 60);
+  assert.equal(last.bottom, Math.min(last.dayHeight, Math.max(last.top + last.height, last.markerTop + 5)));
+  assert.ok(groups.every(group => group.top >= 0 && group.top + group.height <= 24 * 62));
+  const html = ui.timedDeadlineMarker(last);
+  assert.match(html, /timed-deadline-point is-day-end/);
+  assert.match(html, new RegExp(`style="top:${last.markerTop - last.top}px" aria-hidden="true"`));
+  assert.match(html, /timed-deadline-time">23:59</);
+});
+
+test("nearby deadline groups use one fixed label box and do not chain an entire morning transitively", () => {
+  const ui = setup();
+  const tasks = ["10:00", "10:30", "11:00", "11:30", "12:00"].map((dueTime, index) => task(String(index), { dueTime }));
+  const groups = ui.timedDeadlineGroups(tasks, "2030-05-02");
+  assert.deepEqual(groups.map(group => group.tasks.map(item => item.id)), [["0", "1"], ["2", "3"], ["4"]]);
+  assert.deepEqual(groups.flatMap(group => group.entries.map(entry => entry.minutes)), [600, 630, 660, 690, 720]);
+  for (let index = 1; index < groups.length; index += 1) assert.ok(groups[index].top >= groups[index - 1].top + 44 + 4);
+  const edge = ui.timedDeadlineGroups([task("start", { dueTime: "00:00" }), task("near-edge", { dueTime: "00:43" })], "2030-05-02");
+  assert.equal(edge.length, 1, "clamped edge label boxes may overlap even when raw anchors are over44px apart");
+  assert.equal(edge[0].entries[1].markerTop, 43 * 62 / 60);
+});
+
+test("same-instant and nearby late-night group hit spans stay inside the day without moving their timestamp anchors", () => {
+  const ui = setup();
+  for (const times of [["23:59", "23:59"], ["23:30", "23:59"]]) {
+    const tasks = times.map((dueTime, index) => task(`late-${index}`, { dueTime }));
+    const before = structuredClone(tasks), groups = ui.timedDeadlineGroups(tasks, "2030-05-02");
+    assert.equal(groups.length, 1); const group = groups[0];
+    assert.equal(group.bottom, group.dayHeight); assert.ok(group.bottom >= group.top + group.height);
+    assert.deepEqual(group.entries.map(entry => entry.markerTop), times.map(time => Model.minutesFromTime(time) * 62 / 60));
+    const html = ui.timedDeadlineMarker(group);
+    assert.match(html, /timed-deadline-group-trigger/);
+    const span = html.match(/class="timed-deadline-anchor[^\"]*"[^>]*style="top:([\d.]+)px;height:([\d.]+)px"/);
+    assert.ok(span); assert.equal(Number(span[1]) + Number(span[2]), group.dayHeight);
+    assert.match(html, /timed-deadline-point is-day-end/); assert.deepEqual(tasks, before);
+  }
+});
+
+test("timed milestone geometry follows the supplied hour scale and safe label-height defaults", () => {
+  const ui = setup();
+  const group = ui.timedDeadlineGroups([task("scaled", { dueTime: "10:00" })], "2030-05-02", { hourHeight: 120, markerHeight: 30 })[0];
+  assert.equal(group.markerTop, 1200); assert.equal(group.top, 1185); assert.equal(group.height, 30);
+  const fallback = ui.timedDeadlineGroups([task("default", { dueTime: "10:00" })], "2030-05-02", { hourHeight: NaN, markerHeight: -1 })[0];
+  assert.equal(fallback.markerTop, 620); assert.equal(fallback.height, 44);
+});
+
+test("single timed milestone keeps deadline preview semantics, selected state and escaped text without work drag behavior", () => {
+  const id = 'x" onclick="bad', ui = setup(id);
+  const group = ui.timedDeadlineGroups([task(id, { title: '<img src=x onerror="bad">', dueTime: "09:00", dueDate: "2030-05-01" })], "2030-05-01")[0];
+  const html = ui.timedDeadlineMarker(group, { overlapsWork: true });
+  assert.match(html, /timed-deadline-anchor has-work-overlap/); assert.match(html, /data-overlaps-work="true"/);
+  assert.match(html, /class="timed-deadline-marker is-overdue selected"/);
+  assert.match(html, /data-calendar-kind="deadline"/); assert.match(html, /data-edit-task="x&quot; onclick=&quot;bad"/);
+  assert.match(html, /timed-deadline-kind">Deadline</); assert.match(html, /timed-deadline-time">09:00</); assert.match(html, /Overdue/);
+  assert.match(html, /&lt;img src=x onerror=&quot;bad&quot;&gt;/);
+  assert.doesNotMatch(html, /<img| onclick="bad|data-calendar-drag-task|\bdraggable=|\bdata-date=|data-timed-deadline-group=/);
+  assertNoNestedButtons(html);
+});
+
+test("same-instant deadlines retain every task, render one counted pin and open a bounded nearby-time group", () => {
+  const ui = setup(), tasks = [task("b", { title: "Same title", dueTime: "17:00" }), task("a", { title: "Same title", dueTime: "17:00" }), task("nearby", { dueTime: "17:05" })];
+  const before = structuredClone(tasks), groups = ui.timedDeadlineGroups(tasks, "2030-05-02");
+  assert.equal(groups.length, 1); assert.deepEqual(groups[0].tasks.map(item => item.id), ["a", "b", "nearby"]);
+  const html = ui.timedDeadlineMarker(groups[0]);
+  assert.equal((html.match(/class="timed-deadline-point"/g) || []).length, 2);
+  assert.match(html, /timed-deadline-point-count">2</); assert.match(html, /timed-deadline-kind">Deadlines</); assert.match(html, /timed-deadline-count">3</); assert.match(html, /17:00–17:05/);
+  assert.match(html, /data-timed-deadline-group="2030-05-02-1020" data-deadline-date="2030-05-02" aria-haspopup="dialog" aria-expanded="false"/);
+  assert.doesNotMatch(html, /data-select-task|data-edit-task|data-calendar-drag-task|\bdata-date=/);
+  assertNoNestedButtons(html); assert.deepEqual(tasks, before);
+  assert.equal(ui.timedDeadlineMarker(null), "");
+});

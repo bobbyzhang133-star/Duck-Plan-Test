@@ -1,0 +1,175 @@
+{
+  "recordedAt": "2026-11-15T23:42:18.564231+00:00",
+  "status": "PASS",
+  "scope": "Website task-card Due/Work metadata and internal daily-card layout only; no public deployment, storage/API/native changes.",
+  "acceptedSource": "runtime-source.json",
+  "browserRuntime": "Chromium 157.0.8103.78",
+  "matrix": {
+    "status": "PASS",
+    "acceptedClients": 8,
+    "results": "runtime-final.json",
+    "viewports": [
+      320,
+      390,
+      835,
+      1280
+    ],
+    "modes": [
+      "isolated local browser storage",
+      "fresh synthetic account on real localhost Worker8796 schema0001\u20130008"
+    ],
+    "surfaces": [
+      "Calendar desktop/tablet task pane and phone expanded Tasks sheet",
+      "Dashboard active and completed cards",
+      "All Tasks external Due column"
+    ],
+    "clientOutcomes": [
+      {
+        "width": 835,
+        "mode": "local",
+        "theme": "light",
+        "motion": "reduce",
+        "status": "PASS"
+      },
+      {
+        "width": 1280,
+        "mode": "local",
+        "theme": "light",
+        "motion": "no-preference",
+        "status": "PASS"
+      },
+      {
+        "width": 1280,
+        "mode": "signed-in",
+        "theme": "dark",
+        "motion": "reduce",
+        "status": "PASS"
+      },
+      {
+        "width": 835,
+        "mode": "signed-in",
+        "theme": "light",
+        "motion": "no-preference",
+        "status": "PASS"
+      },
+      {
+        "width": 390,
+        "mode": "local",
+        "theme": "dark",
+        "motion": "no-preference",
+        "status": "PASS"
+      },
+      {
+        "width": 390,
+        "mode": "signed-in",
+        "theme": "light",
+        "motion": "reduce",
+        "status": "PASS"
+      },
+      {
+        "width": 320,
+        "mode": "local",
+        "theme": "light",
+        "motion": "reduce",
+        "status": "PASS"
+      },
+      {
+        "width": 320,
+        "mode": "signed-in",
+        "theme": "dark",
+        "motion": "no-preference",
+        "status": "PASS"
+      }
+    ],
+    "affectedBehaviors": [
+      "Due and Work icons/labels and distinct emphasis",
+      "Due-only unscheduled cards omit redundant Work line; undated inbox remains explicit",
+      "Work Today follows actual now, not selected calendar date; overnight work retains ending date",
+      "Past deadline and work-after-deadline badges reflect real task timing; completed tasks have neither warning",
+      "Class color dot, priority, escaped quoted/long titles, logged zero minutes retained",
+      "All Tasks retains exactly one external Due column and inline Work details",
+      "Card click and ellipsis open correct existing editor; Reschedule keeps existing work time; Escape cancels",
+      "Checkbox completion/reopen persists in local and signed-in modes",
+      "Native desktop task drag and Undo at1280 local/signed-in keep deadline, task identity and manual alert preferences",
+      "Reload preserves exact task count, ID, due/work dates, duration, notes, logged minutes, reminder and saved alert preferences",
+      "Date rows, checkbox, edit controls and badges stay within card bounds; no document horizontal overflow",
+      "Existing timed deadline anchors retain exact 09:00 and19:00 geometry"
+    ],
+    "errors": []
+  },
+  "offline": {
+    "status": "PASS",
+    "result": "runtime-sw.json",
+    "harness": "runtime-sw.js",
+    "cache": "duckplan-app-motion-preview-v65",
+    "surface": "fresh normal browser tab with actual service worker; not installed PWA",
+    "affectedAssets": [
+      "index.html",
+      "app.js",
+      "calendar-date-clarity.css"
+    ],
+    "checks": [
+      "Frozen SHA256 digests match cache",
+      "Offline reload serves all three affected assets via actual SW",
+      "Due/Work icons, actual overdue and work-after badges remain available offline",
+      "Card title edit persists offline",
+      "Reconnect/reload retains same ID/count, due/work, logged0 and manual alert preferences"
+    ]
+  },
+  "cleanReferences": {
+    "status": "PASS",
+    "phone": "reference-task-cards-phone.png",
+    "tablet": "reference-task-cards-tablet.png",
+    "fixtures": "runtime-reference.json",
+    "tabletFixtures": "runtime-reference-tablet.json",
+    "note": "Actual rendered synthetic local fixtures; phone shows overdue and scheduled cards before the remaining due group continues below fold. Tablet shows all three."
+  },
+  "initialReview": {
+    "automation": "8/8 PASS before revised layout; runtime-initial.json retained as pre-layout functional evidence only",
+    "visualFinding": "Existing 40px checkbox and40px edit grid tracks made daily-card body/date values too narrow at835. Parent visual review requested wider internal body.",
+    "resolvedBy": "Final CSS ea8d1e3a0934f4e815951e6bd0b4a080059157a5f4ca8fe691cb498712bbc975; 24px checkbox column plus body, absolute40px edit target and title-only clearance.",
+    "beforeScreenshot": "calendar-local-835-before-layout.png",
+    "afterScreenshot": "calendar-local-835.png",
+    "finalAcceptance": "Full8 clients rerun on final app2e797a/CSS ea8d1e3/final2 keys/cache65; not reused from initial layout.",
+    "preflight": "runtime-preflight.json PASS835"
+  },
+  "notRun": [
+    {
+      "surface": "Installed PWA",
+      "status": "NOT RUN",
+      "reason": "Actual browser SW/offline exercised; no installed PWA update requested."
+    },
+    {
+      "surface": "Native iPhone/iPad WKWebView and physical devices",
+      "status": "NOT RUN",
+      "reason": "Website-only card change; native project/bundle synchronization not requested."
+    },
+    {
+      "surface": "Production hosted backend/public site",
+      "status": "NOT RUN",
+      "reason": "No public deployment authorization; signed-in runtime uses isolated real local Worker."
+    },
+    {
+      "surface": "Full feature release baseline",
+      "status": "NOT RUN",
+      "reason": "Focused website card/layout change without shared storage/API/native-bridge changes; proportionate affected checks used."
+    }
+  ],
+  "dataSafety": {
+    "productionWrites": false,
+    "realUserRecordsReadOrChanged": false,
+    "syntheticCredentialsSerialized": false,
+    "cookiesTokensRecoveryCodesSerialized": false,
+    "browserContextsClosed": true,
+    "ownedContextCountAfter": 0,
+    "defaultBrowserPagePreserved": "about:blank",
+    "ownedWorkerStopped": true,
+    "workerPort": 8796,
+    "workerSession": 55043,
+    "existingPreviewPreserved": true,
+    "existingPreviewPort": 8034,
+    "existingPreviewPid": 4896,
+    "userSimulatorE848Untouched": true,
+    "noNativeOperations": true
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "width": 1280,
+      "status": "PASS",
+      "input": "trusted mouse at diamond",
+      "minute": 1065,
+      "overlappedNextLabel": true,
+      "underlyingHit": {
+        "task": "1e8a70ab-0000-4000-8000-000000000003",
+        "group": null
+      },
+      "openedCorrectGroup": true,
+      "focusRestored": true
+    },
+    {
+      "width": 320,
+      "status": "PASS",
+      "input": "trusted emulated touch at diamond",
+      "minute": 1065,
+      "overlappedNextLabel": true,
+      "underlyingHit": {
+        "task": "180b9013-0000-4000-8000-000000000003",
+        "group": null
+      },
+      "openedCorrectGroup": true,
+      "focusRestored": true
+    }
+  ],
+  "passed": true,
+  "productionWrites": false
+}

@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-11-15T22:34:59.527584+00:00",
+  "status": "PASS",
+  "scope": "Website-only focused deadline presentation; no storage/API/native implementation changes",
+  "runtime": "Chromium157.0.8103.78",
+  "functionalRuntimeCases": 13,
+  "visualDemoCaptures": 1,
+  "matrix": {
+    "status": "PASS8/8",
+    "evidence": "runtime-final.json",
+    "widths": [
+      1280,
+      835,
+      390,
+      320
+    ],
+    "modes": [
+      "isolated local browser storage",
+      "isolated signed-in real Worker0001\u20130008"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "motion": [
+      "reduced",
+      "normal"
+    ],
+    "coverage": [
+      "Day/Week exact-minute anchors and edge art/label containment",
+      "Date-only strip and timed-only strip removal",
+      "Same-time and nearby group list exacttimes/fullplaintexttitles/details/Edit/Escape/focus",
+      "Independent work/deadline metadata and connected overlappingworklane containment",
+      "Desktop work drag+Undo preserves identity/deadline/manualpreferences",
+      "Month separateoccurrences/completedcounts/phoneagenda",
+      "Reload and open-group account cleanup"
+    ]
+  },
+  "pointerRegression": {
+    "status": "PASS4/4",
+    "evidence": "runtime-pin-hit-final.json",
+    "coverage": "Desktopmouse+320emulatedtouch at17:45pin: grouped17:00/17:45 opens correctgroup under receivinggutter; opaque17:50label cannotbe stolen by hiddenoldpin"
+  },
+  "offline": {
+    "status": "PASS",
+    "evidence": "runtime-sw.json",
+    "surface": "fresh normal browser tab; not installedPWA",
+    "scope": "SW62 sixcached frozen-source digests including5changedassets +index; offline reload/group/details andonline reconnect"
+  },
+  "referenceDemo": {
+    "status": "PASS",
+    "evidence": "runtime-reference.json",
+    "image": "reference-demo-phone.png",
+    "scope": "Actualfresh390phone render with blue15:00work andcoral17:00deadline;no dateonlystrip"
+  },
+  "sourceReuse": {
+    "matrixAppSha256": "19d3391d9f25951f9c770cfd3e195bba6eb1c061e022b7943e6c69153839145d",
+    "finalAppSha256": "3bd11df9b3752e51ab69d487faafe759685fec708fadd0e82339124e15fb37ed",
+    "reason": "After the eight-case matrix passed, root restricted physical point routing to the receiving label transparent gutter. Matrix geometry, data and group-label inputs are unaffected; CSS, helper and controller are unchanged. All four affected pointer cases and the offline cache proof ran against the final app. The matrix was not rerun after that bounded guard."
+  },
+  "preliminaryDiagnostics": {
+    "runtime-initial.json": "Preliminarydrag harness grabbedtaskcenter; correct grab-offset behavior moved10:00workto10:30. Finalharness uses topgrab; finalmatrixdrag/UndoPASS. No productfix required.",
+    "runtime-matrix.json": "Supersededpreliminary all-API-write guard; finalchecks assertzero itemwrites andunchanged taskstate. Final8cases observedzero mutationrequests during list/details/editor.",
+    "runtime-cloud-diagnostic.js": "Preliminary signed-in calendar-readiness diagnostic; finalharnesswaits actualvisibleCalendarbeforegeometry. All8frozen-source geometrychecksPASS."
+  },
+  "notRun": {
+    "installedPwa": "NOT RUN \u2014outsidewebsite-only focusedscope; normalbrowserSWtested",
+    "nativeAppAndPhysicalDevices": "NOT RUN \u2014website-only; no native sync requested",
+    "FirefoxWebKit": "NOT RUN \u2014onlyavailableChromiumruntime exercised"
+  },
+  "dataSafety": {
+    "allFixturesSynthetic": true,
+    "productionWrites": false,
+    "userPreview8034Preserved": true,
+    "noNativeOperations": true,
+    "serializedCredentials": false,
+    "allSyntheticContextsClosed": true,
+    "ownedWorker8796Stopped": true
+  }
+}

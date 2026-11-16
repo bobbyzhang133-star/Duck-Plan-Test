@@ -59,11 +59,171 @@
 .motion-preview #view-calendar .timeline-column.selected-day { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
 .motion-preview #view-calendar .current-time-line { z-index: 3; height: 1px; }
 
-/* Metadata stays attached to its single task card, regardless of primary section. */
-.task-date-stack { display: grid; gap: 3px; margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.4; }
-.task-date-line { display: block; overflow-wrap: anywhere; }
-.task-timing-badges { display: flex; flex-wrap: wrap; gap: 4px 7px; margin-top: 5px; font-size: 12px; line-height: 1.35; }
-.task-overdue-label,.task-plan-warning { color: #a74432; font-weight: 650; }
+/* Timed due dates are point annotations, never blocks of reserved work time. */
+.motion-preview #view-calendar .timeline-calendar {
+  --timed-deadline-accent: #c45949;
+  --timed-deadline-ink: #843e32;
+  --timed-deadline-surface: #fff0eb;
+  --timed-deadline-line: #e7b5a8;
+}
+.motion-preview #view-calendar .timeline-calendar.has-timed-deadline-work-overlap {
+  min-width: calc(64px + var(--day-count) * 112px);
+}
+.motion-preview #view-calendar .timed-deadline-anchor {
+  position: absolute; z-index: 5; left: 3px; right: 3px; min-width: 0;
+  pointer-events: none; --timed-deadline-gutter: 18px;
+}
+.motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) {
+  left: 56%; right: 2px; --timed-deadline-gutter: 12px;
+}
+.motion-preview #view-calendar .timed-deadline-point {
+  position: absolute; z-index: 2; left: 0; display: flex; align-items: center;
+  width: 10px; height: 0; color: var(--timed-deadline-accent); pointer-events: none;
+}
+.motion-preview #view-calendar .timed-deadline-diamond { display: block; flex: 0 0 10px; width: 10px; height: 10px; }
+.motion-preview #view-calendar .timed-deadline-point.is-day-start .timed-deadline-diamond { transform: translateY(5px); }
+.motion-preview #view-calendar .timed-deadline-point.is-day-end .timed-deadline-diamond { transform: translateY(-5px); }
+.motion-preview #view-calendar .timed-deadline-point-count {
+  position: absolute; top: -16px; left: 0; min-width: 11px; padding: 0 1px;
+  border-radius: 3px; color: var(--timed-deadline-ink); background: var(--timed-deadline-surface);
+  font-size: 9px; font-weight: 750; line-height: 11px; text-align: center; font-variant-numeric: tabular-nums;
+}
+.motion-preview #view-calendar .timed-deadline-point.is-day-start .timed-deadline-point-count { top: 10px; }
+.motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger) {
+  position: absolute; z-index: 1; top: 0; left: 0; display: grid; align-content: start;
+  grid-template-columns: minmax(0,1fr); grid-template-rows: 14px 16px; gap: 1px;
+  box-sizing: border-box; width: 100%; min-width: 0; height: 44px; min-height: 44px;
+  margin: 0; padding: 6px 5px 6px calc(var(--timed-deadline-gutter) + 4px);
+  border: 0; border-radius: 6px; outline: none; color: var(--timed-deadline-ink);
+  background: transparent; box-shadow: none; font: inherit; text-align: left;
+  cursor: pointer; touch-action: manipulation; pointer-events: auto; isolation: isolate;
+  white-space: normal; transform: none; filter: none;
+}
+.motion-preview #view-calendar .timed-deadline-group-trigger { height: 100%; }
+.motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger)::before {
+  position: absolute; z-index: -1; top: 0; left: var(--timed-deadline-gutter); right: 0;
+  box-sizing: border-box; height: 44px; border: 1px solid var(--timed-deadline-line); border-radius: 6px;
+  background: var(--timed-deadline-surface); content: ""; pointer-events: none;
+}
+.motion-preview #view-calendar .timed-deadline-kicker {
+  display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden;
+  color: inherit; font-size: 11px; font-weight: 600; line-height: 14px; white-space: nowrap;
+}
+.motion-preview #view-calendar .timed-deadline-kicker .calendar-kind-icon { flex: 0 0 11px; width: 11px; height: 11px; color: inherit; }
+.motion-preview #view-calendar .timed-deadline-kind { flex: 0 0 auto; font-size: 10px; }
+.motion-preview #view-calendar .timed-deadline-marker .timed-deadline-kind::after { margin-left: 4px; content: "·"; }
+.motion-preview #view-calendar .timed-deadline-time { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.motion-preview #view-calendar .timed-deadline-count { font-variant-numeric: tabular-nums; }
+.motion-preview #view-calendar .timed-deadline-title {
+  display: block; width: auto; height: auto; min-width: 0; margin: 0; padding: 0;
+  overflow: hidden; border-radius: 0; color: inherit; background: transparent;
+  font-size: 12px; font-weight: 650; line-height: 16px; text-overflow: ellipsis; white-space: nowrap;
+}
+.motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) :is(.timed-deadline-kind,.calendar-kind-icon) { display: none; }
+.motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) :is(.timed-deadline-marker,.timed-deadline-group-trigger) { padding-left: calc(var(--timed-deadline-gutter) + 2px); padding-right: 3px; }
+.motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) .timed-deadline-count::after { content: " due"; }
+.motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):is(:hover,:active,.interaction-pressed,:focus-visible) { background: transparent; box-shadow: none; transform: none; filter: none; }
+.motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):hover::before { background: color-mix(in srgb,var(--timed-deadline-surface) 82%,var(--timed-deadline-line)); }
+.motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):is(:focus-visible,.selected,[aria-expanded="true"])::before { border-color: var(--timed-deadline-accent); border-width: 2px; }
+.motion-preview #view-calendar .timed-deadline-marker.is-overdue { font-weight: 700; }
+:root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar {
+  --timed-deadline-accent: #ef9b85; --timed-deadline-ink: #ffd1c4;
+  --timed-deadline-surface: color-mix(in srgb,#b95b4b 18%,var(--card)); --timed-deadline-line: #8d594e;
+}
+
+/* Task cards keep their existing controls/layout while separating Due from Work. */
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row) {
+  --task-card-line: color-mix(in srgb,#cdb38b 24%,var(--line));
+  --task-deadline-ink: #985046;
+  --task-past-surface: color-mix(in srgb,#f7ded8 30%,var(--card));
+  --task-warning-surface: #fbe9e3;
+  --task-warning-line: #efd4c9;
+  --task-warning-ink: #904a3d;
+  min-width: 0; padding-block: 12px; border: 1px solid var(--task-card-line);
+  border-radius: 14px; background: var(--card); box-shadow: none;
+}
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card {
+  position: relative; grid-template-columns: 24px minmax(0,1fr);
+}
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card > .task-select {
+  grid-column: 2; grid-row: 1; padding-right: 0;
+}
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card .task-title { padding-right: 40px; }
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card > .task-check {
+  grid-column: 1; grid-row: 1; align-self: start; justify-self: center;
+  width: 24px; height: 24px; margin: 4px 0 0;
+}
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card > .task-edit {
+  position: absolute; z-index: 1; top: 8px; right: 4px; display: grid; place-items: center;
+  grid-column: auto; grid-row: auto; width: 40px; height: 40px; min-height: 40px; padding: 0;
+}
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card > .task-edit.focus-open { display: flex; align-items: center; justify-content: center; gap: 0; font-size: 0; }
+.motion-preview :is(#daily-task-panel,#view-home) .daily-task-card > .task-edit.focus-open > span { font-size: 18px; }
+.motion-preview #view-tasks #all-task-list { gap: 10px; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row):hover {
+  border-color: color-mix(in srgb,var(--task-card-line) 80%,var(--muted)); box-shadow: none;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row).selected {
+  border-color: color-mix(in srgb,var(--course-color) 32%,var(--task-card-line)); background: var(--card); box-shadow: none;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row).is-overdue:not(.completed) {
+  border-color: color-mix(in srgb,#dca298 42%,var(--task-card-line)); background: var(--task-past-surface);
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.task-select,.task-meta,.category-tag,.task-date-stack,.task-date-line,.task-date-value,.task-timing-badges,.task-due) {
+  min-width: 0; max-width: 100%;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-title {
+  color: var(--ink-deep); font-size: 16px; font-weight: 700; line-height: 1.35; white-space: normal; overflow-wrap: anywhere;
+}
+.motion-preview #daily-task-panel .task-title { font-size: 15px; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-meta {
+  gap: 5px 7px; margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .category-tag {
+  display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0;
+  color: var(--muted); background: transparent; font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .course-dot { flex: 0 0 6px; width: 6px; height: 6px; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-stack {
+  display: grid; gap: 5px; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.45;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-line {
+  display: grid; grid-template-columns: 14px 32px minmax(0,1fr); align-items: start; gap: 6px; overflow-wrap: anywhere;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-icon {
+  display: block; flex: 0 0 14px; width: 14px; height: 14px; margin-top: 2px; color: inherit;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-label { font-weight: 600; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-value { white-space: normal; overflow-wrap: anywhere; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-due { color: var(--task-deadline-ink); }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-date-work { color: var(--muted); }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-timing-badges {
+  display: flex; flex-wrap: wrap; align-items: start; gap: 6px; margin-top: 8px; font-size: 12px; line-height: 1.4;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.task-overdue-label,.task-plan-warning) {
+  display: inline-flex; align-items: start; gap: 5px; min-width: 0; max-width: 100%; padding: 4px 8px;
+  border: 1px solid var(--task-warning-line); border-radius: 999px; color: var(--task-warning-ink);
+  background: var(--task-warning-surface); font-size: 12px; font-weight: 650; line-height: 1.4;
+  white-space: normal; overflow-wrap: anywhere;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.task-overdue-label,.task-plan-warning) svg {
+  display: block; flex: 0 0 12px; width: 12px; height: 12px; margin-top: 2px;
+}
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-due { white-space: normal; overflow-wrap: anywhere; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-due strong { color: var(--task-deadline-ink); font-size: 12px; font-weight: 600; line-height: 1.5; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-due small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .completed :is(.task-title,.task-date-due,.task-due strong) { color: var(--muted); }
+.motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-select:not(:focus-visible):is(:hover,:active,.interaction-pressed,.interaction-released) {
+  outline: none; background: transparent; box-shadow: none; filter: none; transform: none;
+}
+:root[data-theme="dark"] .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row) {
+  --task-card-line: color-mix(in srgb,#978168 18%,var(--line));
+  --task-deadline-ink: #edac9c;
+  --task-past-surface: color-mix(in srgb,#b85e50 11%,var(--card));
+  --task-warning-surface: color-mix(in srgb,#b85e50 20%,var(--card));
+  --task-warning-line: #785248;
+  --task-warning-ink: #ffd0be;
+}
 .task-reschedule { justify-self: start; min-height: 32px; padding: 5px 0; font-size: 12px; line-height: 1.3; text-align: left; }
 .daily-task-card .task-reschedule,.all-task-row .task-reschedule { grid-column: 2 / -1; }
 

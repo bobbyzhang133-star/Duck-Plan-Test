@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "fixtureNow": "2026-11-20T12:00:00-08:00",
+  "selectedDate": "2026-11-20",
+  "proof": {
+    "cards": [
+      {
+        "title": "Review app wireframe",
+        "due": "DueThu, Nov 19 · 5:00 PM",
+        "work": "WorkWed, Nov 18 · 4:30 PM–5:30 PM",
+        "overdue": true,
+        "afterDeadline": false
+      },
+      {
+        "title": "Organize lab notes",
+        "due": "DueFri, Nov 20 · 9:00 PM",
+        "work": "WorkToday · 7:45 PM–8:30 PM",
+        "overdue": false,
+        "afterDeadline": false
+      },
+      {
+        "title": "Finish calculus practice",
+        "due": "DueFri, Nov 20 · 5:00 PM",
+        "work": "WorkThu, Nov 19 · 2:00 PM–3:00 PM",
+        "overdue": false,
+        "afterDeadline": false
+      }
+    ],
+    "overflow": false
+  },
+  "productionWrites": false
+}

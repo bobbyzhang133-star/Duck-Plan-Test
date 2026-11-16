@@ -139,6 +139,8 @@ const calendarTaskPreview = window.DuckCalendarTaskPreview.create({
   store, model: Model, classInfo, formatLongDate, formatShortDate, formatTime,
   getOwnerVersion: () => plannerOwnerVersion,
   getView: () => document.body.dataset.view || "calendar",
+  getDeadlineGroup: (key, date) => calendarDates.timedDeadlineGroups(tasks, date).find(group => group.key === key),
+  onSelectTask: id => { if (selectedTaskId !== id) selectTask(id); },
   openTask: options => openModal(options), showToast, reportError,
   setupButtons: setupButtonMaterial, motion: window.DuckPopupMotion,
 });
@@ -502,12 +504,29 @@ function taskScheduleText(task) {
   return parts ? `${formatTime(parts.time)}–${formatTime(end?.slice(11, 16) || Model.scheduledEnd(task))}${end && end.slice(0, 10) !== parts.date ? ` (${formatShortDate(end.slice(0, 10))})` : ""}` : "Not scheduled";
 }
 
+function taskCardDateText(value, { relative = false } = {}) {
+  const date = dateObject(value);
+  if (!date || !Number.isFinite(date.getTime()) || Model.toDateKey(date) !== value) return "Date unavailable";
+  if (relative && value === nowKey()) return "Today";
+  return new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric", ...(value.slice(0, 4) !== nowKey().slice(0, 4) ? { year: "numeric" } : {}) }).format(date);
+}
+
+function taskDateIcon(kind) {
+  const drawing = kind === "due"
+    ? '<rect x="2" y="3.5" width="12" height="10.5" rx="2"/><path d="M5 2v3M11 2v3M2 7h12"/>'
+    : '<circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5"/>';
+  return `<svg class="task-date-icon" aria-hidden="true" focusable="false" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${drawing}</svg>`;
+}
+
 function taskDateMarkup(task, { showDue = true } = {}) {
   const timing = Model.taskTiming(task);
   const scheduled = Model.scheduledParts(task);
-  const due = task.dueDate ? `${formatShortDate(task.dueDate)}${task.dueTime ? ` · ${formatTime(task.dueTime)}` : " · End of day"}` : "No deadline";
-  const work = scheduled ? `${formatShortDate(scheduled.date)} · ${taskScheduleText(task)}` : "Not scheduled";
-  return `<span class="task-date-stack">${showDue ? `<span class="task-date-line">Due: ${safeText(due)}</span>` : ""}<span class="task-date-line">Work: ${safeText(work)}</span></span>${timing.overdue || timing.plannedAfterDeadline ? `<span class="task-timing-badges">${timing.overdue ? '<span class="task-overdue-label">Overdue</span>' : ""}${timing.plannedAfterDeadline ? '<span class="task-plan-warning">Work ends after deadline</span>' : ""}</span>` : ""}`;
+  const dueTime = task.dueTime ? /^([01]\d|2[0-3]):[0-5]\d$/.test(task.dueTime) ? formatTime(task.dueTime) : "Time unavailable" : "End of day";
+  const due = task.dueDate ? `${taskCardDateText(task.dueDate)} · ${dueTime}` : "No deadline";
+  const work = scheduled ? `${taskCardDateText(scheduled.date, { relative: true })} · ${taskScheduleText(task)}` : "Not scheduled";
+  const showWork = Boolean(scheduled || !showDue || !task.dueDate);
+  const warningIcon = '<svg class="task-status-icon" aria-hidden="true" focusable="false" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2 14 13H2L8 2Z"/><path d="M8 6v3M8 11h.01"/></svg>';
+  return `<span class="task-date-stack">${showDue ? `<span class="task-date-line task-date-due">${taskDateIcon("due")}<span class="task-date-label">Due</span><span class="task-date-value">${safeText(due)}</span></span>` : ""}${showWork ? `<span class="task-date-line task-date-work">${taskDateIcon("work")}<span class="task-date-label">Work</span><span class="task-date-value">${safeText(work)}</span></span>` : ""}</span>${timing.overdue || timing.plannedAfterDeadline ? `<span class="task-timing-badges">${timing.overdue ? `<span class="task-overdue-label">${warningIcon}Past deadline</span>` : ""}${timing.plannedAfterDeadline ? `<span class="task-plan-warning">${warningIcon}Work after deadline</span>` : ""}</span>` : ""}`;
 }
 
 function taskRescheduleMarkup(task) {
@@ -522,7 +541,8 @@ function priorityBadge(task) {
 
 function taskCardMarkup(task, mode = "daily") {
   const info = classInfo(task);
-  return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${safeAttribute(task.id)}">
+  const timing = Model.taskTiming(task);
+  return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${safeAttribute(task.id)}">
     <input class="task-check" type="checkbox" data-task-id="${safeAttribute(task.id)}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeAttribute(task.title)} complete" />
     <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${priorityBadge(task)}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}</span>${taskDateMarkup(task)}</button>
     <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="Edit ${safeAttribute(task.title)}">•••</button>
@@ -564,9 +584,10 @@ function renderDailyPlan() {
 
 function allTaskMarkup(task) {
   const info = classInfo(task);
-  return `<article class="all-task-row ${task.completed ? "completed" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
+  const timing = Model.taskTiming(task);
+  return `<article class="all-task-row ${task.completed ? "completed" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
     <input class="task-check" type="checkbox" data-task-id="${safeAttribute(task.id)}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeAttribute(task.title)} complete" />
-    <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}</span>${taskDateMarkup(task, { showDue: false })}</button>
+    <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}</span>${taskDateMarkup(task, { showDue: false })}</button>
     <span class="task-due"><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${task.dueDate ? task.dueTime ? formatTime(task.dueTime) : "End of day" : ""}</small></span>
     <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="Edit ${safeAttribute(task.title)}">•••</button>
     ${taskRescheduleMarkup(task)}
@@ -764,7 +785,26 @@ function rangeLabel(dates) {
   return `${first}–${last}`;
 }
 function deadlineChips(date) {
-  return calendarDates.deadlineChips(tasks, date, { expanded: expandedDeadlineDates.has(date) });
+  return calendarDates.deadlineChips(tasks, date, { expanded: expandedDeadlineDates.has(date), dateOnly: true });
+}
+function deadlineControlAtPointer(event) {
+  if (!(event.detail > 0) || !Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) return null;
+  const column = event.target.closest("#planner-calendar .timeline-column");
+  if (!column) return null;
+  const receivingAnchor = event.target.closest(".timed-deadline-anchor");
+  if (!receivingAnchor) return null;
+  const receivingBounds = receivingAnchor.getBoundingClientRect();
+  const gutter = Number.parseFloat(getComputedStyle(receivingAnchor).getPropertyValue("--timed-deadline-gutter")) || 0;
+  // Only the transparent diamond gutter can expose another cluster's pin.
+  // A diamond behind an opaque label must not steal that label's activation.
+  if (event.clientX < receivingBounds.left || event.clientX > receivingBounds.left + gutter) return null;
+  // A cluster's transparent tail can share a gutter with the next label. The
+  // visible diamond belongs to its own deadline even when that label receives
+  // the pointer event. Keyboard activation continues to use the focused button.
+  const points = [...column.querySelectorAll(".timed-deadline-diamond")].map(element => ({ element, rect: element.getBoundingClientRect() }))
+    .filter(({ rect }) => event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom)
+    .sort((a, b) => Math.abs(event.clientY - (a.rect.top + a.rect.bottom) / 2) - Math.abs(event.clientY - (b.rect.top + b.rect.bottom) / 2));
+  return points[0]?.element.closest(".timed-deadline-anchor")?.querySelector(".timed-deadline-marker,.timed-deadline-group-trigger") || null;
 }
 function layoutEvents(dayTasks) {
   const sorted = dayTasks.map((task) => {
@@ -788,8 +828,11 @@ function renderTimeline(dates) {
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
-  const deadlineRows = dates.map((date) => `<div class="deadline-cell" data-deadline-date="${date}">${deadlineChips(date)}</div>`).join("");
+  const dateOnlyDeadlines = dates.map(date => deadlineChips(date));
+  const deadlineRows = dateOnlyDeadlines.some(Boolean)
+    ? `<div class="timeline-deadline-label" aria-label="Deadlines without a time">Due</div><div class="timeline-deadlines">${dates.map((date, index) => `<div class="deadline-cell" data-deadline-date="${date}">${dateOnlyDeadlines[index]}</div>`).join("")}</div>` : "";
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span>${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span>`).join("");
+  let hasTimedDeadlineWorkOverlap = false;
   const columns = dates.map((date) => {
     const current = new Date();
     const currentMinutes = current.getHours() * 60 + current.getMinutes();
@@ -797,31 +840,57 @@ function renderTimeline(dates) {
       ? `<div class="current-time-line" style="top:${((currentMinutes - startHour * 60) / 60) * hourHeight}px" aria-hidden="true"><span></span></div>`
       : "";
     const scheduled = tasks.filter((task) => Model.scheduledParts(task)?.date === date && !task.completed);
-    const events = layoutEvents(scheduled).map(({ task, start, end, lane, lanes }) => {
+    const deadlineGroups = calendarDates.timedDeadlineGroups(tasks, date, { hourHeight });
+    const workEvents = layoutEvents(scheduled).map(event => ({ ...event,
+      top: ((event.start - startHour * 60) / 60) * hourHeight,
+      height: Math.max(30, ((event.end - event.start) / 60) * hourHeight),
+    }));
+    const overlapsDeadline = (event, group) => event.top < group.bottom + 2 && event.top + event.height > group.top - 2;
+    // A connected set of overlapping work cards must share one horizontal area;
+    // shrinking only its later card would move that card over an earlier lane.
+    const workClusters = [];
+    for (const event of workEvents) {
+      let cluster = workClusters.at(-1);
+      if (!cluster || event.top >= cluster.bottom) {
+        cluster = { bottom: event.top + event.height, events: [] };
+        workClusters.push(cluster);
+      }
+      cluster.events.push(event); cluster.bottom = Math.max(cluster.bottom, event.top + event.height);
+    }
+    for (const cluster of workClusters) {
+      const availableWidth = cluster.events.some(event => deadlineGroups.some(group => overlapsDeadline(event, group))) ? 56 : 100;
+      for (const event of cluster.events) event.availableWidth = availableWidth;
+    }
+    const events = workEvents.map(({ task, start, end, lane, lanes, top, height, availableWidth }) => {
       const info = classInfo(task);
-      const top = ((start - startHour * 60) / 60) * hourHeight;
-      const height = Math.max(30, ((end - start) / 60) * hourHeight);
       const timing = Model.taskTiming(task);
-      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * 100}% + 3px);width:calc(${100 / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
+      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * availableWidth}% + 3px);width:calc(${availableWidth / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
+    }).join("");
+    const timedDeadlines = deadlineGroups.map(group => {
+      const overlapsWork = workEvents.some(event => overlapsDeadline(event, group));
+      hasTimedDeadlineWorkOverlap ||= overlapsWork;
+      return calendarDates.timedDeadlineMarker(group, { overlapsWork });
     }).join("");
     const slots = Array.from({ length: endHour - startHour }, (_, index) => {
       const time = `${String(startHour + index).padStart(2, "0")}:00`;
       const isFocusSlot = calendarFocusSlot.date === date && calendarFocusSlot.time === time;
       return `<button type="button" class="calendar-slot" tabindex="${isFocusSlot ? "0" : "-1"}" data-slot-date="${date}" data-slot-time="${time}" aria-label="Plan work on ${formatLongDate(date)} at ${formatTime(time)}"></button>`;
     }).join("");
-    return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}</div>`;
+    return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}${timedDeadlines}</div>`;
   }).join("");
-  return `<div class="timeline-calendar" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div><div class="timeline-deadline-label" aria-label="Deadlines">Due</div><div class="timeline-deadlines">${deadlineRows}</div><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
+  return `<div class="timeline-calendar${hasTimedDeadlineWorkOverlap ? " has-timed-deadline-work-overlap" : ""}" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div>${deadlineRows}<div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
 }
 function renderMonth(dates) {
   return calendarDates.month(tasks, dates, selectedDate);
 }
 function relevantCalendarMinutes(dates) {
-  const scheduled = tasks
+  const work = tasks
     .filter((task) => dates.includes(Model.scheduledParts(task)?.date) && !task.completed)
     .map((task) => Model.scheduledParts(task))
-    .filter(Boolean)
-    .sort((a, b) => a.date.localeCompare(b.date) || a.minutes - b.minutes);
+    .filter(Boolean);
+  const deadlines = dates.flatMap(date => calendarDates.timedDeadlineGroups(tasks, date)
+    .flatMap(group => group.entries.map(entry => ({ date, minutes: entry.minutes }))));
+  const scheduled = [...work, ...deadlines].sort((a, b) => a.date.localeCompare(b.date) || a.minutes - b.minutes);
   const selected = scheduled.filter((parts) => parts.date === selectedDate);
   const candidates = selected.length ? selected : scheduled;
   if (candidates.length) {
@@ -896,7 +965,7 @@ function renderCalendar({ autoScroll = false } = {}) {
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
 function setupButtonMaterial(root = document) {
-  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.deadline-overflow,.month-day,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item,.phone-week-day,.task-select,.task-section-heading";
+  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.deadline-overflow,.timed-deadline-marker,.timed-deadline-group-trigger,.month-day,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item,.phone-week-day,.task-select,.task-section-heading";
   root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
@@ -1476,7 +1545,19 @@ document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
   const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) navigateView(viewButton.dataset.view, sidebar.contains(viewButton), viewButton);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
-  const calendarItem = event.target.closest("#planner-calendar [data-select-task]");
+  const deadlinePointerControl = deadlineControlAtPointer(event);
+  const deadlineGroup = deadlinePointerControl
+    ? deadlinePointerControl.matches("[data-timed-deadline-group]") ? deadlinePointerControl : null
+    : event.target.closest("#planner-calendar [data-timed-deadline-group]");
+  if (deadlineGroup) {
+    const group = calendarDates.timedDeadlineGroups(tasks, deadlineGroup.dataset.deadlineDate)
+      .find(item => item.key === deadlineGroup.dataset.timedDeadlineGroup);
+    if (group) calendarTaskPreview.openDeadlineGroup(group, deadlineGroup);
+    return;
+  }
+  const calendarItem = deadlinePointerControl
+    ? deadlinePointerControl.matches("[data-select-task]") ? deadlinePointerControl : null
+    : event.target.closest("#planner-calendar [data-select-task]");
   if (calendarItem) {
     if (selectedTaskId !== calendarItem.dataset.selectTask) selectTask(calendarItem.dataset.selectTask);
     calendarTaskPreview.open(calendarItem.dataset.selectTask, calendarItem);

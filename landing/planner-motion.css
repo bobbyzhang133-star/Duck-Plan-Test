@@ -297,7 +297,7 @@
   .motion-preview .rail-toggle-copy { font-size: 11px; }
 }
 
-/* Reuse the approved shell-first, button-origin popup engine with the new form. */
+/* Source identity crossfades into the fixed-size form during shell expansion. */
 .motion-preview .task-modal {
   max-width: calc(100% - 28px); max-height: calc(100dvh - 32px);
   padding: 0; border: 0; overflow: visible; background: transparent;
@@ -311,11 +311,11 @@
 }
 .motion-preview .task-modal[data-popup-staged] { box-shadow: none; }
 .motion-preview .task-modal[data-popup-staged] form { height: 100%; max-height: 100%; }
-.motion-preview .task-modal[data-popup-stage="shell"] form { display: none; }
+.motion-preview .task-modal[data-popup-motion] form { position: relative; z-index: 3; background: transparent; border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .motion-preview .task-modal[data-popup-staged]::backdrop { animation: none; }
-.motion-preview .task-modal[data-popup-stage="shell"]::backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; }
-.motion-preview .task-modal[data-popup-stage="shell"][data-popup-motion="opening"]::backdrop { animation: popup-backdrop-in var(--motion-popupOpen) var(--motion-ease) both; }
-.motion-preview .task-modal[data-popup-stage="shell"][data-popup-motion="closing"]::backdrop { animation: popup-backdrop-out calc(var(--motion-popupClose) - var(--motion-popupContentOut)) var(--motion-ease) both; }
+.motion-preview .task-modal[data-popup-motion]::backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.motion-preview .task-modal[data-popup-motion="opening"]::backdrop { animation: popup-backdrop-in var(--motion-popupOpen) var(--motion-ease) both; }
+.motion-preview .task-modal[data-popup-motion="closing"]::backdrop { animation: popup-backdrop-out calc(var(--motion-popupClose) - var(--motion-popupContentOut)) var(--motion-ease) both; }
 @media (prefers-reduced-motion: reduce) {
   .motion-preview .unified-shell,.motion-preview .unified-shell .sidebar,.motion-preview .sidebar * { transition: none; }
   .motion-preview .sidebar .primary-nav > .nav-item { transition: none; }
@@ -462,3 +462,9 @@
 :root[data-theme="dark"] .month-day.outside { color: color-mix(in srgb,var(--muted) 70%,transparent); background: rgba(0,0,0,.14); }
 :root[data-theme="dark"] .month-day.selected { background: var(--accent-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent); }
 :root[data-theme="dark"] .month-day.today strong { color: #352c0b; }
+
+/* Frozen source paint never exposes pseudo controls or hover/press effects. */
+.popup-morph-label { pointer-events: none; }
+.popup-morph-label *::before, .popup-morph-label *::after { animation: none !important; transition: none !important; }
+
+.task-modal[data-popup-motion], .calendar-task-preview[data-popup-motion] { outline: none; }

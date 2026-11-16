@@ -1,0 +1,63 @@
+{
+  "runtime": "157.0.8103.78",
+  "cases": [
+    {
+      "width": 1280,
+      "opaque": false,
+      "status": "PASS",
+      "input": "trusted mouse",
+      "minute": 1065,
+      "overlappedNextLabel": true,
+      "underlyingHit": {
+        "task": "79480617-0000-4000-8000-000000000003",
+        "group": null
+      },
+      "openedExpected": "17:00/17:45group",
+      "focusRestored": true
+    },
+    {
+      "width": 320,
+      "opaque": false,
+      "status": "PASS",
+      "input": "trusted emulated touch",
+      "minute": 1065,
+      "overlappedNextLabel": true,
+      "underlyingHit": {
+        "task": "b0a3a094-0000-4000-8000-000000000003",
+        "group": null
+      },
+      "openedExpected": "17:00/17:45group",
+      "focusRestored": true
+    },
+    {
+      "width": 1280,
+      "opaque": true,
+      "status": "PASS",
+      "input": "trusted mouse",
+      "minute": 1065,
+      "overlappedNextLabel": true,
+      "underlyingHit": {
+        "task": "2fc70408-0000-4000-8000-000000000003",
+        "group": null
+      },
+      "openedExpected": "opaque17:50task",
+      "focusRestored": true
+    },
+    {
+      "width": 320,
+      "opaque": true,
+      "status": "PASS",
+      "input": "trusted emulated touch",
+      "minute": 1065,
+      "overlappedNextLabel": true,
+      "underlyingHit": {
+        "task": "ab40b667-0000-4000-8000-000000000003",
+        "group": null
+      },
+      "openedExpected": "opaque17:50task",
+      "focusRestored": true
+    }
+  ],
+  "passed": true,
+  "productionWrites": false
+}

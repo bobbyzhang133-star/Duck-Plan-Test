@@ -8,12 +8,32 @@
     const rect = element?.getBoundingClientRect();
     if (!rect || !rect.width || !rect.height) return null;
     const style=getComputedStyle(element);
-    return {element,capturedAt,label:element.textContent?.trim().replace(/\s+/g,' ')||'',rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},material:{
+    return {element,capturedAt,visual:sourceVisual(element),label:element.textContent?.trim().replace(/\s+/g,' ')||'',rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},material:{
       tint:(!style.backgroundColor || style.backgroundColor==='transparent' || style.backgroundColor==='rgba(0, 0, 0, 0)') ? 'rgba(255,255,255,.7)' : style.backgroundColor,sheen:style.backgroundImage || 'none',
-      radius:Math.min(rect.height/2,parseFloat(style.borderRadius)||rect.height/2),
+      radius:Math.max(0,Math.min(rect.height/2,parseFloat(style.borderTopLeftRadius||style.borderRadius)||0)),
       border:style.border || '1px solid rgba(255,255,255,.9)',shadow:style.boxShadow || 'none',
       color:style.color || '#2b210d',fontSize:style.fontSize || '14px',fontWeight:style.fontWeight || '700'
     }};
+  }
+  // Freeze only the small launcher, before editor setup can rerender it. The copy
+  // is inert paint: no IDs, handlers, focus targets or duplicate form controls.
+  const sourcePaintProperties=('display position left top right bottom width height min-width min-height max-width max-height box-sizing margin padding gap row-gap column-gap grid-template-columns grid-template-rows grid-column grid-row align-items align-self justify-content justify-self flex flex-direction flex-wrap order font-family font-size font-weight font-style line-height letter-spacing text-align text-decoration text-transform text-overflow white-space overflow overflow-wrap word-break color background border border-radius box-shadow opacity visibility fill stroke stroke-width stroke-linecap stroke-linejoin').split(' ');
+  function sourceVisual(element) {
+    if (!element?.cloneNode || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+    const originals=[element,...element.querySelectorAll('*')];
+    if (originals.length>80 || originals.some(node=>node.matches('input,textarea,select,iframe,canvas,video'))) return null;
+    const copy=element.cloneNode(true),copies=[copy,...copy.querySelectorAll('*')];
+    originals.forEach((node,index)=>{
+      const target=copies[index],style=getComputedStyle(node);
+      for (const property of sourcePaintProperties) target.style.setProperty(property,style.getPropertyValue(property));
+      for (const attribute of [...target.attributes]) if (/^(id|name|for|form|autofocus|tabindex|href|on.*)$/i.test(attribute.name)) target.removeAttribute(attribute.name);
+      Object.assign(target.style,{animation:'none',transition:'none',transform:'none',pointerEvents:'none',backdropFilter:'none',webkitBackdropFilter:'none'});
+      target.setAttribute('tabindex','-1');
+    });
+    copy.querySelectorAll('script,style').forEach(node=>node.remove());
+    Object.assign(copy.style,{margin:'0',position:'relative',left:'auto',top:'auto',right:'auto',bottom:'auto',width:'100%',height:'100%',boxSizing:'border-box',visibility:'visible'});
+    copy.inert=true;copy.setAttribute('aria-hidden','true');
+    return copy;
   }
   function mark(anchor, name) {
     if(anchor?.capturedAt!=null)(anchor.phases||(anchor.phases={}))[name]=Number((performance.now()-anchor.capturedAt).toFixed(2));
@@ -159,15 +179,17 @@
     element.removeAttribute('aria-busy');schedulePrepare(element);
   }
   function morph(element, anchor, opening, done) {
-    removeJob(element);known.add(element);
-    const audit=auditMotion(opening,anchor),form=element.querySelector('form'),heading=element.querySelector('#modal-title');
+    removeJob(element);
+    const editor=element.matches('.task-modal');
+    if(editor)known.add(element);
+    const audit=auditMotion(opening,anchor),form=element.querySelector(editor?'form':'.calendar-preview-card'),heading=element.querySelector(editor?'#modal-title':'#calendar-preview-title');
     const previous=running.get(element),oldLayers=previous?.layers;
     // Only reversal reads live animation state; the normal opening uses idle geometry.
     const interrupted=oldLayers?{
       slices:oldLayers.tiles.map(part=>getComputedStyle(part.tile).transform),source:getComputedStyle(oldLayers.source).transform,
       surfaceOpacity:getComputedStyle(oldLayers.surface).opacity,sourceOpacity:getComputedStyle(oldLayers.source).opacity,
       label:getComputedStyle(oldLayers.label).transform,labelOpacity:getComputedStyle(oldLayers.label).opacity,
-      content:previous.stage==='shell'?'0':getComputedStyle(form).opacity,box:previous.box
+      content:getComputedStyle(form).opacity,box:previous.box
     }:null;
     cancel(element);
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate;
@@ -175,7 +197,14 @@
       form.inert=false;form.removeAttribute('aria-hidden');delete element.dataset.popupStage;element.removeAttribute('aria-busy');
       if(opening&&!element.open)element.showModal();audit.finish('reduced');done();return;
     }
-    const box=interrupted?.box || (opening?geometry(element):used.get(element)?.box) || geometry(element);
+    let previewBox;
+    if(!editor){
+      const rect=element.getBoundingClientRect(),title=heading.getBoundingClientRect();
+      previewBox={left:rect.left,top:rect.top,width:rect.width,height:rect.height,radius:parseFloat(getComputedStyle(element).borderRadius)||20,titleX:title.left-rect.left,titleY:title.top-rect.top,prepared:true};
+    }
+    const box=interrupted?.box || (!opening&&used.get(element)?.box) || previewBox || geometry(element);
+    const destinationStyle=getComputedStyle(editor?form:element);
+    const destinationPaint=previous?.paint||{tint:destinationStyle.backgroundColor||'#fffdf7',sheen:destinationStyle.backgroundImage||'none',border:destinationStyle.border||'0'};
     reserve(element,box);
     const sourceBox=previous?.sourceBox||anchorRect(anchor)||{left:box.left+box.width/2-24,top:box.top+box.height/2-20,width:48,height:40};
     const material=anchor?.material||{tint:'rgba(255,255,255,.7)',sheen:'none',border:'1px solid rgba(255,255,255,.9)',shadow:'none',color:'#2b210d',radius:20,fontSize:'14px',fontWeight:'700'};
@@ -183,40 +212,45 @@
     const slices=sliceGeometry(box,sourceBox,material.radius);
     const oldVisibility=anchor?.element?.style.visibility,oldOpacity=form.style.opacity;
     const oldHidden=form.getAttribute('aria-hidden'),oldInert=form.inert;
-    element.dataset.popupMotion=opening?'opening':'closing';element.dataset.popupStage=opening?'shell':'content';
+    element.dataset.popupMotion=opening?'opening':'closing';element.dataset.popupStage=opening?'morph':'content';
     if(opening){form.inert=true;form.setAttribute('aria-hidden','true');element.setAttribute('aria-busy','true');}
     Object.assign(surface.style,{zIndex:'0',left:`${box.left}px`,top:`${box.top}px`,width:`${box.width}px`,height:`${box.height}px`,background:'none',border:'0',boxShadow:'none',willChange:'opacity'});
     tiles.forEach(({tile,paint},index)=>{
       const {base,radius}=slices[index];
       Object.assign(tile.style,{left:`${base.x}px`,top:`${base.y}px`,width:`${base.width+(index%3<2?.5:0)}px`,height:`${base.height+(index<6?.5:0)}px`});
-      // One shared full-size paint recipe, with tiny internal overlaps to avoid
-      // subpixel cracks. A quiet opaque backing prevents doubled translucency
-      // at those overlaps; source tint and highlights stay above it.
-      Object.assign(paint.style,{left:`${-base.x}px`,top:`${-base.y}px`,width:`${box.width}px`,height:`${box.height}px`,borderRadius:`${radius}px`,backgroundColor:'#fffdf7',backgroundImage:`${material.sheen&&material.sheen!=='none'?material.sheen+', ':''}linear-gradient(${material.tint}, ${material.tint})`,border:material.border,boxShadow:material.shadow});
+      // The destination surface uses its actual theme material. Tiny internal
+      // overlaps avoid subpixel cracks; source material fades above it.
+      Object.assign(paint.style,{left:`${-base.x}px`,top:`${-base.y}px`,width:`${box.width}px`,height:`${box.height}px`,borderRadius:`${radius}px`,backgroundColor:destinationPaint.tint,backgroundImage:destinationPaint.sheen,border:destinationPaint.border,boxShadow:'none'});
     });
     Object.assign(source.style,{zIndex:'1',left:`${sourceBox.left}px`,top:`${sourceBox.top}px`,width:`${sourceBox.width}px`,height:`${sourceBox.height}px`,borderRadius:`${material.radius}px`,backgroundColor:material.tint,backgroundImage:material.sheen,border:material.border,boxShadow:material.shadow,willChange:'transform, opacity'});
-    label.textContent=opening?heading.textContent:(anchor?.label||heading.textContent);
-    Object.assign(label.style,{zIndex:'2',left:'0px',top:'0px',whiteSpace:'nowrap',fontWeight:box.titleWeight||material.fontWeight,fontSize:box.titleFont,lineHeight:box.titleLineHeight||'normal',fontFamily:box.titleFamily||'inherit',letterSpacing:box.titleSpacing||'normal',color:material.color,willChange:'transform, opacity'});
+    label.textContent='';
+    if(anchor?.visual)label.append(anchor.visual.cloneNode(true));else label.textContent=anchor?.label||heading.textContent;
+    Object.assign(label.style,{zIndex:'2',left:'0px',top:'0px',width:`${sourceBox.width}px`,height:`${sourceBox.height}px`,overflow:'hidden',borderRadius:`${material.radius}px`,whiteSpace:'normal',fontWeight:material.fontWeight,fontSize:material.fontSize,lineHeight:box.titleLineHeight||'normal',fontFamily:box.titleFamily||'inherit',letterSpacing:box.titleSpacing||'normal',color:material.color,willChange:'transform, opacity'});
     element.append(surface,source,label);
     if(anchor?.element?.isConnected)anchor.element.style.visibility='hidden';
     if(opening&&!element.open)element.showModal();
     if(opening)element.focus({preventScroll:true});
     const full={transform:'translate(0px, 0px) scale(1, 1)'};
     const sourceFull={transform:`translate(${box.left-sourceBox.left}px, ${box.top-sourceBox.top}px) scale(${box.width/sourceBox.width}, ${box.height/sourceBox.height})`};
-    const fontScale=(parseFloat(material.fontSize)||14)/(parseFloat(box.titleFont)||21.6);
-    const labelSmall={transform:`translate(${sourceBox.left+sourceBox.width/2}px, ${sourceBox.top+sourceBox.height/2}px) scale(${fontScale}) translate(-50%, -50%)`};
-    const labelFull={transform:`translate(${box.left+box.titleX}px, ${box.top+box.titleY}px) scale(1) translate(0%, 0%)`};
+    const labelSmall={transform:`translate(${sourceBox.left}px, ${sourceBox.top}px) scale(1)`};
+    const labelFull={transform:`translate(${box.left+box.titleX}px, ${box.top+box.titleY}px) scale(1)`};
     const openTime=window.DuckMotion?.duration.popupOpen||240,closeTime=window.DuckMotion?.duration.popupClose||300;
-    const contentTime=window.DuckMotion?.duration.popupContent||120,outTime=window.DuckMotion?.duration.popupContentOut||60;
+    const outTime=window.DuckMotion?.duration.popupContentOut||60;
     const active=[];
     const play=(target,frames,duration,easing=ease)=>{const animation=target.animate(frames,{duration,easing,fill:'both'});animation.finished.catch(()=>{});active.push(animation);return animation;};
-    const entry={animation:null,layers:chrome,box,sourceBox,stage:'shell',cleanup:null,finish:null};
+    const entry={animation:null,layers:chrome,box,sourceBox,paint:destinationPaint,stage:'morph',cleanup:null,finish:null};
     entry.cleanup=()=>{
       audit.finish('cancelled');active.forEach(a=>a.cancel());[surface,source,label].forEach(layer=>layer.remove());
       form.style.opacity=oldOpacity;form.inert=oldInert;
       if(oldHidden==null)form.removeAttribute('aria-hidden');else form.setAttribute('aria-hidden',oldHidden);
       if(anchor?.element?.isConnected)anchor.element.style.visibility=oldVisibility||'';
       delete element.dataset.popupStage;element.removeAttribute('aria-busy');
+      // Dynamic previews return to native responsive sizing as soon as motion
+      // ends (or reverses); only the reusable editor keeps its prepared frame.
+      if(!editor){
+        const saved=used.get(element);if(saved)Object.assign(element.style,saved.original);used.delete(element);
+        delete element.dataset.popupStaged;delete element.dataset.popupPrepared;
+      }
     };
     entry.finish=()=>{
       if(running.get(element)!==entry)return;running.delete(element);audit.finish();entry.cleanup();delete element.dataset.popupMotion;
@@ -224,15 +258,9 @@
     };
     running.set(element,entry);
     const follow=(animation,next)=>{entry.animation=animation;animation.finished.then(()=>{if(running.get(element)===entry)next();},()=>{});};
-    const reveal=()=>{
-      entry.stage='content';form.scrollTop=0;
-      element.dataset.popupStage='content';form.inert=false;form.removeAttribute('aria-hidden');element.removeAttribute('aria-busy');
-      play(label,[{opacity:1},{opacity:0}],contentTime,'linear');
-      follow(play(form,[{opacity:0},{opacity:1}],contentTime,'linear'),entry.finish);
-    };
     const move=duration=>{
-      entry.stage='shell';
-      if(!opening){element.dataset.popupStage='shell';form.inert=true;form.setAttribute('aria-hidden','true');}
+      entry.stage='morph';element.dataset.popupStage='morph';
+      form.inert=true;form.setAttribute('aria-hidden','true');
       const main=play(surface,[{transform:'none'},{transform:'none'}],duration);
       // One endpoint pair per layer, traversed in the opposite direction on close.
       // A separate center/size curve can make the top edge dip then rise.
@@ -243,26 +271,33 @@
       travel(source,full,sourceFull,interrupted?.source);
       // The sliced shell remains round; the source paint resolves only near the end.
       // All live geometry still uses transforms, without per-frame layout/radius changes.
-      play(surface,opening?[{opacity:interrupted?.surfaceOpacity||0},{opacity:1,offset:.3},{opacity:1}]:[{opacity:interrupted?.surfaceOpacity||1},{opacity:1,offset:.7},{opacity:0}],duration,'linear');
-      play(source,opening?[{opacity:interrupted?.sourceOpacity||1},{opacity:0,offset:.3},{opacity:0}]:[{opacity:interrupted?.sourceOpacity||0},{opacity:0,offset:.7},{opacity:1}],duration,'linear');
+      play(surface,opening?[{opacity:interrupted?.surfaceOpacity??0},{opacity:1,offset:.3},{opacity:1}]:[{opacity:interrupted?.surfaceOpacity??1},{opacity:1,offset:.7},{opacity:0}],duration,'linear');
+      play(source,opening?[{opacity:interrupted?.sourceOpacity??1},{opacity:0,offset:.3},{opacity:0}]:[{opacity:interrupted?.sourceOpacity??0},{opacity:0,offset:.7},{opacity:1}],duration,'linear');
       travel(label,labelSmall,labelFull,interrupted?.label);
-      play(label,[{opacity:opening?(interrupted?.labelOpacity||1):1},{opacity:1}],duration,'linear');
-      follow(main,opening?reveal:entry.finish);
+      // Keep the source design at takeoff, then crossfade the two identities while
+      // the shell is still growing. Native fields stay at their final, crisp size.
+      play(label,opening?[
+        {opacity:interrupted?.labelOpacity??1},{opacity:interrupted?.labelOpacity??1,offset:.2},{opacity:0,offset:.68},{opacity:0}
+      ]:[{opacity:interrupted?.labelOpacity??0},{opacity:0,offset:.48},{opacity:1}],duration,'linear');
+      play(form,opening?[
+        {opacity:interrupted?.content??0},{opacity:interrupted?.content??0,offset:.52},{opacity:1,offset:.96},{opacity:1}
+      ]:[{opacity:interrupted?.content??0},{opacity:0,offset:.2},{opacity:0}],duration,'linear');
+      follow(main,entry.finish);
     };
     if(opening)move(openTime);
-    else if(interrupted&&previous?.stage!=='content')move(closeTime);
+    else if(interrupted)move(closeTime);
     else {
       entry.stage='content';
       // Resolve content at fixed bounds first, then return only the lightweight shell.
       play(surface,[{...full,opacity:1},{...full,opacity:1}],outTime,'linear');
       play(source,[{...sourceFull,opacity:0},{...sourceFull,opacity:0}],outTime,'linear');
-      play(label,[{...labelFull,opacity:interrupted?.labelOpacity||0},{...labelFull,opacity:1}],outTime,'linear');
+      play(label,[{...labelFull,opacity:0},{...labelFull,opacity:0}],outTime,'linear');
       follow(play(form,[{opacity:interrupted?.content||1},{opacity:0}],outTime,'linear'),()=>move(Math.max(1,closeTime-outTime)));
     }
     audit.ready();
   }
   function animate(element, anchor, opening, done=()=>{}) {
-    if(element.matches?.('.task-modal') && element.querySelector('form'))return morph(element,anchor,opening,done);
+    if((element.matches?.('.task-modal') && element.querySelector('form')) || (element.matches?.('.calendar-task-preview') && element.querySelector('.calendar-preview-card')))return morph(element,anchor,opening,done);
     // Sample an interrupted transform before cancelling, so reversing doesn't jump.
     const previous=running.has(element) ? {transform:getComputedStyle(element).transform,opacity:getComputedStyle(element).opacity} : null;
     cancel(element);

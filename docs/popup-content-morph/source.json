@@ -1,0 +1,14 @@
+{
+  "baseCommit": "e350bd7",
+  "branch": "codex/popup-content-morph-20261115",
+  "cache": "duckplan-app-motion-preview-v66",
+  "assetKey": "content-morph-20261115",
+  "sha256": {
+    "landing/popup-motion.js": "494a24d93a83571be26d80ea518118bc429c4185752cd86a5200d0835292659f",
+    "landing/motion-tokens.js": "3d3640252c7fb8dc9ba8be4e5ebdc9911dd650a571a3d8de655f8efaf987174b",
+    "landing/planner-motion.css": "605a847045e4fb9691db4c662bb3847925c204b18f85dc2a6e62c14acb52657c",
+    "landing/calendar-task-preview.css": "d95dee50f0889ec260a9c5cfe9d0c7c35c88f6076f3509bb6bcb0d47b3b48ba0",
+    "landing/index.html": "90d45f23eaf8d22b5ed751420909f07fed7968343c11e2560b5eaad234560832",
+    "landing/service-worker.js": "8dc1a1c0d3475c62d90c02d7ca14585d349befcae11649328824d2205cdb247b"
+  }
+}
