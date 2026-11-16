@@ -1,0 +1,27 @@
+# Google Calendar reference — broader Calendar Chat Check
+
+Review only, November 16, 2026. The user confirmed **broader Calendar UI, including time labels and the red current-time line**, for the current local preview at <http://127.0.0.1:8034/#calendar>. No application implementation, native synchronization, public deployment or user-record changes were performed.
+
+Reviewed source: TEST commit [`ddac1c06300f4af0634f4266dee6b884b27a7928`](https://github.com/bobbyzhang133-star/Duck-Plan-Test/tree/ddac1c06300f4af0634f4266dee6b884b27a7928), remotely verified before requesting the review. The established [Repository Overview conversation](https://chatgpt.com/g/g-p-6addac00e55c8191a3f6db4456733345-duck-plan/c/6addacc2-3bc4-83e8-8f06-cdbedefe067c) returned a completed review. The request, response and focused completion screenshot are retained beside this file.
+
+## Recommended next work
+
+1. **P1 — iPad Week readability.** Preserve the task-column/timetable frame. Improve horizontal-scroll discoverability and keyboard reachability rather than squeezing seven columns further. Use available event height for clearer titles and retain access to full details. The 835px screenshot confirms a horizontally cropped week; `planner-motion.css` sets a minimum timetable width, enlarged when work and deadline annotations overlap.
+2. **P1 — short phone landscape.** Intentionally compact the toolbar, weekday selector, date-only deadline summary and collapsed Tasks summary to recover timetable height. Keep bottom navigation and all actions accessible. Removing the duplicate date header already helps, but the saved landscape screenshot still shows little timetable space.
+3. **P1 — dense work/deadline labels.** Prioritize meaningful titles and exact due times. Investigate compact deadline annotations/grouped details where collision lanes become too narrow. Preserve the exact-minute diamond and the separate work-duration representation; do not move timed deadlines to the date-only band.
+4. **P2 — toolbar, grid and preview hierarchy.** Group date navigation and view selection deliberately at intermediate widths. Compare a subtler selected-day wash with the light-yellow Personal work fill. Polish the current preview's information hierarchy before proposing different popup placement; preserve the approved source-to-popup morph.
+5. **P2 — evaluate current-time edge behavior.** Retain the tested cutoff fix as the baseline. `calendar-viewport.js` intentionally hides partially visible hour labels and hides the whole current-time indicator when its observed dot is clipped. Compare independent dot/line visibility or structural clipping using real fractional-scroll evidence. This is a source-confirmed tradeoff, not a newly observed flicker defect. Preserve time coordinates and the 72px/64px gutters.
+
+These are proposed changes, not completed fixes. The current Calendar structure, 24-hour range, exact-time deadline system, class/default materials and responsive task panel remain the approved foundation.
+
+## Reference and evidence limits
+
+- Primary visual reference: Google's [October 2024 Calendar design announcement](https://workspaceupdates.googleblog.com/2024/10/new-look-and-feel-and-dark-mode-google-calendar.html), including its public light-mode screenshot. Also consulted the [Calendar product page](https://workspace.google.com/products/calendar/) and [Calendar views documentation](https://support.google.com/calendar/answer/6110849?hl=en). This supports layout/readability comparison, not a claim that a live 2026 Google Calendar account was tested.
+- Automatic approval review rejected opening the signed-in Google Calendar because private events could be exposed. No private calendar was accessed; public references fulfilled the comparison.
+- The external reviewer reports inspecting the exact source and four synthetic `docs/calendar-time-cutoff/after-*` screenshots. Locally, the desktop/iPad/phone screenshots and relevant viewport/Calendar CSS were read to corroborate the main observations. The external reviewer did not access localhost independently.
+- The returned review includes a third-party image result and a March 2026 scaling-announcement claim. Those are retained as part of the raw response, but are **not relied on** for this implementation recommendation. The directly inspected official 2024 screenshot is the visual reference.
+- The historical 544 Node tests, 16 browser cutoff cases and other evidence belong to the previous fix. No fresh product tests were run for this documentation-only review. Native, physical devices, Safari/Firefox and installed PWA checks are NOT RUN in this task. No new functional pass or all-platform parity claim is made.
+
+## Acceptance criteria for a later implementation
+
+Verify desktop 1280px, iPad 835px, phones 390px/320px and short phone landscape. Preserve the task frame or collapsed sheet at the correct breakpoint, seven-day selection, all 24 hours, exact-minute deadlines and date-only items. Check intermediate/fractional vertical scroll, horizontal sticky gutter/header alignment, dynamic date-only rows, red dot/line at occlusion boundaries, crowded deadlines/work blocks, keyboard/touch access, preview origin/focus/Escape/editor handoff, light/dark contrast and reduced motion. Compare task IDs, deadlines, scheduled starts, durations, classes, notes and alert preferences before/after. Actual native and signed-in runtime verification is required if the subsequent scope includes app sync or shared behavior.
