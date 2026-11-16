@@ -1,0 +1,9 @@
+{
+  "archive": "/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-owner-update-20261115.zip",
+  "bytes": 13489840,
+  "sha256": "2e85e1da591a71fa00842f72bd1abe2cfa759add681933ce44c2605e555af6fb",
+  "sourceCommit": "3f92c29c825b1983ad103bec6b358120cd2cc47f",
+  "sourceFilesVerified": 140,
+  "dryRun": "PASS; no deployment",
+  "requiresExistingOwnerAccount": true
+}
