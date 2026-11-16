@@ -1,0 +1,10 @@
+{
+  "runtime": "157.0.8103.78",
+  "status": "PASS",
+  "mode": "isolated local phone touch emulation",
+  "groupCount": 3,
+  "groupEscapeFocus": "PASS",
+  "groupToPreviewToReschedule": "PASS",
+  "unchangedData": "PASS",
+  "errors": []
+}

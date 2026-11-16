@@ -5,8 +5,8 @@ function fixture(reduced=false,profile=null){
     constructor(rect={left:100,top:200,width:400,height:300}){
       this.rect=rect;this.isConnected=true;this.style={opacity:'',visibility:'visible'};this.dataset={};this.children=[];this.attributes={};this.inert=false;this.open=false;this.reads=0;
     }
-    matches(s){return s==='.task-modal'&&this.className==='task-modal';}
-    querySelector(s){return s==='form'?this.form:s==='#modal-title'?this.heading:null;}
+    matches(s){return s==='.task-modal'&&this.className==='task-modal'||s==='.calendar-task-preview'&&this.className==='calendar-task-preview';}
+    querySelector(s){return s==='form'?this.form:s==='#modal-title'||s==='#calendar-preview-title'?this.heading:s==='.calendar-preview-card'?this.card:null;}
     append(...nodes){this.children.push(...nodes);nodes.forEach(n=>n.removed=false);}
     setAttribute(name,value){this.attributes[name]=String(value);}
     getAttribute(name){return this.attributes[name]??null;}
@@ -44,17 +44,18 @@ test('idle preparation does not open/focus/reset the form, and avoids full-form 
   assert(api.prepare(p));assert(!p.open);assert(!p.focused);assert.equal(p.dataset.popupPreparing,undefined);assert.equal(p.form.savedTitle,'Keep this');
   const reads=p.form.reads;api.open(p,api.capture(new Element()));assert.equal(p.form.reads,reads);assert.equal(p.dataset.popupPrepared,'true');api.cancel(p);
 });
-test('shell travels first; fields reveal only at fixed final geometry, then native focus callback runs',async()=>{
-  const {api,Element,animations,panel}=fixture(),p=panel(),source=new Element({left:20,top:30,width:80,height:40});api.prepare(p);
+test('source identity survives takeoff and fixed-size fields crossfade during expansion',async()=>{
+  const {api,Element,animations,panel}=fixture(),p=panel(),source=new Element({left:20,top:30,width:80,height:40});source.textContent='Review notes';api.prepare(p);
   let ready=false;api.open(p,api.capture(source),()=>ready=true);
-  assert(p.open);assert(p.focused);assert.equal(p.dataset.popupStage,'shell');assert(p.form.inert);assert.equal(p.form.getAttribute('aria-hidden'),'true');
-  assert.equal(source.style.visibility,'hidden');assert.equal(animations.filter(a=>a.target===p.form).length,0);
+  assert(p.open);assert(p.focused);assert.equal(p.dataset.popupStage,'morph');assert(p.form.inert);assert.equal(p.form.getAttribute('aria-hidden'),'true');
+  assert.equal(source.style.visibility,'hidden');assert.equal(p.children.at(-1).textContent,'Review notes');
+  const content=animations.find(a=>a.target===p.form);assert(content);assert.equal(content.options.duration,animations[0].options.duration);
+  assert(content.frames.every(f=>f.transform===undefined));assert.equal(content.frames[0].opacity,0);
+  assert(content.frames.some(f=>f.opacity===1&&f.offset<1),'content resolves before expansion ends');
   for(const a of animations)for(const frame of a.frames)assert(Object.keys(frame).every(k=>['transform','opacity','offset'].includes(k)));
-  assert.equal(p.children[0].style.width,'400px');assert.equal(p.children[0].style.backdropFilter,undefined);
-  await settle(animations[0]);
-  assert.equal(p.dataset.popupStage,'content');assert(!p.form.inert);assert(!ready);assert.equal(p.style.width,'400px');assert.equal(p.style.height,'300px');
-  const content=animations.find(a=>a.target===p.form);assert(content);assert(content.frames.every(f=>f.transform===undefined));
-  await settle(content);assert(ready);assert.equal(source.style.visibility,'visible');assert(p.children.every(n=>n.removed));assert.equal(p.dataset.popupStage,undefined);
+  assert.equal(p.children[0].style.width,'400px');assert.equal(p.children[0].children[0].children[0].style.backgroundColor,'rgb(248, 201, 67)');assert.equal(p.children[0].style.backdropFilter,undefined);
+  assert(!ready);await settle(animations[0]);assert(ready);assert(!p.form.inert);
+  assert.equal(source.style.visibility,'visible');assert(p.children.every(n=>n.removed));assert.equal(p.dataset.popupStage,undefined);
 });
 test('cold click reserves a scrollable frame without synchronously measuring hidden form',()=>{
   const {api,Element,panel}=fixture(),p=panel();api.open(p,api.capture(new Element()));
@@ -74,14 +75,14 @@ test('close resolves fields before shell shrinks and restores source before call
   const start=animations.length;let closed=false;api.close(p,api.capture(source),()=>{assert.equal(source.style.visibility,'visible');assert(p.children.every(n=>n.removed));closed=true;});
   assert.equal(p.dataset.popupStage,'content');assert(!closed);
   const fade=animations.slice(start).find(a=>a.target===p.form);assert.equal(fade.options.duration,60);await settle(fade);
-  assert.equal(p.dataset.popupStage,'shell');assert(!closed);
+  assert.equal(p.dataset.popupStage,'morph');assert(!closed);
   const movement=animations.slice(start).find(a=>a.target===p.children.at(-3)&&a.options.duration===240);assert(movement);await settle(movement);assert(closed);
 });
-test('Escape/close during shell reverses without revealing content or firing stale ready callback',async()=>{
+test('Escape during crossfade reverses from live opacity without firing stale ready callback',async()=>{
   const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();let ready=false,closed=false;
   api.open(p,api.capture(source),()=>ready=true);const old=animations[0],start=animations.length;
-  api.close(p,api.capture(source),()=>closed=true);assert(old.cancelled);assert.equal(p.dataset.popupStage,'shell');
-  await settle(animations[start]);await settle(old);assert(closed);assert(!ready);assert.equal(animations.filter(a=>a.target===p.form).length,0);assert(p.children.every(n=>n.removed));
+  api.close(p,api.capture(source),()=>closed=true);assert(old.cancelled);assert.equal(p.dataset.popupStage,'morph');
+  await settle(animations[start]);await settle(old);assert(closed);assert(!ready);assert(animations.filter(a=>a.target===p.form).every(a=>a.cancelled));assert(p.children.every(n=>n.removed));
 });
 test('cancel during content reveal cancels every child, restores fields and leaves no layers',async()=>{
   const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();api.open(p,api.capture(source));await settle(animations[0]);api.cancel(p);
@@ -146,7 +147,7 @@ test('reversing a sliced shell preserves each live corner transform',()=>{
 
 test('closing returns the original launcher caption, including its icon',async()=>{
   const {api,Element,panel,animations}=fixture(),p=panel(),source=new Element();source.textContent='＋ Add task';const anchor=api.capture(source);
-  api.open(p,anchor);assert.equal(p.children.at(-1).textContent,'Add task');await settle(animations[0]);await settle(animations.find(a=>a.target===p.form));
+  api.open(p,anchor);assert.equal(p.children.at(-1).textContent,'＋ Add task');await settle(animations[0]);await settle(animations.find(a=>a.target===p.form));
   api.close(p,anchor);assert.equal(p.children.at(-1).textContent,'＋ Add task');api.cancel(p);
 });
 
@@ -175,4 +176,14 @@ test('native prototype-backed button rectangle yields valid closing transforms',
   const tiles=animations.slice(start).filter(a=>a.target.className==='popup-morph-tile');assert.equal(tiles.length,9);
   for(const tile of tiles)for(const frame of tile.frames)assert(!/NaN|undefined|Infinity/.test(frame.transform),frame.transform);
   api.cancel(p);
+});
+
+
+test('compact previews release temporary bounds on finish and interrupted resize',async()=>{
+  const {api,Element,animations,events}=fixture(),preview=new Element();preview.className='calendar-task-preview';preview.card=new Element();preview.heading=new Element();preview.heading.textContent='Task details';
+  preview.style.width='min(520px, 90vw)';let ready=0;
+  api.open(preview,api.capture(new Element()),()=>ready++);
+  assert.equal(preview.dataset.popupStaged,'true');assert(preview.card.inert);
+  await settle(animations[0]);assert.equal(ready,1);assert.equal(preview.style.width,'min(520px, 90vw)');assert.equal(preview.dataset.popupStaged,undefined);assert(!preview.card.inert);
+  api.open(preview,api.capture(new Element()),()=>ready++);events.resize();assert.equal(ready,2);assert.equal(preview.style.width,'min(520px, 90vw)');assert(!preview.card.inert);assert(preview.children.every(n=>n.removed));
 });

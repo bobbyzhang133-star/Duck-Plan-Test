@@ -1,0 +1,284 @@
+{
+  "runtime": "157.0.8103.78",
+  "status": "PASS",
+  "mode": "isolated local browser / SW66 offline cache; not installed PWA",
+  "cache": {
+    "keys": [
+      "duckplan-app-motion-preview-v66"
+    ],
+    "controller": "http://127.0.0.1:8034/service-worker.js",
+    "assets": [
+      {
+        "file": "popup-motion.js",
+        "matches": true
+      },
+      {
+        "file": "motion-tokens.js",
+        "matches": true
+      },
+      {
+        "file": "planner-motion.css",
+        "matches": true
+      },
+      {
+        "file": "calendar-task-preview.css",
+        "matches": true
+      }
+    ]
+  },
+  "offlineEditReloadReconnect": "PASS",
+  "audit": [
+    {
+      "phase": "open",
+      "result": "complete",
+      "noBlur": false,
+      "lightGlass": false,
+      "readiness": {
+        "document": "complete",
+        "fonts": "loaded",
+        "pageAgeMs": 568
+      },
+      "phases": {
+        "fields": 6
+      },
+      "setupMs": 22,
+      "completionTailMs": 10,
+      "wallMs": 362,
+      "samples": 21,
+      "medianMs": 16,
+      "p95Ms": 17,
+      "maxMs": 27,
+      "over25ms": 1,
+      "slowFrames": [
+        {
+          "atMs": 27,
+          "gapMs": 27
+        }
+      ],
+      "supported": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "longWork": [],
+      "resources": []
+    },
+    {
+      "phase": "close",
+      "result": "complete",
+      "noBlur": false,
+      "lightGlass": false,
+      "readiness": {
+        "document": "complete",
+        "fonts": "loaded",
+        "pageAgeMs": 931
+      },
+      "phases": null,
+      "setupMs": 2,
+      "completionTailMs": 7,
+      "wallMs": 325,
+      "samples": 20,
+      "medianMs": 16,
+      "p95Ms": 17,
+      "maxMs": 17,
+      "over25ms": 0,
+      "slowFrames": [],
+      "supported": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "longWork": [],
+      "resources": []
+    },
+    {
+      "phase": "open",
+      "result": "complete",
+      "noBlur": false,
+      "lightGlass": false,
+      "readiness": {
+        "document": "complete",
+        "fonts": "loaded",
+        "pageAgeMs": 1296
+      },
+      "phases": {
+        "fields": 3
+      },
+      "setupMs": 9,
+      "completionTailMs": 6,
+      "wallMs": 347,
+      "samples": 21,
+      "medianMs": 16,
+      "p95Ms": 17,
+      "maxMs": 18,
+      "over25ms": 0,
+      "slowFrames": [],
+      "supported": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "longWork": [],
+      "resources": []
+    },
+    {
+      "phase": "close",
+      "result": "complete",
+      "noBlur": false,
+      "lightGlass": false,
+      "readiness": {
+        "document": "complete",
+        "fonts": "loaded",
+        "pageAgeMs": 1644
+      },
+      "phases": null,
+      "setupMs": 3,
+      "completionTailMs": 4,
+      "wallMs": 329,
+      "samples": 21,
+      "medianMs": 16,
+      "p95Ms": 17,
+      "maxMs": 17,
+      "over25ms": 0,
+      "slowFrames": [],
+      "supported": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "longWork": [],
+      "resources": []
+    },
+    {
+      "phase": "open",
+      "result": "complete",
+      "noBlur": false,
+      "lightGlass": false,
+      "readiness": {
+        "document": "complete",
+        "fonts": "loaded",
+        "pageAgeMs": 2013
+      },
+      "phases": {
+        "fields": 3
+      },
+      "setupMs": 9,
+      "completionTailMs": 4,
+      "wallMs": 347,
+      "samples": 22,
+      "medianMs": 16,
+      "p95Ms": 17,
+      "maxMs": 17,
+      "over25ms": 0,
+      "slowFrames": [],
+      "supported": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "longWork": [],
+      "resources": []
+    },
+    {
+      "phase": "close",
+      "result": "complete",
+      "noBlur": false,
+      "lightGlass": false,
+      "readiness": {
+        "document": "complete",
+        "fonts": "loaded",
+        "pageAgeMs": 2361
+      },
+      "phases": null,
+      "setupMs": 3,
+      "completionTailMs": 0,
+      "wallMs": 329,
+      "samples": 21,
+      "medianMs": 16,
+      "p95Ms": 17,
+      "maxMs": 17,
+      "over25ms": 0,
+      "slowFrames": [],
+      "supported": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "longWork": [],
+      "resources": []
+    }
+  ],
+  "errors": []
+}

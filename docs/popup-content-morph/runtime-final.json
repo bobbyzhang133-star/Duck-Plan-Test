@@ -1,0 +1,745 @@
+{
+  "runtime": "157.0.8103.78",
+  "results": [
+    {
+      "width": 1280,
+      "status": "PASS",
+      "mode": "isolated local",
+      "theme": "light",
+      "start": {
+        "paint": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "open": true,
+        "stage": "morph",
+        "copy": "Review calculus notesCalculusMediumDueFri, Nov 20 · 5:00 PMWorkToday · 10:00 AM–10:45 AM",
+        "children": 19,
+        "duplicates": 0,
+        "sourceHidden": "hidden",
+        "opacity": "0",
+        "inert": true,
+        "anim": [
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "time": 0,
+          "source": 1,
+          "content": 0,
+          "tile": "matrix(0, 0, 0, 0, -199, 239.375)"
+        },
+        {
+          "time": 80,
+          "source": 0.895833,
+          "content": 0,
+          "tile": "matrix(0.658265, 0, 0, 0.658265, -68.0053, 81.8028)"
+        },
+        {
+          "time": 192,
+          "source": 0.166667,
+          "content": 0.181818,
+          "tile": "matrix(0.972294, 0, 0, 0.972294, -5.51349, 6.63212)"
+        },
+        {
+          "time": 308,
+          "source": 0,
+          "content": 1,
+          "tile": "matrix(0.99956, 0, 0, 0.99956, -0.0876098, 0.105385)"
+        }
+      ],
+      "focused": {
+        "name": "title",
+        "inert": false,
+        "layers": 0
+      },
+      "preview": {
+        "width": 520,
+        "height": 404.453125,
+        "scroll": 402,
+        "client": 402
+      },
+      "saved": {
+        "title": "Reviewed calculus notes",
+        "dueDate": "2026-11-20",
+        "dueTime": "17:00",
+        "scheduledStart": "2026-11-20T10:00"
+      },
+      "errors": []
+    },
+    {
+      "width": 835,
+      "status": "PASS",
+      "mode": "synthetic signed-in / real localhost Worker schema 0001-0008",
+      "theme": "light",
+      "start": {
+        "paint": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "open": true,
+        "stage": "morph",
+        "copy": "Review calculus notesCalculusMediumDueFri, Nov 20 · 5:00 PMWorkToday · 10:00 AM–10:45 AM",
+        "children": 19,
+        "duplicates": 0,
+        "sourceHidden": "hidden",
+        "opacity": "0",
+        "inert": true,
+        "anim": [
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "time": 0,
+          "source": 1,
+          "content": 0,
+          "tile": "matrix(0, 0, 0, 0, 19.5, 233.375)"
+        },
+        {
+          "time": 80,
+          "source": 0.895833,
+          "content": 0,
+          "tile": "matrix(0.658265, 0, 0, 0.658265, 6.66383, 79.7524)"
+        },
+        {
+          "time": 192,
+          "source": 0.166667,
+          "content": 0.181818,
+          "tile": "matrix(0.972294, 0, 0, 0.972294, 0.540267, 6.46589)"
+        },
+        {
+          "time": 308,
+          "source": 0,
+          "content": 1,
+          "tile": "matrix(0.99956, 0, 0, 0.99956, 0.00858487, 0.102743)"
+        }
+      ],
+      "focused": {
+        "name": "title",
+        "inert": false,
+        "layers": 0
+      },
+      "preview": {
+        "width": 520,
+        "height": 408.453125,
+        "scroll": 406,
+        "client": 406
+      },
+      "saved": {
+        "title": "Reviewed calculus notes",
+        "dueDate": "2026-11-20",
+        "dueTime": "17:00",
+        "scheduledStart": "2026-11-20T10:00"
+      },
+      "errors": []
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "mode": "synthetic signed-in / real localhost Worker schema 0001-0008",
+      "theme": "light",
+      "start": {
+        "paint": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "open": true,
+        "stage": "morph",
+        "copy": "Review calculus notesCalculusMediumDueFri, Nov 20 · 5:00 PMWorkToday · 10:00 AM–10:45 AM",
+        "children": 19,
+        "duplicates": 0,
+        "sourceHidden": "hidden",
+        "opacity": "0",
+        "inert": true,
+        "anim": [
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "time": 0,
+          "source": 1,
+          "content": 0,
+          "tile": "matrix(0, 0, 0, 0, 49, 422.375)"
+        },
+        {
+          "time": 80,
+          "source": 0.895833,
+          "content": 0,
+          "tile": "matrix(0.658265, 0, 0, 0.658265, 16.745, 144.34)"
+        },
+        {
+          "time": 192,
+          "source": 0.166667,
+          "content": 0.181818,
+          "tile": "matrix(0.972294, 0, 0, 0.972294, 1.35759, 11.7023)"
+        },
+        {
+          "time": 308,
+          "source": 0,
+          "content": 1,
+          "tile": "matrix(0.99956, 0, 0, 0.99956, 0.0215723, 0.185951)"
+        }
+      ],
+      "focused": {
+        "name": "title",
+        "inert": false,
+        "layers": 0
+      },
+      "preview": {
+        "width": 362,
+        "height": 441.859375,
+        "scroll": 440,
+        "client": 440
+      },
+      "saved": {
+        "title": "Reviewed calculus notes",
+        "dueDate": "2026-11-20",
+        "dueTime": "17:00",
+        "scheduledStart": "2026-11-20T10:00"
+      },
+      "errors": []
+    },
+    {
+      "width": 320,
+      "status": "PASS",
+      "mode": "isolated local",
+      "theme": "dark",
+      "start": {
+        "paint": [
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)",
+          "rgb(43, 43, 36)"
+        ],
+        "open": true,
+        "stage": "morph",
+        "copy": "Review calculus notesCalculusMediumDueFri, Nov 20 · 5:00 PMWorkToday · 10:00 AM–10:45 AM",
+        "children": 19,
+        "duplicates": 0,
+        "sourceHidden": "hidden",
+        "opacity": "0",
+        "inert": true,
+        "anim": [
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-tile",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-surface",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-source",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "transform"
+            ]
+          },
+          {
+            "target": "popup-morph-label",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          },
+          {
+            "target": "",
+            "duration": 320,
+            "properties": [
+              "opacity"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "time": 0,
+          "source": 1,
+          "content": 0,
+          "tile": "matrix(0, 0, 0, 0, 49, 422.375)"
+        },
+        {
+          "time": 80,
+          "source": 0.895833,
+          "content": 0,
+          "tile": "matrix(0.658265, 0, 0, 0.658265, 16.745, 144.34)"
+        },
+        {
+          "time": 192,
+          "source": 0.166667,
+          "content": 0.181818,
+          "tile": "matrix(0.972294, 0, 0, 0.972294, 1.35759, 11.7023)"
+        },
+        {
+          "time": 308,
+          "source": 0,
+          "content": 1,
+          "tile": "matrix(0.99956, 0, 0, 0.99956, 0.0215723, 0.185951)"
+        }
+      ],
+      "focused": {
+        "name": "title",
+        "inert": false,
+        "layers": 0
+      },
+      "preview": {
+        "width": 292,
+        "height": 507.15625,
+        "scroll": 505,
+        "client": 505
+      },
+      "saved": {
+        "title": "Reviewed calculus notes",
+        "dueDate": "2026-11-20",
+        "dueTime": "17:00",
+        "scheduledStart": "2026-11-20T10:00"
+      },
+      "errors": []
+    }
+  ]
+}
