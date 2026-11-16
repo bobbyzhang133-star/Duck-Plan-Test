@@ -124,3 +124,30 @@ test("planLocalImport reuses classes by name, creates the rest, and remaps every
 
 // Cloud mode (sign-in, D1 writes, live updates, local-task import) is tested against the real
 // Worker in tests/cloudflare-worker.test.mjs.
+
+test("default work material is light yellow across no-class and original Personal without rewriting stored classes", async () => {
+  const storage = memoryStorage(), store = makeStore({ storage });
+  await store.init();
+  const saved = storage.getItem("duckplan-demo-classes-v1");
+  for (const classId of [null, "missing", "personal"]) {
+    const info = store.classById(classId);
+    assert.equal(info.color, Store.DEFAULT_TASK_COLOR);
+    assert.equal(info.soft, "#fff3bf");
+  }
+  assert.equal(storage.getItem("duckplan-demo-classes-v1"), saved);
+  const importedPersonal = { id: "00000000-0000-4000-8000-000000000099", name: "Personal", color: "#c48b34", code: "★", teacher: "Personal", period: "Anytime" };
+  await store.upsertClass(importedPersonal);
+  assert.equal(store.classById(importedPersonal.id).soft, Store.DEFAULT_TASK_SOFT);
+  assert.equal(store.listClasses().find(c => c.id === importedPersonal.id).color, "#c48b34", "presentation must not migrate the stored class");
+});
+
+test("class-specific and explicitly customized Personal colors retain their own materials", async () => {
+  const store = makeStore(); await store.init();
+  const calculus = store.classById("calculus");
+  assert.equal(calculus.color, "#538fc5"); assert.equal(calculus.soft, Store.softColor("#538fc5"));
+  await store.upsertClass({ ...store.listClasses().find(c => c.id === "personal"), color: "#3e946d" });
+  assert.equal(store.classById("personal").color, "#3e946d");
+  assert.equal(store.classById("personal").soft, Store.softColor("#3e946d"));
+  const custom = await store.upsertClass({ name: "Personal", color: "#c48b34", code: "P", teacher: "", period: "" });
+  assert.equal(store.classById(custom.id).color, "#c48b34", "a user-created class named Personal is not the built-in default");
+});

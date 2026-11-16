@@ -40,3 +40,7 @@ Tests use `node:test` with `node:assert/strict`. Name files `*.test.cjs` or `*.t
 ## Commit & Pull Request Guidelines
 
 Recent commits favor short, imperative subjects such as “Hide navigation sidebar by default.” Use that style and keep commits focused. Pull requests should explain the change, describe validation, link relevant issues when available, and include screenshots for visible interface changes. Call out changes to locally stored task data or migration behavior.
+
+## Website and App Design Alignment
+
+Keep the website and existing iPhone/iPad app aligned with the same approved task/calendar design, preserving the confirmed responsive layouts. Timed deadlines belong at their exact times in the schedule on every platform; date-only deadlines remain date-only. Default Personal/no-class work blocks use light yellow; custom class colors remain. Shared default/class materials must match between templates, drag previews and saved work blocks. Verify canonical, bundled, installed and backend versions separately, including actual native and signed-in feature checks. Never hide a server-capability warning or claim parity from a GitHub push/build alone. Follow `.cursor/rules/website-app-design-parity.mdc` in the website and native checkouts and the platform testing procedure.

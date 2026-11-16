@@ -1,0 +1,21 @@
+{
+  "checkedDate": "2026-11-15",
+  "scope": "anonymous read-only public assets and read-only D1 access attempt",
+  "origin": "https://duckplan.duckplan-cloudflare.workers.dev",
+  "publicCache": "duckplan-app-motion-preview-v13",
+  "publicPlannerLibraryScript": 404,
+  "anonymousSessionUser": null,
+  "authenticatedSchemaCheck": "NOT RUN: no dedicated production test session",
+  "existingInstalledSimulatorApp": {
+    "cache": "duckplan-app-native-cloud-v1",
+    "hasTimedDeadlineModule": false,
+    "hasTimedDeadlineRenderer": false,
+    "physicalPhoneInspected": false
+  },
+  "productionD1Access": {
+    "status": "BLOCKED",
+    "code": 7404,
+    "reason": "The production database bound in the existing configuration was not found through the current authenticated account. No migration was applied."
+  },
+  "productionDeploy": "NOT RUN; owner account required; prepared owner release per previous user choice"
+}
