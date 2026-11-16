@@ -33,7 +33,7 @@ test("sticky header and time-gutter occlusion define independent label and curre
   const f = fixture();
   assert.equal(f.intersections[0].options.root, f.calendar);
   assert.equal(f.intersections[0].options.rootMargin, "-115px -1px -1px -1px");
-  assert.equal(f.intersections[1].options.rootMargin, "-115px -1px -1px -72px");
+  assert.equal(f.intersections[1].options.rootMargin, "-115px -1px -1px -67px", "Allow the gutter-side half of the boundary-centred dot, measured from the inner root edge");
   assert.deepEqual(f.intersections[0].options.threshold, [0, 1]);
   f.emit(f.intersections[0], f.labels[0], 0.5);
   assert.ok(f.labels[0].classes.has("is-viewport-clipped"));

@@ -30,7 +30,10 @@
       const top = Math.max(0, headerBottom - bounds.top), right = Math.max(0, calendar.offsetWidth - calendar.clientWidth - calendar.clientLeft);
       const bottom = Math.max(0, calendar.offsetHeight - calendar.clientHeight - calendar.clientTop);
       const axis = calendar.querySelector(".time-axis").getBoundingClientRect();
-      const left = Math.max(calendar.clientLeft, axis.right - bounds.left);
+      // The 8px dot is centred on today's column boundary. Its gutter-side
+      // half is intentional; keep that half visible without exposing it when
+      // the column has scrolled behind the sticky hour labels.
+      const left = Math.max(0, axis.right - bounds.left - calendar.clientLeft - 4);
       const version = generation;
       const update = indicator => entries => {
         if (destroyed || version !== generation) return;

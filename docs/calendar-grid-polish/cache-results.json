@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "cache": {
+    "name": "duckplan-app-motion-preview-v71",
+    "files": {
+      "calendar-date-clarity.css": "d72ea8e52e188b6ca397fb11036d8affc560602cffb901a17edc7b65f940f9ca",
+      "calendar-viewport.js": "370b74af68783be4882aa4b7adae1b0551d424732c2dbb001928aaedcc32ce0c",
+      "index.html": "91675079f28d86476bdd92044ff3e10eaa7a77cf327e1af6287a05950456eca3"
+    }
+  },
+  "offlineReload": true,
+  "unchangedTasks": true,
+  "installedPWA": false
+}

@@ -52,12 +52,19 @@
 .motion-preview .calendar-event-block.calendar-drag-ghost,
 .motion-preview .library-template-block { border-left-width: 0; }
 .motion-preview #view-calendar .timeline-column {
+  background-color: var(--card);
   background-image:
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) - 1px),var(--calendar-hour-line) calc(var(--hour-height) - 1px),var(--calendar-hour-line) var(--hour-height)),
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2));
 }
+.motion-preview #view-calendar .calendar-date-button { background-color: var(--card); }
+.motion-preview #view-calendar .calendar-date-button.selected { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
 .motion-preview #view-calendar .timeline-column.selected-day { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
-.motion-preview #view-calendar .current-time-line { z-index: 3; height: 1px; }
+/* One continuous surface across the time gutter and timetable. Other day
+   separators remain; the gutter must not read as a separate bordered panel. */
+.motion-preview #view-calendar :is(.time-axis,.timeline-corner,.timeline-deadline-label) { border-right-width: 0; }
+.motion-preview #view-calendar :is(.timeline-column,.calendar-date-button,.deadline-cell):first-child { border-left-width: 0; }
+.motion-preview #view-calendar .current-time-line { z-index: 6; height: 1px; }
 
 /* Timed due dates are point annotations, never blocks of reserved work time. */
 .motion-preview #view-calendar .timeline-calendar {
@@ -331,7 +338,8 @@
   padding: 0; transform: translateY(-50%); font-size: inherit; line-height: 1.25; white-space: nowrap;
 }
 .motion-preview #view-calendar .time-axis > span:first-child .time-axis-label { top: 3px; transform: none; }
-.motion-preview #view-calendar .current-time-line { left: 5px; right: 4px; }
+.motion-preview #view-calendar .current-time-line { left: -1px; right: 0; }
+.motion-preview #view-calendar .timeline-column:first-child > .current-time-line { left: 0; }
 .motion-preview #view-calendar .current-time-line > span { left: -4px; }
 .motion-preview #view-calendar :is(.time-axis-label,.current-time-line).is-viewport-clipped { opacity: 0; }
 @media (max-width: 700px) {
