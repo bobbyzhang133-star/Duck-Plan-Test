@@ -1,0 +1,373 @@
+{
+  "status": "PASS for recorded native UI/persistence/design scope",
+  "runtime": "actual iPhone18Pro iOS27.2 WKWebView; scripted DOM actions, not trusted touch",
+  "qaAppID": "com.duckplan.parityqa",
+  "device": "E8481E77-386B-4C54-BE35-BC1293ECE255; existing production app com.duckplan.app not modified",
+  "qaOverlays": [
+    "separate app and widget bundle IDs/display name",
+    "appended private QA runner script",
+    "ad hoc signing of temporary test copy"
+  ],
+  "realNativeURLSession": "http://127.0.0.1:8796/api; isolated current backend/schema0001-0008; no mocked transport",
+  "passedModes": [
+    "cloud-baseline",
+    "cloud-baseline-relaunch",
+    "cloud-extended",
+    "cloud-presentation",
+    "local-baseline",
+    "local-baseline-relaunch",
+    "local-extended",
+    "local-presentation"
+  ],
+  "rows": [
+    {
+      "runId": "phone-local-baseline-1794792526395597000",
+      "mode": "local-baseline",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-baseline-1794792526395597000",
+      "mode": "local-baseline",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-local-baseline-1794792526395597000",
+      "mode": "local-baseline",
+      "stage": "baseline-pass",
+      "task": true,
+      "classResource": true,
+      "template": true,
+      "visibleCopy": true,
+      "note": true,
+      "goal": true,
+      "habit": true,
+      "viewport": [
+        402,
+        812
+      ],
+      "overflow": false
+    },
+    {
+      "runId": "phone-local-baseline-1794792526395597000",
+      "mode": "local-baseline",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794792550953996000",
+      "mode": "local-baseline-relaunch",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794792550953996000",
+      "mode": "local-baseline-relaunch",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794792550953996000",
+      "mode": "local",
+      "stage": "baseline-relaunch-pass",
+      "persistence": true
+    },
+    {
+      "runId": "phone-local-baseline-relaunch-1794792550953996000",
+      "mode": "local-baseline-relaunch",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-presentation-1794792568169320000",
+      "mode": "local-presentation",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-presentation-1794792568169320000",
+      "mode": "local-presentation",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-local-presentation-1794792691168303000",
+      "mode": "local-presentation",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-presentation-1794792691168303000",
+      "mode": "local-presentation",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-local-presentation-1794792842945453000",
+      "mode": "local-presentation",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        812
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-presentation-1794792842945453000",
+      "mode": "local-presentation",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-local-presentation-1794792842945453000",
+      "mode": "local-presentation",
+      "stage": "presentation-pass",
+      "nativeWKWebView": true,
+      "defaultFill": "rgb(255, 243, 191)",
+      "timedDeadlineMinute": 1020,
+      "templateMatches": true,
+      "distinctWorkAndDeadline": true,
+      "scriptedDOM": true
+    },
+    {
+      "runId": "phone-local-presentation-1794792842945453000",
+      "mode": "local-presentation",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-local-extended-1794792863808853000",
+      "mode": "local-extended",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-local-extended-1794792863808853000",
+      "mode": "local-extended",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-local-extended-1794792863808853000",
+      "mode": "local-extended",
+      "stage": "extended-pass",
+      "calendarModes": true,
+      "midnightLateNight": true,
+      "templateEditScheduleDelete": true,
+      "taskInvalidEditCompleteReopenDelete": true,
+      "notesEditSearchDelete": true,
+      "goalProgressDelete": true,
+      "habitUncheckCascade": true,
+      "resourceDelete": true,
+      "scriptedDOM": true
+    },
+    {
+      "runId": "phone-local-extended-1794792863808853000",
+      "mode": "local-extended",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-baseline-1794792886580832000",
+      "mode": "cloud-baseline",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "local"
+    },
+    {
+      "runId": "phone-cloud-baseline-1794792886580832000",
+      "mode": "cloud-baseline",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-cloud-baseline-1794792886580832000",
+      "mode": "cloud-baseline",
+      "stage": "baseline-pass",
+      "task": true,
+      "classResource": true,
+      "template": true,
+      "visibleCopy": true,
+      "note": true,
+      "goal": true,
+      "habit": true,
+      "viewport": [
+        402,
+        812
+      ],
+      "overflow": false
+    },
+    {
+      "runId": "phone-cloud-baseline-1794792886580832000",
+      "mode": "cloud-baseline",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794792904240163000",
+      "mode": "cloud-baseline-relaunch",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794792904240163000",
+      "mode": "cloud-baseline-relaunch",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794792904240163000",
+      "mode": "cloud",
+      "stage": "baseline-relaunch-pass",
+      "persistence": true
+    },
+    {
+      "runId": "phone-cloud-baseline-relaunch-1794792904240163000",
+      "mode": "cloud-baseline-relaunch",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-presentation-1794792912827263000",
+      "mode": "cloud-presentation",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-presentation-1794792912827263000",
+      "mode": "cloud-presentation",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-cloud-presentation-1794792912827263000",
+      "mode": "cloud-presentation",
+      "stage": "presentation-pass",
+      "nativeWKWebView": true,
+      "defaultFill": "rgb(255, 243, 191)",
+      "timedDeadlineMinute": 1020,
+      "templateMatches": true,
+      "distinctWorkAndDeadline": true,
+      "scriptedDOM": true
+    },
+    {
+      "runId": "phone-cloud-presentation-1794792912827263000",
+      "mode": "cloud-presentation",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    },
+    {
+      "runId": "phone-cloud-extended-1794792924367377000",
+      "mode": "cloud-extended",
+      "stage": "started",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "native": true,
+      "api": "http://127.0.0.1:8796/api",
+      "viewport": [
+        402,
+        778
+      ],
+      "scope": "cloud"
+    },
+    {
+      "runId": "phone-cloud-extended-1794792924367377000",
+      "mode": "cloud-extended",
+      "stage": "permission-state",
+      "status": "NOT RUN: optional OS status probe omitted; UI baseline makes no OS-delivery claim"
+    },
+    {
+      "runId": "phone-cloud-extended-1794792924367377000",
+      "mode": "cloud-extended",
+      "stage": "extended-pass",
+      "calendarModes": true,
+      "midnightLateNight": true,
+      "templateEditScheduleDelete": true,
+      "taskInvalidEditCompleteReopenDelete": true,
+      "notesEditSearchDelete": true,
+      "goalProgressDelete": true,
+      "habitUncheckCascade": true,
+      "resourceDelete": true,
+      "scriptedDOM": true
+    },
+    {
+      "runId": "phone-cloud-extended-1794792924367377000",
+      "mode": "cloud-extended",
+      "stage": "finished",
+      "status": "PASS",
+      "runtime": "actual simulator WKWebView; scripted DOM actions, not trusted touch"
+    }
+  ],
+  "harnessDiagnostics": "Two initial presentation assertions expected a single deadline marker although the17:00 deadlines correctly formed a group. The corrected harness exercises the actual grouped list and task preview; no application code changed for this. The optional direct OS permission-status probe that stalled during the previous release was omitted from this UI baseline; no OS delivery claim.",
+  "notRun": [
+    "native iPad variant for this change",
+    "physical iPhone/iPad installation and actual alert delivery",
+    "APNs",
+    "trusted native touch"
+  ]
+}

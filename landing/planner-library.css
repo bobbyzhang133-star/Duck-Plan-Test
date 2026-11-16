@@ -1,6 +1,6 @@
 /* Assignment templates and class resources share the planner's existing theme. */
 .calendar-event-block, .library-template-block {
-  --calendar-event-fill: color-mix(in srgb,var(--course-color) 15%,white);
+  --calendar-event-fill: var(--course-default-fill,color-mix(in srgb,var(--course-color) 15%,white));
   --calendar-event-title: #293241;
   --calendar-event-secondary: #4d5666;
   background: var(--calendar-event-fill); color: var(--calendar-event-title);
