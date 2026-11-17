@@ -1,0 +1,390 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated Chromium local fixtures; browser wheel boundary tests, not physical macOS/iOS rubber-band validation",
+  "results": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        1,
+        1,
+        0.9585579686566394,
+        1,
+        1,
+        1,
+        1
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.023687200499784043,
+        0.023687200499784043,
+        0.03171659828951619,
+        0.023687200499784043,
+        0.023687200499784043,
+        0.023687200499784043,
+        0.023687200499784043
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 785,
+        "height": 900
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 785,
+        "height": 900
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 785,
+        "height": 900
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        1,
+        1,
+        0.9585579686566394,
+        1,
+        1,
+        1,
+        1
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 785,
+        "height": 900
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.023687200499784043,
+        0.023687200499784043,
+        0.03171659828951619,
+        0.023687200499784043,
+        0.023687200499784043,
+        0.023687200499784043,
+        0.023687200499784043
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "headerColor": "rgb(255, 255, 255)",
+      "headerLuminance": 1,
+      "columnLuminances": [
+        0.9585579686566394
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "headerColor": "color(srgb 0.268392 0.268392 0.244235)",
+      "headerLuminance": 0.05710988384045359,
+      "columnLuminances": [
+        0.03171659828951619
+      ],
+      "topBoundaryStationary": true,
+      "bottomBoundaryStationary": true,
+      "ordinaryScroll": true,
+      "fold": true
+    }
+  ]
+}

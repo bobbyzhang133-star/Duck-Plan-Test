@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.79",
+  "cache": {
+    "name": "duckplan-app-motion-preview-v75",
+    "files": {
+      "index.html": "5158e4604074a7542bd3fb8a4d20e2534b888d3c883bc70175cb4f98d4bbf692",
+      "app.js": "7a71d4de4299ba61bba0b040b924e912b93c95aeac99917d2fe069f56144e341",
+      "planner-model.js": "25d5997a36fd0df022716433013b3b8e8871ab5ef8fdad6afcd75730148a7601",
+      "calendar-date-presentation.js": "ec1e432db824ed4aee8dd117f933440ca52385a12d4d96c8f15bf1dbbb87c8f0",
+      "calendar-viewport.js": "fa6c615acdc626235d64c8608dde58915657540c899c3ed332e7c67be080d2ff",
+      "calendar-date-clarity.css": "a0590f9a536f74c282ac79bace88069c8c69e386e5b736f0e68d1357e7cb3ae5"
+    }
+  },
+  "offlineReloadAndPersistence": true,
+  "state": {
+    "label": "Wednesday, November 18. 1 scheduled assignment, 1 deadline.",
+    "fold": true
+  },
+  "installedPWA": false
+}
