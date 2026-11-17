@@ -1,0 +1,12 @@
+✔ web app manifest defines an installable standalone DuckPlan app (2.762167ms)
+✔ planner markup exposes install metadata and an accessible install control (2.114125ms)
+✔ service worker caches the shell, leaves APIs online-only, and handles notification clicks (2.049875ms)
+✔ install controller registers the worker and supports native install prompts (0.904833ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 335.465875
