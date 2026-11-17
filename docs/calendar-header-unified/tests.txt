@@ -1,0 +1,17 @@
+✔ sticky header and time-gutter occlusion define independent label and current-dot viewports (1.886042ms)
+✔ rerender/resize coalesce, update changed header bounds and ignore stale observer callbacks (0.3725ms)
+✔ destroy cancels pending work, restores paint and releases observers/listeners (0.172083ms)
+✔ unsupported observer environments leave the CSS-sized timeline usable (0.434084ms)
+✔ fold shadow follows only timetable scroll, resets for Month and releases its passive listener (0.227708ms)
+✔ web app manifest defines an installable standalone DuckPlan app (1.78175ms)
+✔ planner markup exposes install metadata and an accessible install control (1.539708ms)
+✔ service worker caches the shell, leaves APIs online-only, and handles notification clicks (1.884334ms)
+✔ install controller registers the worker and supports native install prompts (0.450125ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 216.806166

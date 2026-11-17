@@ -64,16 +64,21 @@
 /* Keep the whole sticky header a neutral band, including the selected date.
    Its badge carries selection; the yellow wash belongs to the timetable. */
 .motion-preview #view-calendar .calendar-date-button,
-.motion-preview #view-calendar .calendar-date-button.selected { background-color: var(--calendar-header-surface); }
+.motion-preview #view-calendar .calendar-date-button.selected { border-left-width: 0; background-color: var(--calendar-header-surface); }
 .motion-preview #view-calendar .timeline-deadlines,
 .motion-preview #view-calendar .timeline-deadline-label { box-shadow: 0 1px 0 var(--line); }
 /* The fixed header folds visually over the scrolling hours, without moving
    the toolbar or adding another permanent row. Only the final header casts. */
 .motion-preview #view-calendar .timeline-calendar { --calendar-fold-shadow: 0 5px 9px -5px rgba(95,72,27,.25); }
+/* Cast one full-width fold rather than separate corner/day shadows, whose
+   overlapping edges made the blank corner look like a separate tab. */
 .motion-preview #view-calendar .is-timeline-scrolled .timeline-deadlines,
-.motion-preview #view-calendar .is-timeline-scrolled .timeline-deadline-label,
-.motion-preview #view-calendar .is-timeline-scrolled .timeline-calendar:not(:has(.timeline-deadlines)) > .timeline-days,
-.motion-preview #view-calendar .is-timeline-scrolled .timeline-calendar:not(:has(.timeline-deadlines)) > .timeline-corner { box-shadow: var(--calendar-fold-shadow); }
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-deadline-label { box-shadow: none; }
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-deadlines::after,
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-calendar:not(:has(.timeline-deadlines)) > .timeline-days::after {
+  content: ""; position: absolute; left: calc(-1 * var(--calendar-axis-width)); right: 0; bottom: 0;
+  height: 12px; pointer-events: none; box-shadow: var(--calendar-fold-shadow);
+}
 :root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar { --calendar-fold-shadow: 0 5px 10px -4px rgba(0,0,0,.55); }
 /* Rebalance existing 66/48px day headings rather than enlarging sticky rows. */
 .motion-preview #view-calendar .calendar-date-button { gap: 1px; padding-block: 3px; }
