@@ -375,7 +375,8 @@
   position: absolute; top: 0; right: 8px; display: block;
   padding: 0; transform: translateY(-50%); font-size: inherit; line-height: 1.25; white-space: nowrap;
 }
-.motion-preview #view-calendar .time-axis > span:first-child .time-axis-label { top: 3px; transform: none; }
+/* Keep the first hour cell and its coordinates, without a redundant 12 AM label. */
+.motion-preview #view-calendar .time-axis > span:first-child .time-axis-label { visibility: hidden; }
 .motion-preview #view-calendar .current-time-line { left: -1px; right: 0; }
 .motion-preview #view-calendar .timeline-column:first-child > .current-time-line { left: 0; }
 .motion-preview #view-calendar .current-time-line > span { left: -4px; }
