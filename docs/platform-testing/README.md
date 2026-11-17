@@ -77,6 +77,8 @@ An intentionally unsupported capability needs an explicit product rule and hones
 
 ## Required evidence and result labels
 
+For Calendar day counts and the folding header, verify independent Work/start-date and Due/all-deadline totals, completed/deleted exclusions, same-day dual membership and overnight start-only membership. Check create/edit/reschedule/complete/delete and incoming refresh without losing phone day-button focus. Test zero/two-digit counts at320/390/835/1280px and short landscape without enlarging sticky rows, with accessible full labels. Check fold shadow only during timetable scroll, with/without date-only rows, top reset, Month cleanup, unchanged time geometry and offline cached inputs.
+
 For each case record: feature/action, platform/runtime version, mode/backend, source/build identity, expected result, actual result, status and evidence path. Include precise data assertions: for example, “Schedule created one new task at 10:00 for 45 minutes; the template and original task count are unchanged; the scheduled task remained after relaunch.” A screenshot of the button is insufficient.
 
 - **PASS:** the stated action and persistence assertions ran successfully in the recorded runtime/mode. A fixture-backed pass must be labeled fixture-backed; it does not prove the production backend.

@@ -47,6 +47,13 @@
       const status = timing(task);
       return `<button type="button" class="deadline-chip calendar-deadline-marker${status.overdue ? " is-overdue" : ""}${task.id === currentSelection() ? " selected" : ""}" style="${colors(task)}" ${taskAttributes(task, "deadline")} aria-label="${escape(accessibleLabel(task, "deadline", date))}">${flag}<span class="deadline-title">${safeText(task.title)}</span><small class="deadline-time">${safeText(dueTime(task))}</small>${status.overdue ? '<span class="sr-only">Overdue</span>' : ""}</button>`;
     }
+    function daySummary(tasks, date) {
+      const { workCount, dueCount } = model.daySummary(tasks, date);
+      const count = value => value > 99 ? "99+" : String(value);
+      return { workCount, dueCount,
+        label: `${formatLongDate(date)}. ${countText(workCount, "scheduled assignment")}, ${countText(dueCount, "deadline")}.`,
+        markup: `<span class="calendar-day-counts" aria-hidden="true">${workCount ? `<span data-day-work-count>${clock}<span>${count(workCount)}</span></span>` : ""}${dueCount ? `<span data-day-due-count>${flag}<span>${count(dueCount)}</span></span>` : ""}</span>` };
+    }
     function deadlineChips(tasks, date, { expanded = false, limit = 3, dateOnly = false } = {}) {
       const deadlines = sortedDeadlines(tasks, date).filter(task => !dateOnly || !validTime(task.dueTime));
       if (!deadlines.length) return "";
@@ -131,7 +138,7 @@
       }).join("");
       return `<div class="month-calendar calendar-layered-month"><div class="calendar-kind-legend" aria-label="Calendar key"><span>${clock}Work session</span><span>${flag}Deadline</span></div><div class="month-weekdays">${weekdays}</div><div class="month-grid">${cells}</div>${agenda(tasks, selectedDate)}</div>`;
     }
-    return { deadlineChips, timedDeadlineGroups, timedDeadlineMarker, month, agenda };
+    return { daySummary, deadlineChips, timedDeadlineGroups, timedDeadlineMarker, month, agenda };
   }
   return { create };
 });

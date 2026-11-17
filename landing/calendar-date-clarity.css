@@ -64,6 +64,39 @@
 .motion-preview #view-calendar .calendar-date-button.selected { background-color: var(--calendar-header-surface); }
 .motion-preview #view-calendar .timeline-deadlines,
 .motion-preview #view-calendar .timeline-deadline-label { box-shadow: 0 1px 0 var(--line); }
+/* The fixed header folds visually over the scrolling hours, without moving
+   the toolbar or adding another permanent row. Only the final header casts. */
+.motion-preview #view-calendar .timeline-calendar { --calendar-fold-shadow: 0 5px 9px -5px rgba(95,72,27,.25); }
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-deadlines,
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-deadline-label,
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-calendar:not(:has(.timeline-deadlines)) > .timeline-days,
+.motion-preview #view-calendar .is-timeline-scrolled .timeline-calendar:not(:has(.timeline-deadlines)) > .timeline-corner { box-shadow: var(--calendar-fold-shadow); }
+:root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar { --calendar-fold-shadow: 0 5px 10px -4px rgba(0,0,0,.55); }
+/* Rebalance existing 66/48px day headings rather than enlarging sticky rows. */
+.motion-preview #view-calendar .calendar-date-button { gap: 1px; padding-block: 3px; }
+.motion-preview #view-calendar .calendar-date-button strong { width: 25px; height: 25px; }
+.motion-preview #view-calendar :is(.calendar-date-button,.phone-week-day) .calendar-day-counts {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; min-width: 0; height: 14px; flex-shrink: 0;
+  color: var(--muted); font-size: 10px; font-weight: 500; line-height: 12px;
+  letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums;
+}
+.motion-preview #view-calendar .calendar-day-counts > span { display: inline-flex; align-items: center; gap: 2px; min-width: 0; }
+.motion-preview #view-calendar .calendar-day-counts span { color: inherit; font: inherit; letter-spacing: 0; text-transform: none; }
+.motion-preview #view-calendar .calendar-day-counts .calendar-kind-icon { width: 10px; height: 10px; color: currentColor; }
+@media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar .calendar-date-button { gap: 0; padding-block: 1px; }
+  .motion-preview #view-calendar .calendar-date-button > span:first-child { font-size: 9px; }
+  .motion-preview #view-calendar .calendar-date-button strong { width: 22px; height: 22px; font-size: 14px; }
+  .motion-preview #view-calendar .phone-week-day { grid-template-rows: 10px 18px 14px; gap: 1px; padding-block: 3px; }
+  .motion-preview #view-calendar .phone-week-day > span:first-child { font-size: 9px; }
+  .motion-preview #view-calendar .phone-week-day .calendar-day-counts { gap: 3px; font-size: 9px; }
+  .motion-preview #view-calendar .phone-week-day .calendar-kind-icon { width: 8px; height: 8px; }
+}
+@media (max-width: 360px) {
+  .motion-preview #view-calendar .phone-week-day { grid-template-rows: 9px 16px 20px; gap: 0; }
+  .motion-preview #view-calendar .phone-week-day .calendar-day-counts { height: 20px; flex-direction: column; gap: 0; line-height: 10px; }
+}
 .motion-preview #view-calendar .timeline-column.selected-day { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
 /* One continuous surface across the time gutter and timetable. Other day
    separators remain; the gutter must not read as a separate bordered panel. */

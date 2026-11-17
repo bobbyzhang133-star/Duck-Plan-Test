@@ -12,7 +12,8 @@ function fixture() {
   const days = element({ bottom: 77 }), due = element({ bottom: 125 }), axis = element({ right: 92 });
   let headers = [days, due], currentLabels = labels, hasAxis = true, nextFrame = 0;
   const frames = new Map(), intersections = [], resize = [], mutations = [], listeners = new Set();
-  const calendar = { ...element({ top: 10, left: 20 }), clientTop: 1, clientLeft: 1, clientHeight: 598, offsetHeight: 600, clientWidth: 398, offsetWidth: 400,
+  const scrollListeners = new Set();
+  const calendar = { scrollTop: 0, addEventListener: (name, fn) => scrollListeners.add(fn), removeEventListener: (name, fn) => scrollListeners.delete(fn), ...element({ top: 10, left: 20 }), clientTop: 1, clientLeft: 1, clientHeight: 598, offsetHeight: 600, clientWidth: 398, offsetWidth: 400,
     querySelector: selector => selector === ".time-axis" && hasAxis ? axis : null,
     querySelectorAll: selector => selector === ".timeline-days,.timeline-deadlines" ? headers : selector === ".time-axis-label" ? currentLabels : [dot] };
   const view = {
@@ -25,7 +26,7 @@ function fixture() {
   const controller = Viewport.create({ calendar, view });
   const flush = () => { const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn()); };
   const emit = (observer, target, ratio) => observer.callback([{ target, intersectionRatio: ratio, isIntersecting: ratio > 0 }]);
-  return { controller, calendar, view, labels, line, dot, days, due, intersections, resize, mutations, frames, listeners, flush, emit,
+  return { controller, calendar, view, labels, line, dot, days, due, intersections, resize, mutations, frames, listeners, scrollListeners, flush, emit,
     replace() { headers = [days]; currentLabels = [element()]; }, month() { headers = []; currentLabels = []; hasAxis = false; } };
 }
 
@@ -76,4 +77,17 @@ test("destroy cancels pending work, restores paint and releases observers/listen
 
 test("unsupported observer environments leave the CSS-sized timeline usable", () => {
   assert.doesNotThrow(() => { const c = Viewport.create({ calendar: {}, view: {} }); c.refresh(); c.destroy(); });
+});
+
+test("fold shadow follows only timetable scroll, resets for Month and releases its passive listener", () => {
+  const f = fixture();
+  assert.equal(f.calendar.classes.has("is-timeline-scrolled"), false);
+  f.calendar.scrollTop = 120; [...f.scrollListeners][0]();
+  assert.ok(f.calendar.classes.has("is-timeline-scrolled"));
+  assert.equal(f.frames.size, 0, "Scroll paint does not rebuild viewport geometry");
+  f.calendar.scrollTop = 0; [...f.scrollListeners][0]();
+  assert.equal(f.calendar.classes.has("is-timeline-scrolled"), false);
+  f.calendar.scrollTop = 120; f.month(); f.controller.refresh();
+  assert.equal(f.calendar.classes.has("is-timeline-scrolled"), false);
+  f.controller.destroy(); assert.equal(f.scrollListeners.size, 0);
 });

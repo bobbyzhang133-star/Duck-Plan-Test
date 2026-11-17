@@ -828,7 +828,7 @@ function renderTimeline(dates) {
   const endHour = CALENDAR_END_HOUR;
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
-  const headers = dates.map((date) => `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
+  const headers = dates.map((date) => { const summary = calendarDates.daySummary(tasks, date); return `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}" aria-label="${safeText(summary.label).replaceAll('"', "&quot;")}" aria-pressed="${date === selectedDate}"${date === nowKey() ? ' aria-current="date"' : ""}><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong>${summary.markup}</button>`; }).join("");
   const dateOnlyDeadlines = dates.map(date => deadlineChips(date));
   const deadlineRows = dateOnlyDeadlines.some(Boolean)
     ? `<div class="timeline-deadline-label" aria-label="Deadlines without a time">Due</div><div class="timeline-deadlines">${dates.map((date, index) => `<div class="deadline-cell" data-deadline-date="${date}">${dateOnlyDeadlines[index]}</div>`).join("")}</div>` : "";
@@ -932,10 +932,17 @@ function renderPhoneWeekStrip(dates) {
   if (strip.hidden) return;
   const week = dates.join(",");
   if (strip.dataset.week !== week) {
-    strip.innerHTML = dates.map((date) => `<button type="button" class="phone-week-day" data-date="${date}" aria-label="${formatLongDate(date)}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button>`).join("");
+    strip.innerHTML = dates.map((date) => `<button type="button" class="phone-week-day" data-date="${date}" aria-label="${formatLongDate(date)}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong><span class="calendar-day-counts" aria-hidden="true"></span></button>`).join("");
     strip.dataset.week = week;
   }
   strip.querySelectorAll("button").forEach((button) => {
+    const summary = calendarDates.daySummary(tasks, button.dataset.date);
+    button.setAttribute("aria-label", summary.label);
+    const counts = button.querySelector(".calendar-day-counts");
+    const key = `${summary.workCount}:${summary.dueCount}`;
+    if (counts && counts.dataset.counts !== key) {
+      counts.outerHTML = summary.markup.replace('class="calendar-day-counts"', `class="calendar-day-counts" data-counts="${key}"`);
+    }
     button.setAttribute("aria-pressed", String(button.dataset.date === selectedDate));
     if (button.dataset.date === nowKey()) button.setAttribute("aria-current", "date");
     else button.removeAttribute("aria-current");

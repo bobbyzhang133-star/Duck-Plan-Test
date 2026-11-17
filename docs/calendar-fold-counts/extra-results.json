@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.79",
+  "mode": "isolated synthetic local browser",
+  "noDueShadow": true,
+  "dateClick": true,
+  "dateKeyboard": true,
+  "topReset": true
+}

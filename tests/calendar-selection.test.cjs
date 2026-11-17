@@ -58,6 +58,7 @@ test("template calendar drops use the target day, including the deadline band, w
     templateDrag: { libraryId: "reusable-template", owner: "local:local" },
     dateObject: (date) => new Date(`${date}T12:00:00`),
     nowKey: () => "2026-11-12", formatTime: (time) => time, formatLongDate: (date) => date,
+    safeText: value => String(value).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;"),
     deadlineChips: () => "Date-only deadline fixture", layoutEvents: () => [], Model: { scheduledParts: () => null },
     document: {
       addEventListener(type, handler) { assert.equal(type, "drop"); onDrop = handler; },

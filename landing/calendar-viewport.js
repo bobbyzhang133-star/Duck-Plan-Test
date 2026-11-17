@@ -9,6 +9,8 @@
     if (!calendar || !view?.IntersectionObserver) return { refresh() {}, destroy() {} };
     let frame = null, generation = 0, destroyed = false, labelObserver, indicatorObserver;
     const observedSizes = new Set(), clipped = new Set();
+    const paintFold = () => calendar.classList.toggle("is-timeline-scrolled", Boolean(calendar.querySelector(".time-axis")) && calendar.scrollTop > 1);
+    calendar.addEventListener("scroll", paintFold, { passive: true });
     const schedule = () => { if (!destroyed && frame === null) frame = view.requestAnimationFrame(() => { frame = null; refresh(); }); };
     const sizes = view.ResizeObserver ? new view.ResizeObserver(schedule) : null;
     function disconnectPaint() {
@@ -19,6 +21,7 @@
     }
     function refresh() {
       if (destroyed) return;
+      paintFold();
       disconnectPaint();
       const headers = [...calendar.querySelectorAll(".timeline-days,.timeline-deadlines")];
       const currentSizes = new Set([calendar, ...headers]);
@@ -60,6 +63,8 @@
       if (frame !== null) view.cancelAnimationFrame(frame);
       frame = null;
       disconnectPaint(); sizes?.disconnect(); mutations?.disconnect(); observedSizes.clear();
+      calendar.removeEventListener("scroll", paintFold);
+      calendar.classList.remove("is-timeline-scrolled");
       view.removeEventListener("resize", schedule);
     } };
   }
