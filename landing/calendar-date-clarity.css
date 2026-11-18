@@ -73,6 +73,8 @@
 .motion-preview #view-calendar .timeline-column {
   background-color: var(--card);
   background-image:
+    /* Midnight keeps its hour rule even though its text label is hidden. */
+    linear-gradient(to bottom,var(--calendar-hour-line) 1px,transparent 1px),
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) - 1px),var(--calendar-hour-line) calc(var(--hour-height) - 1px),var(--calendar-hour-line) var(--hour-height)),
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2));
 }
