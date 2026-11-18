@@ -32,8 +32,7 @@ async page => {
         const top = await p.evaluate(geometry);
         check(top.body > 0 && top.body <= 48 && Math.abs(top.axisTop - rest.axisTop - top.body) < 0.01 && Math.abs(top.bodyTop - rest.bodyTop - top.body) < 0.01, "Top stretch missing or mismatched");
         check(top.headerTop === rest.headerTop && top.toolbarTop === rest.toolbarTop, "Header moved with stretch");
-        await p.waitForTimeout(550);
-        check(await p.evaluate(() => !document.querySelector(".timeline-calendar").style.transform && !document.querySelector(".timeline-calendar").getAnimations().length), "Return did not clean up");
+        await p.waitForFunction(() => !document.querySelector(".timeline-calendar").style.transform && !document.querySelector(".timeline-calendar").getAnimations().length, null, { timeout: 2000 });
         await p.mouse.wheel(0, 180); await p.waitForTimeout(110);
         check((await p.evaluate(geometry)).scroll > 0, "Normal wheel scroll blocked");
         await p.evaluate(() => { const root = document.querySelector("#planner-calendar"); root.scrollTop = root.scrollHeight; });
@@ -43,7 +42,7 @@ async page => {
         const bottom = await p.evaluate(geometry);
         check(bottom.body < 0 && bottom.body >= -48 && Math.abs(bottom.axisTop - bottomRest.axisTop - bottom.body) < 0.01 && Math.abs(bottom.bodyTop - bottomRest.bodyTop - bottom.body) < 0.01, "Bottom stretch missing or mismatched");
         check(bottom.headerTop === bottomRest.headerTop && bottom.toolbarTop === bottomRest.toolbarTop, "Bottom pull moved header");
-        await p.waitForTimeout(550);
+        await p.waitForFunction(() => !document.querySelector(".timeline-calendar").style.transform && !document.querySelector(".timeline-calendar").getAnimations().length, null, { timeout: 2000 });
         check(!bottom.overflow, "Page overflow");
         check(before === await p.evaluate(() => JSON.stringify(store.listItems())), "Edge gesture edited tasks");
         results.push({ viewport, mode, theme: mode === "week" ? "dark" : "light", status: "PASS", topOffset: top.body, bottomOffset: bottom.body });
@@ -60,8 +59,7 @@ async page => {
         const touch = await p.evaluate(geometry);
         check(touch.body > 0 && touch.headerTop === rest.headerTop && Math.abs(touch.axisTop - rest.axisTop - touch.body) < 0.01, "Trusted touch failed");
         await cd.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }); await cd.detach();
-        await p.waitForTimeout(550);
-        check(await p.evaluate(() => !document.querySelector(".timeline-calendar").style.transform), "Touch return leaked");
+        await p.waitForFunction(() => !document.querySelector(".timeline-calendar").style.transform && !document.querySelector(".timeline-calendar").getAnimations().length, null, { timeout: 2000 });
         results.push({ viewport, mode: "trusted touch Week", status: "PASS", offset: touch.body });
       }
       await p.emulateMedia({ reducedMotion: "reduce" });

@@ -24,7 +24,7 @@ function fixture() {
     requestAnimationFrame(fn) { frames.set(++next, fn); return next; }, cancelAnimationFrame: key => frames.delete(key),
     setTimeout(fn) { timers.set(++next, fn); return next; }, clearTimeout: key => timers.delete(key),
     getComputedStyle: () => ({ transform: "matrix(1,0,0,1,0,7)" }),
-    DOMMatrixReadOnly: class { constructor() { this.m42 = 7; } },
+    displayedOffset: 7, DOMMatrixReadOnly: class { constructor() { this.m42 = view.displayedOffset; } },
   });
   const controller = createElastic({ calendar, view });
   const target = { closest: selector => selector === ".time-axis,.timeline-columns" ? timeline : null };
@@ -48,12 +48,31 @@ test("edge wheel pulls move only hours and schedule, with resistance and bounded
   assert.equal(f.frames.size, 1, "Wheel paints coalesce into one frame"); f.flush();
   assert.equal(f.timeline.style.transform, "translate3d(0,48px,0)");
   f.release(); assert.equal(f.animations.length, 2);
-  assert.equal(f.animations[0].options.duration, 400);
-  assert.equal(f.animations[0].keyframes[1].transform, "translate3d(0,0,0)");
+  assert.equal(f.animations[0].options.duration, 440);
+  assert.equal(f.animations[0].keyframes.at(-1).transform, "translate3d(0,0px,0)");
   f.animations.forEach(animation => animation.finish()); await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
   assert.equal(f.timeline.style.transform, ""); assert.equal(f.header.style.transform, "");
   f.calendar.scrollTop = 1000; f.emit("wheel", { deltaY: 100 }); f.flush();
   assert.equal(f.timeline.style.transform, "translate3d(0,-35px,0)"); f.controller.destroy();
+});
+
+test("the spring rebounds past rest at both limits with equal opposite stationary-header motion", () => {
+  for (const bottom of [false, true]) {
+    const f = fixture();
+    if (bottom) f.calendar.scrollTop = 1000;
+    f.emit("wheel", { deltaY: bottom ? 1000 : -1000 }); f.flush(); f.release();
+    const y = frame => Number(frame.transform.match(/,(-?[\d.e+-]+)px/)[1]);
+    const body = f.animations[0].keyframes, header = f.animations[1].keyframes;
+    const rebound = bottom ? Math.max(...body.map(y)) : -Math.min(...body.map(y));
+    assert.ok(rebound > 2 && rebound < 4, "A visible but restrained rebound, rather than a monotonic return");
+    assert.equal(y(body.at(-1)), 0);
+    assert.ok(Math.abs(y(body.at(-2))) < 0.01, "Tail comes to rest before cleanup");
+    body.forEach((frame, index) => {
+      assert.equal(frame.offset, header[index].offset);
+      assert.ok(Math.abs(y(frame) + y(header[index])) < 0.000001, "Header compensation must match every spring sample");
+    });
+    f.controller.destroy();
+  }
 });
 
 test("normal scrolling, horizontal gestures, zoom, headers and reduced motion are not intercepted", () => {
@@ -82,11 +101,14 @@ test("touch holds the stretch until release and leaves multiple fingers or block
 });
 
 test("renewed wheel gesture resumes the displayed spring position without a jump", () => {
-  const f = fixture(); f.emit("wheel"); f.flush(); f.release();
-  f.emit("wheel", { deltaY: -10 }); f.flush();
-  const value = Number(f.timeline.style.transform.match(/,([\d.]+)px/)[1]);
-  assert.ok(value > 7 && value < 11, "Resumes at displayed 7px, rather than old 35px");
-  f.controller.destroy();
+  for (const displayed of [7, -2]) {
+    const f = fixture(); f.emit("wheel"); f.flush(); f.release();
+    f.view.displayedOffset = displayed;
+    f.emit("wheel", { deltaY: -1 }); f.flush();
+    const value = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
+    assert.ok(value > displayed && value < displayed + 1, "Resume the displayed return/rebound position, rather than old 35px");
+    f.controller.destroy();
+  }
 });
 
 test("drag, rerender and lifecycle cleanup restore transforms and leave no work/listeners", () => {
