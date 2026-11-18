@@ -1,0 +1,164 @@
+{
+  "sourceBase": "5b6a170",
+  "cache": "duckplan-app-motion-preview-v84",
+  "browser": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local Chromium, phone/iPad emulation rather than native/physical Safari",
+    "results": [
+      {
+        "viewport": {
+          "width": 1156,
+          "height": 826
+        },
+        "mode": "week",
+        "theme": "light",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 1156,
+          "height": 826
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 1156,
+          "height": 826
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 1156,
+          "height": 826
+        },
+        "mode": "day",
+        "theme": "dark",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "theme": "light",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "theme": "dark",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "theme": "light",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "theme": "dark",
+        "status": "PASS",
+        "offset": 48,
+        "continuationHeight": 56,
+        "headerFixed": true
+      }
+    ]
+  },
+  "dueRow": {
+    "folded": "PASS",
+    "expanded": "PASS"
+  },
+  "serviceWorker": {
+    "status": "PASS",
+    "cachedCssMatchesSource": true,
+    "offlineContinuation": "PASS"
+  },
+  "nativePhysicalSignedIn": "NOT RUN"
+}

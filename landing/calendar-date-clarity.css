@@ -78,6 +78,13 @@
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) - 1px),var(--calendar-hour-line) calc(var(--hour-height) - 1px),var(--calendar-hour-line) var(--hour-height)),
     repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2 - 1px),var(--calendar-half-hour-line) calc(var(--hour-height) / 2));
 }
+/* Continue the day lanes into the 48px edge pull. The opaque fixed header
+   covers this spare paint at rest; it creates no earlier hours or hit targets. */
+.motion-preview #view-calendar .timeline-column::before {
+  content: ""; position: absolute; top: -56px; left: -1px; right: 0; height: 56px;
+  border-left: inherit; background-color: inherit; pointer-events: none;
+}
+.motion-preview #view-calendar .timeline-column:first-child::before { left: 0; }
 /* Keep the whole sticky header a neutral band, including the selected date.
    Its badge carries selection; the yellow wash belongs to the timetable. */
 .motion-preview #view-calendar .calendar-date-button,
