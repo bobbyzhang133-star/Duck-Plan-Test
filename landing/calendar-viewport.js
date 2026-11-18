@@ -73,6 +73,7 @@
       pull(-event.deltaY * multiplier);
     }
     function touchstart(event) {
+      dragging = false;
       reset();
       if (event.touches.length !== 1 || !timelineTarget(event.target) || reduced?.matches) return;
       // Scheduled blocks retain their own drag gesture. Blank timetable/axis
@@ -90,16 +91,19 @@
       view.clearTimeout(releaseTimer); releaseTimer = null;
     }
     const touchend = () => { touch = null; release(); };
-    const pointerdown = event => { if (event.pointerType !== "touch") reset(); };
+    const pointerdown = event => { dragging = false; if (event.pointerType !== "touch") reset(); };
     const dragstart = () => { reset(); dragging = true; };
     const dragend = () => { dragging = false; reset(); };
+    // External/cancelled drags do not always deliver dragend to this window.
+    const dragleave = event => { if (!event.relatedTarget || !calendar.contains(event.relatedTarget)) dragend(); };
+    const keydown = event => { if (event.key === "Escape" && dragging) dragend(); };
     const registrations = [
       [calendar, "wheel", wheel, { passive: false }], [calendar, "touchstart", touchstart, { passive: true }],
       [calendar, "touchmove", touchmove, { passive: false }], [calendar, "touchend", touchend], [calendar, "touchcancel", touchend],
       [calendar, "pointerdown", pointerdown, true], [calendar, "keydown", reset, true],
-      [calendar, "dragstart", dragstart, true], [calendar, "dragenter", dragstart, true],
+      [calendar, "dragstart", dragstart, true], [calendar, "dragenter", dragstart, true], [calendar, "dragleave", dragleave],
       [view, "dragend", dragend], [view, "drop", dragend],
-      [view, "blur", reset], [view, "pagehide", reset], [view, "hashchange", reset],
+      [view, "keydown", keydown], [view, "blur", dragend], [view, "pagehide", dragend], [view, "hashchange", dragend],
     ];
     for (const [target, name, handler, options] of registrations) target.addEventListener(name, handler, options);
     reduced?.addEventListener?.("change", reset);

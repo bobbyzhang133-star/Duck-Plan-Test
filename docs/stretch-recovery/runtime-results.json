@@ -1,0 +1,238 @@
+{
+  "sourceBase": "20e184f",
+  "cache": "duckplan-app-motion-preview-v83",
+  "before": {
+    "normalBounceCases": "6 PASS",
+    "injectedDragEnterThenBlurOffset": 0,
+    "negativeControlTests": "2 FAIL as expected"
+  },
+  "recovery": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local browser; injected interruption events plus real wheel input; not observation of the user's original tab",
+    "results": [
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1000
+        },
+        "injectedInterruption": "blur",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1000
+        },
+        "injectedInterruption": "dragleave",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1000
+        },
+        "injectedInterruption": "Escape",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1000
+        },
+        "injectedInterruption": "pointerdown",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "injectedInterruption": "blur",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "injectedInterruption": "dragleave",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "injectedInterruption": "Escape",
+        "status": "PASS",
+        "offset": 42
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "injectedInterruption": "pointerdown",
+        "status": "PASS",
+        "offset": 42
+      }
+    ]
+  },
+  "regression": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local browser; phone/iPad viewport and trusted Chromium touch emulation, not physical Safari/native",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "trusted touch Week",
+        "status": "PASS",
+        "offset": 21.3312
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      }
+    ]
+  },
+  "realMouseDrag": {
+    "status": "PASS",
+    "scheduledStart": "2026-11-18T03:00",
+    "dueTime": "18:00",
+    "escapeCancelRecoveryOffset": 42
+  },
+  "serviceWorker": {
+    "status": "PASS",
+    "cachedViewportMatchesSource": true
+  },
+  "originalUserTab": "NOT INSPECTED; original cache/media/event state unconfirmed",
+  "nativePhysicalSignedIn": "NOT RUN"
+}

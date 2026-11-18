@@ -18,6 +18,7 @@ function fixture() {
     removeEventListener(name, callback) { const at = registrations.findIndex(r => r.target === target && r.name === name && r.callback === callback); if (at >= 0) registrations.splice(at, 1); },
   });
   const calendar = listen({ style: style(), scrollTop: 0, scrollHeight: 1500, clientHeight: 500,
+    contains: node => node === timeline || node === header,
     querySelectorAll: () => [timeline, header] });
   const reduced = listen({ matches: false });
   const view = listen({ matchMedia: () => reduced,
@@ -122,4 +123,30 @@ test("drag, rerender and lifecycle cleanup restore transforms and leave no work/
   f.emit("change", {}, f.reduced); assert.equal(f.timeline.style.transform, "translateX(2px)");
   f.controller.destroy(); f.controller.destroy();
   assert.equal(f.registrations.length, 0); assert.equal(f.frames.size, 0); assert.equal(f.timers.size, 0);
+});
+
+test("an interrupted or external drag cannot leave boundary stretch disabled", () => {
+  for (const recover of [
+    f => f.emit("dragleave", { relatedTarget: null }),
+    f => f.emit("blur", {}, f.view),
+    f => f.emit("pagehide", {}, f.view),
+    f => f.emit("hashchange", {}, f.view),
+    f => f.emit("keydown", { key: "Escape" }, f.view),
+    f => f.emit("pointerdown", { pointerType: "mouse" }),
+  ]) {
+    const f = fixture(); f.emit("dragenter");
+    assert.equal(f.emit("wheel").prevented, false, "Active drags must not stretch");
+    recover(f);
+    assert.equal(f.emit("wheel").prevented, true, "Cancelled drag must not disable later stretching");
+    f.controller.destroy();
+  }
+});
+
+test("internal drag movement and viewport refresh keep active drag protection until exit", () => {
+  const f = fixture(); f.emit("dragenter");
+  f.emit("dragleave", { relatedTarget: f.timeline }); f.controller.reset();
+  assert.equal(f.emit("wheel").prevented, false);
+  f.emit("dragleave", { relatedTarget: null });
+  assert.equal(f.emit("wheel").prevented, true);
+  f.controller.destroy();
 });
