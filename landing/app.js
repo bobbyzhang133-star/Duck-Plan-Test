@@ -76,6 +76,7 @@ let taskAlertHydration = Promise.resolve();
 let taskAlertHydrationError = null;
 let workAlertContextReady = false;
 const expandedDeadlineDates = new Set();
+let deadlineRowExpanded = false;
 const taskAlertTimeChanges = new Set();
 const taskAlertTouchedFields = new Set();
 const workAlerts = window.DuckWorkAlertController.create({
@@ -785,9 +786,6 @@ function rangeLabel(dates) {
   const last = new Intl.DateTimeFormat(undefined, { month: dateObject(dates[0]).getMonth() === lastDate.getMonth() ? undefined : "short", day: "numeric", year: dates[0].slice(0, 4) === dates.at(-1).slice(0, 4) ? undefined : "numeric" }).format(lastDate);
   return `${first}–${last}`;
 }
-function deadlineChips(date) {
-  return calendarDates.deadlineChips(tasks, date, { expanded: expandedDeadlineDates.has(date), dateOnly: true });
-}
 function deadlineControlAtPointer(event) {
   if (!(event.detail > 0) || !Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) return null;
   const column = event.target.closest("#planner-calendar .timeline-column");
@@ -829,9 +827,7 @@ function renderTimeline(dates) {
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => { const summary = calendarDates.daySummary(tasks, date); return `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}" aria-label="${safeText(summary.label).replaceAll('"', "&quot;")}" aria-pressed="${date === selectedDate}"${date === nowKey() ? ' aria-current="date"' : ""}><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong>${summary.markup}</button>`; }).join("");
-  const dateOnlyDeadlines = dates.map(date => deadlineChips(date));
-  const deadlineRows = dateOnlyDeadlines.some(Boolean)
-    ? `<div class="timeline-deadline-label" aria-label="Deadlines without a time">Due</div><div class="timeline-deadlines">${dates.map((date, index) => `<div class="deadline-cell" data-deadline-date="${date}">${dateOnlyDeadlines[index]}</div>`).join("")}</div>` : "";
+  const deadlineRows = calendarDates.deadlineRow(tasks, dates, { expanded: deadlineRowExpanded, expandedDates: expandedDeadlineDates });
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span><span class="time-axis-label">${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span></span>`).join("");
   let hasTimedDeadlineWorkOverlap = false;
   const columns = dates.map((date) => {
@@ -973,7 +969,7 @@ function renderCalendar({ autoScroll = false } = {}) {
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
 function setupButtonMaterial(root = document) {
-  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.deadline-overflow,.timed-deadline-marker,.timed-deadline-group-trigger,.month-day,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item,.phone-week-day,.task-select,.task-section-heading";
+  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.deadline-overflow,.deadline-row-toggle,.deadline-day-summary,.timed-deadline-marker,.timed-deadline-group-trigger,.month-day,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item,.phone-week-day,.task-select,.task-section-heading";
   root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
@@ -1553,6 +1549,15 @@ document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
   const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) navigateView(viewButton.dataset.view, sidebar.contains(viewButton), viewButton);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
+  const deadlineToggle = event.target.closest("#planner-calendar [data-toggle-deadline-row]");
+  if (deadlineToggle) {
+    const { scrollTop, scrollLeft } = els.calendar;
+    deadlineRowExpanded = !deadlineRowExpanded;
+    renderCalendar({ autoScroll: false }); setupButtonMaterial(els.calendar);
+    els.calendar.scrollTop = scrollTop; els.calendar.scrollLeft = scrollLeft;
+    els.calendar.querySelector(".deadline-row-toggle")?.focus({ preventScroll: true });
+    return;
+  }
   const deadlinePointerControl = deadlineControlAtPointer(event);
   const deadlineGroup = deadlinePointerControl
     ? deadlinePointerControl.matches("[data-timed-deadline-group]") ? deadlinePointerControl : null
@@ -2122,10 +2127,10 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
-  if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); }
+  if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); deadlineRowExpanded = false; }
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
-    calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear();
+    calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); deadlineRowExpanded = false;
     viewTransitions.cancel();
     renderedPlannerOwner = owner;
     nativeAccountSyncState = null; nativeSyncStatusRequest += 1;

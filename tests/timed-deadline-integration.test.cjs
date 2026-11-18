@@ -6,7 +6,7 @@ const Model = require("../landing/planner-model.js");
 const Presentation = require("../landing/calendar-date-presentation.js");
 
 const source = fs.readFileSync("landing/app.js", "utf8");
-const functions = ["deadlineChips", "layoutEvents", "renderTimeline", "relevantCalendarMinutes"]
+const functions = ["layoutEvents", "renderTimeline", "relevantCalendarMinutes"]
   .map(name => source.match(new RegExp(`^function ${name}\\(.*\\) \\{[\\s\\S]*?^\\}`, "m"))?.[0]);
 assert.ok(functions.every(Boolean), "Use the real timeline rendering and initial-scroll functions");
 const date = "2030-05-02";
@@ -14,12 +14,12 @@ const escape = value => String(value).replaceAll("&", "&amp;").replaceAll('"', "
 const task = (id, values = {}) => ({ id, title: `Task ${id}`, dueDate: date, dueTime: null,
   scheduledStart: null, durationMinutes: 45, completed: false, ...values });
 
-function fixture(tasks) {
+function fixture(tasks, deadlineRowExpanded = false) {
   const classInfo = () => ({ name: "Calculus", color: "#538fc5", soft: "#e3eef7" });
   const calendarDates = Presentation.create({ model: Model, classInfo, formatTime: value => value });
   const context = vm.createContext({ tasks, Model, calendarDates, classInfo,
     CALENDAR_START_HOUR: 0, CALENDAR_END_HOUR: 24, selectedDate: date, selectedTaskId: null,
-    expandedDeadlineDates: new Set(), calendarFocusSlot: { date, time: "09:00" },
+    deadlineRowExpanded, expandedDeadlineDates: new Set(), calendarFocusSlot: { date, time: "09:00" },
     nowKey: () => "2030-05-01", dateObject: value => new Date(`${value}T12:00`),
     formatLongDate: value => value, formatTime: value => value, safeText: escape,
     taskScheduleText: () => "Scheduled work", Date, Intl,
@@ -30,8 +30,8 @@ function fixture(tasks) {
 
 test("timed deadlines move into the hourly grid while date-only deadlines stay above it", () => {
   const tasks = [task("due", { dueTime: "17:00", scheduledStart: `${date}T15:00`, durationMinutes: 60 }), task("date-only")];
-  const before = structuredClone(tasks), f = fixture(tasks), html = f.render();
-  const strip = html.slice(html.indexOf('<div class="timeline-deadlines">'), html.indexOf('<div class="time-axis">'));
+  const before = structuredClone(tasks), f = fixture(tasks, true), html = f.render();
+  const strip = html.slice(html.indexOf('<div class="timeline-deadlines"'), html.indexOf('<div class="time-axis">'));
   assert.match(strip, /data-select-task="date-only"/);
   assert.doesNotMatch(strip, /data-select-task="due"/);
   const grid = html.slice(html.indexOf('<div class="timeline-columns">'));
