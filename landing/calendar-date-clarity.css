@@ -5,8 +5,8 @@
   --calendar-hour-line: color-mix(in srgb,var(--line) 78%,transparent);
   --calendar-half-hour-line: color-mix(in srgb,var(--line) 38%,transparent);
 }
-/* 'contain' still permits the browser's boundary bounce, which also moves
-   sticky descendants. Keep the raised header stationary at both scroll edges. */
+/* Suppress whole-scroller native bounce. calendar-viewport.js stretches only
+   the hour axis and schedule beneath the stationary raised header. */
 .motion-preview #view-calendar .planner-calendar { overscroll-behavior: none; }
 .motion-preview #view-calendar .timeline-days,
 .motion-preview #view-calendar .timeline-corner {

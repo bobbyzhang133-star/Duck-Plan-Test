@@ -1,12 +1,112 @@
-/* Keep timeline labels and the current-time dot whole at sticky/scroll edges. */
+/* Keep timeline labels/dots whole and stretch the timetable at scroll limits. */
 (function calendarViewportFactory(root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.DuckCalendarViewport = api;
 })(typeof window !== "undefined" ? window : globalThis, function buildCalendarViewport() {
   "use strict";
+  function createElastic({ calendar, view } = {}) {
+    if (!calendar?.style || !view?.requestAnimationFrame || !view?.setTimeout) return { reset() {}, destroy() {} };
+    const reduced = view.matchMedia?.("(prefers-reduced-motion: reduce)");
+    let parts = [], originals = [], animations = [], offset = 0, frame = null, releaseTimer = null, touch = null, version = 0, destroyed = false, dragging = false;
+    // Move the existing grid as one backing surface, counter-moving its sticky
+    // header pieces. This preserves the current-time dot's overlap with the gutter;
+    // separate axis/column transforms would trap it below the gutter's stacking layer.
+    const paint = () => { frame = null; parts.forEach((part, index) => { part.style.transform = `translate3d(0,${offset * (index ? -1 : 1)}px,0)`; }); };
+    function reset() {
+      version += 1;
+      view.clearTimeout(releaseTimer); releaseTimer = null;
+      if (frame !== null) view.cancelAnimationFrame(frame);
+      frame = null;
+      for (const animation of animations) animation.cancel();
+      animations = [];
+      for (const [part, transform, priority] of originals) {
+        if (transform) part.style.setProperty("transform", transform, priority);
+        else part.style.removeProperty("transform");
+      }
+      parts = []; originals = []; offset = 0; touch = null;
+    }
+    function release() {
+      releaseTimer = null;
+      if (!offset || animations.length) return;
+      if (reduced?.matches || !parts.every(part => part.animate)) { reset(); return; }
+      if (frame !== null) { view.cancelAnimationFrame(frame); paint(); }
+      const current = ++version;
+      animations = parts.map((part, index) => part.animate([
+        { transform: `translate3d(0,${offset * (index ? -1 : 1)}px,0)` }, { transform: "translate3d(0,0,0)" },
+      ], { duration: view.DuckMotion?.duration.release || 400, easing: view.DuckMotion?.easing || "cubic-bezier(.2,.8,.2,1)", fill: "forwards" }));
+      Promise.all(animations.map(animation => animation.finished.catch(() => {}))).then(() => { if (current === version) reset(); });
+    }
+    function pull(delta) {
+      if (animations.length) {
+        // Read the displayed return position once, before cancelling, so a renewed
+        // gesture picks up smoothly instead of snapping to its old end position.
+        const matrix = view.getComputedStyle(parts[0]).transform;
+        const displayed = view.DOMMatrixReadOnly ? new view.DOMMatrixReadOnly(matrix).m42 : 0;
+        version += 1;
+        for (const animation of animations) animation.cancel();
+        animations = []; offset = displayed;
+      }
+      if (!parts.length) {
+        parts = [...calendar.querySelectorAll(".timeline-calendar,.timeline-corner,.timeline-days,.timeline-deadline-label,.timeline-deadlines")];
+        originals = parts.map(part => [part, part.style.getPropertyValue("transform"), part.style.getPropertyPriority("transform")]);
+      }
+      offset = Math.max(-48, Math.min(48, offset + delta * 0.35 * (1 - Math.abs(offset) / 60)));
+      if (frame === null) frame = view.requestAnimationFrame(paint);
+      view.clearTimeout(releaseTimer);
+      releaseTimer = view.setTimeout(release, 90);
+    }
+    function atEdge(delta) {
+      return delta < 0 ? calendar.scrollTop <= 0 : delta > 0 && calendar.scrollTop >= calendar.scrollHeight - calendar.clientHeight - 1;
+    }
+    const timelineTarget = target => Boolean(target?.closest?.(".time-axis,.timeline-columns"));
+    function wheel(event) {
+      if (destroyed || reduced?.matches || dragging || event.buttons || event.ctrlKey || !event.cancelable || !timelineTarget(event.target) || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if (!atEdge(event.deltaY)) { if (offset || animations.length) reset(); return; }
+      event.preventDefault();
+      const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? calendar.clientHeight : 1;
+      pull(-event.deltaY * multiplier);
+    }
+    function touchstart(event) {
+      reset();
+      if (event.touches.length !== 1 || !timelineTarget(event.target) || reduced?.matches) return;
+      // Scheduled blocks retain their own drag gesture. Blank timetable/axis
+      // gestures can stretch; multi-touch and native horizontal scrolling stay native.
+      if (event.target.closest?.("[data-calendar-drag-task]")) return;
+      touch = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }
+    function touchmove(event) {
+      if (!touch || event.touches.length !== 1 || !event.cancelable) return;
+      const next = event.touches[0], dx = next.clientX - touch.x, dy = next.clientY - touch.y;
+      touch = { x: next.clientX, y: next.clientY };
+      if (Math.abs(dx) > Math.abs(dy) || !atEdge(-dy)) { if (offset || animations.length) reset(); return; }
+      event.preventDefault(); pull(dy);
+      // Hold while the finger is down; release on lift/cancel rather than idle.
+      view.clearTimeout(releaseTimer); releaseTimer = null;
+    }
+    const touchend = () => { touch = null; release(); };
+    const pointerdown = event => { if (event.pointerType !== "touch") reset(); };
+    const dragstart = () => { reset(); dragging = true; };
+    const dragend = () => { dragging = false; reset(); };
+    const registrations = [
+      [calendar, "wheel", wheel, { passive: false }], [calendar, "touchstart", touchstart, { passive: true }],
+      [calendar, "touchmove", touchmove, { passive: false }], [calendar, "touchend", touchend], [calendar, "touchcancel", touchend],
+      [calendar, "pointerdown", pointerdown, true], [calendar, "keydown", reset, true],
+      [calendar, "dragstart", dragstart, true], [calendar, "dragenter", dragstart, true],
+      [view, "dragend", dragend], [view, "drop", dragend],
+      [view, "blur", reset], [view, "pagehide", reset], [view, "hashchange", reset],
+    ];
+    for (const [target, name, handler, options] of registrations) target.addEventListener(name, handler, options);
+    reduced?.addEventListener?.("change", reset);
+    return { reset, destroy() {
+      destroyed = true; reset();
+      for (const [target, name, handler, options] of registrations) target.removeEventListener(name, handler, options);
+      reduced?.removeEventListener?.("change", reset);
+    } };
+  }
   function create({ calendar, view = calendar?.ownerDocument?.defaultView } = {}) {
     if (!calendar || !view?.IntersectionObserver) return { refresh() {}, destroy() {} };
+    const elastic = createElastic({ calendar, view });
     let frame = null, generation = 0, destroyed = false, labelObserver, indicatorObserver;
     const observedSizes = new Set(), clipped = new Set();
     const paintFold = () => calendar.classList.toggle("is-timeline-scrolled", Boolean(calendar.querySelector(".time-axis")) && calendar.scrollTop > 1);
@@ -21,6 +121,7 @@
     }
     function refresh() {
       if (destroyed) return;
+      elastic.reset();
       paintFold();
       disconnectPaint();
       const headers = [...calendar.querySelectorAll(".timeline-days,.timeline-deadlines")];
@@ -60,6 +161,7 @@
     return { refresh, destroy() {
       if (destroyed) return;
       destroyed = true;
+      elastic.destroy();
       if (frame !== null) view.cancelAnimationFrame(frame);
       frame = null;
       disconnectPaint(); sizes?.disconnect(); mutations?.disconnect(); observedSizes.clear();
@@ -68,5 +170,5 @@
       view.removeEventListener("resize", schedule);
     } };
   }
-  return { create };
+  return { create, createElastic };
 });

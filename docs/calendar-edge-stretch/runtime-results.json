@@ -1,0 +1,22 @@
+{
+  "runtime": "Chromium 157.0.8103.79",
+  "sourceBase": "a2db71c",
+  "cache": "duckplan-app-motion-preview-v79",
+  "mode": "isolated local; phone/iPad emulation, not physical Safari/native",
+  "matrix": [
+    { "viewport": "1280x950", "dayLightTopBottom": "PASS", "weekDarkTopBottom": "PASS", "reducedSlotCancelMonth": "PASS" },
+    { "viewport": "835x1100", "dayLightTopBottom": "PASS", "weekDarkTopBottom": "PASS", "reducedSlotCancelMonth": "PASS" },
+    { "viewport": "390x844", "dayLightTopBottom": "PASS", "weekDarkTopBottom": "PASS", "reducedSlotCancelMonth": "PASS", "trustedTouch": "PASS", "touchOffset": 21.3312 },
+    { "viewport": "320x568", "dayLightTopBottom": "PASS", "weekDarkTopBottom": "PASS", "reducedSlotCancelMonth": "PASS" }
+  ],
+  "pageExceptions": 0,
+  "recordsUnchanged": true,
+  "extraChecks": {
+    "dateOnlyHeadersAt134And200pxRemainFixed": "PASS",
+    "wholeCurrentTimeDotDuringStretch": "PASS",
+    "trustedDragAfterReturnAndReload": { "status": "PASS", "scheduledStart": "2026-11-18T03:00", "dueTime": "18:00" },
+    "serviceWorker": { "status": "PASS", "cachedViewportEqualsSource": true, "offlineOffset": 35, "recordsUnchanged": true }
+  },
+  "nativePhysicalSignedIn": "NOT RUN",
+  "deployment": "Local website and TEST feature backup only"
+}
