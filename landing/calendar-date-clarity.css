@@ -427,3 +427,31 @@
     height: 0; min-height: 0; overflow: hidden; visibility: hidden; border-bottom-width: 0;
   }
 }
+
+/* Deadline red is shared by the compact Due counts and expanded cards. */
+.motion-preview #view-calendar .timeline-deadlines :is(.deadline-day-summary,.calendar-deadline-marker) {
+  border: 1px solid var(--timed-deadline-accent);
+  background-color: var(--calendar-header-surface);
+}
+.motion-preview #view-calendar .timeline-deadlines :is(.deadline-day-summary,.calendar-deadline-marker) .calendar-kind-icon,
+:root[data-theme="dark"] .motion-preview #view-calendar .timeline-deadlines .calendar-deadline-marker.is-overdue .calendar-kind-icon { color: var(--timed-deadline-accent); }
+.motion-preview #view-calendar .timeline-deadlines :is(.deadline-day-summary,.calendar-deadline-marker):hover {
+  background-color: color-mix(in srgb,var(--timed-deadline-accent) 6%,var(--calendar-header-surface));
+}
+.motion-preview #view-calendar .timeline-deadlines :is(.deadline-day-summary,.calendar-deadline-marker):is(:focus-visible,.selected) {
+  outline: 2px solid var(--timed-deadline-accent); outline-offset: -1px;
+}
+
+/* Quiet Week separators divide dates without restoring boxed header tiles. */
+.motion-preview #view-calendar :is(.week-view .calendar-date-button,.phone-week-day) { position: relative; }
+.motion-preview #view-calendar .week-view .calendar-date-button + .calendar-date-button::before,
+.motion-preview #view-calendar .phone-week-day + .phone-week-day::before {
+  content: ""; position: absolute; top: 9px; bottom: 9px; left: 0; width: 1px;
+  background: var(--line); opacity: .6; pointer-events: none;
+}
+.motion-preview #view-calendar .phone-week-day + .phone-week-day::before { left: -1px; }
+
+/* A single-day timetable needs no full-column selection wash. */
+.motion-preview #view-calendar .day-view { --calendar-day-surface: #fff; background-color: var(--calendar-day-surface); }
+:root[data-theme="dark"] .motion-preview #view-calendar .day-view { --calendar-day-surface: var(--card); }
+.motion-preview #view-calendar .day-view :is(.time-axis,.timeline-column,.timeline-column.selected-day) { background-color: var(--calendar-day-surface); }

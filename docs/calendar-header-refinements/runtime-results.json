@@ -1,0 +1,370 @@
+{
+  "sourceBase": "d2e0142",
+  "cache": "duckplan-app-motion-preview-v85",
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local browser; phone/iPad emulation, not native or authenticated production",
+  "cases": [
+    {
+      "viewport": {
+        "width": 1156,
+        "height": 900
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "column": "rgb(255, 255, 255)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 1156,
+        "height": 900
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "rgb(43, 43, 36)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 1156,
+        "height": 900
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "column": "color(srgb 1 0.984 0.894667)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 1156,
+        "height": 900
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "color(srgb 0.207294 0.196627 0.145176)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1100
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "column": "rgb(255, 255, 255)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1100
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "rgb(43, 43, 36)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1100
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "column": "color(srgb 1 0.984 0.894667)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1100
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "color(srgb 0.207294 0.196627 0.145176)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "column": "rgb(255, 255, 255)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "rgb(43, 43, 36)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "column": "color(srgb 1 0.984 0.894667)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "color(srgb 0.207294 0.196627 0.145176)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "column": "rgb(255, 255, 255)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "rgb(43, 43, 36)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 0
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "column": "color(srgb 1 0.984 0.894667)",
+      "axis": "rgb(255, 255, 255)",
+      "dueBorder": "rgb(196, 89, 73)",
+      "dueFlag": "rgb(196, 89, 73)",
+      "customWork": "#538fc5",
+      "personalFill": "rgb(255, 243, 191)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "column": "color(srgb 0.207294 0.196627 0.145176)",
+      "axis": "rgb(43, 43, 36)",
+      "dueBorder": "rgb(239, 155, 133)",
+      "dueFlag": "rgb(239, 155, 133)",
+      "customWork": "#538fc5",
+      "personalFill": "color(srgb 0.338902 0.29098 0.136078)",
+      "hours": 24,
+      "overflow": false,
+      "separators": 6
+    }
+  ],
+  "bounceCases": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "edge": "top",
+      "status": "PASS",
+      "rebound": 2.81635
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "edge": "bottom",
+      "status": "PASS",
+      "rebound": 2.81635
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1100
+      },
+      "edge": "top",
+      "status": "PASS",
+      "rebound": 2.81635
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1100
+      },
+      "edge": "bottom",
+      "status": "PASS",
+      "rebound": 2.81635
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "edge": "top",
+      "status": "PASS",
+      "rebound": 2.81635
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "edge": "bottom",
+      "status": "PASS",
+      "rebound": 2.81635
+    }
+  ],
+  "serviceWorker": {
+    "status": "PASS",
+    "cachedCssMatchesSource": true,
+    "offlineDayWhite": true
+  },
+  "google": {
+    "signedInLink": "Redirected to sign-in; not inspected",
+    "reference": "Official October 2024 Calendar light/dark design images plus unauthenticated public US Holidays Week embed",
+    "publicEmbedProbe": {
+      "before": 0,
+      "outward": 0,
+      "inward": 180,
+      "overscroll": "auto",
+      "transform": "none"
+    },
+    "exactNativeBounceTiming": "NOT VERIFIED"
+  },
+  "nativePhysicalSignedIn": "NOT RUN"
+}
