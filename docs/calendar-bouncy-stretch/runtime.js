@@ -31,7 +31,8 @@ async page => {
           return phases;
         });
         const rebound = bottom ? Math.max(...phases.map(p => p.offset)) : -Math.min(...phases.map(p => p.offset));
-        check(rebound > 2 && rebound < 4, "Rendered return did not rebound past rest");
+        const initial = Math.abs(phases[0].offset);
+        check(rebound > initial * 0.04 && rebound < initial * 0.08, "Rendered return did not rebound proportionally past rest");
         check(phases.every(phase => Math.abs(phase.header - rest.header) < 0.01), "Header bounced with timetable");
         await p.waitForTimeout(160);
         check(await p.evaluate(() => !document.querySelector(".timeline-calendar").style.transform && !document.querySelector(".timeline-calendar").getAnimations().length), "Spring did not release its styles");
