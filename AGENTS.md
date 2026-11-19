@@ -16,6 +16,10 @@ Use the original white Sigma duck identity for mascot artwork, preserving the cu
 Animated poses use a complete duck body and visible orange webbed feet on land. Front views have a plain body outline with no visible tail or feather/wing lines on the chest; a lifted wing appears only to wave. Keep the head-only original for the brand icon.
 The Daily progress pond uses a right-facing side-profile swimming duck; other mascot placements retain their front-facing poses.
 
+## Reference-Site Comparison
+
+For every user-named reference site, inspect the exact page and interaction before implementation, then return to that same site after each implementation or revision and compare the result. Record actual observations, runtime/input and differences. If access or reproduction is unavailable, request the missing recording/access and keep dependent work pending; do not substitute an embed or claim a match. Follow `.cursor/rules/reference-site-comparison.mdc` throughout DuckPlan work, including the native app.
+
 ## Project Structure & Module Organization
 
 DuckPlan is a student planner built with plain HTML, CSS, and JavaScript. The deployable site lives in `landing/`:
