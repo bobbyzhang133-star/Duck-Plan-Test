@@ -1,0 +1,87 @@
+{
+  "platform": "MacIntel",
+  "referenceUrl": "https://calendar.google.com/calendar/embed?src=en.usa%23holiday%40group.v.calendar.google.com&ctz=America%2FLos_Angeles&mode=WEEK",
+  "runtime": "157.0.8103.79",
+  "samples": [
+    {
+      "paintEdgeY": 188,
+      "timeMs": -112.826904296875
+    },
+    {
+      "paintEdgeY": 188,
+      "timeMs": 15.787841796875
+    },
+    {
+      "paintEdgeY": 189,
+      "timeMs": 65.785888671875
+    },
+    {
+      "paintEdgeY": 190,
+      "timeMs": 82.450927734375
+    },
+    {
+      "paintEdgeY": 192,
+      "timeMs": 99.1181640625
+    },
+    {
+      "paintEdgeY": 194,
+      "timeMs": 115.783935546875
+    },
+    {
+      "paintEdgeY": 197,
+      "timeMs": 149.1162109375
+    },
+    {
+      "paintEdgeY": 198,
+      "timeMs": 165.781982421875
+    },
+    {
+      "paintEdgeY": 199,
+      "timeMs": 182.447021484375
+    },
+    {
+      "paintEdgeY": 199,
+      "timeMs": 199.113037109375
+    },
+    {
+      "paintEdgeY": 197,
+      "timeMs": 215.77880859375
+    },
+    {
+      "paintEdgeY": 195,
+      "timeMs": 232.445068359375
+    },
+    {
+      "paintEdgeY": 194,
+      "timeMs": 249.111083984375
+    },
+    {
+      "paintEdgeY": 193,
+      "timeMs": 265.77685546875
+    },
+    {
+      "paintEdgeY": 192,
+      "timeMs": 282.443115234375
+    },
+    {
+      "paintEdgeY": 191,
+      "timeMs": 299.109130859375
+    },
+    {
+      "paintEdgeY": 190,
+      "timeMs": 332.43994140625
+    },
+    {
+      "paintEdgeY": 189,
+      "timeMs": 365.77294921875
+    },
+    {
+      "paintEdgeY": 188,
+      "timeMs": 449.10302734375
+    },
+    {
+      "paintEdgeY": 188,
+      "timeMs": 949.0810546875
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "platform": "MacIntel",
+  "referenceUrl": "http://127.0.0.1:8034/?qa=native-reference#calendar",
+  "runtime": "157.0.8103.79",
+  "samples": [
+    {
+      "paintEdgeY": 221,
+      "timeMs": -121.281005859375
+    },
+    {
+      "paintEdgeY": 221,
+      "timeMs": 5.0458984375
+    },
+    {
+      "paintEdgeY": 222,
+      "timeMs": 55.0439453125
+    },
+    {
+      "paintEdgeY": 223,
+      "timeMs": 71.7099609375
+    },
+    {
+      "paintEdgeY": 224,
+      "timeMs": 88.375
+    },
+    {
+      "paintEdgeY": 225,
+      "timeMs": 105.0419921875
+    },
+    {
+      "paintEdgeY": 227,
+      "timeMs": 121.70703125
+    },
+    {
+      "paintEdgeY": 228,
+      "timeMs": 138.3740234375
+    },
+    {
+      "paintEdgeY": 230,
+      "timeMs": 155.0400390625
+    },
+    {
+      "paintEdgeY": 232,
+      "timeMs": 171.705078125
+    },
+    {
+      "paintEdgeY": 233,
+      "timeMs": 205.036865234375
+    },
+    {
+      "paintEdgeY": 233,
+      "timeMs": 221.7041015625
+    },
+    {
+      "paintEdgeY": 231,
+      "timeMs": 238.369140625
+    },
+    {
+      "paintEdgeY": 229,
+      "timeMs": 255.034912109375
+    },
+    {
+      "paintEdgeY": 228,
+      "timeMs": 271.699951171875
+    },
+    {
+      "paintEdgeY": 226,
+      "timeMs": 288.366943359375
+    },
+    {
+      "paintEdgeY": 225,
+      "timeMs": 305.032958984375
+    },
+    {
+      "paintEdgeY": 224,
+      "timeMs": 338.364013671875
+    },
+    {
+      "paintEdgeY": 223,
+      "timeMs": 355.031005859375
+    },
+    {
+      "paintEdgeY": 222,
+      "timeMs": 405.02880859375
+    },
+    {
+      "paintEdgeY": 222,
+      "timeMs": 438.361083984375
+    },
+    {
+      "paintEdgeY": 221,
+      "timeMs": 488.358154296875
+    },
+    {
+      "paintEdgeY": 221,
+      "timeMs": 971.6708984375
+    }
+  ]
+}

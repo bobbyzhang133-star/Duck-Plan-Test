@@ -1,0 +1,237 @@
+{
+  "date": "2026-11-19",
+  "baseCommit": "fffbdfb",
+  "node": {
+    "full": 571,
+    "originalSourceNegativeControl": "FAIL as expected",
+    "status": "PASS"
+  },
+  "browser": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated Chromium macOS with real CDP gestures and responsive/touch emulation; not physical trackpad/native WKWebView",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "trusted touch hold and release",
+        "status": "PASS",
+        "held": 21.3642
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 12
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      }
+    ]
+  },
+  "dragCache": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "case": "real task drag after rebound, preserved deadline and reload",
+        "status": "PASS",
+        "scheduledStart": "2026-11-19T03:00"
+      },
+      {
+        "case": "v91 cache equality and offline synchronized pixel-rounded return",
+        "status": "PASS",
+        "equal": true,
+        "sha256": "350277672973920c4d8d0e7119c210a487a20ed48a8322cf6e7b387c49f79bd8",
+        "script": "http://127.0.0.1:8034/calendar-viewport.js?v=reference-loop-rebound-final-20261119",
+        "keys": [
+          "duckplan-app-motion-preview-v91"
+        ],
+        "duration": 252.60152621764325
+      }
+    ]
+  }
+}

@@ -69,12 +69,13 @@ test("the native-style rebound returns immediately without oscillating, while he
     const y = frame => Number(frame.transform.match(/,(-?[\d.e+-]+)px/)[1]);
     const body = f.animations[0].keyframes, header = f.animations[1].keyframes;
     const values = body.map(y), initial = Math.abs(values[0]);
+    assert.ok(values.every(Number.isInteger), "Wheel rebound follows native whole-pixel positions");
     assert.ok(values.every(value => bottom ? value <= 0 : value >= 0), "The reference returns without an extra opposite-direction oscillation");
     assert.ok(values.every((value, index) => !index || Math.abs(value) <= Math.abs(values[index - 1])), "Return decays toward rest from its first frame");
     const after60ms = Math.ceil(60 / f.animations[0].options.duration * 60);
     assert.ok(Math.abs(values[after60ms]) < initial * .55, "More than 45% of the pull releases within 60ms");
     assert.equal(y(body.at(-1)), 0);
-    assert.ok(Math.abs(y(body.at(-2))) < 0.6, "Tail comes to rest before cleanup");
+    assert.ok(Math.abs(y(body.at(-2))) <= 1, "Native rounded-pixel tail is at most one pixel before cleanup");
     body.forEach((frame, index) => {
       assert.equal(frame.offset, header[index].offset);
       assert.ok(Math.abs(y(frame) + y(header[index])) < 0.000001, "Header compensation must match every spring sample");
@@ -116,7 +117,10 @@ test("renewed wheel gesture resumes the displayed spring position without a jump
     f.view.displayedOffset = displayed;
     f.emit("wheel", { deltaY: -1 }); f.flush();
     const value = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
-    assert.ok(value > displayed && value < displayed + 1, "Resume the displayed return/rebound position, rather than old 35px");
+    assert.ok(value >= displayed && value <= displayed + 1, "Resume the displayed position with native pixel rounding");
+    for (let n = 0; n < 20; n++) f.emit("wheel", { deltaY: -1 });
+    f.flush();
+    assert.ok(Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]) > displayed, "Small input still accumulates across the rounding threshold");
     f.controller.destroy();
   }
 });
@@ -179,7 +183,7 @@ test("the exposed overlimit area continues the same pull and a reverse gesture r
   const first = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
   f.emit("wheel", { target: gap, deltaY: -40 }); f.flush();
   const second = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
-  assert.ok(second > first && second < first * 2, "Resistance grows with pull distance");
+  assert.ok(second > first && second <= first * 2, "Continued small pulls accumulate with native pixel rounding");
   f.emit("wheel", { deltaY: 10 }); f.flush();
   const reversed = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
   assert.ok(reversed > 0 && reversed < second, "Reverse input must unwind rather than snap");
@@ -213,4 +217,15 @@ test("the first 240px wheel pull matches the reference's roughly 12px paint move
   const f = fixture(); f.emit("wheel", { deltaY: -240 }); f.flush();
   const value = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
   assert.ok(value > 11.5 && value < 12.5); f.controller.destroy();
+});
+
+test("the first boundary input paints immediately and return layers share the current document frame", () => {
+  const f = fixture(); f.view.document = { timeline: { currentTime: 1234 } };
+  f.emit("wheel", { deltaY: -240 });
+  assert.notEqual(f.timeline.style.transform, "", "First pull must not wait behind another animation frame");
+  assert.equal(f.frames.size, 0);
+  f.release();
+  assert.ok(f.animations.length >= 2);
+  assert.ok(f.animations.every(animation => animation.startTime === 1234), "Return and stationary-header compensation start together, without a pending-frame pause");
+  f.controller.destroy();
 });

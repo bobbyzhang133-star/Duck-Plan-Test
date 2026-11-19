@@ -27,7 +27,11 @@
     // Move the existing grid as one backing surface, counter-moving its sticky
     // header pieces. This preserves the current-time dot's overlap with the gutter;
     // separate axis/column transforms would trap it below the gutter's stacking layer.
-    const paint = () => { frame = null; parts.forEach((part, index) => { part.style.transform = `translate3d(0,${offset * (index ? -1 : 1)}px,0)`; }); };
+    const paint = () => {
+      frame = null;
+      const displacement = inputMode === "wheel" ? Math.round(offset) : offset;
+      parts.forEach((part, index) => { part.style.transform = `translate3d(0,${displacement * (index ? -1 : 1)}px,0)`; });
+    };
     function reset() {
       version += 1;
       view.clearTimeout(releaseTimer); releaseTimer = null;
@@ -51,10 +55,19 @@
       const duration = Math.max(0, Math.log(Math.abs(offset) * 2) / nativeDecay * 1000);
       if (!duration) { reset(); return; }
       const current = ++version;
-      animations = parts.map((part, index) => part.animate(Array.from({ length: 61 }, (_, sample) => ({
-        offset: sample / 60,
-        transform: `translate3d(0,${sample === 60 ? 0 : offset * Math.exp(-nativeDecay * duration / 1000 * sample / 60) * (index ? -1 : 1)}px,0)`,
-      })), { duration, easing: "linear", fill: "forwards" }));
+      const timelineTime = view.document?.timeline?.currentTime;
+      const wheel = inputMode === "wheel";
+      animations = parts.map((part, index) => part.animate(Array.from({ length: 61 }, (_, sample) => {
+        const value = sample === 60 ? 0 : offset * Math.exp(-nativeDecay * duration / 1000 * sample / 60);
+        return { offset: sample / 60,
+          transform: `translate3d(0,${(wheel ? Math.round(value) : value) * (index ? -1 : 1)}px,0)`,
+          easing: wheel ? "steps(1,end)" : "linear" };
+      }), { duration, easing: "linear", fill: "forwards" }));
+      // Start in the current document frame instead of adding WAAPI's pending
+      // start-frame delay. Every header uses the same time to stay in phase.
+      if (Number.isFinite(timelineTime)) {
+        animations.forEach(animation => { animation.startTime = timelineTime; });
+      }
       Promise.all(animations.map(animation => animation.finished.catch(() => {}))).then(() => { if (current === version) reset(); });
     }
     function resumeReturn() {
@@ -72,10 +85,10 @@
       if (!parts.length) {
         parts = [...calendar.querySelectorAll(".timeline-calendar,.timeline-corner,.timeline-days,.timeline-deadline-label,.timeline-deadlines")];
         originals = parts.map(part => [part, part.style.getPropertyValue("transform"), part.style.getPropertyPriority("transform")]);
-      }
-      if (frame === null) frame = view.requestAnimationFrame(paint);
+        paint();
+      } else if (frame === null) frame = view.requestAnimationFrame(paint);
       view.clearTimeout(releaseTimer);
-      releaseTimer = view.setTimeout(release, 8);
+      releaseTimer = view.setTimeout(release, 24);
     }
     function pull(delta) {
       resumeReturn();

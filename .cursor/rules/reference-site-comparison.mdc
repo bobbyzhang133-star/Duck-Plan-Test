@@ -5,6 +5,10 @@ alwaysApply: true
 
 # Reference-Site Comparison
 
+- Unless the user explicitly requests review only, "use this as a reference" authorizes implementing the requested element and completing the corrective comparison loop. An audit or a list of differences alone does not complete the task.
+- Before tuning, define observable acceptance checks for the requested element, with tolerances appropriate to rendered pixels and frame sampling. Preserve unrelated approved design choices; do not broaden the task to copying the entire reference site.
+- Implement → compare with Playwright MCP → identify remaining mismatches → correct → return to the same reference and compare again. Continue until the requested requirements pass. Do not stop merely because it is "close" or because tests pass while a material reference mismatch remains; do not loosen criteria to manufacture a pass.
+- Finish with evidence of the final comparison and regression checks. Distinguish a verified visual/interaction match from untested physical-device equivalence. A specific access/runtime blocker must be reported honestly; it is not a completed match.
 - Use Playwright MCP for browser-based reference checks when available. Record the tool, actual served version, viewport, input and capture method; use rendered frames for native/compositor rebound instead of relying only on DOM coordinates.
 - Whenever the user names a website as a reference, open the exact relevant page and inspect the requested appearance or interaction before implementation.
 - After each implementation or revision, return to that same reference site, repeat the relevant action, then compare it with DuckPlan. An earlier visit, memory, a screenshot, an embed or a related article does not replace this return visit.

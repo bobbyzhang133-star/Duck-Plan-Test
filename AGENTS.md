@@ -18,6 +18,8 @@ The Daily progress pond uses a right-facing side-profile swimming duck; other ma
 
 ## Reference-Site Comparison
 
+"Use as a reference" means implement the requested element, check it with Playwright MCP, correct mismatches and repeat the comparison until the requested appearance/behavior requirements pass, unless the user asks for review only. Define observable acceptance checks before tuning, preserve unrelated approved choices and do not stop at a report that it is merely close. Follow the reference rule's evidence and honest-blocker requirements.
+
 For every user-named reference site, inspect the exact page and interaction before implementation, then return to that same site after each implementation or revision and compare the result. Record actual observations, runtime/input and differences. If access or reproduction is unavailable, request the missing recording/access and keep dependent work pending. Use an alternate reference only when the user authorizes it, identify that source and repeat the before/after comparison there without claiming equivalence to the unavailable original. Follow `.cursor/rules/reference-site-comparison.mdc` throughout DuckPlan work, including the native app.
 
 ## Project Structure & Module Organization

@@ -1,0 +1,42 @@
+{
+  "phase": "iteration1",
+  "status": "FAIL",
+  "checks": {
+    "completeCapture": true,
+    "peak": false,
+    "return": false,
+    "firstPaint": true,
+    "path": false,
+    "noExtraOscillation": true
+  },
+  "differences": {
+    "peakPx": 7,
+    "returnMs": 99.995849609375,
+    "firstPaintMs": 4.435791015625,
+    "pathMaxPx": 7.0,
+    "pathMeanPx": 3.2763723962061473
+  },
+  "metrics": {
+    "googleBefore": {
+      "peakPx": 12,
+      "returnMs": 266.655029296875,
+      "firstPaintFromInputMs": 14.546875,
+      "complete": true,
+      "noExtraOscillation": true
+    },
+    "local": {
+      "peakPx": 5,
+      "returnMs": 166.6591796875,
+      "firstPaintFromInputMs": 15.112060546875,
+      "complete": true,
+      "noExtraOscillation": true
+    },
+    "googleAfter": {
+      "peakPx": 12,
+      "returnMs": 266.655029296875,
+      "firstPaintFromInputMs": 19.5478515625,
+      "complete": true,
+      "noExtraOscillation": true
+    }
+  }
+}
