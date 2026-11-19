@@ -5,6 +5,7 @@ alwaysApply: true
 
 # Reference-Site Comparison
 
+- Use Playwright MCP for browser-based reference checks when available. Record the tool, actual served version, viewport, input and capture method; use rendered frames for native/compositor rebound instead of relying only on DOM coordinates.
 - Whenever the user names a website as a reference, open the exact relevant page and inspect the requested appearance or interaction before implementation.
 - After each implementation or revision, return to that same reference site, repeat the relevant action, then compare it with DuckPlan. An earlier visit, memory, a screenshot, an embed or a related article does not replace this return visit.
 - For motion, compare the trigger and first gesture, direction, travel/resistance, release delay, return speed, rebound/overshoot and stationary elements. Match browser, input method and viewport where they affect the behavior.
