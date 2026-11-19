@@ -5,17 +5,25 @@
   if (root) root.DuckCalendarViewport = api;
 })(typeof window !== "undefined" ? window : globalThis, function buildCalendarViewport() {
   "use strict";
-  // The approved 6814b34 spring: zeta .67, omega 7.1, with a smooth resting
-  // tail. Explicit samples retain its rebound even without CSS linear() easing.
-  // Keep this local: button/popup release curves must not change with edge bounce.
-  const edgeSpring = [0,0.006638,0.025150,0.053557,0.090040,0.132942,0.180768,0.232176,0.285978,0.341125,0.396708,0.451944,0.506168,0.558829,0.609474,0.657743,0.703362,0.746127,0.785906,0.822621,0.856246,0.886800,0.914338,0.938946,0.960735,0.979837,0.996398,1.010578,1.022542,1.032460,1.040504,1.046844,1.051649,1.055081,1.057298,1.058448,1.058674,1.058108,1.056873,1.055084,1.052844,1.050250,1.047386,1.044329,1.041147,1.037899,1.034638,1.031407,1.028243,1.025134,1.021940,1.018599,1.015157,1.011734,1.008496,1.005622,1.003272,1.001561,1.000520,1.000073,1];
+  // Chrome's published non-Android rubber-band return uses exponential decay
+  // at stiffness 20 / period 1.6. Keep this independent of route/button springs.
+  // Reference: chromium/chromium, elastic_overscroll_controller_exponential.cc.
+  const nativeDecay = 20 / 1.6;
   function createElastic({ calendar, view } = {}) {
     if (!calendar?.style || !view?.requestAnimationFrame || !view?.setTimeout) return { reset() {}, destroy() {} };
     const reduced = view.matchMedia?.("(prefers-reduced-motion: reduce)");
     let parts = [], originals = [], animations = [], offset = 0, distance = 0, frame = null, releaseTimer = null, touch = null, version = 0, destroyed = false, dragging = false;
-    const resistance = 0.55, limit = 48;
-    const rubber = value => limit * resistance * value / (limit + resistance * Math.abs(value));
-    const unRubber = value => limit * value / (resistance * Math.max(0.01, limit - Math.abs(value)));
+    const limit = 48;
+    let inputMode = "wheel";
+    const resistance = () => inputMode === "touch" ? 0.55 : 1 / 20;
+    // Small wheel pulls match Chrome's 1/20 displacement; tanh only softens
+    // unusually large pulls before they exceed the painted continuation.
+    const rubber = value => inputMode === "wheel"
+      ? limit * Math.tanh(value / (20 * limit))
+      : limit * resistance() * value / (limit + resistance() * Math.abs(value));
+    const unRubber = value => inputMode === "wheel"
+      ? 20 * limit * Math.atanh(Math.max(-0.999999, Math.min(0.999999, value / limit)))
+      : limit * value / (resistance() * Math.max(0.01, limit - Math.abs(value)));
     // Move the existing grid as one backing surface, counter-moving its sticky
     // header pieces. This preserves the current-time dot's overlap with the gutter;
     // separate axis/column transforms would trap it below the gutter's stacking layer.
@@ -38,11 +46,15 @@
       if (!offset || animations.length) return;
       if (reduced?.matches || !parts.every(part => part.animate)) { reset(); return; }
       if (frame !== null) { view.cancelAnimationFrame(frame); paint(); }
+      // Native rounded-pixel motion finishes below half a pixel. Small pulls
+      // therefore return sooner, with immediate decay instead of an ease-in.
+      const duration = Math.max(0, Math.log(Math.abs(offset) * 2) / nativeDecay * 1000);
+      if (!duration) { reset(); return; }
       const current = ++version;
-      animations = parts.map((part, index) => part.animate(edgeSpring.map((progress, sample) => ({
-        offset: sample / (edgeSpring.length - 1),
-        transform: `translate3d(0,${offset * (1 - progress) * (index ? -1 : 1)}px,0)`,
-      })), { duration: 220, easing: "linear", fill: "forwards" }));
+      animations = parts.map((part, index) => part.animate(Array.from({ length: 61 }, (_, sample) => ({
+        offset: sample / 60,
+        transform: `translate3d(0,${sample === 60 ? 0 : offset * Math.exp(-nativeDecay * duration / 1000 * sample / 60) * (index ? -1 : 1)}px,0)`,
+      })), { duration, easing: "linear", fill: "forwards" }));
       Promise.all(animations.map(animation => animation.finished.catch(() => {}))).then(() => { if (current === version) reset(); });
     }
     function resumeReturn() {
@@ -63,7 +75,7 @@
       }
       if (frame === null) frame = view.requestAnimationFrame(paint);
       view.clearTimeout(releaseTimer);
-      releaseTimer = view.setTimeout(release, 50);
+      releaseTimer = view.setTimeout(release, 8);
     }
     function pull(delta) {
       resumeReturn();
@@ -87,8 +99,8 @@
       // travel for ordinary scrolling in the very same input event.
       if (offset && Math.sign(offset) === Math.sign(delta)) {
         preventDefault();
-        const consumed = Math.sign(delta) * Math.min(Math.abs(delta), Math.abs(offset) / resistance);
-        const next = offset - consumed * resistance;
+        const consumed = Math.sign(delta) * Math.min(Math.abs(delta), Math.abs(offset) / resistance());
+        const next = offset - consumed * resistance();
         if (Math.abs(next) > 0.01) {
           offset = next; distance = unRubber(offset); queuePull(); return true;
         }
@@ -121,6 +133,7 @@
     };
     function wheel(event) {
       if (destroyed || reduced?.matches || dragging || event.buttons || event.ctrlKey || !timelineTarget(event.target) || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if (inputMode !== "wheel") { resumeReturn(); inputMode = "wheel"; distance = unRubber(offset); }
       const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? calendar.clientHeight : 1;
       const delta = event.deltaY * multiplier;
       if (event.cancelable) scrollWithElastic(delta, () => event.preventDefault());
@@ -134,6 +147,7 @@
       // Scheduled blocks retain their own drag gesture. Blank timetable/axis
       // gestures can stretch; multi-touch and native horizontal scrolling stay native.
       if (event.target.closest?.("[data-calendar-drag-task]")) return;
+      inputMode = "touch";
       touch = { x: event.touches[0].clientX, y: event.touches[0].clientY };
     }
     function touchmove(event) {

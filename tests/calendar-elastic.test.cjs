@@ -45,33 +45,36 @@ test("edge wheel pulls move only hours and schedule, with resistance and bounded
   const f = fixture();
   assert.ok(f.emit("wheel").prevented); f.flush();
   const first = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
-  assert.ok(first > 20 && first < 35, "Resisted travel is smaller than the input");
+  assert.ok(first > 4 && first < 6, "Resisted travel is smaller than the input");
   assert.equal(f.header.style.transform, `translate3d(0,${-first}px,0)`, "Header counter-moves exactly to stay stationary");
   for (let n = 0; n < 20; n++) f.emit("wheel");
   assert.equal(f.frames.size, 1, "Wheel paints coalesce into one frame"); f.flush();
   const maximum = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
   assert.ok(maximum > first && maximum < 48, "Continued pulls approach the limit without hitting a hard stop");
   f.release(); assert.equal(f.animations.length, 2);
-  assert.equal(f.animations[0].options.duration, 220);
+  assert.ok(f.animations[0].options.duration > 100 && f.animations[0].options.duration < 370);
   assert.equal(f.animations[0].keyframes.at(-1).transform, "translate3d(0,0px,0)");
   f.animations.forEach(animation => animation.finish()); await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
   assert.equal(f.timeline.style.transform, ""); assert.equal(f.header.style.transform, "");
   f.calendar.scrollTop = 1000; f.emit("wheel", { deltaY: 100 }); f.flush();
   const bottom = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
-  assert.ok(bottom < -20 && bottom > -35); f.controller.destroy();
+  assert.ok(bottom < -4 && bottom > -6); f.controller.destroy();
 });
 
-test("the spring rebounds past rest at both limits with equal opposite stationary-header motion", () => {
+test("the native-style rebound returns immediately without oscillating, while headers stay stationary", () => {
   for (const bottom of [false, true]) {
     const f = fixture();
     if (bottom) f.calendar.scrollTop = 1000;
     f.emit("wheel", { deltaY: bottom ? 1000 : -1000 }); f.flush(); f.release();
     const y = frame => Number(frame.transform.match(/,(-?[\d.e+-]+)px/)[1]);
     const body = f.animations[0].keyframes, header = f.animations[1].keyframes;
-    const rebound = bottom ? Math.max(...body.map(y)) : -Math.min(...body.map(y));
-    assert.ok(rebound > 2 && rebound < 4, "A visible but restrained rebound, rather than a monotonic return");
+    const values = body.map(y), initial = Math.abs(values[0]);
+    assert.ok(values.every(value => bottom ? value <= 0 : value >= 0), "The reference returns without an extra opposite-direction oscillation");
+    assert.ok(values.every((value, index) => !index || Math.abs(value) <= Math.abs(values[index - 1])), "Return decays toward rest from its first frame");
+    const after60ms = Math.ceil(60 / f.animations[0].options.duration * 60);
+    assert.ok(Math.abs(values[after60ms]) < initial * .55, "More than 45% of the pull releases within 60ms");
     assert.equal(y(body.at(-1)), 0);
-    assert.ok(Math.abs(y(body.at(-2))) < 0.01, "Tail comes to rest before cleanup");
+    assert.ok(Math.abs(y(body.at(-2))) < 0.6, "Tail comes to rest before cleanup");
     body.forEach((frame, index) => {
       assert.equal(frame.offset, header[index].offset);
       assert.ok(Math.abs(y(frame) + y(header[index])) < 0.000001, "Header compensation must match every spring sample");
@@ -204,4 +207,10 @@ test("non-cancelable native wheel/touch input paints only the boundary without d
   f.flush(); assert.ok(Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]) > 0);
   f.emit("touchend"); assert.equal(f.animations.length, 2);
   f.controller.destroy();
+});
+
+test("the first 240px wheel pull matches the reference's roughly 12px paint movement", () => {
+  const f = fixture(); f.emit("wheel", { deltaY: -240 }); f.flush();
+  const value = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
+  assert.ok(value > 11.5 && value < 12.5); f.controller.destroy();
 });

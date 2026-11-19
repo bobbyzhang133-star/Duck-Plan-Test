@@ -1,0 +1,131 @@
+{
+  "platform" : "MacIntel",
+  "referenceUrl" : "http:\/\/127.0.0.1:8034\/?qa=native-reference#calendar",
+  "runtime" : "157.0.8103.79",
+  "samples" : [
+    {
+      "paintEdgeY" : 221,
+      "timeMs" : -97
+    },
+    {
+      "paintEdgeY" : 221,
+      "timeMs" : -81
+    },
+    {
+      "paintEdgeY" : 221,
+      "timeMs" : -68
+    },
+    {
+      "paintEdgeY" : 221,
+      "timeMs" : -52
+    },
+    {
+      "paintEdgeY" : 221,
+      "timeMs" : 14
+    },
+    {
+      "paintEdgeY" : 222,
+      "timeMs" : 71
+    },
+    {
+      "paintEdgeY" : 223,
+      "timeMs" : 88
+    },
+    {
+      "paintEdgeY" : 224,
+      "timeMs" : 104
+    },
+    {
+      "paintEdgeY" : 225,
+      "timeMs" : 133
+    },
+    {
+      "paintEdgeY" : 227,
+      "timeMs" : 139
+    },
+    {
+      "paintEdgeY" : 228,
+      "timeMs" : 154
+    },
+    {
+      "paintEdgeY" : 230,
+      "timeMs" : 171
+    },
+    {
+      "paintEdgeY" : 231,
+      "timeMs" : 188
+    },
+    {
+      "paintEdgeY" : 233,
+      "timeMs" : 205
+    },
+    {
+      "paintEdgeY" : 233,
+      "timeMs" : 219
+    },
+    {
+      "paintEdgeY" : 231,
+      "timeMs" : 236
+    },
+    {
+      "paintEdgeY" : 229,
+      "timeMs" : 252
+    },
+    {
+      "paintEdgeY" : 228,
+      "timeMs" : 273
+    },
+    {
+      "paintEdgeY" : 226,
+      "timeMs" : 288
+    },
+    {
+      "paintEdgeY" : 225,
+      "timeMs" : 307
+    },
+    {
+      "paintEdgeY" : 225,
+      "timeMs" : 322
+    },
+    {
+      "paintEdgeY" : 224,
+      "timeMs" : 345
+    },
+    {
+      "paintEdgeY" : 223,
+      "timeMs" : 357
+    },
+    {
+      "paintEdgeY" : 223,
+      "timeMs" : 377
+    },
+    {
+      "paintEdgeY" : 223,
+      "timeMs" : 391
+    },
+    {
+      "paintEdgeY" : 222,
+      "timeMs" : 409
+    },
+    {
+      "paintEdgeY" : 222,
+      "timeMs" : 425
+    },
+    {
+      "paintEdgeY" : 222,
+      "timeMs" : 441
+    },
+    {
+      "paintEdgeY" : 222,
+      "timeMs" : 455
+    },
+    {
+      "paintEdgeY" : 222,
+      "timeMs" : 470
+    },
+    {
+      "paintEdgeY" : 221,
+      "timeMs" : 486
+    }
+  ]
+}

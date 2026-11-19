@@ -10,6 +10,7 @@ alwaysApply: true
 - For motion, compare the trigger and first gesture, direction, travel/resistance, release delay, return speed, rebound/overshoot and stationary elements. Match browser, input method and viewport where they affect the behavior.
 - Record the reference URL, date, before/after observations, tested runtime/input and remaining differences. Mark the comparison PASS, FAIL or BLOCKED according to actual evidence.
 - If the exact page requires unavailable sign-in/access, or the available input/runtime cannot reproduce the effect, explain that specific limitation and request the recording or access needed. Continue independent work, but leave the dependent implementation/comparison pending instead of guessing a match.
-- A public embed or alternate source may support investigation only when clearly labeled; it is not proof of equivalence to the requested page. A failed reproduction does not disprove behavior the user observes in another browser.
+- If the user explicitly authorizes alternate reference pages, identify the alternate page and apply the same before/after inspection to it. Label its scope; matching a public demo is not proof of equivalence to the private page.
+- Without that authorization, an embed or alternate source supports investigation only. A failed reproduction does not disprove behavior the user observes in another browser; native/compositor motion may require rendered-frame inspection rather than DOM coordinates.
 - Report honestly whether the requested reference behavior was reproduced and matched. Do not claim a verified match or completed reference-based work when the comparison is blocked.
 - Inspect reference UI without modifying the user's records or sending messages to others.

@@ -13,3 +13,5 @@ The requested full URL is `https://calendar.google.com/calendar/u/0/r`. Opened i
 **DONE:** persistent rule and required access recheck. **PENDING:** dependent rebound redesign and before/after motion comparison. No application code, current 220ms rebound, half-height date dividers, cache, user data or native bundle changed in this checkpoint.
 
 Validation: reviewed the new rule and both AGENTS sections for the before/after requirement, exact-source distinction and honest BLOCKED handling; `git diff --check` passes. No application tests rerun for documentation-only work. Feature-branch TEST backup only; no main merge or deployment.
+
+Follow-up November19: the user explicitly authorized other reference pages. The public Google Calendar page was then reproduced using rendered-frame capture, and the rebound rebuilt and compared before/after. See `../native-reference-rebound/README.md`. The private-page comparison remains unavailable; it is distinguished from the completed authorized public-reference work.
