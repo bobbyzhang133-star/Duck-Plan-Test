@@ -42,7 +42,7 @@
       animations = parts.map((part, index) => part.animate(edgeSpring.map((progress, sample) => ({
         offset: sample / (edgeSpring.length - 1),
         transform: `translate3d(0,${offset * (1 - progress) * (index ? -1 : 1)}px,0)`,
-      })), { duration: 440, easing: "linear", fill: "forwards" }));
+      })), { duration: 220, easing: "linear", fill: "forwards" }));
       Promise.all(animations.map(animation => animation.finished.catch(() => {}))).then(() => { if (current === version) reset(); });
     }
     function resumeReturn() {
@@ -63,7 +63,7 @@
       }
       if (frame === null) frame = view.requestAnimationFrame(paint);
       view.clearTimeout(releaseTimer);
-      releaseTimer = view.setTimeout(release, 90);
+      releaseTimer = view.setTimeout(release, 50);
     }
     function pull(delta) {
       resumeReturn();

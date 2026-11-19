@@ -11,6 +11,8 @@ async page => {
     const c = await browser.newContext({ viewport, hasTouch: viewport.width < 1000, isMobile: viewport.width < 700, serviceWorkers: "block" });
     try {
       const p = await c.newPage(), errors = []; p.on("pageerror", error => errors.push(error.message));
+      const wheelSession = await c.newCDPSession(p);
+      const wheel = (x, y, deltaY) => wheelSession.send("Input.dispatchMouseEvent", { type: "mouseWheel", x, y, deltaX: 0, deltaY });
       await p.goto("http://127.0.0.1:8034/?qa=continuous-overscroll#calendar");
       await p.waitForFunction(() => typeof store !== "undefined" && workAlertContextReady);
       await p.evaluate(() => { calendarView = "day"; selectedDate = Model.todayKey(); renderAll({ autoScrollCalendar: false }); }); await p.waitForTimeout(100);
@@ -19,7 +21,7 @@ async page => {
         await p.evaluate(bottom => { const cal = document.querySelector("#planner-calendar"); cal.scrollTop = bottom ? cal.scrollHeight - cal.clientHeight - 20 : 20; }, bottom); await p.waitForTimeout(60);
         const initial = await p.evaluate(state);
         const xy = await p.evaluate(() => { const cal = document.querySelector("#planner-calendar"), h = cal.querySelector(".timeline-days").getBoundingClientRect(), a = cal.querySelector(".time-axis").getBoundingClientRect(); return { x: a.right + 35, y: h.bottom + 100 }; });
-        await p.mouse.move(xy.x, xy.y); await p.mouse.wheel(0, bottom ? 100 : -100); await p.waitForTimeout(20);
+        await wheel(xy.x, xy.y, bottom ? 100 : -100); await p.waitForTimeout(20);
         const crossed = await p.evaluate(state);
         check(bottom ? crossed.offset < 0 : crossed.offset > 0, "First movement crossing the limit did not stretch");
         check(Math.abs(crossed.offset) < 48 && JSON.stringify(crossed.headers) === JSON.stringify(initial.headers), "Boundary/header regression");
@@ -30,13 +32,13 @@ async page => {
             const y = Math.max(...headers) + 5, e = document.elementFromPoint(x, y);
             return { x, y: Number.isFinite(y) ? y : fallback, tag: e?.className };
           }, { x: xy.x, fallback: gapY });
-          await p.mouse.move(gap.x, gap.y); await p.mouse.wheel(0, -50); await p.waitForTimeout(20);
+          await wheel(gap.x, gap.y, -50); await p.waitForTimeout(20);
           const continued = await p.evaluate(state);
           check(continued.offset > crossed.offset && continued.offset < 48, "Pull stopped over its exposed edge");
-          await p.mouse.move(xy.x, xy.y); await p.mouse.wheel(0, 10); await p.waitForTimeout(20);
+          await wheel(xy.x, xy.y, 10); await p.waitForTimeout(20);
           const reversed = await p.evaluate(state);
           check(reversed.offset > 0 && reversed.offset < continued.offset && reversed.top === 0, "Reverse gesture snapped instead of unwinding");
-          await p.mouse.wheel(0, 180); await p.waitForTimeout(30);
+          await wheel(xy.x, xy.y, 180); await p.waitForTimeout(30);
           const inside = await p.evaluate(state);
           check(inside.offset === 0 && inside.top > 0, "Reverse leftover did not rejoin ordinary scrolling");
           results.push({ viewport, case: "cross-top, continue through gap, unwind and rejoin", status: "PASS", crossed, continued, reversed, inside });

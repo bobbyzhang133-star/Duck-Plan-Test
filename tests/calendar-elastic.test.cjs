@@ -52,7 +52,7 @@ test("edge wheel pulls move only hours and schedule, with resistance and bounded
   const maximum = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
   assert.ok(maximum > first && maximum < 48, "Continued pulls approach the limit without hitting a hard stop");
   f.release(); assert.equal(f.animations.length, 2);
-  assert.equal(f.animations[0].options.duration, 440);
+  assert.equal(f.animations[0].options.duration, 220);
   assert.equal(f.animations[0].keyframes.at(-1).transform, "translate3d(0,0px,0)");
   f.animations.forEach(animation => animation.finish()); await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
   assert.equal(f.timeline.style.transform, ""); assert.equal(f.header.style.transform, "");

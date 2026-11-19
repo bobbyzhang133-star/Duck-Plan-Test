@@ -17,6 +17,8 @@ async page => {
     const c = await browser.newContext({ viewport, hasTouch: viewport.width < 1000, isMobile: viewport.width < 700, serviceWorkers: "block" });
     try {
       const p = await c.newPage(), errors = []; p.on("pageerror", error => errors.push(error.message));
+      const wheelSession = await c.newCDPSession(p);
+      const wheel = (x, y, deltaY) => wheelSession.send("Input.dispatchMouseEvent", { type: "mouseWheel", x, y, deltaX: 0, deltaY });
       await p.goto("http://127.0.0.1:8034/?qa=edge-stretch#calendar");
       await p.waitForFunction(() => typeof store !== "undefined" && workAlertContextReady);
       const before = await p.evaluate(() => JSON.stringify(store.listItems()));
@@ -28,17 +30,17 @@ async page => {
         }, mode);
         await p.waitForTimeout(120);
         const rest = await p.evaluate(geometry);
-        await p.mouse.move(rest.x, rest.y); await p.mouse.wheel(0, -150); await p.waitForTimeout(25);
+        await wheel(rest.x, rest.y, -150); await p.waitForTimeout(25);
         const top = await p.evaluate(geometry);
         check(top.body > 0 && top.body <= 48 && Math.abs(top.axisTop - rest.axisTop - top.body) < 0.01 && Math.abs(top.bodyTop - rest.bodyTop - top.body) < 0.01, "Top stretch missing or mismatched");
         check(top.headerTop === rest.headerTop && top.toolbarTop === rest.toolbarTop, "Header moved with stretch");
         await p.waitForFunction(() => !document.querySelector(".timeline-calendar").style.transform && !document.querySelector(".timeline-calendar").getAnimations().length, null, { timeout: 2000 });
-        await p.mouse.wheel(0, 180); await p.waitForTimeout(110);
+        await wheel(rest.x, rest.y, 180); await p.waitForTimeout(110);
         check((await p.evaluate(geometry)).scroll > 0, "Normal wheel scroll blocked");
         await p.evaluate(() => { const root = document.querySelector("#planner-calendar"); root.scrollTop = root.scrollHeight; });
         await p.waitForTimeout(70);
         const bottomRest = await p.evaluate(geometry);
-        await p.mouse.move(bottomRest.x, bottomRest.y); await p.mouse.wheel(0, 150); await p.waitForTimeout(25);
+        await wheel(bottomRest.x, bottomRest.y, 150); await p.waitForTimeout(25);
         const bottom = await p.evaluate(geometry);
         check(bottom.body < 0 && bottom.body >= -48 && Math.abs(bottom.axisTop - bottomRest.axisTop - bottom.body) < 0.01 && Math.abs(bottom.bodyTop - bottomRest.bodyTop - bottom.body) < 0.01, "Bottom stretch missing or mismatched");
         check(bottom.headerTop === bottomRest.headerTop && bottom.toolbarTop === bottomRest.toolbarTop, "Bottom pull moved header");
@@ -64,7 +66,7 @@ async page => {
       }
       await p.emulateMedia({ reducedMotion: "reduce" });
       await p.evaluate(() => { document.querySelector("#planner-calendar").scrollTop = 0; }); await p.waitForTimeout(70);
-      const rest = await p.evaluate(geometry); await p.mouse.move(rest.x, rest.y); await p.mouse.wheel(0, -150); await p.waitForTimeout(30);
+      const rest = await p.evaluate(geometry); await wheel(rest.x, rest.y, -150); await p.waitForTimeout(30);
       check((await p.evaluate(geometry)).body === 0, "Reduced motion still stretched");
       // A real blank slot still opens the correct editor after boundary interaction.
       const slot = p.locator('.calendar-slot[data-slot-time="01:00"]').first();

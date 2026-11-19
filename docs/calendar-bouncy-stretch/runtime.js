@@ -23,7 +23,9 @@ async page => {
           const grid = document.querySelector(".timeline-calendar"), moving = grid.getAnimations({ subtree: true }).filter(a => a.effect.target.matches(".timeline-calendar,.timeline-corner,.timeline-days,.timeline-deadline-label,.timeline-deadlines"));
           if (moving.length < 3) throw Error("No active coordinated spring");
           moving.forEach(a => a.pause());
-          const phases = [0, 150, 210, 264, 350, 430].map(time => {
+          const duration = moving[0].effect.getTiming().duration;
+          const phases = [0, 150 / 440, 210 / 440, 264 / 440, 350 / 440, 430 / 440].map(fraction => {
+            const time = fraction * duration;
             moving.forEach(a => { a.currentTime = time; });
             return { time, offset: new DOMMatrixReadOnly(getComputedStyle(grid).transform).m42, header: document.querySelector(".timeline-days").getBoundingClientRect().top };
           });
