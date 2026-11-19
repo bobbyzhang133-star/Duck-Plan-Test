@@ -442,12 +442,12 @@
   outline: 2px solid var(--timed-deadline-accent); outline-offset: -1px;
 }
 
-/* Quiet Week separators divide dates without restoring boxed header tiles. */
+/* Half-height Week dividers separate dates within one continuous header. */
 .motion-preview #view-calendar :is(.week-view .calendar-date-button,.phone-week-day) { position: relative; }
 .motion-preview #view-calendar .week-view .calendar-date-button + .calendar-date-button::before,
 .motion-preview #view-calendar .phone-week-day + .phone-week-day::before {
-  content: ""; position: absolute; top: 9px; bottom: 9px; left: 0; width: 1px;
-  background: var(--line); opacity: .6; pointer-events: none;
+  content: ""; position: absolute; top: 25%; bottom: 25%; left: 0; width: 1px;
+  background: color-mix(in srgb,var(--line) 80%,var(--muted)); pointer-events: none;
 }
 .motion-preview #view-calendar .phone-week-day + .phone-week-day::before { left: -1px; }
 
