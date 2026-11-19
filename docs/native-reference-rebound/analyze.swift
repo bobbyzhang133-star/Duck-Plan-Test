@@ -11,7 +11,8 @@ let minY = probe["minY"] as! Int
 let maxY = probe["maxY"] as! Int
 var samples = [[String: Any]]()
 var peak = 0
-var peakEdge = -1
+let direction = input["direction"] as? String == "bottom" ? -1 : 1
+var peakEdge = Int.min
 for (index, frame) in frames.enumerated() {
   let png = Data(base64Encoded: frame["png"] as! String)!
   let bitmap = NSBitmapImageRep(data: png)!
@@ -23,7 +24,7 @@ for (index, frame) in frames.enumerated() {
       if mode == "hour-rule" && color.blueComponent < darkest { darkest = color.blueComponent; edge = y }
     }
   }
-  if edge > peakEdge { peakEdge = edge; peak = index }
+  if edge * direction > peakEdge { peakEdge = edge * direction; peak = index }
   samples.append(["timeMs": frame["timeMs"]!, "paintEdgeY": edge])
   if index == 0 || index == frames.count - 1 { try png.write(to: URL(fileURLWithPath: folder + (index == 0 ? "/before.png" : "/settled.png"))) }
 }
