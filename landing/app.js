@@ -875,7 +875,7 @@ function renderTimeline(dates) {
     }).join("");
     return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}${timedDeadlines}</div>`;
   }).join("");
-  return `<div class="timeline-calendar${hasTimedDeadlineWorkOverlap ? " has-timed-deadline-work-overlap" : ""}" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div>${deadlineRows}<div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div>`;
+  return `<div class="timeline-calendar${hasTimedDeadlineWorkOverlap ? " has-timed-deadline-work-overlap" : ""}" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="calendar-header-viewport"><div class="calendar-header-grid"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div>${deadlineRows}</div></div><div class="calendar-timeline-scroller" role="region" aria-label="Hourly schedule" tabindex="0"><div class="calendar-body-grid"><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div></div></div>`;
 }
 function renderMonth(dates) {
   return calendarDates.month(tasks, dates, selectedDate);
@@ -905,17 +905,21 @@ function relevantCalendarMinutes(dates) {
   return 9 * 60;
 }
 
+function calendarScrollElement() {
+  return window.DuckCalendarViewport?.scroller(els.calendar) || els.calendar;
+}
+
 function scrollCalendarToRelevant(dates) {
   if (calendarView === "month" || calendarUserScrolled) return;
   requestAnimationFrame(() => {
     const column = els.calendar.querySelector("[data-column-date]");
-    const headerOffset = column ? column.getBoundingClientRect().top - els.calendar.getBoundingClientRect().top + els.calendar.scrollTop - els.calendar.clientTop : 114;
+    const headerOffset = column ? column.getBoundingClientRect().top - calendarScrollElement().getBoundingClientRect().top + calendarScrollElement().scrollTop - calendarScrollElement().clientTop : 114;
     calendarProgrammaticScroll = true;
-    els.calendar.scrollTop = PlannerUI.timelineScrollTop({
+    calendarScrollElement().scrollTop = PlannerUI.timelineScrollTop({
       targetMinutes: relevantCalendarMinutes(dates),
       headerOffset,
-      viewportHeight: els.calendar.clientHeight,
-      scrollHeight: els.calendar.scrollHeight,
+      viewportHeight: calendarScrollElement().clientHeight,
+      scrollHeight: calendarScrollElement().scrollHeight,
     });
     requestAnimationFrame(() => { calendarProgrammaticScroll = false; });
   });
@@ -946,6 +950,8 @@ function renderPhoneWeekStrip(dates) {
 }
 
 function renderCalendar({ autoScroll = false } = {}) {
+  const previousScroll = calendarScrollElement();
+  const position = { top: previousScroll.scrollTop, left: previousScroll.scrollLeft };
   const dates = Model.datesForView(calendarView, selectedDate);
   const singleDayWeek = phonePlannerQuery.matches && calendarView === "week";
   const visibleDates = singleDayWeek ? [selectedDate] : dates;
@@ -955,13 +961,16 @@ function renderCalendar({ autoScroll = false } = {}) {
   els.calendar.className = `planner-calendar ${calendarView}-view${singleDayWeek ? " phone-single-day" : ""}`;
   els.calendar.innerHTML = calendarView === "month" ? renderMonth(dates) : renderTimeline(visibleDates);
   renderPhoneWeekStrip(dates);
+  calendarScrollElement().scrollTop = position.top;
+  calendarScrollElement().scrollLeft = position.left;
+  calendarViewport?.refresh();
   document.querySelectorAll("[data-calendar-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.calendarView === calendarView)));
   els.calendarStatus.textContent = `${calendarView[0].toUpperCase()}${calendarView.slice(1)} view, ${els.calendarRange.textContent}`;
   if (autoScroll) {
     calendarUserScrolled = false;
     if (calendarView === "month") {
-      els.calendar.scrollTop = 0;
-      els.calendar.scrollLeft = 0;
+      calendarScrollElement().scrollTop = 0;
+      calendarScrollElement().scrollLeft = 0;
     }
     scrollCalendarToRelevant(visibleDates);
   }
@@ -1245,7 +1254,7 @@ function updateCalendarDragPosition(clientX, clientY) {
   calendarDrag.ghost.style.top = `${top}px`;
   calendarDrag.ghost.style.width = `${Math.max(32, rect.width - 6)}px`;
   calendarDrag.ghost.querySelector("small").textContent = formatTime(drop.time);
-  const viewport = els.calendar.getBoundingClientRect();
+  const viewport = calendarScrollElement().getBoundingClientRect();
   const edge = 52;
   calendarDrag.scrollVelocity = clientY < viewport.top + edge ? -12 : clientY > viewport.bottom - edge ? 12 : 0;
 }
@@ -1254,9 +1263,9 @@ function runCalendarDragAutoscroll() {
   if (!calendarDrag?.started) return;
   if (!currentCalendarDrag()) return;
   if (calendarDrag.scrollVelocity) {
-    const before = els.calendar.scrollTop;
-    els.calendar.scrollTop += calendarDrag.scrollVelocity;
-    if (els.calendar.scrollTop !== before) {
+    const before = calendarScrollElement().scrollTop;
+    calendarScrollElement().scrollTop += calendarDrag.scrollVelocity;
+    if (calendarScrollElement().scrollTop !== before) {
       updateCalendarDragPosition(calendarDrag.lastPointer.x, calendarDrag.lastPointer.y);
     }
   }
@@ -1551,10 +1560,10 @@ document.addEventListener("click", (event) => {
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
   const deadlineToggle = event.target.closest("#planner-calendar [data-toggle-deadline-row]");
   if (deadlineToggle) {
-    const { scrollTop, scrollLeft } = els.calendar;
+    const { scrollTop, scrollLeft } = calendarScrollElement();
     deadlineRowExpanded = !deadlineRowExpanded;
     renderCalendar({ autoScroll: false }); setupButtonMaterial(els.calendar);
-    els.calendar.scrollTop = scrollTop; els.calendar.scrollLeft = scrollLeft;
+    calendarScrollElement().scrollTop = scrollTop; calendarScrollElement().scrollLeft = scrollLeft;
     els.calendar.querySelector(".deadline-row-toggle")?.focus({ preventScroll: true });
     return;
   }
@@ -1684,7 +1693,7 @@ function showFreeCalendarPreview(clientX, clientY, time = null) {
 }
 
 function fitCalendarDropPreview({ left, top, width, height }, mode) {
-  const preview = templateDrag.preview, viewport = els.calendar.getBoundingClientRect();
+  const preview = templateDrag.preview, viewport = calendarScrollElement().getBoundingClientRect();
   Object.assign(preview.style, {
     left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`,
     clipPath: `inset(${Math.max(0, viewport.top - top)}px ${Math.max(0, left + width - viewport.right)}px ${Math.max(0, top + height - viewport.bottom)}px ${Math.max(0, viewport.left - left)}px)`,
@@ -1715,7 +1724,7 @@ function updateTemplatePreview(event) {
   const rect = column.getBoundingClientRect(), hourHeight = rect.height / CALENDAR_HOURS;
   const top = rect.top + (minutes - CALENDAR_START_HOUR * 60) * hourHeight / 60;
   const height = Math.max(30, templateDrag.template.durationMinutes * hourHeight / 60);
-  const viewport = els.calendar.getBoundingClientRect();
+  const viewport = calendarScrollElement().getBoundingClientRect();
   // Date/deadline headers keep their existing 09:00 default. If that time is
   // offscreen, show an honest labeled block by the pointer rather than a false slot.
   if (!placement.column && (top + height <= viewport.top || top >= viewport.bottom)) {
@@ -1736,9 +1745,9 @@ function scrollTemplatePreview() {
     return;
   }
   if (templateDrag.velocity) {
-    const previous = els.calendar.scrollTop;
-    els.calendar.scrollTop += templateDrag.velocity;
-    if (previous !== els.calendar.scrollTop) {
+    const previous = calendarScrollElement().scrollTop;
+    calendarScrollElement().scrollTop += templateDrag.velocity;
+    if (previous !== calendarScrollElement().scrollTop) {
       const { x, y } = templateDrag.pointer;
       const target = document.elementFromPoint(x, y);
       if (target) updateTemplatePreview({ target, clientX: x, clientY: y });
@@ -1848,7 +1857,9 @@ window.addEventListener("hashchange", () => { if (location.hash === "#planner-si
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));
 document.querySelector("#calendar-next").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, 1)));
 document.querySelector("#calendar-today").addEventListener("click", () => selectDate(nowKey()));
-els.calendar.addEventListener("scroll", () => { if (!calendarProgrammaticScroll) calendarUserScrolled = true; }, { passive: true });
+els.calendar.addEventListener("scroll", event => {
+  if (event.target === calendarScrollElement() && !calendarProgrammaticScroll) calendarUserScrolled = true;
+}, { passive: true, capture: true });
 els.calendar.addEventListener("pointerdown", (event) => {
   const source = event.target.closest("[data-calendar-drag-task]");
   if (!source || event.button !== 0 || event.isPrimary === false || calendarView === "month") return;

@@ -5,8 +5,8 @@
   --calendar-hour-line: color-mix(in srgb,var(--line) 78%,transparent);
   --calendar-half-hour-line: color-mix(in srgb,var(--line) 38%,transparent);
 }
-/* Suppress whole-scroller native bounce. calendar-viewport.js stretches only
-   the hour axis and schedule beneath the stationary raised header. */
+/* Keep the outer frame still; the separate timetable scrollport below restores
+   browser-native rebound without pulling the raised date header. */
 .motion-preview #view-calendar .planner-calendar { overscroll-behavior: none; }
 .motion-preview #view-calendar .timeline-days,
 .motion-preview #view-calendar .timeline-corner {
@@ -455,3 +455,34 @@
 .motion-preview #view-calendar .day-view { --calendar-day-surface: #fff; background-color: var(--calendar-day-surface); }
 :root[data-theme="dark"] .motion-preview #view-calendar .day-view { --calendar-day-surface: var(--card); }
 .motion-preview #view-calendar .day-view :is(.time-axis,.timeline-column,.timeline-column.selected-day) { background-color: var(--calendar-day-surface); }
+
+/* Restore native timetable rebound, with the header outside its scrollport. */
+.motion-preview #view-calendar .planner-calendar:not(.month-view) { display: flex; overflow: hidden; }
+.motion-preview #view-calendar .planner-calendar:not(.month-view) > .timeline-calendar {
+  display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; min-height: 0;
+  --calendar-content-width: 0px;
+}
+.motion-preview #view-calendar .planner-calendar.week-view > .timeline-calendar { --calendar-content-width: 650px; }
+.motion-preview #view-calendar .planner-calendar.week-view > .timeline-calendar.has-timed-deadline-work-overlap { --calendar-content-width: calc(var(--calendar-axis-width) + var(--day-count) * 112px); }
+.motion-preview #view-calendar .planner-calendar.week-view.phone-single-day > .timeline-calendar { --calendar-content-width: 0px; }
+.motion-preview #view-calendar .calendar-header-viewport {
+  flex: 0 0 auto; min-width: 0; overflow: hidden; position: relative; z-index: 8;
+  background: var(--calendar-header-surface); overscroll-behavior: none;
+}
+.motion-preview #view-calendar :is(.calendar-header-grid,.calendar-body-grid) {
+  display: grid; grid-template-columns: var(--calendar-axis-width) minmax(0,1fr);
+  min-width: var(--calendar-content-width);
+}
+.motion-preview #view-calendar .calendar-header-grid { grid-template-rows: var(--calendar-day-header-height) auto; }
+.motion-preview #view-calendar .calendar-timeline-scroller {
+  flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain;
+  background: var(--calendar-day-surface,var(--card));
+}
+.motion-preview #view-calendar .calendar-body-grid { grid-template-rows: auto; }
+.motion-preview #view-calendar .calendar-body-grid .time-axis { position: sticky; left: 0; }
+.motion-preview #view-calendar .calendar-header-grid :is(.timeline-days,.timeline-deadlines)::after { content: none; }
+.motion-preview #view-calendar .calendar-header-grid :is(.timeline-deadlines,.timeline-deadline-label) { box-shadow: none; }
+.motion-preview #view-calendar .is-timeline-scrolled .calendar-header-viewport { box-shadow: var(--calendar-fold-shadow); }
+@media (prefers-reduced-motion: reduce) {
+  .motion-preview #view-calendar .calendar-timeline-scroller { overscroll-behavior: none; }
+}
