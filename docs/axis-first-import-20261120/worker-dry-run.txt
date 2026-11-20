@@ -1,0 +1,6 @@
+Total Upload: 110.20 KiB / gzip: 27.07 KiB
+env.LIVE (PlannerLive)                              Durable Object
+env.DB (duckplan-latest)                            D1 Database
+env.ASSETS                                          Assets
+--dry-run: exiting now.
+No remote deployment performed.

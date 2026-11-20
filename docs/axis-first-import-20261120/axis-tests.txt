@@ -1,0 +1,18 @@
+✔ date-only imports use the account's local day; timed deadlines compare exact instants (48.241209ms)
+✔ DST overlaps follow the existing earlier-instant rule and invalid inputs remain open (1.283208ms)
+✔ first connection completes only new overdue Axis rows and returns the actual count (74.828625ms)
+✔ later syncs preserve reopened work and leave newly appearing overdue assignments open (21.593291ms)
+✔ disconnect/reconnect does not repeat completion; an empty successful import also consumes the first connection (19.764917ms)
+axis sync failed 83f95d99-d58f-45ee-b855-45411d444813 synthetic import failure
+✔ failed first imports roll back rows/completion and a successful retry still completes overdue imports (20.725042ms)
+✔ existing Axis records without sync history are preserved and other accounts have independent first imports (28.160375ms)
+✔ concurrent initial imports cannot both auto-complete and conflicting UIDs never change prior rows (17.624292ms)
+✔ completion count excludes D1 trigger side effects (18.171416ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 462.42975

@@ -1,0 +1,6 @@
+{"runId": "ipad-initial-1795198695805024000", "mode": "initial", "stage": "started", "api": "http://127.0.0.1:8798/api", "native": true, "viewport": [1032, 1344], "fixtureBacked": true}
+{"runId": "ipad-initial-1795198695805024000", "mode": "initial", "stage": "initial-pass", "imported": 4, "autoCompleted": 2, "todayOpen": true, "futureOpen": true, "completionToast": true, "doneListAndReopen": true, "nativeURLSession": true}
+{"runId": "ipad-initial-1795198695805024000", "mode": "initial", "stage": "finished", "status": "PASS", "runtime": "actual iOS27.2 WKWebView; scripted DOM actions; real URLSession/Worker/D1 and synthetic upstream"}
+{"runId": "ipad-later-1795198727778145000", "mode": "later", "stage": "started", "api": "http://127.0.0.1:8798/api", "native": true, "viewport": [1032, 1344], "fixtureBacked": true}
+{"runId": "ipad-later-1795198727778145000", "mode": "later", "stage": "later-pass", "relaunchPersistence": true, "newOverdueOpen": true, "reopenedStillOpen": true, "reconnectNoRepeat": true, "nativeURLSession": true}
+{"runId": "ipad-later-1795198727778145000", "mode": "later", "stage": "finished", "status": "PASS", "runtime": "actual iOS27.2 WKWebView; scripted DOM actions; real URLSession/Worker/D1 and synthetic upstream"}

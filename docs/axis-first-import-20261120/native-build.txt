@@ -1,0 +1,3 @@
+Debug simulator app/widget build PASS; unsigned.
+Full local log: /private/tmp/duckplan-axis-native-build.log
+** BUILD SUCCEEDED **

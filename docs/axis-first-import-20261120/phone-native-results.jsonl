@@ -1,0 +1,10 @@
+{"runId": "phone-initial-1795198301149773000", "mode": "initial", "stage": "started", "api": "http://127.0.0.1:8798/api", "native": true, "viewport": [402, 812], "fixtureBacked": true}
+{"runId": "phone-initial-1795198301149773000", "mode": "initial", "stage": "failure", "at": "first connect", "message": "Initial completion feedback"}
+{"runId": "phone-initial-1795198484454781000", "mode": "initial", "stage": "started", "api": "http://127.0.0.1:8798/api", "native": true, "viewport": [402, 812], "fixtureBacked": true}
+{"runId": "phone-initial-1795198484454781000", "mode": "initial", "stage": "failure", "at": "first connect", "message": "Timeout: initial completion feedback", "toast": "Signed in as axis-native-phone-1795198484125288000@axis.test."}
+{"runId": "phone-initial-1795198630945372000", "mode": "initial", "stage": "started", "api": "http://127.0.0.1:8798/api", "native": true, "viewport": [402, 812], "fixtureBacked": true}
+{"runId": "phone-initial-1795198630945372000", "mode": "initial", "stage": "initial-pass", "imported": 4, "autoCompleted": 2, "todayOpen": true, "futureOpen": true, "completionToast": true, "doneListAndReopen": true, "nativeURLSession": true}
+{"runId": "phone-initial-1795198630945372000", "mode": "initial", "stage": "finished", "status": "PASS", "runtime": "actual iOS27.2 WKWebView; scripted DOM actions; real URLSession/Worker/D1 and synthetic upstream"}
+{"runId": "phone-later-1795198648512687000", "mode": "later", "stage": "started", "api": "http://127.0.0.1:8798/api", "native": true, "viewport": [402, 812], "fixtureBacked": true}
+{"runId": "phone-later-1795198648512687000", "mode": "later", "stage": "later-pass", "relaunchPersistence": true, "newOverdueOpen": true, "reopenedStillOpen": true, "reconnectNoRepeat": true, "nativeURLSession": true}
+{"runId": "phone-later-1795198648512687000", "mode": "later", "stage": "finished", "status": "PASS", "runtime": "actual iOS27.2 WKWebView; scripted DOM actions; real URLSession/Worker/D1 and synthetic upstream"}

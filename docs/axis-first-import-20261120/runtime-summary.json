@@ -1,0 +1,27 @@
+{
+  "backend": "real isolated local Worker/D1/DO with synthetic upstream feed and fixed evaluation clock",
+  "browser": "PASS: desktop1280/phone390/iPad835; browser-results.json",
+  "native": {
+    "phone": {
+      "status": "PASS",
+      "initial": "phone-initial-1795198630945372000",
+      "relaunchLaterReconnect": "phone-later-1795198648512687000",
+      "nativeURLSession": true,
+      "fixtureBacked": true,
+      "scriptedDOM": true
+    },
+    "ipad": {
+      "status": "PASS",
+      "initial": "ipad-initial-1795198695805024000",
+      "relaunchLaterReconnect": "ipad-later-1795198727778145000",
+      "nativeURLSession": true,
+      "fixtureBacked": true,
+      "scriptedDOM": true
+    }
+  },
+  "schemaMigrations": 0,
+  "hostedDeploymentPerformed": false,
+  "physicalInstall": "NOT RUN",
+  "physicalAxisFeed": "NOT RUN: no private student feeds used",
+  "existingStudentRecordsChanged": false
+}

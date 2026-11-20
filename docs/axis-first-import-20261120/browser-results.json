@@ -1,0 +1,107 @@
+[
+  {
+    "name": "desktop",
+    "fixtureBacked": true,
+    "native": false,
+    "checks": {
+      "localSignInFirst": true,
+      "failedConnectNoRows": true,
+      "initialResponse": {
+        "added": 4,
+        "updated": 0,
+        "removed": 0,
+        "autoCompleted": 2,
+        "classesAdded": 1,
+        "lastSyncedAt": "2026-11-20T18:05:46.901Z"
+      },
+      "initial": {
+        "added": 4,
+        "autoCompleted": 2,
+        "todayOpen": true,
+        "futureOpen": true,
+        "toast": true
+      },
+      "reopenAndReload": true,
+      "laterSync": {
+        "added": 1,
+        "autoCompleted": 0,
+        "newOverdueOpen": true,
+        "reopenedStillOpen": true
+      },
+      "reconnectAndPersist": true,
+      "noOverflow": true
+    },
+    "pageErrors": [],
+    "status": "PASS"
+  },
+  {
+    "name": "phone",
+    "fixtureBacked": true,
+    "native": false,
+    "checks": {
+      "localSignInFirst": true,
+      "failedConnectNoRows": true,
+      "initialResponse": {
+        "added": 4,
+        "updated": 0,
+        "removed": 0,
+        "autoCompleted": 2,
+        "classesAdded": 1,
+        "lastSyncedAt": "2026-11-20T18:05:48.769Z"
+      },
+      "initial": {
+        "added": 4,
+        "autoCompleted": 2,
+        "todayOpen": true,
+        "futureOpen": true,
+        "toast": true
+      },
+      "reopenAndReload": true,
+      "laterSync": {
+        "added": 1,
+        "autoCompleted": 0,
+        "newOverdueOpen": true,
+        "reopenedStillOpen": true
+      },
+      "reconnectAndPersist": true,
+      "noOverflow": true
+    },
+    "pageErrors": [],
+    "status": "PASS"
+  },
+  {
+    "name": "ipad",
+    "fixtureBacked": true,
+    "native": false,
+    "checks": {
+      "localSignInFirst": true,
+      "failedConnectNoRows": true,
+      "initialResponse": {
+        "added": 4,
+        "updated": 0,
+        "removed": 0,
+        "autoCompleted": 2,
+        "classesAdded": 1,
+        "lastSyncedAt": "2026-11-20T18:05:50.924Z"
+      },
+      "initial": {
+        "added": 4,
+        "autoCompleted": 2,
+        "todayOpen": true,
+        "futureOpen": true,
+        "toast": true
+      },
+      "reopenAndReload": true,
+      "laterSync": {
+        "added": 1,
+        "autoCompleted": 0,
+        "newOverdueOpen": true,
+        "reopenedStillOpen": true
+      },
+      "reconnectAndPersist": true,
+      "noOverflow": true
+    },
+    "pageErrors": [],
+    "status": "PASS"
+  }
+]

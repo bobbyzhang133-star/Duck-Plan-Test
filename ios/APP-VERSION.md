@@ -1,9 +1,9 @@
 # Current native app version
 
-Synced November 19 and verified November 20, 2026 from website commit `fb93ff7` (application source `c5b5aed`, cache v95). The existing local Xcode project includes the latest calendar folding, deadline styling, whole-timetable immediate spring rebound and request backoff changes.
+Local branch `codex/native-axis-first-import-20261120` adds the first-successful-connection Axis overdue rule and completion feedback (cache v96), based on verified native release `8951ee6`. The affected native UI flows and relaunch/reconnect pass in real iPhone/iPad simulator WKWebViews; all589 native tests and the119-file simulator app/widget build pass. See `docs/axis-first-import-20261120/README.md`.
 
-The app now connects to **https://duckplan-latest.ocs-learning.workers.dev/api**, as explicitly requested. This is the separate new site’s accounts/data. Original-server accounts and records are not migrated or deleted; use the account created on the new site. Device guest data is preserved, and account/API-scoped fallback templates remain isolated from the new server.
+The production API default remains `https://duckplan-latest.ocs-learning.workers.dev/api` and uses that separate site’s accounts/data. The new server rule is still local pending explicit deployment approval. A GitHub upload or phone rebuild alone cannot activate backend changes.
 
-Open the existing `DuckPlan-iOS/ios/DuckPlan.xcodeproj`, choose your connected iPhone/iPad and press Run to install. Existing local signing settings, native alarms/normal notifications, approved icon and sounds are preserved. Source synchronization or a build does not update an installed physical app.
+The latest already-published shared app baseline is `codex/ios-main-release-20261120` (cache95); this new feature is a separate local/TEST checkpoint until published. Existing local signing, native alarm/normal-notification providers, icon, guest data and account/API fallback scopes are preserved.
 
-See `docs/native-latest-20261119/README.md` for exact source/build/runtime evidence and limitations. Free Personal Team background push remains disabled; this update does not add closed-app cross-device APNs sync.
+Open the existing `DuckPlan-iOS/ios/DuckPlan.xcodeproj` and Run on your phone after the server update to install the new interface. No physical phone installation or physical alert-delivery test was performed here. Free Personal Team closed-app APNs sync remains unavailable.
