@@ -945,7 +945,7 @@ function renderPhoneWeekStrip(dates) {
     const counts = button.querySelector(".calendar-day-counts");
     const key = `${summary.workCount}:${summary.dueCount}`;
     if (counts && counts.dataset.counts !== key) {
-      counts.outerHTML = summary.markup.replace('class="calendar-day-counts"', `class="calendar-day-counts" data-counts="${key}"`);
+      counts.outerHTML = summary.markup.replace('aria-hidden="true"', `data-counts="${key}" aria-hidden="true"`);
     }
     button.setAttribute("aria-pressed", String(button.dataset.date === selectedDate));
     if (button.dataset.date === nowKey()) button.setAttribute("aria-current", "date");

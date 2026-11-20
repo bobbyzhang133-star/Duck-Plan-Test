@@ -50,9 +50,10 @@
     function daySummary(tasks, date) {
       const { workCount, dueCount } = model.daySummary(tasks, date);
       const count = value => value > 99 ? "99+" : String(value);
+      const dense = workCount > 0 && dueCount > 0 && Math.max(workCount, dueCount) >= 10;
       return { workCount, dueCount,
         label: `${formatLongDate(date)}. ${countText(workCount, "scheduled assignment")}, ${countText(dueCount, "deadline")}.`,
-        markup: `<span class="calendar-day-counts" aria-hidden="true">${workCount ? `<span data-day-work-count>${clock}<span>${count(workCount)}</span></span>` : ""}${dueCount ? `<span data-day-due-count>${flag}<span>${count(dueCount)}</span></span>` : ""}</span>` };
+        markup: `<span class="calendar-day-counts${dense ? " is-dense" : ""}" aria-hidden="true">${workCount ? `<span data-day-work-count>${clock}<span data-day-count-value>${count(workCount)}</span><span class="calendar-count-label">work</span></span>` : ""}${dueCount ? `<span data-day-due-count>${flag}<span data-day-count-value>${count(dueCount)}</span><span class="calendar-count-label">due</span></span>` : ""}</span>` };
     }
     function deadlineChips(tasks, date, { expanded = false, limit = 3, dateOnly = false } = {}) {
       const deadlines = sortedDeadlines(tasks, date).filter(task => !dateOnly || !validTime(task.dueTime));

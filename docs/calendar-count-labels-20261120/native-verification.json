@@ -1,0 +1,370 @@
+{
+  "status": "PASS",
+  "installedBundles": [
+    {
+      "device": "phone",
+      "status": "PASS",
+      "runtime": "iOS27.2 WKWebView",
+      "files": 119,
+      "nativeCodeSHA256": "87aa1df2a570caa1a23acde3ddf3f4f5978e3479380fd6fe0375b72d9034d04d",
+      "instrumentation": [
+        "separate QA bundle identifier",
+        "one QA script/index tag"
+      ],
+      "protectedNativeSource": "unchanged except version documentation; Xcode generated UI state excluded"
+    },
+    {
+      "device": "ipad",
+      "status": "PASS",
+      "runtime": "iOS27.2 WKWebView",
+      "files": 119,
+      "nativeCodeSHA256": "87aa1df2a570caa1a23acde3ddf3f4f5978e3479380fd6fe0375b72d9034d04d",
+      "instrumentation": [
+        "separate QA bundle identifier",
+        "one QA script/index tag"
+      ],
+      "protectedNativeSource": "unchanged except version documentation; Xcode generated UI state excluded"
+    }
+  ],
+  "finalRuntimeCases": [
+    {
+      "device": "phone",
+      "runId": "phone-cloud-persist-1795206150568420000",
+      "mode": "cloud-persist",
+      "stage": "finished",
+      "status": "PASS",
+      "native": true,
+      "platform": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "viewport": [
+        402,
+        812
+      ],
+      "rows": [
+        {
+          "date": "2026-11-16",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-17",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-18",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-19",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-20",
+          "workCount": 10,
+          "dueCount": 10,
+          "height": 56,
+          "badgeBottom": 153.5,
+          "countsTop": 154.5
+        },
+        {
+          "date": "2026-11-21",
+          "workCount": 1,
+          "dueCount": 1,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-22",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        }
+      ],
+      "checks": [
+        "actual WKWebView",
+        "real native transport for cloud mode",
+        "light/dark",
+        "large counts",
+        "completion",
+        "reschedule",
+        "due edit",
+        "fixed header",
+        "relaunch when requested"
+      ]
+    },
+    {
+      "device": "phone",
+      "runId": "phone-local-persist-1795206192303743000",
+      "mode": "local-persist",
+      "stage": "finished",
+      "status": "PASS",
+      "native": true,
+      "platform": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+      "viewport": [
+        402,
+        812
+      ],
+      "rows": [
+        {
+          "date": "2026-11-16",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-17",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-18",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-19",
+          "workCount": 0,
+          "dueCount": 1,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-20",
+          "workCount": 21,
+          "dueCount": 22,
+          "height": 56,
+          "badgeBottom": 153.5,
+          "countsTop": 154.5
+        },
+        {
+          "date": "2026-11-21",
+          "workCount": 4,
+          "dueCount": 3,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        },
+        {
+          "date": "2026-11-22",
+          "workCount": 0,
+          "dueCount": 1,
+          "height": 56,
+          "badgeBottom": 159,
+          "countsTop": 161
+        }
+      ],
+      "checks": [
+        "actual WKWebView",
+        "real native transport for cloud mode",
+        "light/dark",
+        "large counts",
+        "completion",
+        "reschedule",
+        "due edit",
+        "fixed header",
+        "relaunch when requested"
+      ]
+    },
+    {
+      "device": "ipad",
+      "runId": "ipad-cloud-persist-1795206323409898000",
+      "mode": "cloud-persist",
+      "stage": "finished",
+      "status": "PASS",
+      "native": true,
+      "platform": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+      "viewport": [
+        1032,
+        1344
+      ],
+      "rows": [
+        {
+          "date": "2026-11-16",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-17",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-18",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-19",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-20",
+          "workCount": 10,
+          "dueCount": 10,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-21",
+          "workCount": 1,
+          "dueCount": 1,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-22",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        }
+      ],
+      "checks": [
+        "actual WKWebView",
+        "real native transport for cloud mode",
+        "light/dark",
+        "large counts",
+        "completion",
+        "reschedule",
+        "due edit",
+        "fixed header",
+        "relaunch when requested"
+      ]
+    },
+    {
+      "device": "ipad",
+      "runId": "ipad-local-persist-1795206344246361000",
+      "mode": "local-persist",
+      "stage": "finished",
+      "status": "PASS",
+      "native": true,
+      "platform": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+      "viewport": [
+        1032,
+        1344
+      ],
+      "rows": [
+        {
+          "date": "2026-11-16",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-17",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-18",
+          "workCount": 0,
+          "dueCount": 0,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-19",
+          "workCount": 0,
+          "dueCount": 1,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-20",
+          "workCount": 11,
+          "dueCount": 12,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-21",
+          "workCount": 3,
+          "dueCount": 2,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        },
+        {
+          "date": "2026-11-22",
+          "workCount": 0,
+          "dueCount": 1,
+          "height": 66,
+          "badgeBottom": 142,
+          "countsTop": 143
+        }
+      ],
+      "checks": [
+        "actual WKWebView",
+        "real native transport for cloud mode",
+        "light/dark",
+        "large counts",
+        "completion",
+        "reschedule",
+        "due edit",
+        "fixed header",
+        "relaunch when requested"
+      ]
+    }
+  ],
+  "earlierHarnessDiagnostics": [
+    {
+      "device": "phone",
+      "runId": "phone-cloud-setup-1795205036092149000",
+      "mode": "cloud-setup",
+      "stage": "failure",
+      "status": "FAIL",
+      "at": "due edit",
+      "message": "Header moved"
+    }
+  ]
+}

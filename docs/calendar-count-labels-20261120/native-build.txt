@@ -1,0 +1,1 @@
+PASS:unsigned arm64 Debug simulator app/widget build;119 source web files match. Full local build log: /private/tmp/duckplan-count-native-build.log

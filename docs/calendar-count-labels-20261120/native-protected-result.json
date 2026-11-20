@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "builtWebFiles": 119,
+  "sourceSigningPreserved": true,
+  "excludedMetadata": [
+    {
+      "path": "ios/APP-VERSION.md",
+      "reason": "intentional version documentation"
+    },
+    {
+      "path": "ios/DuckPlan.xcodeproj/project.xcworkspace/xcuserdata/bobbyzhang.xcuserdatad/UserInterfaceState.xcuserstate",
+      "reason": "Xcode user interface/generated workspace state; retained as found"
+    },
+    {
+      "path": "ios/DuckPlan.xcodeproj/xcuserdata/bobbyzhang.xcuserdatad/xcschemes/xcschememanagement.plist",
+      "reason": "Xcode user interface/generated workspace state; retained as found"
+    }
+  ]
+}
