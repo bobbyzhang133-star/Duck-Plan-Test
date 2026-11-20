@@ -436,6 +436,7 @@ body.sidebar-open { overflow: hidden; }
 .task-section:first-of-type { border-top: 0; }
 .task-section-heading { display: flex; width: 100%; min-height: 46px; align-items: center; justify-content: space-between; padding: 7px 3px; border: 0; color: var(--ink); background: transparent; font-size: 0.76rem; font-weight: 800; letter-spacing: .02em; text-align: left; cursor: pointer; }
 .task-section-heading.static { cursor: default; }
+.overdue-complete-button { min-height: 44px; max-width: 100%; margin: 2px 0 12px; padding: 8px 12px; font-size: 13px; white-space: normal; }
 .task-section-heading > span { display: inline-flex; align-items: center; gap: 8px; }
 .task-section-heading strong { display: grid; min-width: 24px; height: 24px; place-items: center; border-radius: 999px; color: var(--muted); background: #f4eedc; font-size: .7rem; }
 .task-section-heading[aria-expanded="false"] > span::after { content: "›"; margin-left: 4px; transform: rotate(90deg); }

@@ -1,0 +1,14 @@
+{
+  "runtime": "Chromium 157.0.8103.79",
+  "backend": "Real isolated loopback Worker/D1 on 8798; 503 injected only for the failure case",
+  "results": [
+    {"viewport":[1280,900],"mode":"local","entry":"Calendar","completed":4,"status":"PASS"},
+    {"viewport":[835,1000],"mode":"local","entry":"Tasks","completed":4,"status":"PASS"},
+    {"viewport":[390,844],"mode":"local","entry":"Calendar task sheet","completed":4,"status":"PASS"},
+    {"viewport":[320,568],"mode":"local","entry":"Tasks","completed":4,"status":"PASS"},
+    {"viewport":[1280,900],"mode":"signed-in","entry":"Calendar","completed":3,"status":"PASS"},
+    {"viewport":[390,844],"mode":"signed-in","entry":"Tasks","completed":3,"partialFailureRollbackAndRetry":"PASS","status":"PASS"}
+  ],
+  "checks": ["one click","44px target height","pending state","deadline scope including earlier today","date-only today remains open","unrelated task fields preserved","reload persistence","no page overflow","no uncaught page errors"],
+  "harnessNotes": "First attempt needed a visible-navigation selector because desktop and phone buttons coexist. Screenshot output hit ENOSPC; functional matrix then passed without screenshot writes. No product change was required."
+}

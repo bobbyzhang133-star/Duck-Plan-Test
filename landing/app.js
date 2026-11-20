@@ -36,6 +36,7 @@ const store = window.DuckPlannerStore.createPlannerStore({
 let tasks = [];
 let renderedPlannerOwner = "local";
 let plannerOwnerVersion = 0;
+let overdueCompletion = null;
 const REMINDER_KEY = "duckplan-deadline-reminders-v1";
 const reminderSettings = loadReminderSettings();
 const reminderLedger = ReminderLedger.createLedger({ storage: localStorage });
@@ -552,7 +553,54 @@ function taskCardMarkup(task, mode = "daily") {
   </article>`;
 }
 
+function unfinishedOverdueTasks() {
+  return store.listItems().filter(task => !task.deleted && !task.deleted_at && Model.taskTiming(task).overdue);
+}
+
+function renderOverdueActions() {
+  const count = unfinishedOverdueTasks().length;
+  document.querySelectorAll("[data-complete-overdue]").forEach(button => {
+    button.hidden = count === 0 && !overdueCompletion;
+    button.disabled = Boolean(overdueCompletion) || count === 0;
+    button.textContent = overdueCompletion ? "Completing overdue…" : "Complete all overdue";
+    button.setAttribute("aria-busy", String(Boolean(overdueCompletion)));
+    button.setAttribute("aria-label", `Complete all ${count} overdue ${count === 1 ? "task" : "tasks"}`);
+    button.title = "Complete all unfinished tasks whose deadlines have passed, across all dates and classes.";
+  });
+}
+
+async function completeAllOverdue(source) {
+  if (overdueCompletion) return;
+  const ids = [...new Set(unfinishedOverdueTasks().map(task => task.id))];
+  if (!ids.length) { renderOverdueActions(); return; }
+  const owner = `${store.mode}:${store.user?.id || "local"}`, ownerVersion = plannerOwnerVersion;
+  const currentOwner = () => ownerVersion === plannerOwnerVersion && owner === `${store.mode}:${store.user?.id || "local"}`;
+  const operation = overdueCompletion = {};
+  let completed = 0;
+  renderOverdueActions();
+  try {
+    // Use the normal persisted completion path, one request at a time. Recheck
+    // each original task so a moved deadline or account switch cannot broaden it.
+    for (const id of ids) {
+      if (!currentOwner()) return;
+      if (!unfinishedOverdueTasks().some(task => task.id === id)) continue;
+      await store.toggleComplete(id, true);
+      completed += 1;
+    }
+    if (currentOwner()) showToast(`Completed ${completed} overdue ${completed === 1 ? "task" : "tasks"}.`, { duration: 5000 });
+  } catch (error) {
+    if (currentOwner()) reportError(new Error(`Completed ${completed} overdue ${completed === 1 ? "task" : "tasks"} before stopping. ${error.message || "Could not save the next task."} Remaining tasks are still open; try again.`));
+  } finally {
+    if (overdueCompletion === operation) overdueCompletion = null;
+    renderOverdueActions();
+    if (currentOwner() && source?.isConnected && source.hidden && document.activeElement === source) {
+      (source.closest("#overdue-section")?.querySelector("[data-collapse]") || document.querySelector('[data-filter="all"]'))?.focus({ preventScroll: true });
+    }
+  }
+}
+
 function renderDailyPlan() {
+  renderOverdueActions();
   const groups = Model.groupForDate(tasks, selectedDate, nowKey());
   const todayItems = tasks.filter(task => task.dueDate === selectedDate || Model.scheduledParts(task)?.date === selectedDate);
   const completed = todayItems.filter((task) => task.completed).length;
@@ -1565,6 +1613,8 @@ document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
   const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) navigateView(viewButton.dataset.view, sidebar.contains(viewButton), viewButton);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
+  const completeOverdue = event.target.closest("[data-complete-overdue]");
+  if (completeOverdue) { void completeAllOverdue(completeOverdue); return; }
   const dayList = event.target.closest("#view-calendar [data-day-list]");
   if (dayList) { calendarTaskPreview.openDayList(dayList.dataset.summaryDate, dayList.dataset.dayList, dayList); return; }
   const deadlineToggle = event.target.closest("#planner-calendar [data-toggle-deadline-row]");

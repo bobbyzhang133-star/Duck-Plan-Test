@@ -1,0 +1,1 @@
+{"status":"PASS","runtime":"Chromium 157.0.8103.79","cacheVersion":100,"completed":1,"checks":["final cached app ready","offline reload","one-click completion through real local store","second offline reload retained completion"]}

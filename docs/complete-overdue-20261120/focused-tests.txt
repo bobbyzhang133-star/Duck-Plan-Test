@@ -1,0 +1,33 @@
+✔ one action completes past deadlines, including earlier today, while preserving other task details (6.986709ms)
+✔ repeated clicks cannot duplicate work and requests run serially (0.773916ms)
+✔ a changed deadline, deletion or completion is rechecked and newly overdue tasks are not added mid-run (0.806375ms)
+✔ account changes stop queued writes and suppress old-owner feedback (1.273458ms)
+✔ a save failure stops the queue, retains successful completions and allows retry (1.013625ms)
+✔ no overdue tasks produces no write, while both entry points remain independent of task search and filters (0.686208ms)
+✔ date keys stay in local calendar time (4.597209ms)
+✔ legacy deadlines are preserved without inventing schedules (0.229709ms)
+✔ daily groups keep scheduled and deadline-only work separate (1.0025ms)
+✔ the backlog makes undated unfinished copies available on any day without changing daily progress groups (0.498625ms)
+✔ scheduling or completing an undated task removes it from backlog without inventing a deadline (0.144959ms)
+✔ calendar views and duration helpers are stable (0.355208ms)
+✔ each selected-day task has one primary section while both due and work dates remain intact (16.112125ms)
+✔ a selected past deadline stays visible in the due section rather than appearing twice as overdue (0.157458ms)
+✔ deadline wall times retain precise due times and date-only end-of-day semantics (0.318417ms)
+✔ full work end dates roll across midnight without changing the existing display helper (0.272791ms)
+✔ deadline conflict checks compare the whole work end, including precise equality and overnight rollover (0.2995ms)
+✔ deadline status is independent of work grouping and completed work never carries urgency warnings (0.18ms)
+✔ calendar arithmetic stays civil across DST and Date references use each host's local clock (479.907792ms)
+✔ web app manifest defines an installable standalone DuckPlan app (1.056333ms)
+✔ planner markup exposes install metadata and an accessible install control (0.699542ms)
+✔ service worker caches the shell, leaves APIs online-only, and handles notification clicks (0.799042ms)
+✔ install controller registers the worker and supports native install prompts (0.411708ms)
+✔ inline task panels stay interactive when startup, navigation or resize closes a drawer (2.962208ms)
+✔ phone tasks start collapsed, isolate the sheet, restore its launcher and return to inline tablet layout (1.006291ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 692.877709
