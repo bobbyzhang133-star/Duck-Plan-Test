@@ -1,0 +1,59 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local browser; desktop and touch emulation",
+  "results": [
+    {
+      "width": 1280,
+      "input": "continuous trusted wheel",
+      "status": "PASS",
+      "burst": {
+        "active": 1,
+        "offset": 34.8257
+      }
+    },
+    {
+      "width": 835,
+      "input": "continuous trusted wheel",
+      "status": "PASS",
+      "burst": {
+        "active": 1,
+        "offset": 35.4123
+      }
+    },
+    {
+      "width": 835,
+      "input": "trusted touch hold/lift",
+      "status": "PASS",
+      "held": {
+        "active": 0,
+        "offset": 21.3312
+      },
+      "lifted": {
+        "active": 1,
+        "offset": 21.3312
+      }
+    },
+    {
+      "width": 390,
+      "input": "continuous trusted wheel",
+      "status": "PASS",
+      "burst": {
+        "active": 1,
+        "offset": 35.9726
+      }
+    },
+    {
+      "width": 390,
+      "input": "trusted touch hold/lift",
+      "status": "PASS",
+      "held": {
+        "active": 0,
+        "offset": 21.3312
+      },
+      "lifted": {
+        "active": 1,
+        "offset": 21.3312
+      }
+    }
+  ]
+}

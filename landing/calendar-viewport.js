@@ -10,15 +10,14 @@
   // Keep this local: button/popup release curves must not change with edge bounce.
   const edgeSpring = [0,0.006638,0.025150,0.053557,0.090040,0.132942,0.180768,0.232176,0.285978,0.341125,0.396708,0.451944,0.506168,0.558829,0.609474,0.657743,0.703362,0.746127,0.785906,0.822621,0.856246,0.886800,0.914338,0.938946,0.960735,0.979837,0.996398,1.010578,1.022542,1.032460,1.040504,1.046844,1.051649,1.055081,1.057298,1.058448,1.058674,1.058108,1.056873,1.055084,1.052844,1.050250,1.047386,1.044329,1.041147,1.037899,1.034638,1.031407,1.028243,1.025134,1.021940,1.018599,1.015157,1.011734,1.008496,1.005622,1.003272,1.001561,1.000520,1.000073,1];
   function createElastic({ calendar, view } = {}) {
-    if (!calendar?.style || !view?.requestAnimationFrame || !view?.setTimeout) return { reset() {}, destroy() {} };
+    if (!calendar?.style || !view?.requestAnimationFrame) return { reset() {}, destroy() {} };
     const reduced = view.matchMedia?.("(prefers-reduced-motion: reduce)");
-    let parts = [], originals = [], animations = [], offset = 0, frame = null, releaseTimer = null, touch = null, version = 0, destroyed = false, dragging = false;
+    let parts = [], originals = [], animations = [], offset = 0, frame = null, touch = null, version = 0, destroyed = false, dragging = false;
     // Use the historical spring on one complete timetable backing surface.
     // The current date/Due header is already outside this scrolling surface.
     const paint = () => { frame = null; parts.forEach((part, index) => { part.style.transform = `translate3d(0,${offset * (index ? -1 : 1)}px,0)`; }); };
     function reset() {
       version += 1;
-      view.clearTimeout(releaseTimer); releaseTimer = null;
       if (frame !== null) view.cancelAnimationFrame(frame);
       frame = null;
       for (const animation of animations) animation.cancel();
@@ -30,7 +29,6 @@
       parts = []; originals = []; offset = 0; touch = null;
     }
     function release() {
-      releaseTimer = null;
       if (!offset || animations.length) return;
       if (reduced?.matches || !parts.every(part => part.animate)) { reset(); return; }
       if (frame !== null) { view.cancelAnimationFrame(frame); paint(); }
@@ -57,8 +55,6 @@
       }
       offset = Math.max(-48, Math.min(48, offset + delta * 0.35 * (1 - Math.abs(offset) / 60)));
       if (frame === null) frame = view.requestAnimationFrame(paint);
-      view.clearTimeout(releaseTimer);
-      releaseTimer = view.setTimeout(release, 90);
     }
     function atEdge(delta) {
       return delta < 0 ? calendar.scrollTop <= 0 : delta > 0 && calendar.scrollTop >= calendar.scrollHeight - calendar.clientHeight - 1;
@@ -70,6 +66,9 @@
       event.preventDefault();
       const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? calendar.clientHeight : 1;
       pull(-event.deltaY * multiplier);
+      // Start returning in this input event, with no wheel-idle pause. Further
+      // input picks up the displayed spring position through pull(), above.
+      release();
     }
     function touchstart(event) {
       reset();
@@ -85,8 +84,7 @@
       touch = { x: next.clientX, y: next.clientY };
       if (Math.abs(dx) > Math.abs(dy) || !atEdge(-dy)) { if (offset || animations.length) reset(); return; }
       event.preventDefault(); pull(dy);
-      // Hold while the finger is down; release on lift/cancel rather than idle.
-      view.clearTimeout(releaseTimer); releaseTimer = null;
+      // Unlike wheel input, a held finger keeps the surface pulled until lift.
     }
     const touchend = () => { touch = null; release(); };
     const pointerdown = event => { if (event.pointerType !== "touch") reset(); };

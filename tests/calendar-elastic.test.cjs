@@ -10,7 +10,7 @@ function fixture() {
   const timeline = { style: style() }, header = { style: style() };
   for (const part of [timeline, header]) part.animate = (keyframes, options) => {
     let resolve; const finished = new Promise(done => { resolve = done; });
-    const animation = { keyframes, options, finished, cancel: resolve, finish: resolve };
+    const animation = { keyframes, options, finished, cancelled: false, cancel() { this.cancelled = true; resolve(); }, finish: resolve };
     animations.push(animation); return animation;
   };
   const listen = target => Object.assign(target, {
@@ -23,8 +23,8 @@ function fixture() {
   const view = listen({ matchMedia: () => reduced,
     requestAnimationFrame(fn) { frames.set(++next, fn); return next; }, cancelAnimationFrame: key => frames.delete(key),
     setTimeout(fn) { timers.set(++next, fn); return next; }, clearTimeout: key => timers.delete(key),
-    getComputedStyle: () => ({ transform: "matrix(1,0,0,1,0,7)" }),
-    displayedOffset: 7, DOMMatrixReadOnly: class { constructor() { this.m42 = view.displayedOffset; } },
+    getComputedStyle: () => ({ transform: timeline.style.transform }),
+    displayedOffset: null, DOMMatrixReadOnly: class { constructor(matrix) { this.m42 = view.displayedOffset ?? Number(matrix.match(/,(-?[\d.]+)px/)?.[1] || 0); } },
   });
   const controller = createElastic({ calendar, view });
   const target = { closest: selector => selector === ".time-axis,.timeline-columns" ? timeline : null };
@@ -36,7 +36,7 @@ function fixture() {
   };
   const flush = () => { const work = [...frames.values()]; frames.clear(); work.forEach(fn => fn()); };
   const release = () => { const work = [...timers.values()]; timers.clear(); work.forEach(fn => fn()); };
-  return { timeline, header, calendar, view, reduced, frames, timers, animations, registrations, controller, target, emit, flush, release };
+  return { timeline, header, calendar, view, reduced, frames, timers, animations, registrations, controller, target, emit, flush, release, get activeAnimations() { return animations.filter(a => !a.cancelled); } };
 }
 
 test("edge wheel pulls move only hours and schedule, with resistance and bounded displacement", async () => {
@@ -45,9 +45,9 @@ test("edge wheel pulls move only hours and schedule, with resistance and bounded
   assert.equal(f.timeline.style.transform, "translate3d(0,35px,0)");
   assert.equal(f.header.style.transform, "", "The fixed header is outside the moving surface");
   for (let n = 0; n < 20; n++) f.emit("wheel");
-  assert.equal(f.frames.size, 1, "Wheel paints coalesce into one frame"); f.flush();
+  assert.equal(f.frames.size, 0, "Wheel return starts without waiting for a later frame"); f.flush();
   assert.equal(f.timeline.style.transform, "translate3d(0,48px,0)");
-  f.release(); assert.equal(f.animations.length, 1);
+  f.release(); assert.equal(f.activeAnimations.length, 1);
   assert.equal(f.animations[0].options.duration, 440);
   assert.equal(f.animations[0].keyframes.at(-1).transform, "translate3d(0,0px,0)");
   f.animations.forEach(animation => animation.finish()); await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
@@ -71,6 +71,33 @@ test("the copied spring rebounds past rest at both limits while the fixed header
     assert.equal(f.animations.length, 1);
     f.controller.destroy();
   }
+});
+
+test("wheel return starts in the input event with no idle timer or frame delay", () => {
+  const f = fixture();
+  f.emit("wheel");
+  assert.equal(f.activeAnimations.length, 1, "Return exists before any clock/frame is advanced");
+  assert.equal(f.timers.size, 0, "There is no post-wheel waiting period");
+  assert.equal(f.frames.size, 0, "First paint and return do not wait for separate animation frames");
+  assert.equal(f.timeline.style.transform, "translate3d(0,35px,0)");
+  f.controller.destroy();
+});
+
+test("continued wheel input replaces the spring without stale completion clearing the new return", async () => {
+  const f = fixture();
+  f.emit("wheel"); const first = f.activeAnimations[0];
+  f.view.displayedOffset = 25;
+  f.emit("wheel", { deltaY: -20 });
+  const current = f.activeAnimations[0];
+  assert.ok(first.cancelled); assert.notEqual(first, current);
+  await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+  assert.equal(f.activeAnimations[0], current);
+  const continuedOffset = Number(f.timeline.style.transform.match(/,(-?[\d.]+)px/)[1]);
+  assert.ok(continuedOffset > 25 && continuedOffset < 32, "Continue from the displayed position with bounded resistance");
+  current.finish();
+  await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+  assert.equal(f.timeline.style.transform, "");
+  f.controller.destroy();
 });
 
 test("normal scrolling, horizontal gestures, zoom, headers and reduced motion are not intercepted", () => {
