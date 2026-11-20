@@ -830,7 +830,7 @@ function renderTimeline(dates) {
   const endHour = CALENDAR_END_HOUR;
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
-  const headers = dates.map((date) => { const summary = calendarDates.daySummary(tasks, date); return `<button type="button" class="calendar-date-button ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}" aria-label="${safeText(summary.label).replaceAll('"', "&quot;")}" aria-pressed="${date === selectedDate}"${date === nowKey() ? ' aria-current="date"' : ""}><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong>${summary.markup}</button>`; }).join("");
+  const headers = dates.map((date) => { const summary = calendarDates.daySummary(tasks, date); return `<div role="group" class="calendar-date-button calendar-day-heading ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}" aria-label="${safeText(summary.label).replaceAll('"', "&quot;")}" ${date === nowKey() ? ' aria-current="date"' : ""}><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong>${summary.markup}</div>`; }).join("");
   const deadlineRows = calendarDates.deadlineRow(tasks, dates, { expanded: deadlineRowExpanded, expandedDates: expandedDeadlineDates });
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span><span class="time-axis-label">${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span></span>`).join("");
   let hasTimedDeadlineWorkOverlap = false;
@@ -936,20 +936,23 @@ function renderPhoneWeekStrip(dates) {
   if (strip.hidden) return;
   const week = dates.join(",");
   if (strip.dataset.week !== week) {
-    strip.innerHTML = dates.map((date) => `<button type="button" class="phone-week-day" data-date="${date}" aria-label="${formatLongDate(date)}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong><span class="calendar-day-counts" aria-hidden="true"></span></button>`).join("");
+    strip.innerHTML = dates.map((date) => `<div class="phone-week-day" role="group" data-phone-date="${date}"><button type="button" class="phone-week-date" data-date="${date}" aria-label="${safeAttribute(`Select ${formatLongDate(date)}`)}"><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong></button><span class="calendar-day-counts"></span></div>`).join("");
     strip.dataset.week = week;
   }
-  strip.querySelectorAll("button").forEach((button) => {
-    const summary = calendarDates.daySummary(tasks, button.dataset.date);
+  strip.querySelectorAll(".phone-week-day").forEach((button) => {
+    const date = button.dataset.phoneDate;
+    const summary = calendarDates.daySummary(tasks, date);
     button.setAttribute("aria-label", summary.label);
     const counts = button.querySelector(".calendar-day-counts");
     const key = `${summary.workCount}:${summary.dueCount}`;
     if (counts && counts.dataset.counts !== key) {
-      counts.outerHTML = summary.markup.replace('aria-hidden="true"', `data-counts="${key}" aria-hidden="true"`);
+      counts.outerHTML = summary.markup.replace('<span class="calendar-day-counts', `<span data-counts="${key}" class="calendar-day-counts`);
     }
-    button.setAttribute("aria-pressed", String(button.dataset.date === selectedDate));
-    if (button.dataset.date === nowKey()) button.setAttribute("aria-current", "date");
-    else button.removeAttribute("aria-current");
+    button.classList.toggle("selected", date === selectedDate);
+    const dateButton = button.querySelector(".phone-week-date");
+    dateButton.setAttribute("aria-pressed", String(date === selectedDate));
+    if (date === nowKey()) dateButton.setAttribute("aria-current", "date");
+    else dateButton.removeAttribute("aria-current");
   });
 }
 
@@ -982,7 +985,7 @@ function renderCalendar({ autoScroll = false } = {}) {
 
 // Native labels remain sharp; lightweight CSS glass replaces live fur canvases.
 function setupButtonMaterial(root = document) {
-  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,.calendar-date-button,.calendar-event-block,.deadline-chip,.deadline-overflow,.deadline-row-toggle,.deadline-day-summary,.timed-deadline-marker,.timed-deadline-group-trigger,.month-day,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item,.phone-week-day,.task-select,.task-section-heading";
+  const contentControls = ".sidebar-scrim,.task-panel-scrim,.calendar-slot,[data-day-list],.calendar-event-block,.deadline-chip,.deadline-overflow,.deadline-row-toggle,.deadline-day-summary,.timed-deadline-marker,.timed-deadline-group-trigger,.month-day,.month-date-button,.month-entry,.month-overflow,.calendar-agenda-item,.phone-week-date,.task-select,.task-section-heading";
   root.querySelectorAll("button, a.secondary-button, a.nav-open-button").forEach(button => {
     button.classList.toggle("glass-button", !button.matches(contentControls));
   });
@@ -1562,6 +1565,8 @@ document.addEventListener("click", (event) => {
   const drawerDismiss = event.target.closest(".drawer-close,.sidebar-scrim"); if (drawerDismiss) setSidebar(false);
   const viewButton = event.target.closest(".nav-item[data-view]"); if (viewButton?.matches("button")) navigateView(viewButton.dataset.view, sidebar.contains(viewButton), viewButton);
   const goButton = event.target.closest("[data-go]"); if (goButton) { event.preventDefault(); navigateView(goButton.dataset.go, sidebar.contains(goButton), goButton); }
+  const dayList = event.target.closest("#view-calendar [data-day-list]");
+  if (dayList) { calendarTaskPreview.openDayList(dayList.dataset.summaryDate, dayList.dataset.dayList, dayList); return; }
   const deadlineToggle = event.target.closest("#planner-calendar [data-toggle-deadline-row]");
   if (deadlineToggle) {
     const { scrollTop, scrollLeft } = calendarScrollElement();
@@ -1601,7 +1606,7 @@ document.addEventListener("click", (event) => {
   if (openDay) { calendarView = "day"; selectDate(openDay.dataset.calendarOpenDay); return; }
   const reschedule = event.target.closest("[data-reschedule-task]");
   if (reschedule) { openModal({ id: reschedule.dataset.rescheduleTask, source: reschedule, reschedule: true }); return; }
-  const dateButton = event.target.closest("[data-date]"); if (dateButton) selectDate(dateButton.dataset.date);
+  const dateButton = event.target.closest("[data-date]"); if (dateButton?.matches("button,.month-day")) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
   const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ source: edit, id: edit.dataset.editTask });

@@ -136,26 +136,6 @@
   .motion-preview #view-calendar .calendar-date-button { gap: 0; padding-block: 1px; }
   .motion-preview #view-calendar .calendar-date-button > span:first-child { font-size: 9px; }
   .motion-preview #view-calendar .calendar-date-button strong { width: 22px; height: 22px; font-size: 14px; }
-  .motion-preview #view-calendar .phone-week-day { grid-template-rows: 10px 18px 18px; gap: 1px; padding-block: 3px; }
-  .motion-preview #view-calendar .phone-week-day > span:first-child { font-size: 9px; line-height: 10px; }
-  .motion-preview #view-calendar .phone-week-day > strong { font-size: 14px; line-height: 16px; align-self: center; }
-  .motion-preview #view-calendar .phone-week-day[aria-current="date"] > strong { text-underline-offset: 1px; }
-  .motion-preview #view-calendar :is(.calendar-date-button,.phone-week-day) .calendar-day-counts { gap: 3px; font-size: 10px; }
-  .motion-preview #view-calendar .calendar-day-counts > span { gap: 2px; padding-inline: 2px; }
-  .motion-preview #view-calendar .calendar-day-counts .calendar-count-label { display: none; }
-  .motion-preview #view-calendar .calendar-day-counts .calendar-kind-icon { width: 8px; height: 8px; }
-  .motion-preview #view-calendar .calendar-date-button .calendar-day-counts,
-  .motion-preview #view-calendar .calendar-date-button .calendar-day-counts > span { height: 14px; }
-  .motion-preview #view-calendar .phone-week-day:has(.calendar-day-counts.is-dense) { grid-template-rows: 9px 14px 26px; gap: 1px; padding-block: 2px; }
-  .motion-preview #view-calendar .phone-week-day:has(.calendar-day-counts.is-dense) > strong { font-size: 13px; line-height: 14px; }
-  .motion-preview #view-calendar .phone-week-day .calendar-day-counts.is-dense { height: 26px; flex-direction: column; gap: 0; font-size: 9px; line-height: 11px; }
-  .motion-preview #view-calendar .phone-week-day .calendar-day-counts.is-dense > span { height: 13px; }
-}
-@media (max-width: 360px) {
-  .motion-preview #view-calendar .phone-week-day { grid-template-rows: 9px 14px 26px; gap: 1px; padding-block: 2px; }
-  .motion-preview #view-calendar .phone-week-day > strong { font-size: 13px; line-height: 14px; }
-  .motion-preview #view-calendar .phone-week-day .calendar-day-counts { height: 26px; flex-direction: column; gap: 0; font-size: 9px; line-height: 11px; }
-  .motion-preview #view-calendar .phone-week-day .calendar-day-counts > span { height: 13px; }
 }
 .motion-preview #view-calendar .timeline-column.selected-day { background-color: color-mix(in srgb,var(--accent-soft) 34%,var(--card)); }
 /* One continuous surface across the time gutter and timetable. Other day
@@ -479,6 +459,42 @@
 }
 .motion-preview #view-calendar .phone-week-day + .phone-week-day::before { left: -1px; }
 
+/* Static day headings contain independent Work/Due list launchers. */
+.motion-preview #view-calendar { --calendar-count-work-ink: #255ba0; --calendar-count-work-surface: #e8f0fe; }
+:root[data-theme="dark"] .motion-preview #view-calendar { --calendar-count-work-ink: #bbd5ff; --calendar-count-work-surface: #243a56; }
+.motion-preview #view-calendar .calendar-day-counts > [data-day-work-count] { color: var(--calendar-count-work-ink); background: var(--calendar-count-work-surface); }
+.motion-preview #view-calendar .calendar-day-counts.is-single > span { flex: 1; justify-content: center; }
+.motion-preview #view-calendar .timeline-calendar { --calendar-day-header-height: 76px; }
+.motion-preview #view-calendar .calendar-day-heading {
+  box-sizing: border-box; min-height: var(--calendar-day-header-height); padding: 3px 4px; gap: 2px;
+  cursor: default; background: var(--calendar-header-surface); container-type: inline-size;
+}
+.motion-preview #view-calendar .calendar-day-counts.is-interactive {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; height: 30px;
+}
+.motion-preview #view-calendar .calendar-day-counts.is-interactive.is-single { grid-template-columns: minmax(0,1fr); }
+.motion-preview #view-calendar .calendar-day-counts.is-interactive > button {
+  display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box;
+  width: 100%; min-width: 0; height: 30px; min-height: 30px; margin: 0; padding: 2px;
+  border: 0; border-radius: 6px; box-shadow: none; font: inherit; line-height: 14px; text-align: center;
+  cursor: pointer; touch-action: manipulation;
+}
+.motion-preview #view-calendar .calendar-day-counts.is-interactive > button:is(:hover,:active,.interaction-pressed) { filter: brightness(.95); transform: none; }
+.motion-preview #view-calendar .calendar-day-counts.is-interactive > button:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+.motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-interactive .calendar-count-label { display: none; }
+.motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-single .calendar-count-label,
+.motion-preview #view-calendar :is(.day-view,.phone-single-day) .calendar-day-heading .calendar-day-counts.is-interactive .calendar-count-label { display: inline; }
+@container (min-width: 120px) {
+  .motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-interactive:not(.is-dense) .calendar-count-label { display: inline; }
+}
+.motion-preview #view-calendar .week-view .calendar-date-button + .calendar-date-button::before { bottom: 0; background: var(--line); }
+.motion-preview #view-calendar .phone-week-day + .phone-week-day::before { bottom: 0; }
+@media (min-width: 560px) and (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar .timeline-calendar { --calendar-day-header-height: 44px; }
+  .motion-preview #view-calendar :is(.timeline-days,.timeline-corner) { height: 44px; min-height: 44px; overflow: visible; visibility: visible; }
+  .motion-preview #view-calendar .calendar-day-heading > :is(span:first-child,strong) { display: none; }
+}
+
 /* A single-day timetable needs no full-column selection wash. */
 .motion-preview #view-calendar .day-view { --calendar-day-surface: #fff; background-color: var(--calendar-day-surface); }
 :root[data-theme="dark"] .motion-preview #view-calendar .day-view { --calendar-day-surface: var(--card); }
@@ -513,4 +529,20 @@
 .motion-preview #view-calendar .is-timeline-scrolled .calendar-header-viewport { box-shadow: var(--calendar-fold-shadow); }
 @media (prefers-reduced-motion: reduce) {
   .motion-preview #view-calendar .calendar-timeline-scroller { overscroll-behavior: none; }
+}
+
+/* Separate phone date navigation from its Work/Due actions; never nest buttons. */
+@media (max-width: 700px), (max-width: 960px) and (max-height: 500px) and (pointer: coarse) {
+  .motion-preview #view-calendar .phone-week-day { display: grid; grid-template-rows: 32px 50px; gap: 2px; min-height: 90px; padding: 3px 2px; cursor: default; background: transparent; }
+  .motion-preview #view-calendar .phone-week-day.selected { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+  .motion-preview #view-calendar .phone-week-date { display: grid; grid-template-rows: 10px 16px; gap: 1px; align-content: center; justify-items: center; width: 100%; min-width: 0; height: 32px; min-height: 32px; margin: 0; padding: 1px; border: 0; border-radius: 6px; color: var(--ink-deep); background: transparent; box-shadow: none; cursor: pointer; touch-action: manipulation; }
+  .motion-preview #view-calendar .phone-week-date > span { color: var(--muted); font-size: 9px; line-height: 10px; }
+  .motion-preview #view-calendar .phone-week-date > strong { font-size: 14px; line-height: 16px; font-weight: 700; }
+  .motion-preview #view-calendar .phone-week-date[aria-current="date"] > strong { text-decoration: underline; text-underline-offset: 1px; }
+  .motion-preview #view-calendar .phone-week-date:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .motion-preview #view-calendar .phone-week-day .calendar-day-counts.is-interactive { grid-template-columns: minmax(0,1fr); grid-template-rows: repeat(2,24px); align-content: start; height: 50px; gap: 2px; }
+  .motion-preview #view-calendar .phone-week-day .calendar-day-counts.is-single { grid-template-rows: 24px; }
+  .motion-preview #view-calendar .phone-week-day .calendar-day-counts.is-interactive > button { height: 24px; min-height: 24px; padding: 1px; font-size: 10px; line-height: 12px; }
+  .motion-preview #view-calendar .phone-week-day .calendar-count-label { display: none; }
+  .motion-preview #view-calendar .phone-week-day .calendar-kind-icon { width: 8px; height: 8px; }
 }

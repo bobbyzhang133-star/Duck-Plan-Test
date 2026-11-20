@@ -47,13 +47,19 @@
       const status = timing(task);
       return `<button type="button" class="deadline-chip calendar-deadline-marker${status.overdue ? " is-overdue" : ""}${task.id === currentSelection() ? " selected" : ""}" style="${colors(task)}" ${taskAttributes(task, "deadline")} aria-label="${escape(accessibleLabel(task, "deadline", date))}">${flag}<span class="deadline-title">${safeText(task.title)}</span><small class="deadline-time">${safeText(dueTime(task))}</small>${status.overdue ? '<span class="sr-only">Overdue</span>' : ""}</button>`;
     }
-    function daySummary(tasks, date) {
+    function daySummary(tasks, date, { interactive = true } = {}) {
       const { workCount, dueCount } = model.daySummary(tasks, date);
       const count = value => value > 99 ? "99+" : String(value);
       const dense = workCount > 0 && dueCount > 0 && Math.max(workCount, dueCount) >= 10;
+      const item = (kind, value, icon, word) => {
+        if (!value) return "";
+        const tag = interactive ? "button" : "span";
+        const control = interactive ? ` type="button" data-day-list="${kind}" data-summary-date="${escape(date)}" aria-haspopup="dialog" aria-expanded="false" aria-label="${escape(`Show ${countText(value, kind === "work" ? "work session" : "deadline")} for ${formatLongDate(date)}`)}"` : "";
+        return `<${tag}${control} data-day-${kind === "work" ? "work" : "due"}-count>${icon}<span data-day-count-value>${count(value)}</span><span class="calendar-count-label">${word}</span></${tag}>`;
+      };
       return { workCount, dueCount,
         label: `${formatLongDate(date)}. ${countText(workCount, "scheduled assignment")}, ${countText(dueCount, "deadline")}.`,
-        markup: `<span class="calendar-day-counts${dense ? " is-dense" : ""}" aria-hidden="true">${workCount ? `<span data-day-work-count>${clock}<span data-day-count-value>${count(workCount)}</span><span class="calendar-count-label">work</span></span>` : ""}${dueCount ? `<span data-day-due-count>${flag}<span data-day-count-value>${count(dueCount)}</span><span class="calendar-count-label">due</span></span>` : ""}</span>` };
+        markup: `<span class="calendar-day-counts${interactive ? " is-interactive" : ""}${dense ? " is-dense" : ""}${Boolean(workCount) !== Boolean(dueCount) ? " is-single" : ""}"${interactive ? "" : ' aria-hidden="true"'}>${item("work", workCount, clock, "work")}${item("due", dueCount, flag, "due")}</span>` };
     }
     function deadlineChips(tasks, date, { expanded = false, limit = 3, dateOnly = false } = {}) {
       const deadlines = sortedDeadlines(tasks, date).filter(task => !dateOnly || !validTime(task.dueTime));

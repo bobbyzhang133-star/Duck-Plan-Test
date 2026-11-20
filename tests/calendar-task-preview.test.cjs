@@ -95,6 +95,64 @@ function fixture({ deferredClose = false } = {}) {
   };
 }
 
+test("daily Work lists are read-only, chronological and independent of the deadline date", () => {
+  const f = fixture(); f.source.dataset = { dayList: "work", summaryDate: "2030-05-01" };
+  f.replaceTask("beta", { scheduledStart: "2030-05-01T10:00", dueDate: "2030-05-04" });
+  assert.equal(f.api.openDayList("2030-05-01", "work", f.source), true);
+  const dialog = f.dialog(), rows = dialog.querySelectorAll("[data-deadline-preview-task]");
+  assert.deepEqual(rows.map(row => row.dataset.deadlinePreviewTask), ["beta", "alpha"]);
+  assert.match(rows[1].textContent, /time:23:30–time:01:00 \(\+1 day\)/);
+  assert.match(rows[1].textContent, /<img src=x/); assert.equal(dialog.querySelector("img"), null);
+  assert.equal(dialog.querySelector(".calendar-deadline-group-time").getAttribute("datetime"), "2030-05-01T10:00");
+  assert.equal(f.source.getAttribute("aria-expanded"), "true");
+  assert.equal(f.api.openDayList("2030-05-01", "work", f.source), true); assert.equal(f.dialog(), dialog);
+  assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
+});
+
+test("daily Due lists include timed and date-only deadlines, update live and keep an honest empty state", () => {
+  const f = fixture(); f.source.dataset = { dayList: "due", summaryDate: "2030-05-02" };
+  f.replaceTask("beta", { dueDate: "2030-05-02", dueTime: "" });
+  f.api.openDayList("2030-05-02", "due", f.source);
+  let rows = f.dialog().querySelectorAll("[data-deadline-preview-task]");
+  assert.deepEqual(rows.map(row => row.dataset.deadlinePreviewTask), ["alpha", "beta"]);
+  assert.match(rows[1].textContent, /End of day/);
+  rows[1].focus(); f.replaceTask("alpha", { completed: true }); f.api.sync();
+  assert.equal(f.doc.activeElement, rows[1]); assert.equal(f.dialog().querySelectorAll("[data-deadline-preview-task]").length, 1);
+  f.replaceTask("beta", { deleted_at: "2030-05-02" }); f.api.sync();
+  assert.equal(f.dialog().querySelectorAll("[data-deadline-preview-task]").length, 0);
+  assert.match(f.dialog().querySelector(".calendar-preview-status").textContent, /No remaining deadlines/);
+  assert.equal(f.calls.length, 0);
+});
+
+test("day-list task handoff waits for closing and cannot cross an owner or list-membership change", () => {
+  for (const invalidate of ["none", "owner", "date"]) {
+    const f = fixture({ deferredClose: true }); f.source.dataset = { dayList: "work", summaryDate: "2030-05-01" };
+    f.api.openDayList("2030-05-01", "work", f.source);
+    const row = f.dialog().querySelector("[data-deadline-preview-task]");
+    f.dialog().fire("click", { target: row }); assert.equal(f.selections.length, 0);
+    if (invalidate === "owner") f.setOwner("B");
+    if (invalidate === "date") f.replaceTask("alpha", { scheduledStart: "2030-05-03T09:00" });
+    f.closing.shift()();
+    assert.equal(f.selections.length, invalidate === "none" ? 1 : 0);
+    if (invalidate === "none") assert.match(f.dialog().querySelector("#calendar-preview-title").textContent, /Alpha/);
+    else assert.equal(f.dialog(), null);
+    assert.equal(f.calls.length, 0);
+  }
+});
+
+test("day-list source rebinding, Escape, view changes and invalid requests preserve focus and owner isolation", () => {
+  const f = fixture(); f.source.dataset = { dayList: "work", summaryDate: "2030-05-01" };
+  assert.equal(f.api.openDayList("2030-02-30", "work", f.source), false);
+  assert.equal(f.api.openDayList("2030-05-01", "other", f.source), false);
+  assert.equal(f.api.openDayList("2030-05-03", "work", f.source), false);
+  f.api.openDayList("2030-05-01", "work", f.source);
+  f.source.remove(); const replacement=f.doc.createElement("button");replacement.dataset={dayList:"work",summaryDate:"2030-05-01"};f.calendar.append(replacement);
+  f.api.sync();assert.equal(replacement.getAttribute("aria-expanded"),"true");
+  f.dialog().fire("cancel");assert.equal(f.dialog(),null);assert.equal(f.doc.activeElement,replacement);assert.equal(replacement.getAttribute("aria-expanded"),"false");
+  f.api.openDayList("2030-05-01", "work", replacement);f.setView("tasks");f.api.sync();assert.equal(f.dialog(),null);
+  f.api.destroy();assert.equal(f.api.openDayList("2030-05-01", "work", replacement),false);
+});
+
 test("calendar preview uses one native dialog with plaintext details and complete overnight work/deadline dates", () => {
   const f = fixture(); assert.equal(f.api.open("alpha", f.source), true);
   const dialog = f.dialog();

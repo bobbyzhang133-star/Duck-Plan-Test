@@ -42,6 +42,11 @@ test("compact counts hide zero categories, cap only visual large totals and reta
   assert.equal(result.dueCount, 110);
   assert.match(result.markup, /99\+/);
   assert.match(result.label, /0 scheduled assignments, 110 deadlines/);
-  assert.match(result.markup, /aria-hidden="true"/);
-  assert.doesNotMatch(result.markup, /<button/);
+  assert.match(result.markup, /data-day-list="due"/);
+  assert.match(result.markup, /Show 110 deadlines for Date 2026-11-18/);
+  assert.match(result.markup, /aria-haspopup="dialog"/);
+  assert.match(result.markup, /is-single/);
+  const picker = ui.daySummary(rows, "2026-11-18", { interactive: false });
+  assert.match(picker.markup, /aria-hidden="true"/);
+  assert.doesNotMatch(picker.markup, /<button/);
 });

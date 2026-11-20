@@ -10,6 +10,8 @@
     const model = host.model || doc.defaultView?.DuckPlannerModel;
     const motion = host.motion || doc.defaultView?.DuckPopupMotion;
     let dialog = null, generation = 0, destroyed = false;
+    const onResize = () => { if (dialog?.type === "day-list") close({ immediate: true }); };
+    doc.defaultView?.addEventListener?.("resize", onResize);
     const ownerKey = () => `${store.mode}:${store.user?.id || "local"}:${host.getOwnerVersion?.() ?? 0}`;
     const viewKey = () => host.getView?.() ?? "calendar";
     const taskFor = id => store.listItems().find(task => String(task.id) === id && !task.deleted && !task.deleted_at);
@@ -22,7 +24,13 @@
       if (value !== undefined) element.textContent = value;
       return element;
     };
-    const sourceKind = source => source?.dataset?.calendarKind || source?.dataset?.calendarTaskKind || (source?.dataset?.timedDeadlineGroup || source?.classList?.contains("deadline-chip") ? "deadline" : source?.classList?.contains("calendar-event-block") ? "work" : "");
+    const sourceKind = source => source?.dataset?.calendarKind || source?.dataset?.calendarTaskKind || (source?.dataset?.dayList === "due" ? "deadline" : source?.dataset?.dayList === "work" ? "work" : source?.dataset?.timedDeadlineGroup || source?.classList?.contains("deadline-chip") ? "deadline" : source?.classList?.contains("calendar-event-block") ? "work" : "");
+    function daySource(date, kind, phone = false) {
+      const root = doc.querySelector("#view-calendar") || doc.querySelector("#planner-calendar");
+      const sources = [...(root?.querySelectorAll("[data-day-list]") || [])]
+        .filter(element => element.dataset.summaryDate === date && element.dataset.dayList === kind);
+      return sources.find(element => Boolean(element.closest("#phone-week-strip")) === phone) || sources[0] || null;
+    }
     function groupSource(key, date) {
       const calendar = doc.querySelector("#planner-calendar");
       return [...(calendar?.querySelectorAll("[data-timed-deadline-group]") || [])]
@@ -31,14 +39,16 @@
     function sourceFor(context) {
       if (context.source?.isConnected) return context.source;
       if (context.type === "deadline-group") return groupSource(context.key, context.date);
+      if (context.type === "day-list") return daySource(context.date, context.kind, context.phoneSource);
       const calendar = doc.querySelector("#planner-calendar");
       return [...(calendar?.querySelectorAll("[data-edit-task],[data-calendar-preview-task],[data-calendar-drag-task]") || [])]
         .find(element => [element.dataset.editTask, element.dataset.calendarPreviewTask, element.dataset.calendarDragTask].some(id => String(id) === context.id)
           && (!context.kind || sourceKind(element) === context.kind))
-        || (context.returnGroup ? groupSource(context.returnGroup.key, context.returnGroup.date) : null);
+        || (context.returnGroup ? groupSource(context.returnGroup.key, context.returnGroup.date) : null)
+        || (context.returnDayList ? daySource(context.returnDayList.date, context.returnDayList.kind, context.returnDayList.phone) : null);
     }
     function expandGroup(context, expanded) {
-      if (context.type !== "deadline-group") return;
+      if (!["deadline-group", "day-list"].includes(context.type)) return;
       for (const source of new Set([context.source, sourceFor(context)])) {
         if (!source) continue;
         source.setAttribute("aria-expanded", String(expanded));
@@ -103,6 +113,12 @@
         if (!context.closing) renderDeadlineGroup(context, group);
         return;
       }
+      if (context.type === "day-list") {
+        const group = dayGroupFor(context);
+        if (!group) { close({ immediate: true }); return; }
+        if (!context.closing) { renderDeadlineGroup(context, group); if (!context.element.dataset.popupMotion) positionDayList(context); }
+        return;
+      }
       const task = taskFor(context.id);
       if (!task) { close({ immediate: true }); return; }
       if (!context.closing) render(context, task);
@@ -146,11 +162,34 @@
         .sort((a, b) => a.dueTime.localeCompare(b.dueTime) || String(a.title).localeCompare(String(b.title)) || String(a.id).localeCompare(String(b.id)));
       return tasks.length ? { ...group, tasks } : null;
     }
+    function dayGroupFor({ date, kind }) {
+      if (!["work", "due"].includes(kind) || typeof date !== "string") return null;
+      const parsed = model.fromDateKey(date);
+      if (!parsed || model.toDateKey(parsed) !== date) return null;
+      const rows = new Map();
+      for (const task of store.listItems()) {
+        if (!task || task.completed || task.deleted || task.deleted_at) continue;
+        if ((kind === "work" ? model.scheduledParts(task)?.date : task.dueDate) !== date) continue;
+        rows.set(String(task.id), task);
+      }
+      const tasks = [...rows.values()].sort((a, b) => {
+        const time = task => kind === "work" ? model.scheduledParts(task).time : task.dueTime || "24:00";
+        return time(a).localeCompare(time(b)) || String(a.title).localeCompare(String(b.title)) || String(a.id).localeCompare(String(b.id));
+      });
+      return { date, kind, tasks };
+    }
+    function listTime(context, task) {
+      const format = host.formatTime || (value => value);
+      if (context.kind !== "work") return task.dueTime ? /^([01]\d|2[0-3]):[0-5]\d$/.test(task.dueTime) ? format(task.dueTime) : "Time unavailable" : "End of day";
+      const start = model.scheduledParts(task), end = model.scheduledEndAt(task);
+      return `${format(start.time)}–${format(end?.slice(11, 16) || model.scheduledEnd(task))}${end && end.slice(0, 10) > start.date ? " (+1 day)" : ""}`;
+    }
     function renderDeadlineGroup(context, group) {
       const fields = context.fields, count = group.tasks.length, formatTime = host.formatTime || (value => value);
-      text(fields.title, `${count} ${count === 1 ? "deadline" : "deadlines"}`);
+      const work = context.type === "day-list" && context.kind === "work", noun = work ? "work session" : "deadline";
+      text(fields.title, `${count} ${noun}${count === 1 ? "" : "s"}`);
       text(fields.meta, (host.formatLongDate || (value => value))(context.date));
-      text(fields.status, `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to view its details.`);
+      text(fields.status, count ? `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to view its details.` : `No remaining ${work ? "work sessions" : "deadlines"} for this day.`);
       const signature = JSON.stringify(group.tasks.map(task => String(task.id)));
       const focusedID = doc.activeElement?.dataset?.deadlinePreviewTask;
       for (const task of group.tasks) {
@@ -161,9 +200,10 @@
           const time = node("time", "calendar-deadline-group-time"), title = node("strong", "calendar-deadline-group-task-title");
           button.append(time, title); item.append(button); row = { item, button, time, title }; fields.rows.set(id, row);
         }
-        text(row.title, task.title || "Untitled task"); text(row.time, formatTime(task.dueTime));
-        row.time.setAttribute("datetime", `${context.date}T${task.dueTime}`);
-        row.button.setAttribute("aria-label", `${task.title || "Untitled task"}. Deadline at ${formatTime(task.dueTime)}. View task details.`);
+        const time = context.type === "day-list" ? listTime(context, task) : formatTime(task.dueTime);
+        text(row.title, task.title || "Untitled task"); text(row.time, time);
+        row.time.setAttribute("datetime", work ? `${context.date}T${model.scheduledParts(task).time}` : task.dueTime ? `${context.date}T${task.dueTime}` : context.date);
+        row.button.setAttribute("aria-label", `${task.title || "Untitled task"}. ${work ? "Work" : "Deadline"}: ${time}. View task details.`);
       }
       if (signature !== context.rowSignature) {
         fields.list.textContent = "";
@@ -180,12 +220,26 @@
     }
     function chooseDeadline(context, id) {
       if (!current(context) || context.closing) return;
-      if (!deadlineGroupFor(context)?.tasks.some(task => String(task.id) === id)) { sync(); return; }
+      const latest = () => context.type === "day-list" ? dayGroupFor(context) : deadlineGroupFor(context);
+      if (!latest()?.tasks.some(task => String(task.id) === id)) { sync(); return; }
       close({ restoreFocus: false, afterClose: () => {
-        if (!sameOwner(context) || !deadlineGroupFor(context)?.tasks.some(task => String(task.id) === id)) return;
+        if (!sameOwner(context) || !latest()?.tasks.some(task => String(task.id) === id)) return;
         host.onSelectTask?.(id);
         if (sameOwner(context)) open(id, sourceFor(context) || doc.querySelector("#calendar-today"));
       } });
+    }
+    function positionDayList(context) {
+      if (context.type !== "day-list") return;
+      const viewport = doc.defaultView;
+      if (!viewport?.innerWidth || !viewport.innerHeight) return;
+      const rect = context.element.getBoundingClientRect(), source = sourceFor(context)?.getBoundingClientRect();
+      if (!source) return;
+      const margin = 14, gap = 8, width = rect.width, height = rect.height;
+      const left = source.left >= width + gap + margin ? source.left - width - gap
+        : source.right + width + gap <= viewport.innerWidth - margin ? source.right + gap : source.left;
+      Object.assign(context.element.style, { margin: "0", right: "auto", bottom: "auto",
+        left: `${Math.max(margin, Math.min(viewport.innerWidth - width - margin, left))}px`,
+        top: `${Math.max(margin, Math.min(viewport.innerHeight - height - margin, source.top))}px` });
     }
     function show(context, dismiss, onClick) {
       const element = context.element;
@@ -210,9 +264,29 @@
           event.preventDefault(); (event.shiftKey ? last : first).focus();
         }
       });
-      doc.body.append(element); host.setupButtons?.(element); element.showModal();
+      doc.body.append(element); host.setupButtons?.(element); element.showModal(); positionDayList(context);
       const focus = () => { if (current(context) && !context.closing) dismiss.focus({ preventScroll: true }); };
       if (motion?.open) motion.open(element, context.anchor, focus); else focus();
+    }
+    function openDayList(date, kind, source) {
+      if (destroyed) return false;
+      const group = dayGroupFor({ date, kind });
+      if (!group?.tasks.length) return false;
+      if (dialog?.type === "day-list" && current(dialog) && dialog.date === date && dialog.kind === kind && !dialog.closing) { sync(); return true; }
+      close({ immediate: true, restoreFocus: false });
+      const element = node("dialog", "calendar-task-preview calendar-day-list-preview"); element.id = "calendar-task-preview"; element.tabIndex = -1;
+      element.dataset.dayListKind = kind; element.setAttribute("aria-labelledby", "calendar-preview-title"); element.setAttribute("aria-describedby", "calendar-preview-status");
+      const card = node("article", "calendar-preview-card"), heading = node("header", "calendar-preview-heading"), headingText = node("div");
+      const title = node("h2"); title.id = "calendar-preview-title";
+      const meta = node("p", "calendar-preview-meta"), dismiss = node("button", "close-button", "×"); dismiss.type = "button"; dismiss.setAttribute("aria-label", kind === "work" ? "Close work list" : "Close due list");
+      headingText.append(node("p", "calendar-preview-kicker", kind === "work" ? "Scheduled work" : "Deadlines"), title, meta); heading.append(headingText, dismiss);
+      const status = node("p", "calendar-preview-status"); status.id = "calendar-preview-status"; status.setAttribute("role", "status");
+      const list = node("ul", "calendar-deadline-group-list"); card.append(heading, status, list); element.append(card);
+      const context = { type: "day-list", date, kind, source, phoneSource: Boolean(source?.closest?.("#phone-week-strip")), owner: ownerKey(), view: viewKey(), generation: ++generation, element,
+        fields: { title, meta, status, list, dismiss, rows: new Map() }, closing: false, anchor: motion?.capture?.(source) || null };
+      dialog = context; renderDeadlineGroup(context, group);
+      show(context, dismiss, button => { if (button.dataset.deadlinePreviewTask) chooseDeadline(context, button.dataset.deadlinePreviewTask); });
+      return true;
     }
     function openDeadlineGroup(group, source) {
       if (destroyed || !group?.key || !group.date) return false;
@@ -260,6 +334,7 @@
       actions.append(edit, reschedule, completeButton); card.append(heading, status, dates, warning, notesSection, error, actions); element.append(card);
       const context = { id, source, kind: sourceKind(source), owner: ownerKey(), view: viewKey(), generation: ++generation, element,
         returnGroup: source?.dataset?.timedDeadlineGroup ? { key: source.dataset.timedDeadlineGroup, date: source.dataset.deadlineDate } : null,
+        returnDayList: source?.dataset?.dayList ? { date: source.dataset.summaryDate, kind: source.dataset.dayList, phone: Boolean(source.closest?.("#phone-week-strip")) } : null,
         fields: { title, meta, status, work, due, warning, notesSection, notes, error, edit, reschedule, complete: completeButton },
         busy: false, closing: false, anchor: motion?.capture?.(source) || null };
       dialog = context; render(context, task);
@@ -271,9 +346,9 @@
       return true;
     }
     return {
-      open, openDeadlineGroup, close, sync,
+      open, openDeadlineGroup, openDayList, close, sync,
       get isOpen() { return Boolean(dialog?.element.open); },
-      destroy() { destroyed = true; close({ immediate: true, restoreFocus: false }); },
+      destroy() { destroyed = true; doc.defaultView?.removeEventListener?.("resize", onResize); close({ immediate: true, restoreFocus: false }); },
     };
   }
   return { create };

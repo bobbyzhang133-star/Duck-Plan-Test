@@ -1,0 +1,33 @@
+✔ daily counts independently represent unfinished work starts and timed/date-only deadlines without writes (4.931625ms)
+✔ unique identities, empty/invalid dates and source updates do not produce misleading totals (0.323834ms)
+✔ compact counts hide zero categories, cap only visual large totals and retain a full accessible label (1.28625ms)
+✔ daily Work lists are read-only, chronological and independent of the deadline date (21.68675ms)
+✔ daily Due lists include timed and date-only deadlines, update live and keep an honest empty state (0.453666ms)
+✔ day-list task handoff waits for closing and cannot cross an owner or list-membership change (1.808459ms)
+✔ day-list source rebinding, Escape, view changes and invalid requests preserve focus and owner isolation (0.436458ms)
+✔ calendar preview uses one native dialog with plaintext details and complete overnight work/deadline dates (0.386042ms)
+✔ Edit and Reschedule wait for preview closing and keep the original calendar launcher (0.469792ms)
+✔ Complete suppresses duplicate clicks, preserves task identity and refreshes the existing preview controls (0.683291ms)
+✔ a failed completion keeps the preview open with an error and permits a single retry (0.407125ms)
+✔ late completion success and failure cannot change another owner's dialog or report old errors (0.491542ms)
+✔ an old handoff callback cannot open an editor after an owner change or another preview (0.729666ms)
+✔ sync closes deleted or routed-away previews and keeps live details/focus when a task changes (0.31225ms)
+✔ Escape/backdrop dismissal and Tab wrap preserve keyboard access and rebind detached source by kind (0.44275ms)
+✔ a grouped deadline list uses plaintext exact times, current unfinished tasks and no editing or writes (0.491584ms)
+✔ choosing a grouped deadline waits for closing and opens its compact preview without a write (0.391083ms)
+✔ group sync re-reads canonical tasks, preserves live row focus, filters completed/deleted entries and closes a missing group (0.299375ms)
+✔ a delayed grouped-deadline handoff cannot cross an owner change or replace another preview (0.299041ms)
+✔ group keyboard dismissal rebinds its launcher, resets aria and routed/destroyed groups cannot linger (0.619375ms)
+✔ events from a detached deadline dialog cannot dismiss its replacement preview (0.135917ms)
+✔ web app manifest defines an installable standalone DuckPlan app (1.251125ms)
+✔ planner markup exposes install metadata and an accessible install control (1.643458ms)
+✔ service worker caches the shell, leaves APIs online-only, and handles notification clicks (0.785791ms)
+✔ install controller registers the worker and supports native install prompts (0.559ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 221.232333
