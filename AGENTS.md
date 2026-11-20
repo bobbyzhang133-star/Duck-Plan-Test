@@ -62,3 +62,7 @@ Keep the website and existing iPhone/iPad app aligned with the same approved tas
 ## Shared GitHub release pointer
 
 The November20,2026 upload keeps the website on `main` and the portable app on `codex/ios-main-release-20261120`, with separate web/native bundle configuration. Check `ios/APP-VERSION.md` and `docs/main-release-20261120/README.md` before a GitHub app checkout. Preserve the existing local Xcode team selections; portable copies intentionally clear them.
+
+## First Axis import
+
+The November20,2026 first-import behavior completes only new overdue rows in the account’s first successful Axis import. Preserve successful sync history (or migrate its durable checkpoint) before adding run-log retention; later syncs/reconnects and reopened/legacy tasks retain user choices. Date-only work due today stays open for that whole account-local day. Current implementation/cache96 and real-runtime evidence are in `docs/axis-first-import-20261120/README.md`; hosted activation is pending approval.

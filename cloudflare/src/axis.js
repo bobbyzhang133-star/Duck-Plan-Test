@@ -13,6 +13,7 @@ import Ical from "../../landing/ical-parser.js";
 import { HttpError, json, nowIso, readJson } from "./http.js";
 import { jsonInsert } from "./planner.js";
 import { broadcast } from "./live.js";
+import { overdueImportIds } from "./axis-completion.js";
 
 const MAX_FEED_BYTES = 5_000_000;
 const MIN_SYNC_INTERVAL_MS = 60_000;
@@ -45,7 +46,7 @@ FROM (
 ) AS j
 WHERE items.id = j.id AND items.user_id = ?2 AND items.completed = 0 AND items.deleted_at IS NULL`;
 
-export async function syncUser(env, userId, icalUrl, { fetchImpl } = {}) {
+export async function syncUser(env, userId, icalUrl, { fetchImpl, now = Date.now } = {}) {
   const db = env.DB;
   const runId = crypto.randomUUID();
   const startedAt = nowIso();
@@ -55,10 +56,11 @@ export async function syncUser(env, userId, icalUrl, { fetchImpl } = {}) {
   ]);
   try {
     const feed = Ical.parseAxisFeed(await fetchFeed(icalUrl, fetchImpl));
-    const [axisClasses, axisItems, classCount] = await db.batch([
+    const [axisClasses, axisItems, classCount, account] = await db.batch([
       db.prepare("SELECT id, axis_key FROM classes WHERE user_id = ? AND axis_key IS NOT NULL").bind(userId),
       db.prepare("SELECT id, axis_uid, title, due_date, class_id, notes, completed, deleted_at, axis_missing FROM items WHERE user_id = ? AND axis_uid IS NOT NULL").bind(userId),
       db.prepare("SELECT count(*) AS n FROM classes WHERE user_id = ?").bind(userId),
+      db.prepare("SELECT time_zone FROM users WHERE id = ?").bind(userId),
     ]);
     const existingClasses = axisClasses.results;
     const plan = Ical.planAxisSync({
@@ -71,10 +73,26 @@ export async function syncUser(env, userId, icalUrl, { fetchImpl } = {}) {
 
     const finishedAt = nowIso();
     const statements = [];
+    let completionStatement = -1;
     if (plan.classInserts.length) statements.push(jsonInsert(db, "classes", userId, plan.classInserts, "ON CONFLICT (user_id, axis_key) DO NOTHING"));
     if (plan.itemInserts.length) {
       const rows = plan.itemInserts.map((row) => ({ ...row, axis_missing: row.axis_missing ? 1 : 0 }));
       statements.push(jsonInsert(db, "items", userId, rows, "ON CONFLICT (user_id, axis_uid) DO NOTHING"));
+      const overdueIds = axisItems.results.length ? [] : overdueImportIds(rows, {
+        now: now(), timeZone: account.results[0]?.time_zone || "America/Los_Angeles",
+      });
+      if (overdueIds.length) {
+        completionStatement = statements.length;
+        // The successful-run check is inside the same transaction as insertion.
+        // Concurrent connects cannot both consume the first-import behavior.
+        // Fresh generated IDs exclude pre-existing/conflicting/reopened tasks.
+        statements.push(db.prepare(`UPDATE items SET completed = 1, completed_at = ?3, updated_at = ?3
+          WHERE user_id = ?1 AND id IN (SELECT value FROM json_each(?2))
+            AND source = 'axis' AND completed = 0 AND deleted_at IS NULL
+            AND NOT EXISTS (SELECT 1 FROM sync_runs WHERE user_id = ?1 AND status = 'ok')
+          RETURNING id`)
+          .bind(userId, JSON.stringify(overdueIds), finishedAt));
+      }
     }
     if (plan.itemUpdates.length) statements.push(db.prepare(ITEM_UPDATES).bind(JSON.stringify(plan.itemUpdates), userId, finishedAt));
     if (plan.itemsMissing.length) {
@@ -85,9 +103,10 @@ export async function syncUser(env, userId, icalUrl, { fetchImpl } = {}) {
       db.prepare("UPDATE axis_connections SET last_synced_at = ?, last_error = NULL, updated_at = ? WHERE user_id = ?").bind(finishedAt, finishedAt, userId),
     );
     // One transaction: a sync applies completely or not at all.
-    await db.batch(statements);
+    const results = await db.batch(statements);
+    const autoCompleted = completionStatement < 0 ? 0 : results[completionStatement].results.length;
     await broadcast(env, userId, { reload: true });
-    return { ...plan.counts, classesAdded: plan.classInserts.length, lastSyncedAt: finishedAt };
+    return { ...plan.counts, autoCompleted, classesAdded: plan.classInserts.length, lastSyncedAt: finishedAt };
   } catch (error) {
     const message = error instanceof HttpError ? error.message : "Sync failed unexpectedly.";
     console.error("axis sync failed", userId, error instanceof HttpError ? error.message : error?.message || error);

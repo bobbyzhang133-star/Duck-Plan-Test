@@ -27,7 +27,10 @@ function setup(overrides) {
     if (cookie) init.headers.Cookie = cookie;
     if (origin && method !== "GET") init.headers.Origin = origin;
     if (body !== undefined) { init.headers["Content-Type"] = "application/json"; init.body = JSON.stringify(body); }
-    const response = await handleRequest(new Request(`${ORIGIN}${pathname}`, init), fake.env, ctx, { fetchImpl });
+    const response = await handleRequest(new Request(`${ORIGIN}${pathname}`, init), fake.env, ctx, {
+      // Keep this fixture future-dated; initial-overdue behavior has dedicated boundary tests.
+      fetchImpl, now: () => Date.parse("2026-11-01T12:00:00Z"),
+    });
     await ctx.settle();
     const text = await response.text();
     let data = null;

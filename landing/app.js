@@ -737,7 +737,7 @@ window.addEventListener("duckplan:native-sync-status", () => { readNativeAccount
 function renderAxis() {
   let body;
   if (store.mode !== "cloud") body = `<div><h2>Axis connection</h2><p>Sign in, then paste your Axis calendar feed link to import classes and assignments.</p></div><button type="button" class="secondary-button" id="connect-axis">Sign in first</button>`;
-  else if (!axisStatus.connected) body = `<div><h2>Axis connection</h2><p>Copy the private calendar feed link from Axis. It ends in <code>iCal.aspx</code>.</p></div><form class="settings-form" id="axis-form"><label><span class="sr-only">Axis feed link</span><input name="icalUrl" type="url" required autocomplete="off" spellcheck="false" placeholder="webcal://…iCal.aspx?z=…" /></label><button type="submit" class="secondary-button">Connect Axis</button></form>`;
+  else if (!axisStatus.connected) body = `<div><h2>Axis connection</h2><p>Copy the private calendar feed link from Axis. It ends in <code>iCal.aspx</code>.</p><p>Your first import marks already-overdue assignments complete.</p></div><form class="settings-form" id="axis-form"><label><span class="sr-only">Axis feed link</span><input name="icalUrl" type="url" required autocomplete="off" spellcheck="false" placeholder="webcal://…iCal.aspx?z=…" /></label><button type="submit" class="secondary-button">Connect Axis</button></form>`;
   else body = `<div><h2>Axis connection</h2><p>${safeText(relativeSyncTime(axisStatus.lastSyncedAt))}.${axisStatus.lastError ? ` Last problem: ${safeText(axisStatus.lastError)}` : ""}</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="axis-sync-now">Sync now</button><button type="button" class="secondary-button" id="axis-disconnect">Disconnect</button></div>`;
   replaceSettings(els.axisSettings, `<div class="settings-row">${body}</div>`);
   els.syncCopy.textContent = store.mode !== "cloud" ? "Not signed in" : axisStatus.connected ? (axisStatus.lastError ? "Needs attention" : relativeSyncTime(axisStatus.lastSyncedAt)) : "Not connected";
@@ -766,9 +766,13 @@ async function runAction(button, action) {
   }
   finally { if (button.isConnected) button.disabled = false; }
 }
+function axisCompletionNotice(result) {
+  const count = result.autoCompleted;
+  return Number.isSafeInteger(count) && count > 0 ? ` ${count} overdue assignment${count === 1 ? "" : "s"} marked complete.` : "";
+}
 async function syncAxisNow() {
   const result = await store.syncAxisNow();
-  showToast(`Axis synced: ${result.added} new, ${result.updated} updated.`);
+  showToast(`Axis synced: ${result.added} new, ${result.updated} updated.${axisCompletionNotice(result)}`);
   await refreshAccountState();
 }
 function showRecoveryCode(code) {
@@ -2093,7 +2097,7 @@ els.axisSettings.addEventListener("submit", (event) => {
   runAction(event.submitter, async () => {
     showToast("Connecting to Axis…");
     const result = await store.connectAxis(link);
-    showToast(`Axis connected: ${result.added} assignments and ${result.classesAdded} classes imported.`);
+    showToast(`Axis connected: ${result.added} assignments and ${result.classesAdded} classes imported.${axisCompletionNotice(result)}`);
     await refreshAccountState();
   });
 });

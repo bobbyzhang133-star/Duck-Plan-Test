@@ -1,0 +1,24 @@
+[
+  {
+    "name": "phone",
+    "status": "PASS",
+    "runtime": "iOS27.2 WKWebView",
+    "files": 119,
+    "nativeCodeSHA256": "63f555db81fc8a8dd6d13b1011f42ff31674949b6d7beafdf1c31643aade8229",
+    "allowedInstrumentation": [
+      "separate QA identifiers",
+      "QA script and index tag"
+    ]
+  },
+  {
+    "name": "ipad",
+    "status": "PASS",
+    "runtime": "iOS27.2 WKWebView",
+    "files": 119,
+    "nativeCodeSHA256": "63f555db81fc8a8dd6d13b1011f42ff31674949b6d7beafdf1c31643aade8229",
+    "allowedInstrumentation": [
+      "separate QA identifiers",
+      "QA script and index tag"
+    ]
+  }
+]

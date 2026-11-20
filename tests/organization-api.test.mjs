@@ -161,7 +161,7 @@ test("task importance and urgency survive completion, older clients and Axis ref
   const fixture = fs.readFileSync(path.join(repoRoot, "tests/fixtures/axis-feed.ics"), "utf8");
   const fetchFeed = (text) => async () => new Response(text, { headers: { "Content-Type": "text/calendar" } });
   const feedLink = "https://example.myschoolapp.com/podium/feed/iCal.aspx?made-up-test-token";
-  await syncUser(app.env, user.id, feedLink, { fetchImpl: fetchFeed(fixture) });
+  await syncUser(app.env, user.id, feedLink, { fetchImpl: fetchFeed(fixture), now: () => Date.parse("2026-11-01T12:00:00Z") });
   const axisTask = (await app.call("/api/planner", { cookie })).data.items.find((row) => row.axis_uid === "6f1c2a9e-0d4b-4c7e-9a51-1b2c3d4e5f60");
   await app.call(`/api/items/${axisTask.id}`, { method: "PUT", cookie, body: { ...axisTask, importance: "not_important", urgency: "urgent" } });
   await syncUser(app.env, user.id, feedLink, { fetchImpl: fetchFeed(fixture.replace("Unit 1 Quiz", "Updated Quiz")) });
