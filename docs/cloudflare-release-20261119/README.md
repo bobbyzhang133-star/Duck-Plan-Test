@@ -1,6 +1,6 @@
 # Cloudflare release preparation — November19
 
-Requested: create a Cloudflare server for the current website. Source is `c5b5aed` with cache95 and the immediate whole-timetable spring. Publication destination remains pending the user's answer: a separate site or the existing `duckplan.duckplan-cloudflare.workers.dev` address. No remote resource creation, migration, secret change or deployment has occurred.
+Requested: create a Cloudflare server for the current website. Source is `c5b5aed` with cache95 and the immediate whole-timetable spring. This file records the earlier preflight checkpoint before destination selection. The user later chose and authorized a separate site; current deployment and notification status are in `../cloudflare-latest-20261119/README.md`. At this preflight checkpoint no remote mutations had occurred.
 
 ## Account and preserved resources
 

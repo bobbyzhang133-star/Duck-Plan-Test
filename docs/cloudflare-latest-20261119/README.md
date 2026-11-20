@@ -6,7 +6,7 @@ The user explicitly chose a separate site after being told it has separate accou
 
 The website/backend application inputs are unchanged from the verified `c5b5aed` release (cache95). New deployment configuration lives in `cloudflare/wrangler.latest.jsonc`. All eight migrations were applied to the new empty database; the final remote list reports no pending migrations. The Worker owns its own SQLite Durable Object namespace for live sync and both existing cron schedules. Static files bypass application code except the existing dynamic/API routes. No plan or billing settings were changed.
 
-Active deployment: `92f152ab-8b15-40af-9b73-c87b16ae9817`, Worker version `75697393-6451-4d20-8f1d-523da2ef9c51` at100%traffic. Provider startup time2ms; uploaded Worker100.86KiB/24.68KiBgzip and117static assets. `deployment.json` records the first verified healthy version for future rollback reference; no rollback occurred.
+Initial verified deployment: `92f152ab-8b15-40af-9b73-c87b16ae9817`, Worker version `75697393-6451-4d20-8f1d-523da2ef9c51`. After the user approved notification credentials, active deployment is `25e5bb9d-1296-4f35-bae9-4d17df804a43`, Worker version `70ba52a4-4f47-40da-9c10-ada35d500d25` at100%traffic. Provider startup time2ms; uploaded Worker100.86KiB/24.68KiBgzip and117static assets. `deployment.json` records the first verified healthy version for future rollback reference; no rollback occurred.
 
 ## Live acceptance
 
@@ -22,7 +22,13 @@ Active deployment: `92f152ab-8b15-40af-9b73-c87b16ae9817`, Worker version `75697
 
 Attempted to provision fresh VAPID browser-notification credentials as a follow-up setup step. Automatic approval review rejected starting that process: the site-creation request did not separately authorize persistent private-credential upload, and deployment could be verified without it. The provisioning script did not run; no key was generated/uploaded and no secret configuration changed. It was not retried or bypassed.
 
-Asked the user explicitly whether to generate a private push key and store it in this new Worker's Cloudflare secrets. That answer is pending. Browser notifications remain honestly disabled/awaiting activation, with no hidden capability warning. Native APNs credentials/background delivery and Google OAuth are also unconfigured; email/password account creation/sign-in works. These optional credentials are not required for the completed website deployment.
+The user subsequently explicitly approved generating the private push key and storing it in this site's Cloudflare secrets. That resolved the approval boundary. Installed exactly three fresh secrets after confirming there were none: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_JWK`, `VAPID_SUBJECT`. The ECDSA P-256 key pair was generated in memory and verified using the actual backend's VAPID signing function before upload. Keys went to Wrangler through stdin, never command arguments or source files; `WRANGLER_WRITE_LOGS=false` prevented persistent CLI debug logs. No key values are committed here. The private key remains in Cloudflare secrets and must not be silently rotated on future deployments.
+
+**PASS:**the secret inventory lists the three intended names. Live signed-in `/api/push/config` reports available with a valid65-byte uncompressed P-256 public key, identical across two independent sessions. Settings no longer says server activation is pending and presents the normal device opt-in action. Through the actual browser notification adapter, a future notification time saved to Cloudflare, appeared in the second session and cancellation removed it there. Test task/notification records were cleaned up; no push devices were enrolled. See `notification-activation-check.js` and `notification-activation-results.json`.
+
+**PASS:**27 focused notification/capability/provider/VAPID/dispatch/ownership tests; reused prior full baseline because application, schema and assets are unchanged. **NOT RUN:**real push subscription/provider acceptance/OS-visible delivery/closed-browser physical lifecycle. These require each device's opt-in and real delivery testing; server activation is not a claim of delivery. No browser permission was granted on the user's device. The settings card explains the iPhone Home Screen/device steps.
+
+Browser notification server activation is now complete. Native APNs background delivery and Google OAuth remain unconfigured; this did not change native credentials, app source or billing.
 
 ## Future authorized releases
 
