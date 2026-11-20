@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "cacheVersion": 101,
+  "mode": "fresh browser offline reload; actual local store",
+  "dateOnly": {
+    "text": "End of dayDate-only deadline",
+    "background": "rgb(251, 238, 237)",
+    "color": "rgb(41, 41, 41)",
+    "time": "rgb(41, 41, 41)"
+  }
+}

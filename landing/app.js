@@ -77,7 +77,6 @@ let taskAlertHydration = Promise.resolve();
 let taskAlertHydrationError = null;
 let workAlertContextReady = false;
 const expandedDeadlineDates = new Set();
-let deadlineRowExpanded = false;
 const taskAlertTimeChanges = new Set();
 const taskAlertTouchedFields = new Set();
 const workAlerts = window.DuckWorkAlertController.create({
@@ -879,7 +878,6 @@ function renderTimeline(dates) {
   const hourHeight = 62;
   if (!dates.includes(calendarFocusSlot.date)) calendarFocusSlot = { date: selectedDate, time: calendarFocusSlot.time || "09:00" };
   const headers = dates.map((date) => { const summary = calendarDates.daySummary(tasks, date); return `<div role="group" class="calendar-date-button calendar-day-heading ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected" : ""} ${date === nowKey() ? "today" : ""}" data-date="${date}" aria-label="${safeText(summary.label).replaceAll('"', "&quot;")}" ${date === nowKey() ? ' aria-current="date"' : ""}><span>${new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(dateObject(date))}</span><strong>${dateObject(date).getDate()}</strong>${summary.markup}</div>`; }).join("");
-  const deadlineRows = calendarDates.deadlineRow(tasks, dates, { expanded: deadlineRowExpanded, expandedDates: expandedDeadlineDates });
   const timeLabels = Array.from({ length: endHour - startHour }, (_, index) => `<span><span class="time-axis-label">${formatTime(`${String(startHour + index).padStart(2, "0")}:00`)}</span></span>`).join("");
   let hasTimedDeadlineWorkOverlap = false;
   const columns = dates.map((date) => {
@@ -927,7 +925,7 @@ function renderTimeline(dates) {
     }).join("");
     return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}${timedDeadlines}</div>`;
   }).join("");
-  return `<div class="timeline-calendar${hasTimedDeadlineWorkOverlap ? " has-timed-deadline-work-overlap" : ""}" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="calendar-header-viewport"><div class="calendar-header-grid"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div>${deadlineRows}</div></div><div class="calendar-timeline-scroller" role="region" aria-label="Hourly schedule" tabindex="0"><div class="calendar-body-grid"><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div></div></div>`;
+  return `<div class="timeline-calendar${hasTimedDeadlineWorkOverlap ? " has-timed-deadline-work-overlap" : ""}" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="calendar-header-viewport"><div class="calendar-header-grid"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div></div></div><div class="calendar-timeline-scroller" role="region" aria-label="Hourly schedule" tabindex="0"><div class="calendar-body-grid"><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div></div></div>`;
 }
 function renderMonth(dates) {
   return calendarDates.month(tasks, dates, selectedDate);
@@ -1617,15 +1615,6 @@ document.addEventListener("click", (event) => {
   if (completeOverdue) { void completeAllOverdue(completeOverdue); return; }
   const dayList = event.target.closest("#view-calendar [data-day-list]");
   if (dayList) { calendarTaskPreview.openDayList(dayList.dataset.summaryDate, dayList.dataset.dayList, dayList); return; }
-  const deadlineToggle = event.target.closest("#planner-calendar [data-toggle-deadline-row]");
-  if (deadlineToggle) {
-    const { scrollTop, scrollLeft } = calendarScrollElement();
-    deadlineRowExpanded = !deadlineRowExpanded;
-    renderCalendar({ autoScroll: false }); setupButtonMaterial(els.calendar);
-    calendarScrollElement().scrollTop = scrollTop; calendarScrollElement().scrollLeft = scrollLeft;
-    els.calendar.querySelector(".deadline-row-toggle")?.focus({ preventScroll: true });
-    return;
-  }
   const deadlinePointerControl = deadlineControlAtPointer(event);
   const deadlineGroup = deadlinePointerControl
     ? deadlinePointerControl.matches("[data-timed-deadline-group]") ? deadlinePointerControl : null
@@ -2197,10 +2186,10 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
-  if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); deadlineRowExpanded = false; }
+  if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); }
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {
-    calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); deadlineRowExpanded = false;
+    calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear();
     viewTransitions.cancel();
     renderedPlannerOwner = owner;
     nativeAccountSyncState = null; nativeSyncStatusRequest += 1;

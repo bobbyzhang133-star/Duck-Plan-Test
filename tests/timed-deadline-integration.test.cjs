@@ -14,12 +14,12 @@ const escape = value => String(value).replaceAll("&", "&amp;").replaceAll('"', "
 const task = (id, values = {}) => ({ id, title: `Task ${id}`, dueDate: date, dueTime: null,
   scheduledStart: null, durationMinutes: 45, completed: false, ...values });
 
-function fixture(tasks, deadlineRowExpanded = false) {
+function fixture(tasks) {
   const classInfo = () => ({ name: "Calculus", color: "#538fc5", soft: "#e3eef7" });
   const calendarDates = Presentation.create({ model: Model, classInfo, formatTime: value => value });
   const context = vm.createContext({ tasks, Model, calendarDates, classInfo,
     CALENDAR_START_HOUR: 0, CALENDAR_END_HOUR: 24, selectedDate: date, selectedTaskId: null,
-    deadlineRowExpanded, expandedDeadlineDates: new Set(), calendarFocusSlot: { date, time: "09:00" },
+    expandedDeadlineDates: new Set(), calendarFocusSlot: { date, time: "09:00" },
     nowKey: () => "2030-05-01", dateObject: value => new Date(`${value}T12:00`),
     formatLongDate: value => value, formatTime: value => value, safeText: escape,
     taskScheduleText: () => "Scheduled work", Date, Intl,
@@ -28,12 +28,11 @@ function fixture(tasks, deadlineRowExpanded = false) {
   return { render: () => context.renderTimeline([date]), relevant: () => context.relevantCalendarMinutes([date]) };
 }
 
-test("timed deadlines move into the hourly grid while date-only deadlines stay above it", () => {
+test("timed deadlines retain exact times while date-only deadlines stay accessible in the heading Due list without a duplicate band", () => {
   const tasks = [task("due", { dueTime: "17:00", scheduledStart: `${date}T15:00`, durationMinutes: 60 }), task("date-only")];
-  const before = structuredClone(tasks), f = fixture(tasks, true), html = f.render();
-  const strip = html.slice(html.indexOf('<div class="timeline-deadlines"'), html.indexOf('<div class="time-axis">'));
-  assert.match(strip, /data-select-task="date-only"/);
-  assert.doesNotMatch(strip, /data-select-task="due"/);
+  const before = structuredClone(tasks), f = fixture(tasks), html = f.render();
+  assert.doesNotMatch(html, /timeline-deadline-label|timeline-deadlines|calendar-date-only-deadlines|data-toggle-deadline-row/);
+  assert.match(html, /data-day-list="due"[^>]*data-summary-date="2030-05-02"[^>]*aria-label="Show 2 deadlines/);
   const grid = html.slice(html.indexOf('<div class="timeline-columns">'));
   assert.match(grid, /data-calendar-kind="work" data-calendar-drag-task="due"/);
   assert.match(grid, /class="timed-deadline-marker[^\"]*"[^>]*data-select-task="due"[^>]*data-calendar-kind="deadline"/);

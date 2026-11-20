@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "formMarkupSHA256": "e61fa7f773cc8664b8e47b694a380e06136385aa3e7563c4f8145b9eaa031718",
+  "unchangedEditorFunctions": [
+    "openModal",
+    "openTaskEditorWithFocus",
+    "renderTaskAlertFields",
+    "hydrateTaskAlertEditor"
+  ],
+  "referenceComparison": "BLOCKED: Google sign-in required"
+}

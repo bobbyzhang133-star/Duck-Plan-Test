@@ -517,7 +517,7 @@
   display: grid; grid-template-columns: var(--calendar-axis-width) minmax(0,1fr);
   min-width: var(--calendar-content-width);
 }
-.motion-preview #view-calendar .calendar-header-grid { grid-template-rows: var(--calendar-day-header-height) auto; }
+.motion-preview #view-calendar .calendar-header-grid { grid-template-rows: var(--calendar-day-header-height); }
 .motion-preview #view-calendar .calendar-timeline-scroller {
   flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: none;
   background: var(--calendar-day-surface,var(--card));

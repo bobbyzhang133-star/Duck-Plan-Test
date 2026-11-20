@@ -1,0 +1,46 @@
+{
+  "groupedDeadlineRows": [
+    {
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "background": "rgb(251, 238, 237)",
+          "color": "rgb(41, 41, 41)",
+          "time": "rgb(41, 41, 41)"
+        },
+        {
+          "background": "rgb(251, 238, 237)",
+          "color": "rgb(41, 41, 41)",
+          "time": "rgb(41, 41, 41)"
+        },
+        {
+          "background": "rgb(251, 238, 237)",
+          "color": "rgb(41, 41, 41)",
+          "time": "rgb(41, 41, 41)"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "background": "rgb(74, 48, 46)",
+          "color": "rgb(247, 243, 232)",
+          "time": "rgb(247, 243, 232)"
+        },
+        {
+          "background": "rgb(74, 48, 46)",
+          "color": "rgb(247, 243, 232)",
+          "time": "rgb(247, 243, 232)"
+        },
+        {
+          "background": "rgb(74, 48, 46)",
+          "color": "rgb(247, 243, 232)",
+          "time": "rgb(247, 243, 232)"
+        }
+      ]
+    }
+  ]
+}

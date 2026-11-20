@@ -32,14 +32,14 @@
 .calendar-task-preview .calendar-deadline-group-item {
   display: grid; grid-template-columns: minmax(72px,max-content) minmax(0,1fr); align-items: center; gap: 12px;
   box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; margin: 0; padding: 12px;
-  border: 1px solid var(--line); border-radius: 10px; color: var(--ink-deep); background: var(--card);
+  border: 1px solid #efd3ce; border-radius: 10px; color: var(--ink-deep); background: #fbeeed;
   box-shadow: none; text-align: left; font: inherit; cursor: pointer; touch-action: manipulation;
 }
-.calendar-deadline-group-time { color: #843e32; font-size: 13px; line-height: 1.4; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.calendar-deadline-group-time { color: inherit; font-size: 13px; line-height: 1.4; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .calendar-deadline-group-task-title { min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
-.calendar-task-preview .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #e7b5a8; background: color-mix(in srgb,#fff0eb 65%,var(--card)); box-shadow: none; transform: none; filter: none; }
-:root[data-theme="dark"] .calendar-deadline-group-time { color: #ffd1c4; }
-:root[data-theme="dark"] .calendar-task-preview .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #8d594e; background: color-mix(in srgb,#b95b4b 18%,var(--card)); }
+.calendar-task-preview .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #e7b5a8; background: #f8e1dd; box-shadow: none; transform: none; filter: none; }
+:root[data-theme="dark"] .calendar-task-preview .calendar-deadline-group-item { border-color: #70504b; background: #4a302e; }
+:root[data-theme="dark"] .calendar-task-preview .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #99685e; background: #593934; }
 .calendar-task-preview button:focus-visible { outline: 3px solid var(--accent, var(--yellow)); outline-offset: 3px; }
 .calendar-task-preview[data-popup-motion="opening"]::backdrop { animation: calendar-preview-backdrop-in var(--motion-popupOpen,240ms) var(--motion-ease,ease) both; }
 .calendar-task-preview[data-popup-motion="closing"]::backdrop { animation: calendar-preview-backdrop-out var(--motion-popupClose,300ms) var(--motion-ease,ease) both; }
@@ -75,7 +75,7 @@
 .calendar-day-list-preview .calendar-deadline-group-list { max-height: min(340px,50dvh); overflow: auto; overscroll-behavior: contain; }
 .calendar-day-list-preview .calendar-deadline-group-item { grid-template-columns: minmax(0,1fr); gap: 3px; min-height: 58px; padding: 10px 12px; }
 .calendar-day-list-preview .calendar-deadline-group-time { white-space: normal; }
-.calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-time { color: #255ba0; }
-.calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #adc7ec; background: color-mix(in srgb,#e8f0fe 65%,var(--card)); }
-:root[data-theme="dark"] .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-time { color: #bbd5ff; }
-:root[data-theme="dark"] .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #6085b6; background: color-mix(in srgb,#243a56 65%,var(--card)); }
+.calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item { border-color: #cbdcf5; background: #e8f0fe; }
+.calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #adc7ec; background: #dce8fc; }
+:root[data-theme="dark"] .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item { border-color: #446083; background: #243a56; }
+:root[data-theme="dark"] .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #6085b6; background: #2e486a; }

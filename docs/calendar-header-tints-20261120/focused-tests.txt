@@ -1,0 +1,43 @@
+✔ calendar task selection preserves popup launchers, scroll and focus across selection changes (10.8825ms)
+✔ template calendar drops use the target heading or time slot without changing the selected day (81.622958ms)
+✔ daily Work lists are read-only, chronological and independent of the deadline date (49.431458ms)
+✔ daily Due lists include timed and date-only deadlines, update live and keep an honest empty state (8.366459ms)
+✔ day-list task handoff waits for closing and cannot cross an owner or list-membership change (4.699292ms)
+✔ day-list source rebinding, Escape, view changes and invalid requests preserve focus and owner isolation (1.873375ms)
+✔ calendar preview uses one native dialog with plaintext details and complete overnight work/deadline dates (2.385083ms)
+✔ Edit and Reschedule wait for preview closing and keep the original calendar launcher (1.697208ms)
+✔ Complete suppresses duplicate clicks, preserves task identity and refreshes the existing preview controls (3.117959ms)
+✔ a failed completion keeps the preview open with an error and permits a single retry (1.253ms)
+✔ late completion success and failure cannot change another owner's dialog or report old errors (1.407792ms)
+✔ an old handoff callback cannot open an editor after an owner change or another preview (3.416375ms)
+✔ sync closes deleted or routed-away previews and keeps live details/focus when a task changes (2.250125ms)
+✔ Escape/backdrop dismissal and Tab wrap preserve keyboard access and rebind detached source by kind (1.064292ms)
+✔ a grouped deadline list uses plaintext exact times, current unfinished tasks and no editing or writes (1.340291ms)
+✔ choosing a grouped deadline waits for closing and opens its compact preview without a write (1.59ms)
+✔ group sync re-reads canonical tasks, preserves live row focus, filters completed/deleted entries and closes a missing group (0.861208ms)
+✔ a delayed grouped-deadline handoff cannot cross an owner change or replace another preview (0.841417ms)
+✔ group keyboard dismissal rebinds its launcher, resets aria and routed/destroyed groups cannot linger (0.617417ms)
+✔ events from a detached deadline dialog cannot dismiss its replacement preview (1.125458ms)
+✔ sticky header and time-gutter occlusion define independent label and current-dot viewports (10.34325ms)
+✔ rerender/resize coalesce, update changed header bounds and ignore stale observer callbacks (1.10625ms)
+✔ destroy cancels pending work, restores paint and releases observers/listeners (13.881083ms)
+✔ unsupported observer environments leave the CSS-sized timeline usable (0.515666ms)
+✔ fold shadow follows only timetable scroll, resets for Month and releases its passive listener (0.838ms)
+✔ fold paint changes only when crossing the edge, without querying geometry on scroll (1.664959ms)
+✔ web app manifest defines an installable standalone DuckPlan app (2.443292ms)
+✔ planner markup exposes install metadata and an accessible install control (3.650667ms)
+✔ service worker caches the shell, leaves APIs online-only, and handles notification clicks (19.517083ms)
+✔ install controller registers the worker and supports native install prompts (3.728292ms)
+✔ timed deadlines retain exact times while date-only deadlines stay accessible in the heading Due list without a duplicate band (42.416583ms)
+✔ a timed-only day removes the empty top strip and initially scrolls to its real due time (2.733417ms)
+✔ deadline labels share space with overlapping work without changing either time (1.778667ms)
+✔ overlapping work keeps a shared horizontal area when only its longer session reaches a deadline (2.592333ms)
+✔ pointer activation resolves a visible diamond to its own group while keyboard activation keeps its focused control (1.418541ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 489.540125

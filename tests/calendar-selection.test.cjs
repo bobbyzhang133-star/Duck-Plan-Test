@@ -37,7 +37,7 @@ test("calendar task selection preserves popup launchers, scroll and focus across
   assert.equal(context.activeElement, controls[0]);
 });
 
-test("template calendar drops use the target day, including the deadline band, without changing the selected day", () => {
+test("template calendar drops use the target heading or time slot without changing the selected day", () => {
   const source = fs.readFileSync("landing/app.js", "utf8");
   const renderTimeline = source.match(/^function renderTimeline\(dates\) \{[\s\S]*?^\}/m)?.[0];
   const dropHandler = source.match(/^document\.addEventListener\("drop", \(event\) => \{[\s\S]*?^\}\);/m)?.[0];
@@ -50,7 +50,7 @@ test("template calendar drops use the target day, including the deadline band, w
   const calendar = {};
   const context = vm.createContext({
     selectedDate: "2026-11-12", calendarFocusSlot: { date: "2026-11-12", time: "09:00" },
-    selectedTaskId: null, tasks: [{ id: "date-only", title: "Date-only fixture", dueDate: "2026-11-09", dueTime: null }], deadlineRowExpanded: false, expandedDeadlineDates: new Set(), PlannerUI, calendarDates: CalendarDates.create(), clearTemplateDrag() {}, showToast() {},
+    selectedTaskId: null, tasks: [{ id: "date-only", title: "Date-only fixture", dueDate: "2026-11-09", dueTime: null }], expandedDeadlineDates: new Set(), PlannerUI, calendarDates: CalendarDates.create(), clearTemplateDrag() {}, showToast() {},
     CALENDAR_START_HOUR: PlannerUI.TIMELINE_START_HOUR,
     CALENDAR_END_HOUR: PlannerUI.TIMELINE_END_HOUR,
     CALENDAR_HOURS: PlannerUI.TIMELINE_END_HOUR - PlannerUI.TIMELINE_START_HOUR,
@@ -87,11 +87,8 @@ test("template calendar drops use the target day, including the deadline band, w
   context.tasks = [];
   const noDeadlineHTML = vm.runInContext('renderTimeline(["2026-11-09", "2026-11-12"])', context);
   assert.doesNotMatch(noDeadlineHTML, /class="deadline-cell"/, "An empty date-only deadline band stays omitted");
-  const deadlineCells = [...html.matchAll(/<div class="deadline-cell"([^>]*)>/g)];
-  assert.equal(deadlineCells.length, 2);
-  assert.match(deadlineCells[0][1], /data-deadline-date="2026-11-09"/);
-  // A deadline click must retain its popup launcher instead of triggering the date-navigation handler.
-  assert.doesNotMatch(deadlineCells[0][1], /\bdata-date=/);
+  assert.doesNotMatch(html, /class="deadline-cell"|calendar-date-only-deadlines/);
+  assert.match(html, /data-day-list="due" data-summary-date="2026-11-09"/);
 
   const targetFor = (attributes, column = null) => {
     const target = {
@@ -113,7 +110,6 @@ test("template calendar drops use the target day, including the deadline band, w
     getBoundingClientRect: () => ({ top: 100, height: 24 * 62 }),
   };
   const cases = [
-    { target: targetFor({ deadlineDate: "2026-11-09" }), time: "09:00" },
     { target: targetFor({ date: "2026-11-09" }), time: "09:00" },
     { target: targetFor({ slotDate: "2026-11-09", slotTime: "10:00" }, column), time: "10:30" },
     { target: targetFor({}, column), time: "10:30" },
