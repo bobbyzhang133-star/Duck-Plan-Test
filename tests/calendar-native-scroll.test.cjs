@@ -30,7 +30,7 @@ test("the actual timetable is the scroll target, while Month retains its outer s
   f.month(); assert.equal(scroller(f.calendar), f.calendar); f.controller.destroy();
 });
 
-test("native timetable input has no cancellable wheel/touch handlers on its surface or ancestors", () => {
+test("the fixed-header adapter adds no cancellable handlers to the timetable or its ancestors", () => {
   const f = fixture();
   assert.equal(f.registrations.filter(r => [f.surface, f.calendar, f.doc].includes(r.target) && ["wheel", "touchmove"].includes(r.name)).length, 0);
   const target = { closest: () => null };

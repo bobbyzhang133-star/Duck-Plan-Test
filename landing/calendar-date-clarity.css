@@ -456,7 +456,7 @@
 :root[data-theme="dark"] .motion-preview #view-calendar .day-view { --calendar-day-surface: var(--card); }
 .motion-preview #view-calendar .day-view :is(.time-axis,.timeline-column,.timeline-column.selected-day) { background-color: var(--calendar-day-surface); }
 
-/* Restore native timetable rebound, with the header outside its scrollport. */
+/* Keep the fixed header outside the historical spring's timetable scrollport. */
 .motion-preview #view-calendar .planner-calendar:not(.month-view) { display: flex; overflow: hidden; }
 .motion-preview #view-calendar .planner-calendar:not(.month-view) > .timeline-calendar {
   display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; min-height: 0;
@@ -475,7 +475,7 @@
 }
 .motion-preview #view-calendar .calendar-header-grid { grid-template-rows: var(--calendar-day-header-height) auto; }
 .motion-preview #view-calendar .calendar-timeline-scroller {
-  flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain;
+  flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: none;
   background: var(--calendar-day-surface,var(--card));
 }
 .motion-preview #view-calendar .calendar-body-grid { grid-template-rows: auto; }

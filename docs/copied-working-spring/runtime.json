@@ -1,0 +1,240 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local storage / browser touch emulation",
+  "cases": [
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 1280,
+      "height": 950,
+      "touch": false,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 705
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 1280,
+      "height": 950,
+      "touch": false,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 705
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 1280,
+      "height": 950,
+      "touch": false,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 705
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 1280,
+      "height": 950,
+      "touch": false,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 705
+    },
+    {
+      "test": "header-input-rerender-Due-Month",
+      "width": 1280,
+      "status": "PASS"
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 835,
+      "height": 950,
+      "touch": true,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 649
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 835,
+      "height": 950,
+      "touch": true,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 649
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 835,
+      "height": 950,
+      "touch": true,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 649
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 835,
+      "height": 950,
+      "touch": true,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 649
+    },
+    {
+      "test": "header-input-rerender-Due-Month",
+      "width": 835,
+      "status": "PASS"
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 453.71875
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 453.71875
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 389.71875
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 389.71875
+    },
+    {
+      "test": "header-input-rerender-Due-Month",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 320,
+      "height": 740,
+      "touch": true,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 349.71875
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 320,
+      "height": 740,
+      "touch": true,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 349.71875
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 320,
+      "height": 740,
+      "touch": true,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 285.71875
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 320,
+      "height": 740,
+      "touch": true,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 285.71875
+    },
+    {
+      "test": "header-input-rerender-Due-Month",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 120.90625
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 120.90625
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "bodyHeight": 66.90625
+    },
+    {
+      "test": "responsive-fixed-header-copied-spring-body",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "bodyHeight": 66.90625
+    },
+    {
+      "test": "header-input-rerender-Due-Month",
+      "width": 844,
+      "status": "PASS"
+    },
+    {
+      "test": "task-drag-03:00-preserves-18:00-deadline",
+      "status": "PASS"
+    },
+    {
+      "test": "template-drag-05:00-copy-source-and-task-reload",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}
