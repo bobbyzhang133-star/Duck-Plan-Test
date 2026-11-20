@@ -58,3 +58,7 @@ Recent commits favor short, imperative subjects such as “Hide navigation sideb
 ## Website and App Design Alignment
 
 Keep the website and existing iPhone/iPad app aligned with the same approved task/calendar design, preserving the confirmed responsive layouts. Timed deadlines belong at their exact times in the schedule on every platform; date-only deadlines remain date-only. Default Personal/no-class work blocks use light yellow; custom class colors remain. Shared default/class materials must match between templates, drag previews and saved work blocks. Verify canonical, bundled, installed and backend versions separately, including actual native and signed-in feature checks. Never hide a server-capability warning or claim parity from a GitHub push/build alone. Follow `.cursor/rules/website-app-design-parity.mdc` in the website and native checkouts and the platform testing procedure.
+
+## Shared GitHub release pointer
+
+The November20,2026 upload keeps the website on `main` and the portable app on `codex/ios-main-release-20261120`, with separate web/native bundle configuration. Check `ios/APP-VERSION.md` and `docs/main-release-20261120/README.md` before a GitHub app checkout. Preserve the existing local Xcode team selections; portable copies intentionally clear them.

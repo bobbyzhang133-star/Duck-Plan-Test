@@ -1,0 +1,8 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project ios/DuckPlan.xcodeproj -scheme DuckPlan -configuration Debug -destination generic/platform=iOS -derivedDataPath /private/tmp/duckplan-latest-device-build CODE_SIGNING_ALLOWED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Full local log: /private/tmp/duckplan-latest-device-build.log
+** BUILD SUCCEEDED **
