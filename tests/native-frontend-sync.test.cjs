@@ -7,7 +7,7 @@ const Model = require("../landing/planner-model.js");
 
 test("synced personal and organization features use the native JSON transport without browser networking", async () => {
   const calls = [];
-  const apiUrl = "https://duckplan.duckplan-cloudflare.workers.dev/api";
+  const apiUrl = "https://duckplan-latest.ocs-learning.workers.dev/api";
   const native = {
     apiUrl,
     async request(request) {

@@ -47,6 +47,13 @@
       const status = timing(task);
       return `<button type="button" class="deadline-chip calendar-deadline-marker${status.overdue ? " is-overdue" : ""}${task.id === currentSelection() ? " selected" : ""}" style="${colors(task)}" ${taskAttributes(task, "deadline")} aria-label="${escape(accessibleLabel(task, "deadline", date))}">${flag}<span class="deadline-title">${safeText(task.title)}</span><small class="deadline-time">${safeText(dueTime(task))}</small>${status.overdue ? '<span class="sr-only">Overdue</span>' : ""}</button>`;
     }
+    function daySummary(tasks, date) {
+      const { workCount, dueCount } = model.daySummary(tasks, date);
+      const count = value => value > 99 ? "99+" : String(value);
+      return { workCount, dueCount,
+        label: `${formatLongDate(date)}. ${countText(workCount, "scheduled assignment")}, ${countText(dueCount, "deadline")}.`,
+        markup: `<span class="calendar-day-counts" aria-hidden="true">${workCount ? `<span data-day-work-count>${clock}<span>${count(workCount)}</span></span>` : ""}${dueCount ? `<span data-day-due-count>${flag}<span>${count(dueCount)}</span></span>` : ""}</span>` };
+    }
     function deadlineChips(tasks, date, { expanded = false, limit = 3, dateOnly = false } = {}) {
       const deadlines = sortedDeadlines(tasks, date).filter(task => !dateOnly || !validTime(task.dueTime));
       if (!deadlines.length) return "";
@@ -55,6 +62,20 @@
       const remaining = deadlines.length - visible.length;
       const overflow = deadlines.length > visibleLimit ? `<button type="button" class="deadline-overflow" data-deadline-overflow="${escape(date)}" aria-expanded="${expanded ? "true" : "false"}" aria-label="${escape(expanded ? `Show fewer deadlines for ${formatLongDate(date)}` : `Show ${remaining} more deadline${remaining === 1 ? "" : "s"} for ${formatLongDate(date)}`)}">${expanded ? "Show fewer" : `+${remaining} more`}</button>` : "";
       return `<div class="deadline-chip-list" data-deadline-expanded="${expanded ? "true" : "false"}">${visible.map(task => deadlineChip(task, date)).join("")}</div>${overflow}`;
+    }
+    function deadlineRow(tasks, dates, { expanded = false, expandedDates = new Set() } = {}) {
+      const counts = dates.map(date => sortedDeadlines(tasks, date).filter(task => !validTime(task.dueTime)).length);
+      const total = counts.reduce((sum, count) => sum + count, 0);
+      if (!total) return "";
+      const controls = 'aria-controls="calendar-date-only-deadlines"';
+      const toggle = `<button type="button" class="deadline-row-toggle" data-toggle-deadline-row aria-expanded="${expanded}" ${controls} aria-label="${expanded ? "Collapse" : "Expand"} ${countText(total, "date-only deadline")}"><span>Due</span><svg viewBox="0 0 12 12" width="12" height="12" fill="none" aria-hidden="true"><path d="m3 4.5 3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+      const cells = dates.map((date, index) => {
+        const count = counts[index];
+        const summary = count ? `<button type="button" class="deadline-day-summary" data-toggle-deadline-row aria-expanded="false" ${controls} aria-label="${escape(`Show ${countText(count, "date-only deadline")} for ${formatLongDate(date)}`)}">${flag}<span>${count > 99 ? "99+" : count} due</span></button>` : "";
+        const content = expanded ? deadlineChips(tasks, date, { expanded: expandedDates.has(date), dateOnly: true }) : summary;
+        return `<div class="deadline-cell" data-deadline-date="${escape(date)}">${content}</div>`;
+      }).join("");
+      return `<div class="timeline-deadline-label" data-deadline-row-expanded="${expanded}">${toggle}</div><div class="timeline-deadlines" id="calendar-date-only-deadlines" data-deadline-row-expanded="${expanded}">${cells}</div>`;
     }
     function timedDeadlineGroups(tasks, date, { hourHeight = 62, markerHeight = 44 } = {}) {
       // Date-only deadlines retain their end-of-day status semantics without
@@ -131,7 +152,7 @@
       }).join("");
       return `<div class="month-calendar calendar-layered-month"><div class="calendar-kind-legend" aria-label="Calendar key"><span>${clock}Work session</span><span>${flag}Deadline</span></div><div class="month-weekdays">${weekdays}</div><div class="month-grid">${cells}</div>${agenda(tasks, selectedDate)}</div>`;
     }
-    return { deadlineChips, timedDeadlineGroups, timedDeadlineMarker, month, agenda };
+    return { daySummary, deadlineChips, deadlineRow, timedDeadlineGroups, timedDeadlineMarker, month, agenda };
   }
   return { create };
 });

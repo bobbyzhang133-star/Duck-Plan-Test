@@ -202,7 +202,7 @@ final class NativeCloudClient: NSObject, URLSessionTaskDelegate {
     }()
 
     override init() {
-        var endpoint = URL(string: "https://duckplan.duckplan-cloudflare.workers.dev/api")!
+        var endpoint = URL(string: "https://duckplan-latest.ocs-learning.workers.dev/api")!
         #if DEBUG && targetEnvironment(simulator)
         // Local fixture only. Physical-device and Release builds always use HTTPS production.
         if let value = ProcessInfo.processInfo.environment["DUCKPLAN_NATIVE_API_URL"],

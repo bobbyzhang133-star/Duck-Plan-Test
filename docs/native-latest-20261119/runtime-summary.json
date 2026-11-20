@@ -1,0 +1,202 @@
+{
+  "runtime": "actual iOS27.2 simulator WKWebView; scripted DOM interactions, real native bridges and URLSession; no mocked app transport",
+  "api": "https://duckplan-latest.ocs-learning.workers.dev/api",
+  "buildIdentity": "built-bundle-verification.json",
+  "installedIdentity": "installed-qa-verification.json",
+  "devices": {
+    "phone": {
+      "cases": [
+        {
+          "mode": "local-baseline",
+          "status": "PASS",
+          "runId": "phone-local-baseline-1795159372010703000"
+        },
+        {
+          "mode": "local-baseline-relaunch",
+          "status": "PASS",
+          "runId": "phone-local-baseline-relaunch-1795159474749269000"
+        },
+        {
+          "mode": "local-presentation",
+          "status": "PASS",
+          "runId": "phone-local-presentation-1795159501681839000"
+        },
+        {
+          "mode": "local-extended",
+          "status": "PASS",
+          "runId": "phone-local-extended-1795159527726031000"
+        },
+        {
+          "mode": "local-preferences",
+          "status": "PASS",
+          "runId": "phone-local-preferences-1795159578767570000"
+        },
+        {
+          "mode": "local-preferences-relaunch",
+          "status": "PASS",
+          "runId": "phone-local-preferences-relaunch-1795159614072565000"
+        },
+        {
+          "mode": "cloud-baseline",
+          "status": "PASS",
+          "runId": "phone-cloud-baseline-1795159633937151000"
+        },
+        {
+          "mode": "cloud-baseline-relaunch",
+          "status": "PASS",
+          "runId": "phone-cloud-baseline-relaunch-1795159668274263000"
+        },
+        {
+          "mode": "cloud-presentation",
+          "status": "PASS",
+          "runId": "phone-cloud-presentation-1795159700112576000"
+        },
+        {
+          "mode": "cloud-extended",
+          "status": "PASS",
+          "runId": "phone-cloud-extended-1795159727434401000"
+        },
+        {
+          "mode": "cloud-preferences",
+          "status": "PASS",
+          "runId": "phone-cloud-preferences-1795194434075417000"
+        },
+        {
+          "mode": "cloud-preferences-relaunch",
+          "status": "PASS",
+          "runId": "phone-cloud-preferences-relaunch-1795194470200779000"
+        },
+        {
+          "mode": "cloud-midnight-preferences",
+          "status": "PASS",
+          "runId": "phone-cloud-midnight-preferences-1795194488355132000"
+        },
+        {
+          "mode": "cloud-midnight-preferences-relaunch",
+          "status": "PASS",
+          "runId": "phone-cloud-midnight-preferences-relaunch-1795194525842501000"
+        },
+        {
+          "mode": "cloud-isolation",
+          "status": "PASS",
+          "runId": "phone-cloud-isolation-1795194550402403000"
+        },
+        {
+          "mode": "cloud-sync-status",
+          "status": "PASS",
+          "runId": "phone-cloud-sync-status-1795194574070453000"
+        },
+        {
+          "mode": "cloud-shared-create",
+          "status": "PASS",
+          "runId": "phone-cloud-shared-create-1795194654718000000"
+        },
+        {
+          "mode": "cloud-shared-verify",
+          "status": "PASS",
+          "runId": "phone-cloud-shared-verify-1795195091400623000"
+        }
+      ],
+      "passed": 18,
+      "expected": 18,
+      "diagnostics": [
+        {
+          "runId": "phone-cloud-preferences-1795159812167553000",
+          "at": "restore follow preferences",
+          "message": "Restored defaults did not follow",
+          "resolution": "Test helper crossed midnight without advancing scheduled date; corrected helper and explicit midnight/relaunch checks pass."
+        }
+      ],
+      "initialStartupTimeouts": [
+        "phone-local-baseline-1795159041049398000"
+      ]
+    },
+    "ipad": {
+      "cases": [
+        {
+          "mode": "local-baseline",
+          "status": "PASS",
+          "runId": "ipad-local-baseline-1795194685968137000"
+        },
+        {
+          "mode": "local-baseline-relaunch",
+          "status": "PASS",
+          "runId": "ipad-local-baseline-relaunch-1795194856089868000"
+        },
+        {
+          "mode": "local-presentation",
+          "status": "PASS",
+          "runId": "ipad-local-presentation-1795194871793107000"
+        },
+        {
+          "mode": "local-extended",
+          "status": "PASS",
+          "runId": "ipad-local-extended-1795194886611532000"
+        },
+        {
+          "mode": "local-preferences",
+          "status": "PASS",
+          "runId": "ipad-local-preferences-1795194909559680000"
+        },
+        {
+          "mode": "local-preferences-relaunch",
+          "status": "PASS",
+          "runId": "ipad-local-preferences-relaunch-1795194922897167000"
+        },
+        {
+          "mode": "cloud-baseline",
+          "status": "PASS",
+          "runId": "ipad-cloud-baseline-1795194928954615000"
+        },
+        {
+          "mode": "cloud-baseline-relaunch",
+          "status": "PASS",
+          "runId": "ipad-cloud-baseline-relaunch-1795194946586567000"
+        },
+        {
+          "mode": "cloud-presentation",
+          "status": "PASS",
+          "runId": "ipad-cloud-presentation-1795194952629704000"
+        },
+        {
+          "mode": "cloud-extended",
+          "status": "PASS",
+          "runId": "ipad-cloud-extended-1795194960750851000"
+        },
+        {
+          "mode": "cloud-preferences",
+          "status": "PASS",
+          "runId": "ipad-cloud-preferences-1795194979603241000"
+        },
+        {
+          "mode": "cloud-preferences-relaunch",
+          "status": "PASS",
+          "runId": "ipad-cloud-preferences-relaunch-1795194993574845000"
+        },
+        {
+          "mode": "cloud-isolation",
+          "status": "PASS",
+          "runId": "ipad-cloud-isolation-1795195000414547000"
+        },
+        {
+          "mode": "cloud-shared-read-edit",
+          "status": "PASS",
+          "runId": "ipad-cloud-shared-read-edit-1795195011378691000"
+        }
+      ],
+      "passed": 14,
+      "expected": 14,
+      "diagnostics": [],
+      "initialStartupTimeouts": []
+    }
+  },
+  "limits": {
+    "physicalInstall": "NOT RUN: physical devices unavailable during preparation; source/build update only",
+    "alarmNotificationDelivery": "NOT RUN: physical AlarmKit/UNUserNotifications delivery/Stop/Snooze; preference tests deliberately disable delivery",
+    "backgroundAPNs": "BLOCKED: Free Personal Team build has no push entitlement and new server has no APNs credentials",
+    "SafariPWA": "NOT RUN in this native update; prior web browser release evidence is in the canonical website checkout",
+    "trustedTouchDragRotationOffline": "NOT RUN: native scripted controls/persistence are not trusted-touch, operating-system drag-layer, rotation or airplane-mode delivery evidence",
+    "externalResourceOpening": "NOT RUN: baseline verifies resource CRUD, not external browser navigation"
+  },
+  "complete": true
+}

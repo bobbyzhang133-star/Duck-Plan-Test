@@ -332,37 +332,79 @@
     };
   }
 
-  // Live updates over a WebSocket to the user's PlannerLive Durable Object. Reconnects with backoff
-  // and reloads after a reconnect, so anything missed while offline still arrives.
-  function openLiveSocket({ url, WebSocketImpl, onMessage, onReconnect, timers = globalThis }) {
+  // A brief successful handshake must not reset an outage's backoff. Catch-up snapshots
+  // are also bounded across flapping connections; individual live rows remain immediate.
+  function openLiveSocket({ url, WebSocketImpl, onMessage, onReconnect, timers = globalThis, random = Math.random, now = () => globalThis.performance?.now?.() ?? Date.now() }) {
     if (!WebSocketImpl || !url) return () => {};
     let socket = null;
     let closed = false;
     let attempts = 0;
     let retryTimer = null;
     let pingTimer = null;
-    function connect() {
-      socket = new WebSocketImpl(url);
-      socket.onopen = () => {
-        if (closed) { socket.close(1000); return; }
-        // Catch writes committed between the initial snapshot and this connection too.
+    let stableTimer = null;
+    let reloadTimer = null;
+    let lastReload = -Infinity;
+    const stableAfter = 30_000;
+    const reloadInterval = 30_000;
+    function clearConnectionTimers() {
+      timers.clearInterval(pingTimer);
+      timers.clearTimeout(stableTimer);
+      timers.clearTimeout(reloadTimer);
+      pingTimer = stableTimer = reloadTimer = null;
+    }
+    function retry() {
+      if (closed) return;
+      attempts = Math.min(attempts + 1, 5);
+      const ceiling = Math.min(30_000, 1000 * 2 ** attempts);
+      // 75–100% jitter spreads clients out without exceeding the 30-second cap.
+      retryTimer = timers.setTimeout(connect, ceiling * (0.75 + random() * 0.25));
+    }
+    function catchUp(connection) {
+      const run = () => {
+        reloadTimer = null;
+        if (closed || socket !== connection) return;
+        lastReload = now();
         onReconnect();
-        attempts = 0;
-        pingTimer = timers.setInterval(() => { try { socket.send("ping"); } catch { /* reconnecting */ } }, 30_000);
       };
-      socket.onmessage = (event) => {
-        if (closed || event.data === "pong") return;
+      const remaining = reloadInterval - (now() - lastReload);
+      if (remaining > 0) reloadTimer = timers.setTimeout(run, remaining);
+      else run(); // Includes the first snapshot-to-socket gap.
+    }
+    function connect() {
+      retryTimer = null;
+      if (closed) return;
+      let connection;
+      try { connection = new WebSocketImpl(url); }
+      catch { retry(); return; }
+      socket = connection;
+      let opened = false;
+      connection.onopen = () => {
+        if (closed || socket !== connection) { connection.close(1000); return; }
+        if (opened) return;
+        opened = true;
+        stableTimer = timers.setTimeout(() => { if (!closed && socket === connection) attempts = 0; }, stableAfter);
+        pingTimer = timers.setInterval(() => { try { connection.send("ping"); } catch { /* reconnecting */ } }, 30_000);
+        catchUp(connection);
+      };
+      connection.onmessage = (event) => {
+        if (closed || socket !== connection || event.data === "pong") return;
         try { onMessage(JSON.parse(event.data)); } catch { /* ignore malformed messages */ }
       };
-      socket.onclose = () => {
-        timers.clearInterval(pingTimer);
-        if (closed) return;
-        attempts += 1;
-        retryTimer = timers.setTimeout(connect, Math.min(30_000, 1000 * 2 ** Math.min(attempts, 5)));
+      connection.onclose = () => {
+        if (closed || socket !== connection) return;
+        socket = null;
+        clearConnectionTimers();
+        retry();
       };
     }
     connect();
-    return () => { closed = true; timers.clearTimeout(retryTimer); timers.clearInterval(pingTimer); try { socket.close(1000); } catch { /* already closed */ } };
+    return () => {
+      closed = true;
+      timers.clearTimeout(retryTimer);
+      clearConnectionTimers();
+      try { socket?.close(1000); } catch { /* already closed */ }
+      socket = null;
+    };
   }
 
   function createCloudBackend({ api, user, liveUrl, WebSocketImpl }) {

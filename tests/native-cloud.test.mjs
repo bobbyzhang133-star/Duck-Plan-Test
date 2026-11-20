@@ -9,7 +9,7 @@ import { createCtx, createFakeEnv } from "./support/fake-cloudflare.mjs";
 const require = createRequire(import.meta.url);
 const Store = require("../landing/planner-store.js");
 const Model = require("../landing/planner-model.js");
-const apiUrl = "https://duckplan.duckplan-cloudflare.workers.dev/api";
+const apiUrl = "https://duckplan-latest.ocs-learning.workers.dev/api";
 const transport = fs.readFileSync("landing/native-cloud.js", "utf8");
 const config = fs.readFileSync("landing/cloud-config.js", "utf8");
 

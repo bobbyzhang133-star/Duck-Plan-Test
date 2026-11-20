@@ -44,3 +44,7 @@ Recent commits favor short, imperative subjects such as “Hide navigation sideb
 ## Website and App Design Alignment
 
 Keep the website and existing iPhone/iPad app aligned with the same approved task/calendar design, preserving the confirmed responsive layouts. Timed deadlines belong at their exact times in the schedule on every platform; date-only deadlines remain date-only. Default Personal/no-class work blocks use light yellow; custom class colors remain. Shared default/class materials must match between templates, drag previews and saved work blocks. Verify canonical, bundled, installed and backend versions separately, including actual native and signed-in feature checks. Never hide a server-capability warning or claim parity from a GitHub push/build alone. Follow `.cursor/rules/website-app-design-parity.mdc` in the website and native checkouts and the platform testing procedure.
+
+## Current native release checkpoint
+
+November 20, 2026: the existing Xcode app bundles website `fb93ff7` / cache v95 and uses `https://duckplan-latest.ocs-learning.workers.dev/api` by explicit user choice. This new site has separate accounts/data; preserve original-server records, local guest data and API/account-scoped fallback templates. Native alarms, notifications, approved icon and signing settings remain preserved. Before future app updates, check current build/runtime evidence and installation limits in `docs/native-latest-20261119/README.md`; use `ios/APP-VERSION.md` to identify the current app source rather than the older November15 branch.

@@ -18,16 +18,17 @@ try {
 @main struct BoundaryTests {
     static func main() async throws {
         let client = NativeCloudClient()
-        precondition(client.apiURL.absoluteString == "https://duckplan.duckplan-cloudflare.workers.dev/api")
+        precondition(client.apiURL.absoluteString == "https://duckplan-latest.ocs-learning.workers.dev/api")
         let rejected = [
             "https://unrelated.example/api/session",
-            "http://duckplan.duckplan-cloudflare.workers.dev/api/session",
-            "https://duckplan.duckplan-cloudflare.workers.dev:8443/api/session",
-            "https://user:password@duckplan.duckplan-cloudflare.workers.dev/api/session",
-            "https://duckplan.duckplan-cloudflare.workers.dev/api/session#fragment",
-            "https://duckplan.duckplan-cloudflare.workers.dev/not-api/session",
-            "https://duckplan.duckplan-cloudflare.workers.dev/api/auth/google",
-            "https://duckplan.duckplan-cloudflare.workers.dev/api/live"
+            "https://duckplan.duckplan-cloudflare.workers.dev/api/session",
+            "http://duckplan-latest.ocs-learning.workers.dev/api/session",
+            "https://duckplan-latest.ocs-learning.workers.dev:8443/api/session",
+            "https://user:password@duckplan-latest.ocs-learning.workers.dev/api/session",
+            "https://duckplan-latest.ocs-learning.workers.dev/api/session#fragment",
+            "https://duckplan-latest.ocs-learning.workers.dev/not-api/session",
+            "https://duckplan-latest.ocs-learning.workers.dev/api/auth/google",
+            "https://duckplan-latest.ocs-learning.workers.dev/api/live"
         ]
         for url in rejected {
             do {

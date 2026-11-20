@@ -21,6 +21,35 @@ function assertNoNestedButtons(html) {
   assert.equal(depth, 0);
 }
 
+test("the date-only band starts folded with accurate per-day counts and an accessible whole-row toggle", () => {
+  const tasks = [task("one", { dueTime: null }), task("two", { dueTime: "" }), task("timed"),
+    task("completed", { dueTime: null, completed: true }), task("deleted", { dueTime: null, deleted: true }),
+    task("next", { dueDate: "2030-05-03", dueTime: null })];
+  const before = structuredClone(tasks), ui = setup();
+  const html = ui.deadlineRow(tasks, ["2030-05-02", "2030-05-03"]);
+  assert.match(html, /aria-expanded="false" aria-controls="calendar-date-only-deadlines" aria-label="Expand 3 date-only deadlines"/);
+  assert.match(html, />2 due</); assert.match(html, />1 due</);
+  assert.doesNotMatch(html, /data-select-task|deadline-chip-list/);
+  assertNoNestedButtons(html);
+  assert.deepEqual(tasks, before);
+});
+
+test("expanding the whole Due row retains per-day overflow and keeps timed deadlines out", () => {
+  const tasks = Array.from({ length: 5 }, (_, n) => task(`date-${n}`, { dueTime: null }));
+  tasks.push(task("timed"));
+  const ui = setup(), dates = ["2030-05-02"];
+  const expanded = ui.deadlineRow(tasks, dates, { expanded: true });
+  assert.match(expanded, /aria-label="Collapse 5 date-only deadlines"/);
+  assert.equal((expanded.match(/data-select-task=/g) || []).length, 3);
+  assert.match(expanded, /\+2 more/);
+  assert.doesNotMatch(expanded, /data-select-task="timed"/);
+  const all = ui.deadlineRow(tasks, dates, { expanded: true, expandedDates: new Set(dates) });
+  assert.equal((all.match(/data-select-task=/g) || []).length, 5);
+  assert.match(all, /Show fewer/); assertNoNestedButtons(all);
+  assert.equal(ui.deadlineRow([task("timed")], dates), "");
+  assert.equal(ui.deadlineRow([], dates), "");
+});
+
 test("deadline strip orders precise times and exposes all overflow without creating calendar navigation ancestors", () => {
   const ui = setup("early");
   const tasks = [task("all-day", { dueTime: "" }), task("late", { dueTime: "20:00" }), task("early", { dueTime: "08:30" }), task("middle"), task("completed", { completed: true })];

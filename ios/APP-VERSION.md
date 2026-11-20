@@ -1,9 +1,9 @@
 # Current native app version
 
-The latest website lives on this repository’s `main` branch. The matching portable iPhone/iPad project is published on [`codex/ios-main-release-20261115`](https://github.com/m-mcnicholas/group-project-michael-bobby-priya/tree/codex/ios-main-release-20261115).
+Synced November 19 and verified November 20, 2026 from website commit `fb93ff7` (application source `c5b5aed`, cache v95). The existing local Xcode project includes the latest calendar folding, deadline styling, whole-timetable immediate spring rebound and request backoff changes.
 
-The app branch includes the native account transport and six documented web overlays. Keeping those on the app branch preserves the website configuration and the app’s existing native behavior. Open `ios/DuckPlan.xcodeproj` from that branch, select your own development team and connected iPhone, then Run to install. Personal signing settings are excluded from the portable project.
+The app now connects to **https://duckplan-latest.ocs-learning.workers.dev/api**, as explicitly requested. This is the separate new site’s accounts/data. Original-server accounts and records are not migrated or deleted; use the account created on the new site. Device guest data is preserved, and account/API-scoped fallback templates remain isolated from the new server.
 
-The existing local project at `DuckPlan-iOS/ios/DuckPlan.xcodeproj` is already synchronized and retains its original signing settings. A GitHub push or successful unsigned build does not install an update on the phone.
+Open the existing `DuckPlan-iOS/ios/DuckPlan.xcodeproj`, choose your connected iPhone/iPad and press Run to install. Existing local signing settings, native alarms/normal notifications, approved icon and sounds are preserved. Source synchronization or a build does not update an installed physical app.
 
-See `docs/release-20261115/README.md` for verified source/build identities and runtime limitations. Production backend activation remains the account owner’s separate deployment step.
+See `docs/native-latest-20261119/README.md` for exact source/build/runtime evidence and limitations. Free Personal Team background push remains disabled; this update does not add closed-app cross-device APNs sync.
