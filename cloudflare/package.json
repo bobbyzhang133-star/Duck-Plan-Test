@@ -10,7 +10,9 @@
     "deploy:dev": "wrangler deploy --env=''",
     "check": "wrangler deploy --dry-run --env='' --outdir dist && wrangler deploy --dry-run --env production --outdir dist",
     "db:migrate:prod": "wrangler d1 migrations apply duckplan-prod --remote --env production",
-    "deploy:prod": "wrangler deploy --env production"
+    "deploy:prod": "wrangler deploy --env production",
+    "db:migrate:latest": "wrangler d1 migrations apply DB --remote --config wrangler.latest.jsonc",
+    "deploy:latest": "wrangler deploy --config wrangler.latest.jsonc"
   },
   "devDependencies": {
     "wrangler": "^4.157.0"

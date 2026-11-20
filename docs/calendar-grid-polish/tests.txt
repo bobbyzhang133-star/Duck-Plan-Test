@@ -1,0 +1,46 @@
+✔ deadline strip orders precise times and exposes all overflow without creating calendar navigation ancestors (21.655ms)
+✔ deadline warnings use text and icon semantics, exclude deleted/completed tasks, and escape attributes (0.4785ms)
+✔ Month represents one task's work and deadline as separate occurrences while reporting one task (1.847291ms)
+✔ Month overflow points at its own day, compact markers count all entries, and selected-day agenda includes the full title (1.330917ms)
+✔ selected-day agenda separates work from deadlines and reflects work ending after its deadline (0.724667ms)
+✔ presentation rejects unsafe class color text without changing valid calendar class colors (1.550166ms)
+✔ completed Month work and deadlines remain visible and counted once per task without urgency warnings (0.775709ms)
+✔ completed Month occurrences cannot hide unfinished work within the three-item preview (0.73025ms)
+✔ date-only strip option removes timed milestones while retaining undated-time and invalid legacy fallbacks (0.467709ms)
+✔ timed deadline groups use only explicit valid active deadlines without deriving work sessions or end-of-day markers (0.908375ms)
+✔ midnight and late-night diamonds stay at their exact minute while only label boxes clamp inside the day (0.824791ms)
+✔ nearby deadline groups use one fixed label box and do not chain an entire morning transitively (0.371459ms)
+✔ same-instant and nearby late-night group hit spans stay inside the day without moving their timestamp anchors (0.750708ms)
+✔ timed milestone geometry follows the supplied hour scale and safe label-height defaults (0.124125ms)
+✔ single timed milestone keeps deadline preview semantics, selected state and escaped text without work drag behavior (0.377292ms)
+✔ same-instant deadlines retain every task, render one counted pin and open a bounded nearby-time group (0.511375ms)
+✔ calendar preview uses one native dialog with plaintext details and complete overnight work/deadline dates (7.038209ms)
+✔ Edit and Reschedule wait for preview closing and keep the original calendar launcher (2.003333ms)
+✔ Complete suppresses duplicate clicks, preserves task identity and refreshes the existing preview controls (3.82175ms)
+✔ a failed completion keeps the preview open with an error and permits a single retry (1.176708ms)
+✔ late completion success and failure cannot change another owner's dialog or report old errors (0.996708ms)
+✔ an old handoff callback cannot open an editor after an owner change or another preview (0.523042ms)
+✔ sync closes deleted or routed-away previews and keeps live details/focus when a task changes (0.5715ms)
+✔ Escape/backdrop dismissal and Tab wrap preserve keyboard access and rebind detached source by kind (1.043916ms)
+✔ a grouped deadline list uses plaintext exact times, current unfinished tasks and no editing or writes (16.553792ms)
+✔ choosing a grouped deadline waits for closing and opens its compact preview without a write (2.389583ms)
+✔ group sync re-reads canonical tasks, preserves live row focus, filters completed/deleted entries and closes a missing group (0.760041ms)
+✔ a delayed grouped-deadline handoff cannot cross an owner change or replace another preview (0.960167ms)
+✔ group keyboard dismissal rebinds its launcher, resets aria and routed/destroyed groups cannot linger (0.58075ms)
+✔ events from a detached deadline dialog cannot dismiss its replacement preview (0.313334ms)
+✔ sticky header and time-gutter occlusion define independent label and current-dot viewports (3.486959ms)
+✔ rerender/resize coalesce, update changed header bounds and ignore stale observer callbacks (0.496208ms)
+✔ destroy cancels pending work, restores paint and releases observers/listeners (0.267667ms)
+✔ unsupported observer environments leave the CSS-sized timeline usable (1.438042ms)
+✔ web app manifest defines an installable standalone DuckPlan app (1.918834ms)
+✔ planner markup exposes install metadata and an accessible install control (3.715625ms)
+✔ service worker caches the shell, leaves APIs online-only, and handles notification clicks (1.762666ms)
+✔ install controller registers the worker and supports native install prompts (0.659084ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 800.921375

@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "cache": "duckplan-app-motion-preview-v68",
+  "files": {
+    "planner-store.js": "420c79af562084fa32909f663cfd5c683dcebbbaf97fa8a23222d9a59129814d",
+    "planner-library.js": "8e50a4cbf2f1e0face82f83dc55754358376036c3460d863d6828caa038f19e0",
+    "app.js": "64af6a73d9ef6c51d67309dfaefe5a93ce60f02414570eda715a6852252e43f6"
+  },
+  "offlineGuestTemplateRelaunch": true
+}

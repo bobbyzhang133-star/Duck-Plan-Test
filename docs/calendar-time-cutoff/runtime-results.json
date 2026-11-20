@@ -1,0 +1,1142 @@
+{
+  "runtime": "157.0.8103.78",
+  "mode": "isolated local browser fixtures; frozen current time10:05",
+  "results": [
+    {
+      "width": 1280,
+      "mode": "day",
+      "status": "PASS",
+      "axisWidth": 72,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM",
+            "10:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 207.046875,
+            "bottom": 215.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 217.046875,
+            "bottom": 225.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 232.046875,
+            "bottom": 240.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 262.046875,
+            "bottom": 270.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 280.046875,
+            "bottom": 288.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 331.046875,
+            "bottom": 339.046875,
+            "left": 470,
+            "right": 478
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "mode": "week",
+      "status": "PASS",
+      "axisWidth": 72,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM",
+            "10:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 207.046875,
+            "bottom": 215.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 217.046875,
+            "bottom": 225.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 232.046875,
+            "bottom": 240.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 262.046875,
+            "bottom": 270.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 280.046875,
+            "bottom": 288.046875,
+            "left": 470,
+            "right": 478
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 331.046875,
+            "bottom": 339.046875,
+            "left": 470,
+            "right": 478
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 835,
+      "mode": "day",
+      "status": "PASS",
+      "axisWidth": 72,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 275.65625,
+            "bottom": 283.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 285.65625,
+            "bottom": 293.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 300.65625,
+            "bottom": 308.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 330.65625,
+            "bottom": 338.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 348.65625,
+            "bottom": 356.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 399.65625,
+            "bottom": 407.65625,
+            "left": 440,
+            "right": 448
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 835,
+      "mode": "week",
+      "status": "PASS",
+      "axisWidth": 72,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM",
+            "9:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 275.65625,
+            "bottom": 283.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 285.65625,
+            "bottom": 293.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 300.65625,
+            "bottom": 308.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM",
+            "8:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 330.65625,
+            "bottom": 338.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 348.65625,
+            "bottom": 356.65625,
+            "left": 440,
+            "right": 448
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 399.65625,
+            "bottom": 407.65625,
+            "left": 440,
+            "right": 448
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "mode": "day",
+      "status": "PASS",
+      "axisWidth": 64,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 229.65625,
+            "bottom": 237.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 239.65625,
+            "bottom": 247.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 254.65625,
+            "bottom": 262.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 284.65625,
+            "bottom": 292.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 302.65625,
+            "bottom": 310.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 353.65625,
+            "bottom": 361.65625,
+            "left": 88,
+            "right": 96
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "mode": "week",
+      "status": "PASS",
+      "axisWidth": 64,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 293.65625,
+            "bottom": 301.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 303.65625,
+            "bottom": 311.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 318.65625,
+            "bottom": 326.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 348.65625,
+            "bottom": 356.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 366.65625,
+            "bottom": 374.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 417.65625,
+            "bottom": 425.65625,
+            "left": 88,
+            "right": 96
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 320,
+      "mode": "day",
+      "status": "PASS",
+      "axisWidth": 64,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 229.65625,
+            "bottom": 237.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 239.65625,
+            "bottom": 247.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM",
+            "7:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 254.65625,
+            "bottom": 262.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 284.65625,
+            "bottom": 292.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 302.65625,
+            "bottom": 310.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 353.65625,
+            "bottom": 361.65625,
+            "left": 88,
+            "right": 96
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 320,
+      "mode": "week",
+      "status": "PASS",
+      "axisWidth": 64,
+      "midnightVisible": true,
+      "samples": [
+        {
+          "offset": 2,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": false,
+            "top": 293.65625,
+            "bottom": 301.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 12,
+          "visibleLabels": [
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 303.65625,
+            "bottom": 311.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 27,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM",
+            "6:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 318.65625,
+            "bottom": 326.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 57,
+          "visibleLabels": [
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 348.65625,
+            "bottom": 356.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 75,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM",
+            "5:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 366.65625,
+            "bottom": 374.65625,
+            "left": 88,
+            "right": 96
+          }
+        },
+        {
+          "offset": 126,
+          "visibleLabels": [
+            "9:00 AM",
+            "10:00 AM",
+            "11:00 AM",
+            "12:00 PM",
+            "1:00 PM",
+            "2:00 PM",
+            "3:00 PM",
+            "4:00 PM"
+          ],
+          "indicator": {
+            "visible": true,
+            "top": 417.65625,
+            "bottom": 425.65625,
+            "left": 88,
+            "right": 96
+          }
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

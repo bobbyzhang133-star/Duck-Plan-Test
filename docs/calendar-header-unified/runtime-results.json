@@ -1,0 +1,422 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local browser; no saved records changed",
+  "results": [
+    {
+      "width": 1280,
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 1280,
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 1280,
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 1280,
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 785,
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 785,
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 785,
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 785,
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -72,
+        "axisWidth": 72,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 390,
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 390,
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 390,
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 390,
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 320,
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 320,
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 320,
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)",
+          "rgb(255, 255, 255)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    },
+    {
+      "width": 320,
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "state": {
+        "borders": [
+          "0px"
+        ],
+        "fills": [
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)",
+          "color(srgb 0.268392 0.268392 0.244235)"
+        ],
+        "cornerShadow": "none",
+        "dayShadow": "none",
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "foldLeft": -64,
+        "axisWidth": 64,
+        "overflow": false,
+        "cells": 24
+      }
+    }
+  ]
+}

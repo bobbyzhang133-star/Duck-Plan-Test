@@ -1,0 +1,396 @@
+{
+  "sourceBase": "b225574",
+  "cache": "duckplan-app-motion-preview-v80",
+  "springReference": "6814b34:landing/page-stack.css; all 61 samples numerically identical",
+  "spring": {
+    "runtime": "157.0.8103.79",
+    "mode": "real Chromium animation sampling; local desktop and emulated phone/iPad, not physical Safari/native",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "edge": "top",
+        "status": "PASS",
+        "rebound": 2.81635,
+        "phases": [
+          {
+            "time": 0,
+            "offset": 48,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": 6.23356,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": -1.38497,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": -2.81635,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": -1.39708,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": -0.0113061,
+            "header": 94
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "edge": "bottom",
+        "status": "PASS",
+        "rebound": 2.81635,
+        "phases": [
+          {
+            "time": 0,
+            "offset": -48,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": -6.23356,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": 1.38497,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": 2.81635,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": 1.39708,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": 0.0113061,
+            "header": 94
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "edge": "top",
+        "status": "PASS",
+        "rebound": 2.81635,
+        "phases": [
+          {
+            "time": 0,
+            "offset": 48,
+            "header": 156
+          },
+          {
+            "time": 150,
+            "offset": 6.23356,
+            "header": 156
+          },
+          {
+            "time": 210,
+            "offset": -1.38497,
+            "header": 156
+          },
+          {
+            "time": 264,
+            "offset": -2.81635,
+            "header": 156
+          },
+          {
+            "time": 350,
+            "offset": -1.39708,
+            "header": 156
+          },
+          {
+            "time": 430,
+            "offset": -0.0113061,
+            "header": 156
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "edge": "bottom",
+        "status": "PASS",
+        "rebound": 2.81635,
+        "phases": [
+          {
+            "time": 0,
+            "offset": -48,
+            "header": 156
+          },
+          {
+            "time": 150,
+            "offset": -6.23356,
+            "header": 156
+          },
+          {
+            "time": 210,
+            "offset": 1.38497,
+            "header": 156
+          },
+          {
+            "time": 264,
+            "offset": 2.81635,
+            "header": 156
+          },
+          {
+            "time": 350,
+            "offset": 1.39708,
+            "header": 156
+          },
+          {
+            "time": 430,
+            "offset": 0.0113061,
+            "header": 156
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "edge": "top",
+        "status": "PASS",
+        "rebound": 2.81635,
+        "phases": [
+          {
+            "time": 0,
+            "offset": 48,
+            "header": 128
+          },
+          {
+            "time": 150,
+            "offset": 6.23356,
+            "header": 128
+          },
+          {
+            "time": 210,
+            "offset": -1.38497,
+            "header": 128
+          },
+          {
+            "time": 264,
+            "offset": -2.81635,
+            "header": 128
+          },
+          {
+            "time": 350,
+            "offset": -1.39708,
+            "header": 128
+          },
+          {
+            "time": 430,
+            "offset": -0.0113061,
+            "header": 128
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "edge": "bottom",
+        "status": "PASS",
+        "rebound": 2.81635,
+        "phases": [
+          {
+            "time": 0,
+            "offset": -48,
+            "header": 128
+          },
+          {
+            "time": 150,
+            "offset": -6.23356,
+            "header": 128
+          },
+          {
+            "time": 210,
+            "offset": 1.38497,
+            "header": 128
+          },
+          {
+            "time": 264,
+            "offset": 2.81635,
+            "header": 128
+          },
+          {
+            "time": 350,
+            "offset": 1.39708,
+            "header": 128
+          },
+          {
+            "time": 430,
+            "offset": 0.0113061,
+            "header": 128
+          }
+        ]
+      }
+    ]
+  },
+  "regression": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local browser; phone/iPad viewport and trusted Chromium touch emulation, not physical Safari/native",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "trusted touch Week",
+        "status": "PASS",
+        "offset": 21.3312
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 48,
+        "bottomOffset": -48
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      }
+    ]
+  }
+}

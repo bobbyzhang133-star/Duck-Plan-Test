@@ -1,0 +1,26 @@
+{
+  "top": {
+    "historicalBefore": {
+      "peakDifferencePx": 0,
+      "peakAlignedReturnMaxPathDifferencePx": 1
+    },
+    "historicalAfter": {
+      "peakDifferencePx": 0,
+      "peakAlignedReturnMaxPathDifferencePx": 1.0000585917473526
+    }
+  },
+  "bottom": {
+    "historicalBefore": {
+      "peakDifferencePx": 0,
+      "peakAlignedReturnMaxPathDifferencePx": 1.0001171852112272
+    },
+    "historicalAfter": {
+      "peakDifferencePx": 0,
+      "peakAlignedReturnMaxPathDifferencePx": 0.9999707006929288
+    }
+  },
+  "header": {
+    "peakPx": 0,
+    "headerTravelPx": 0
+  }
+}

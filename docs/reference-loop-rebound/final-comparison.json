@@ -1,0 +1,266 @@
+{
+  "status": "PASS",
+  "criteria": "acceptance.json, defined before tuning and unchanged",
+  "finalSourceSha256": "350277672973920c4d8d0e7119c210a487a20ed48a8322cf6e7b387c49f79bd8",
+  "passes": 6,
+  "topPasses": 3,
+  "bottomPasses": 3,
+  "maxPeakDifferencePx": 1,
+  "maxPathDifferencePx": 1.0000937673970407,
+  "maxReturnDifferenceMs": 16.6650390625,
+  "maxFirstPaintDifferenceMs": 2.718017578125,
+  "comparisons": [
+    {
+      "phase": "roundedTop1",
+      "status": "PASS",
+      "checks": {
+        "completeCapture": true,
+        "peak": true,
+        "return": true,
+        "firstPaint": true,
+        "path": true,
+        "noExtraOscillation": true
+      },
+      "differences": {
+        "peakPx": 0,
+        "returnMs": 0.0009765625,
+        "firstPaintMs": 0.62109375,
+        "pathMaxPx": 0.37324694719443263,
+        "pathMeanPx": 0.061762716313258546
+      },
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 12,
+          "returnMs": 266.65478515625,
+          "firstPaintFromInputMs": 16.15087890625,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "local": {
+          "peakPx": 12,
+          "returnMs": 266.654052734375,
+          "firstPaintFromInputMs": 15.0439453125,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "returnMs": 266.655029296875,
+          "firstPaintFromInputMs": 14.4228515625,
+          "complete": true,
+          "noExtraOscillation": true
+        }
+      }
+    },
+    {
+      "phase": "roundedTop2",
+      "status": "PASS",
+      "checks": {
+        "completeCapture": true,
+        "peak": true,
+        "return": true,
+        "firstPaint": true,
+        "path": true,
+        "noExtraOscillation": true
+      },
+      "differences": {
+        "peakPx": 1,
+        "returnMs": 16.6650390625,
+        "firstPaintMs": 0.637939453125,
+        "pathMaxPx": 1.0000937673970407,
+        "pathMeanPx": 0.4725325942202579
+      },
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 12,
+          "returnMs": 266.655029296875,
+          "firstPaintFromInputMs": 8.0361328125,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "local": {
+          "peakPx": 12,
+          "returnMs": 266.654052734375,
+          "firstPaintFromInputMs": 14.489013671875,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "googleAfter": {
+          "peakPx": 11,
+          "returnMs": 249.989013671875,
+          "firstPaintFromInputMs": 13.85107421875,
+          "complete": true,
+          "noExtraOscillation": true
+        }
+      }
+    },
+    {
+      "phase": "roundedTop3",
+      "status": "PASS",
+      "checks": {
+        "completeCapture": true,
+        "peak": true,
+        "return": true,
+        "firstPaint": true,
+        "path": true,
+        "noExtraOscillation": true
+      },
+      "differences": {
+        "peakPx": 0,
+        "returnMs": 0.001220703125,
+        "firstPaintMs": 2.68408203125,
+        "pathMaxPx": 1.0000732493407565,
+        "pathMeanPx": 0.21363609303517941
+      },
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 11,
+          "returnMs": 249.989990234375,
+          "firstPaintFromInputMs": 14.785888671875,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "local": {
+          "peakPx": 12,
+          "returnMs": 266.65478515625,
+          "firstPaintFromInputMs": 14.29296875,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "returnMs": 266.656005859375,
+          "firstPaintFromInputMs": 16.97705078125,
+          "complete": true,
+          "noExtraOscillation": true
+        }
+      }
+    },
+    {
+      "phase": "roundedBottom1",
+      "status": "PASS",
+      "checks": {
+        "completeCapture": true,
+        "peak": true,
+        "return": true,
+        "firstPaint": true,
+        "path": true,
+        "noExtraOscillation": true
+      },
+      "differences": {
+        "peakPx": 0,
+        "returnMs": 0.000244140625,
+        "firstPaintMs": 0.56298828125,
+        "pathMaxPx": 0.49999195683732633,
+        "pathMeanPx": 0.06296256571255922
+      },
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 12,
+          "returnMs": 266.654052734375,
+          "firstPaintFromInputMs": 15.9580078125,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "local": {
+          "peakPx": 12,
+          "returnMs": 266.65478515625,
+          "firstPaintFromInputMs": 14.62109375,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "returnMs": 266.655029296875,
+          "firstPaintFromInputMs": 15.18408203125,
+          "complete": true,
+          "noExtraOscillation": true
+        }
+      }
+    },
+    {
+      "phase": "roundedBottom2",
+      "status": "PASS",
+      "checks": {
+        "completeCapture": true,
+        "peak": true,
+        "return": true,
+        "firstPaint": true,
+        "path": true,
+        "noExtraOscillation": true
+      },
+      "differences": {
+        "peakPx": 0,
+        "returnMs": 0.0009765625,
+        "firstPaintMs": 2.718017578125,
+        "pathMaxPx": 0.00011718177576902633,
+        "pathMeanPx": 1.6032810594878443e-05
+      },
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 11,
+          "returnMs": 249.989013671875,
+          "firstPaintFromInputMs": 14.23583984375,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "local": {
+          "peakPx": 12,
+          "returnMs": 266.65576171875,
+          "firstPaintFromInputMs": 16.8779296875,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "returnMs": 266.65478515625,
+          "firstPaintFromInputMs": 14.159912109375,
+          "complete": true,
+          "noExtraOscillation": true
+        }
+      }
+    },
+    {
+      "phase": "roundedBottom3",
+      "status": "PASS",
+      "checks": {
+        "completeCapture": true,
+        "peak": true,
+        "return": true,
+        "firstPaint": true,
+        "path": true,
+        "noExtraOscillation": true
+      },
+      "differences": {
+        "peakPx": 0,
+        "returnMs": 0.0,
+        "firstPaintMs": 0.649169921875,
+        "pathMaxPx": 1.0000586140660808,
+        "pathMeanPx": 0.21111261660729988
+      },
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 12,
+          "returnMs": 266.655029296875,
+          "firstPaintFromInputMs": 14.926025390625,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "local": {
+          "peakPx": 12,
+          "returnMs": 266.655029296875,
+          "firstPaintFromInputMs": 15.5400390625,
+          "complete": true,
+          "noExtraOscillation": true
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "returnMs": 266.655029296875,
+          "firstPaintFromInputMs": 14.890869140625,
+          "complete": true,
+          "noExtraOscillation": true
+        }
+      }
+    }
+  ]
+}

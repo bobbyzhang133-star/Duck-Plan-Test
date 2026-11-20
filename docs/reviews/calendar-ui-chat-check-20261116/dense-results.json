@@ -1,0 +1,34 @@
+{
+  "runtime": "157.0.8103.78",
+  "mode": "isolated local browser fixtures",
+  "results": [
+    {
+      "width": 835,
+      "status": "PASS",
+      "points": [
+        1020,
+        1025,
+        1030
+      ],
+      "workWidth": 56.15625,
+      "workLabel": "Work session: Deadline 1. 4:30 PM–6:00 PM. Work ends after deadline",
+      "overflow": false,
+      "groupContainsAllDeadlines": true,
+      "selectionOpensCorrectTask": true
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "points": [
+        1020,
+        1025,
+        1030
+      ],
+      "workWidth": 160.3125,
+      "workLabel": "Work session: Deadline 1. 4:30 PM–6:00 PM. Work ends after deadline",
+      "overflow": false,
+      "groupContainsAllDeadlines": true,
+      "selectionOpensCorrectTask": true
+    }
+  ]
+}

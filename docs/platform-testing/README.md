@@ -77,6 +77,8 @@ An intentionally unsupported capability needs an explicit product rule and hones
 
 ## Required evidence and result labels
 
+For Calendar day counts and the folding header, verify independent Work/start-date and Due/all-deadline totals, completed/deleted exclusions, same-day dual membership and overnight start-only membership. Check create/edit/reschedule/complete/delete and incoming refresh without losing phone day-button focus. Test zero/two-digit counts at320/390/835/1280px and short landscape without enlarging sticky rows, with accessible full labels. Check fold shadow only during timetable scroll, with/without date-only rows, top reset, Month cleanup, unchanged time geometry and offline cached inputs.
+
 For each case record: feature/action, platform/runtime version, mode/backend, source/build identity, expected result, actual result, status and evidence path. Include precise data assertions: for example, “Schedule created one new task at 10:00 for 45 minutes; the template and original task count are unchanged; the scheduled task remained after relaunch.” A screenshot of the button is insufficient.
 
 - **PASS:** the stated action and persistence assertions ran successfully in the recorded runtime/mode. A fixture-backed pass must be labeled fixture-backed; it does not prove the production backend.
@@ -93,3 +95,7 @@ Run the matching existing automated tests and relevant native boundary/build che
 Before telling the user to Run Xcode, verify the existing project contains the intended web files and that its successful built bundle matches them. Before claiming the phone is updated, verify installation of that specific build on the phone. A GitHub push does not update either the installed phone app or the hosted backend.
 
 Keep the existing local-first authorization boundary: prepare and verify the concrete release locally before seeking any required public-deployment or remote-migration approval. This procedure does not authorize deployment, account creation, production mutation, signing changes or broader access by itself.
+
+## Native legacy-server template fallback
+
+Test account/API-scoped device template create/edit/delete, Add to tasks, Schedule/drop and relaunch against a real older backend. Guest data and other accounts must remain separate; resources stay gated. Upgrade the same fixture server/schema and verify automatic same-account import with unchanged IDs/settings. Cover lost acknowledgements, repeated refresh, migration failure/retry, concurrent edit/delete, full or corrupt storage, account changes and remote edits/deletion after migration. Never discard cache before a durable server acknowledgement or claim cross-device sharing while the template is still device-only.

@@ -1,0 +1,27 @@
+# Folding header and compact daily counts
+
+November17,2026. Current local website, based on `a8f1bdc`. The user asked to implement mainly the chat plan's folding top header and compact day headings. The established Repository Overview plans were read directly and retained in `chat-plans.txt`.
+
+## Implemented scope
+
+- **Folding shadow:** a restrained warm shadow appears under the last fixed Calendar row when the timetable scrolls past its top, and clears again at the top. It follows the Due row when present or the date row when absent. Header positions and dimensions do not change. A passive scroll handler updates one class, without reading layout or rebuilding clipping observers on scroll. Dark mode uses a matching shadow; no new motion is introduced.
+- **Compact Work/Due counts:** clock/flag plus small neutral numbers inside the existing day buttons, including the phone seven-day strip. Zero categories show no marker, but reserve consistent space. The date remains primary. Rebalanced internal spacing keeps existing66px desktop/iPad,48px phone date headers and56px phone week tabs. At320px, count pairs stack within their reserved slot. Visual counts cap at99+ for extreme totals; accessible button labels retain the exact numbers.
+- **Shared definitions:** pure `Model.daySummary` counts unique unfinished tasks whose scheduled start date matches Work, independently from tasks whose due date matches Due. Due includes timed and date-only deadlines. Completed/deleted records are excluded, and overnight work counts on its start date. It does not use the task list's exclusive grouping or change task data.
+- **Live refresh:** phone count children update on same-week renders while existing day buttons and focus survive. Calendar headers use the same calculation after creation, work-time changes, completion, deadline edits, deletion and incoming data rerenders. Day buttons have complete accessible labels and retain selection/current-date semantics.
+- Cache73 includes versioned model, presentation, viewport, CSS and app inputs. Existing task rows,24-hour range, exact-time deadlines, default/class materials and red-dot coordinate are preserved.
+
+The separate **calendar-only elastic edge pull** proposal is not part of this change. The plan defines folding as a stationary header/shadow, not a physically collapsing header. Midnight label visibility, the Due strip's expansion interaction and Month layout remain unchanged.
+
+## Verification
+
+- **PASS:**548 full Node tests (`tests-full.txt`), including four new substantive summary/fold lifecycle cases.41 focused tests also pass (`tests.txt`). Syntax and final diff checks pass. The full run initially exposed an extracted-render test fixture missing the newly used `safeText` dependency; its fixture was updated, with no production workaround.
+- **PASS:**actual Chromium157.0.8103.79 at1280x1000,835x1000,390x844,320x568 and844x390 in local mode.10 light/dark layout cases and five full live-update/reload sequences in `runtime.js` / `runtime-results.json`. Verify independent counts, zero categories, overnight start-only counting, unchanged header height, two-digit containment, fixed headers, scroll-dependent shadow, same-week phone focus retention, rescheduling, completion, deadline editing, deletion, creation of12 stress tasks, persisted dates/completion after reload, Day and Month routing, and no page errors. Updates exercise the real local store and renderer, not a mocked transport. They do not claim every editor/drag interaction was retested.
+- **PASS:**an additional no-Due-row browser case checks shadow placement, top reset, pointer date selection and Enter selection (`extra-results.json`). Existing header/date controls remain accessible.
+- **PASS:**actual service-worker cache73 hashes for all six changed web inputs match final source; offline reload, task creation, count refresh and another offline reload retain the new task and fold behavior (`cache-runtime.js`, `cache-results.json`, `source.json`). This is an ordinary browser SW check, not an installed-PWA launch.
+- **PASS:**existing user preview refreshed to all five new asset keys, with its prior Week/ThursdayNovember19 selection, collapsed Tasks sheet and4 remaining tasks retained. No user task record was edited.
+- **BLOCKED:**fresh signed-in Worker runtime coverage: the checkout has no Wrangler installation and the available offline tooling/cache was already unavailable. No production records or accounts were used. The account/storage/API/native transport is unchanged; previous signed-in evidence is not relabeled as a new pass.
+- **NOT RUN:**actual native WKWebView/build/installation, physical iPhone/iPad, Safari/Firefox and installed PWA. This is a local website change, not app synchronization or a release.
+
+The preview server was stopped when this task began; the existing loopback-only8034 process was restarted. Harness corrections were isolated from application behavior: the initialization script originally reseeded fixtures on reload; it now seeds once, and stress fixtures explicitly include the app's null-class default. The cache fixture now starts with an empty task list so its one-task assertion does not include built-in demo tasks. Final results above use the corrected fixtures.
+
+All synthetic contexts were closed. Local preview remains at <http://127.0.0.1:8034/#calendar>. TEST feature-branch backup only; no shared-main merge, public deployment, remote migration, native sync or physical-phone update.

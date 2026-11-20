@@ -1,0 +1,17 @@
+{
+  "runtime": "Chromium 157.0.8103.79",
+  "sourceBase": "fb865cd",
+  "cache": "duckplan-app-motion-preview-v78",
+  "modeNote": "Real browser full app and WebSocket events; signed-in APIs and connections use isolated fault-injection fixtures.",
+  "cases": [
+    { "viewport": "1280x900", "mode": "local guest", "status": "PASS", "socketAttempts": 0, "pageErrors": 0 },
+    { "viewport": "1280x900", "mode": "signed-in fixture", "status": "PASS", "socketAttemptsIncludingReload": 7, "snapshotsIncludingCRUDReload": 9, "snapshotsThroughFiveDisconnectsIncludingBootstrap": 3, "pageErrors": 0 },
+    { "viewport": "390x844", "mode": "local guest", "status": "PASS", "socketAttempts": 0, "pageErrors": 0 },
+    { "viewport": "390x844", "mode": "signed-in fixture", "status": "PASS", "socketAttemptsIncludingReload": 7, "snapshotsIncludingCRUDReload": 9, "snapshotsThroughFiveDisconnectsIncludingBootstrap": 3, "pageErrors": 0 },
+    { "viewport": "835x1100", "mode": "local guest", "status": "PASS", "socketAttempts": 0, "pageErrors": 0 },
+    { "viewport": "835x1100", "mode": "signed-in fixture", "status": "PASS", "socketAttemptsIncludingReload": 7, "snapshotsIncludingCRUDReload": 9, "snapshotsThroughFiveDisconnectsIncludingBootstrap": 3, "pageErrors": 0 }
+  ],
+  "serviceWorker": { "status": "PASS", "cachedStoreExactlyMatchesServed": true, "offlineLocalTaskPersistence": "PASS", "pageErrors": 0 },
+  "production": "NOT MODIFIED; incident attribution BLOCKED",
+  "nativeAndPhysicalPlatforms": "NOT RUN; not modified"
+}

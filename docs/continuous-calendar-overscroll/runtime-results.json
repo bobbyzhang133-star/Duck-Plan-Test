@@ -1,0 +1,608 @@
+{
+  "date": "2026-11-18",
+  "baseCommit": "26e8f73",
+  "cacheVersion": 86,
+  "node": {
+    "focused": 20,
+    "full": 569,
+    "status": "PASS"
+  },
+  "continuous": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local Chromium, real wheel/CDP touch input; not physical Safari or exact Google OS-physics equivalence",
+    "results": [
+      {
+        "viewport": {
+          "width": 1156,
+          "height": 900
+        },
+        "case": "cross-top, continue through gap, unwind and rejoin",
+        "status": "PASS",
+        "crossed": {
+          "top": 0,
+          "maximum": 811,
+          "offset": 22.9565,
+          "headers": [
+            94
+          ]
+        },
+        "continued": {
+          "top": 0,
+          "maximum": 817,
+          "offset": 28.7197,
+          "headers": [
+            94
+          ]
+        },
+        "reversed": {
+          "top": 0,
+          "maximum": 811,
+          "offset": 23.2197,
+          "headers": [
+            94
+          ]
+        },
+        "inside": {
+          "top": 138,
+          "maximum": 788,
+          "offset": 0,
+          "headers": [
+            94
+          ]
+        }
+      },
+      {
+        "viewport": {
+          "width": 1156,
+          "height": 900
+        },
+        "case": "cross-bottom and rebound",
+        "status": "PASS",
+        "crossed": {
+          "top": 788,
+          "maximum": 788,
+          "offset": -22.9565,
+          "headers": [
+            94
+          ]
+        }
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "case": "cross-top, continue through gap, unwind and rejoin",
+        "status": "PASS",
+        "crossed": {
+          "top": 0,
+          "maximum": 667,
+          "offset": 22.9565,
+          "headers": [
+            156
+          ]
+        },
+        "continued": {
+          "top": 0,
+          "maximum": 673,
+          "offset": 28.7197,
+          "headers": [
+            156
+          ]
+        },
+        "reversed": {
+          "top": 0,
+          "maximum": 667,
+          "offset": 23.2197,
+          "headers": [
+            156
+          ]
+        },
+        "inside": {
+          "top": 138,
+          "maximum": 644,
+          "offset": 0,
+          "headers": [
+            156
+          ]
+        }
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "case": "cross-bottom and rebound",
+        "status": "PASS",
+        "crossed": {
+          "top": 644,
+          "maximum": 644,
+          "offset": -22.9565,
+          "headers": [
+            156
+          ]
+        }
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "case": "cross-top, continue through gap, unwind and rejoin",
+        "status": "PASS",
+        "crossed": {
+          "top": 0,
+          "maximum": 1012,
+          "offset": 22.9565,
+          "headers": [
+            128
+          ]
+        },
+        "continued": {
+          "top": 0,
+          "maximum": 1017,
+          "offset": 28.2754,
+          "headers": [
+            128
+          ]
+        },
+        "reversed": {
+          "top": 0,
+          "maximum": 1012,
+          "offset": 22.7754,
+          "headers": [
+            128
+          ]
+        },
+        "inside": {
+          "top": 139,
+          "maximum": 989,
+          "offset": 0,
+          "headers": [
+            128
+          ]
+        }
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "case": "cross-bottom and rebound",
+        "status": "PASS",
+        "crossed": {
+          "top": 989,
+          "maximum": 989,
+          "offset": -22.9565,
+          "headers": [
+            128
+          ]
+        }
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "case": "trusted touch pan crosses top and releases",
+        "status": "PASS",
+        "pulled": {
+          "top": 0,
+          "maximum": 1018,
+          "offset": 29.1534,
+          "headers": [
+            128
+          ]
+        }
+      }
+    ]
+  },
+  "regression": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local browser; phone/iPad viewport and trusted Chromium touch emulation, not physical Safari/native",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "trusted touch Week",
+        "status": "PASS",
+        "offset": 21.3642
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "topOffset": 30.3448,
+        "bottomOffset": -30.3448
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "reduced motion, slot click/cancel, Month",
+        "status": "PASS",
+        "errors": []
+      }
+    ]
+  },
+  "spring": {
+    "runtime": "157.0.8103.79",
+    "mode": "real Chromium animation sampling; local desktop and emulated phone/iPad, not physical Safari/native",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "edge": "top",
+        "status": "PASS",
+        "rebound": 1.89673,
+        "phases": [
+          {
+            "time": 0,
+            "offset": 32.3265,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": 4.19811,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": -0.932732,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": -1.89673,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": -0.940893,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": -0.00761431,
+            "header": 94
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "edge": "bottom",
+        "status": "PASS",
+        "rebound": 1.89673,
+        "phases": [
+          {
+            "time": 0,
+            "offset": -32.3265,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": -4.19811,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": 0.932732,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": 1.89673,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": 0.940893,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": 0.00761431,
+            "header": 94
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "edge": "top",
+        "status": "PASS",
+        "rebound": 1.89673,
+        "phases": [
+          {
+            "time": 0,
+            "offset": 32.3265,
+            "header": 156
+          },
+          {
+            "time": 150,
+            "offset": 4.19811,
+            "header": 156
+          },
+          {
+            "time": 210,
+            "offset": -0.932732,
+            "header": 156
+          },
+          {
+            "time": 264,
+            "offset": -1.89673,
+            "header": 156
+          },
+          {
+            "time": 350,
+            "offset": -0.940893,
+            "header": 156
+          },
+          {
+            "time": 430,
+            "offset": -0.00761431,
+            "header": 156
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "edge": "bottom",
+        "status": "PASS",
+        "rebound": 1.89673,
+        "phases": [
+          {
+            "time": 0,
+            "offset": -32.3265,
+            "header": 156
+          },
+          {
+            "time": 150,
+            "offset": -4.19811,
+            "header": 156
+          },
+          {
+            "time": 210,
+            "offset": 0.932732,
+            "header": 156
+          },
+          {
+            "time": 264,
+            "offset": 1.89673,
+            "header": 156
+          },
+          {
+            "time": 350,
+            "offset": 0.940893,
+            "header": 156
+          },
+          {
+            "time": 430,
+            "offset": 0.00761431,
+            "header": 156
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "edge": "top",
+        "status": "PASS",
+        "rebound": 1.89673,
+        "phases": [
+          {
+            "time": 0,
+            "offset": 32.3265,
+            "header": 128
+          },
+          {
+            "time": 150,
+            "offset": 4.19811,
+            "header": 128
+          },
+          {
+            "time": 210,
+            "offset": -0.932732,
+            "header": 128
+          },
+          {
+            "time": 264,
+            "offset": -1.89673,
+            "header": 128
+          },
+          {
+            "time": 350,
+            "offset": -0.940893,
+            "header": 128
+          },
+          {
+            "time": 430,
+            "offset": -0.00761431,
+            "header": 128
+          }
+        ]
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "edge": "bottom",
+        "status": "PASS",
+        "rebound": 1.89673,
+        "phases": [
+          {
+            "time": 0,
+            "offset": -32.3265,
+            "header": 128
+          },
+          {
+            "time": 150,
+            "offset": -4.19811,
+            "header": 128
+          },
+          {
+            "time": 210,
+            "offset": 0.932732,
+            "header": 128
+          },
+          {
+            "time": 264,
+            "offset": 1.89673,
+            "header": 128
+          },
+          {
+            "time": 350,
+            "offset": 0.940893,
+            "header": 128
+          },
+          {
+            "time": 430,
+            "offset": 0.00761431,
+            "header": 128
+          }
+        ]
+      }
+    ]
+  },
+  "drag": {
+    "status": "PASS",
+    "scheduledStart": "2026-11-18T03:00",
+    "deadline": "2026-11-18T18:00",
+    "errors": []
+  },
+  "cache": {
+    "status": "PASS",
+    "cache": {
+      "equal": true,
+      "keys": [
+        "duckplan-app-motion-preview-v86"
+      ]
+    },
+    "offlineOffset": 22.9565,
+    "errors": []
+  }
+}

@@ -1,0 +1,399 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.78",
+  "cache": {
+    "name": "duckplan-app-motion-preview-v70",
+    "files": {
+      "calendar-viewport.js": "e1a86a536d8d4a4ea4fb34b2d12d9d710a1a98c9b0b4bbbade7a2cefb8146674",
+      "calendar-date-clarity.css": "49d251722f08bca5e83e192fbfb3ab770ace19b921ed90496467874c6ab72397",
+      "app.js": "0087a7034cd3ac9e09ca48be4d9400dddce0fc396883820aa1961998815d9471",
+      "index.html": "0abdb7dfcdd93c38c6333f502ac9ef73132bb5af82a95b49c354d6001c972240"
+    }
+  },
+  "offlineReloadAndPersistence": true,
+  "dynamicDeadlineBand": true,
+  "resize": [
+    {
+      "width": 320,
+      "height": 568,
+      "visibleLabels": 2,
+      "cutoff": false,
+      "pageOverflow": false,
+      "columns": 1,
+      "rootHeight": 207,
+      "top": 295,
+      "bottom": 399,
+      "calendarView": "week",
+      "phone": true,
+      "axis": {
+        "x": 22,
+        "y": -65,
+        "width": 64,
+        "height": 1488,
+        "top": -65,
+        "right": 86,
+        "bottom": 1423,
+        "left": 22
+      },
+      "labelRects": [
+        {
+          "text": "5:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": 238.125,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 238.125,
+            "right": 77,
+            "bottom": 251.875,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "6:00 AM",
+          "opacity": "1",
+          "rect": {
+            "x": 32.375,
+            "y": 300.125,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 300.125,
+            "right": 77,
+            "bottom": 313.875,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "7:00 AM",
+          "opacity": "1",
+          "rect": {
+            "x": 32.375,
+            "y": 362.125,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 362.125,
+            "right": 77,
+            "bottom": 375.875,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "8:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": 424.125,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 424.125,
+            "right": 77,
+            "bottom": 437.875,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "9:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": 486.125,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 486.125,
+            "right": 77,
+            "bottom": 499.875,
+            "left": 32.375
+          }
+        }
+      ]
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "visibleLabels": 1,
+      "cutoff": false,
+      "pageOverflow": false,
+      "columns": 1,
+      "rootHeight": 116,
+      "top": 185.296875,
+      "bottom": 246.296875,
+      "calendarView": "week",
+      "phone": true,
+      "axis": {
+        "x": 26,
+        "y": -174.703125,
+        "width": 64,
+        "height": 1488,
+        "top": -174.703125,
+        "right": 90,
+        "bottom": 1313.296875,
+        "left": 26
+      },
+      "labelRects": [
+        {
+          "text": "5:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 36.375,
+            "y": 128.421875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 128.421875,
+            "right": 81,
+            "bottom": 142.171875,
+            "left": 36.375
+          }
+        },
+        {
+          "text": "6:00 AM",
+          "opacity": "1",
+          "rect": {
+            "x": 36.375,
+            "y": 190.421875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 190.421875,
+            "right": 81,
+            "bottom": 204.171875,
+            "left": 36.375
+          }
+        },
+        {
+          "text": "7:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 36.375,
+            "y": 252.421875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 252.421875,
+            "right": 81,
+            "bottom": 266.171875,
+            "left": 36.375
+          }
+        },
+        {
+          "text": "8:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 36.375,
+            "y": 314.421875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 314.421875,
+            "right": 81,
+            "bottom": 328.171875,
+            "left": 36.375
+          }
+        },
+        {
+          "text": "9:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 36.375,
+            "y": 376.421875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": 376.421875,
+            "right": 81,
+            "bottom": 390.171875,
+            "left": 36.375
+          }
+        }
+      ]
+    },
+    {
+      "width": 835,
+      "height": 1112,
+      "visibleLabels": 12,
+      "cutoff": false,
+      "pageOverflow": false,
+      "columns": 7,
+      "rootHeight": 922,
+      "top": 277,
+      "bottom": 1078,
+      "calendarView": "week",
+      "phone": false,
+      "axis": {
+        "x": 366,
+        "y": -410,
+        "width": 72,
+        "height": 1488,
+        "top": -410,
+        "right": 438,
+        "bottom": 1078,
+        "left": 366
+      },
+      "labelRects": [
+        {
+          "text": "5:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 380.8125,
+            "y": -107.5,
+            "width": 48.1875,
+            "height": 15,
+            "top": -107.5,
+            "right": 429,
+            "bottom": -92.5,
+            "left": 380.8125
+          }
+        },
+        {
+          "text": "6:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 380.8125,
+            "y": -45.5,
+            "width": 48.1875,
+            "height": 15,
+            "top": -45.5,
+            "right": 429,
+            "bottom": -30.5,
+            "left": 380.8125
+          }
+        },
+        {
+          "text": "7:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 380.8125,
+            "y": 16.5,
+            "width": 48.1875,
+            "height": 15,
+            "top": 16.5,
+            "right": 429,
+            "bottom": 31.5,
+            "left": 380.8125
+          }
+        },
+        {
+          "text": "8:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 380.8125,
+            "y": 78.5,
+            "width": 48.1875,
+            "height": 15,
+            "top": 78.5,
+            "right": 429,
+            "bottom": 93.5,
+            "left": 380.8125
+          }
+        },
+        {
+          "text": "9:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 380.8125,
+            "y": 140.5,
+            "width": 48.1875,
+            "height": 15,
+            "top": 140.5,
+            "right": 429,
+            "bottom": 155.5,
+            "left": 380.8125
+          }
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "visibleLabels": 6,
+      "cutoff": false,
+      "pageOverflow": false,
+      "columns": 1,
+      "rootHeight": 483,
+      "top": 295,
+      "bottom": 675,
+      "calendarView": "week",
+      "phone": true,
+      "axis": {
+        "x": 22,
+        "y": -624,
+        "width": 64,
+        "height": 1488,
+        "top": -624,
+        "right": 86,
+        "bottom": 864,
+        "left": 22
+      },
+      "labelRects": [
+        {
+          "text": "5:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": -320.875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": -320.875,
+            "right": 77,
+            "bottom": -307.125,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "6:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": -258.875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": -258.875,
+            "right": 77,
+            "bottom": -245.125,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "7:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": -196.875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": -196.875,
+            "right": 77,
+            "bottom": -183.125,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "8:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": -134.875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": -134.875,
+            "right": 77,
+            "bottom": -121.125,
+            "left": 32.375
+          }
+        },
+        {
+          "text": "9:00 AM",
+          "opacity": "0",
+          "rect": {
+            "x": 32.375,
+            "y": -72.875,
+            "width": 44.625,
+            "height": 13.75,
+            "top": -72.875,
+            "right": 77,
+            "bottom": -59.125,
+            "left": 32.375
+          }
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "installedPWAClaim": false
+}

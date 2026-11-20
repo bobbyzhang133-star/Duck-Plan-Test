@@ -1,0 +1,50 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "disposable local browser context; touch emulation",
+  "cases": [
+    {
+      "test": "horizontal-header-body-column-alignment",
+      "status": "PASS",
+      "max": 211
+    },
+    {
+      "test": "trusted-touch-body-scroll-fixed-header",
+      "status": "PASS",
+      "scrollTop": 452
+    },
+    {
+      "test": "trusted-touch-header-pans-body-without-header-motion",
+      "status": "PASS"
+    },
+    {
+      "test": "01:00-slot-editor-cancel-and-work-block-reschedule",
+      "status": "PASS"
+    },
+    {
+      "test": "reduced-motion-native-boundary-clamp",
+      "status": "PASS"
+    },
+    {
+      "test": "v92-three-assets-equal-offline-task-and-slot",
+      "status": "PASS",
+      "cache": {
+        "name": "duckplan-app-motion-preview-v92",
+        "results": [
+          {
+            "path": "app.js",
+            "equal": true
+          },
+          {
+            "path": "calendar-viewport.js",
+            "equal": true
+          },
+          {
+            "path": "calendar-date-clarity.css",
+            "equal": true
+          }
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

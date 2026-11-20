@@ -1,0 +1,43 @@
+{
+  "origin": "https://duckplan-latest.ocs-learning.workers.dev",
+  "assets": [
+    {
+      "path": "index.html",
+      "url": "https://duckplan-latest.ocs-learning.workers.dev/",
+      "matches": true,
+      "sha256": "10a03b8e2dff33a2ab6b252f00615fafbe493724fea373f462cfdb4bcaa7d22e"
+    },
+    {
+      "path": "service-worker.js",
+      "url": "https://duckplan-latest.ocs-learning.workers.dev/service-worker.js",
+      "matches": true,
+      "sha256": "57e00119a21ffd7bafe38c31648e14f379eb0eace0490d31bd139a04289f6d5f"
+    },
+    {
+      "path": "calendar-viewport.js",
+      "url": "https://duckplan-latest.ocs-learning.workers.dev/calendar-viewport.js",
+      "matches": true,
+      "sha256": "8ecea3aaa74018467f43bc0b762c958786f5f3726ce6de44de5e08bf5a23138c"
+    },
+    {
+      "path": "calendar-date-clarity.css",
+      "url": "https://duckplan-latest.ocs-learning.workers.dev/calendar-date-clarity.css",
+      "matches": true,
+      "sha256": "30647c5b3f78f463067b517c1b9c31b8ecfb3565ed880a22c9ef483d93411379"
+    },
+    {
+      "path": "planner-library.js",
+      "url": "https://duckplan-latest.ocs-learning.workers.dev/planner-library.js",
+      "matches": true,
+      "sha256": "8e50a4cbf2f1e0face82f83dc55754358376036c3460d863d6828caa038f19e0"
+    },
+    {
+      "path": "planner-store.js",
+      "url": "https://duckplan-latest.ocs-learning.workers.dev/planner-store.js",
+      "matches": true,
+      "sha256": "64b3fab59e377850e219ec1ab50f7f787dd5087b206a61ef1af6ba21b3f936a9"
+    }
+  ],
+  "tlsVerification": "system curl defaults; Python certificate-store check failed, no TLS bypass used",
+  "htmlCanonicalPath": "/index.html redirects to /; canonical root bytes match local index.html"
+}

@@ -1,0 +1,14 @@
+{
+  "baseline": "a8f1bdc",
+  "scope": "current local website only",
+  "cacheVersion": 73,
+  "files": {
+    "landing/app.js": "7a71d4de4299ba61bba0b040b924e912b93c95aeac99917d2fe069f56144e341",
+    "landing/planner-model.js": "25d5997a36fd0df022716433013b3b8e8871ab5ef8fdad6afcd75730148a7601",
+    "landing/calendar-date-presentation.js": "ec1e432db824ed4aee8dd117f933440ca52385a12d4d96c8f15bf1dbbb87c8f0",
+    "landing/calendar-viewport.js": "fa6c615acdc626235d64c8608dde58915657540c899c3ed332e7c67be080d2ff",
+    "landing/calendar-date-clarity.css": "43beb31cb2c89aef83994eeaa400842405d46987d5e78815c177b8a05e211143",
+    "landing/index.html": "953ad120f9940bd7e5b1c4f4bc990018de3ba2fb18493e6971feb29e06be4417",
+    "landing/service-worker.js": "1f575273a6f3dd165fd82f5bf6c1916c6fa1d23a23c9a26ee34fa4d0dff7e545"
+  }
+}

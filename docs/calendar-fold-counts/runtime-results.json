@@ -1,0 +1,716 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local storage and actual browser actions; not native",
+  "results": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "theme": "light",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "header": {
+          "x": 468,
+          "y": 94,
+          "width": 772,
+          "height": 66,
+          "top": 94,
+          "right": 1240,
+          "bottom": 160,
+          "left": 468
+        },
+        "height": 66,
+        "stripHeight": null,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "theme": "dark",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "header": {
+          "x": 468,
+          "y": 94,
+          "width": 772,
+          "height": 66,
+          "top": 94,
+          "right": 1240,
+          "bottom": 160,
+          "left": 468
+        },
+        "height": 66,
+        "stripHeight": null,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1000
+      },
+      "theme": "light",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "header": {
+          "x": 438,
+          "y": 156,
+          "width": 578,
+          "height": 66,
+          "top": 156,
+          "right": 1016,
+          "bottom": 222,
+          "left": 438
+        },
+        "height": 66,
+        "stripHeight": null,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1000
+      },
+      "theme": "dark",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "header": {
+          "x": 438,
+          "y": 156,
+          "width": 578,
+          "height": 66,
+          "top": 156,
+          "right": 1016,
+          "bottom": 222,
+          "left": 438
+        },
+        "height": 66,
+        "stripHeight": null,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "theme": "light",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "header": {
+          "x": 86,
+          "y": 192,
+          "width": 282,
+          "height": 48,
+          "top": 192,
+          "right": 368,
+          "bottom": 240,
+          "left": 86
+        },
+        "height": 48,
+        "stripHeight": 56,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "theme": "dark",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "header": {
+          "x": 86,
+          "y": 192,
+          "width": 282,
+          "height": 48,
+          "top": 192,
+          "right": 368,
+          "bottom": 240,
+          "left": 86
+        },
+        "height": 48,
+        "stripHeight": 56,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": true
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "theme": "light",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "header": {
+          "x": 86,
+          "y": 192,
+          "width": 212,
+          "height": 48,
+          "top": 192,
+          "right": 298,
+          "bottom": 240,
+          "left": 86
+        },
+        "height": 48,
+        "stripHeight": 56,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": false
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "theme": "dark",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "header": {
+          "x": 86,
+          "y": 192,
+          "width": 212,
+          "height": 48,
+          "top": 192,
+          "right": 298,
+          "bottom": 240,
+          "left": 86
+        },
+        "height": 48,
+        "stripHeight": 56,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": false
+      }
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "theme": "light",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(95, 72, 27, 0.25) 0px 5px 9px -5px",
+        "header": {
+          "x": 90,
+          "y": 134,
+          "width": 728,
+          "height": 0,
+          "top": 134,
+          "right": 818,
+          "bottom": 134,
+          "left": 90
+        },
+        "height": 0,
+        "stripHeight": 50,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": false
+      }
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "theme": "dark",
+      "status": "PASS",
+      "summary": [
+        {
+          "date": "2026-11-16",
+          "label": "Monday, November 16. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-17",
+          "label": "Tuesday, November 17. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-18",
+          "label": "Wednesday, November 18. 2 scheduled assignments, 2 deadlines.",
+          "work": "2",
+          "due": "2"
+        },
+        {
+          "date": "2026-11-19",
+          "label": "Thursday, November 19. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-20",
+          "label": "Friday, November 20. 0 scheduled assignments, 1 deadline.",
+          "work": "0",
+          "due": "1"
+        },
+        {
+          "date": "2026-11-21",
+          "label": "Saturday, November 21. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        },
+        {
+          "date": "2026-11-22",
+          "label": "Sunday, November 22. 0 scheduled assignments, 0 deadlines.",
+          "work": "0",
+          "due": "0"
+        }
+      ],
+      "state": {
+        "shadow": true,
+        "fold": "rgba(0, 0, 0, 0.55) 0px 5px 10px -4px",
+        "header": {
+          "x": 90,
+          "y": 134,
+          "width": 728,
+          "height": 0,
+          "top": 134,
+          "right": 818,
+          "bottom": 134,
+          "left": 90
+        },
+        "height": 0,
+        "stripHeight": 50,
+        "overflow": false,
+        "clipped": false,
+        "lineVisible": false
+      }
+    }
+  ]
+}

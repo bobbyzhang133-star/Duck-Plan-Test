@@ -1,0 +1,11 @@
+{
+  "baseline": "5503c1e7950acee5aec9277a35d29dbd769edde6",
+  "scope": "current local website only",
+  "cacheVersion": 71,
+  "files": {
+    "landing/calendar-date-clarity.css": "d72ea8e52e188b6ca397fb11036d8affc560602cffb901a17edc7b65f940f9ca",
+    "landing/calendar-viewport.js": "370b74af68783be4882aa4b7adae1b0551d424732c2dbb001928aaedcc32ce0c",
+    "landing/index.html": "91675079f28d86476bdd92044ff3e10eaa7a77cf327e1af6287a05950456eca3",
+    "landing/service-worker.js": "829d433a30404a077c1232ba1e868d9e6e29fa0e4053798f26a7a8ae0cda9f8d"
+  }
+}

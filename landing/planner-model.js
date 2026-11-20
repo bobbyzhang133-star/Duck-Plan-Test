@@ -140,6 +140,20 @@
     groups.unscheduled.sort((a, b) => (a.dueTime || "99:99").localeCompare(b.dueTime || "99:99"));
     return groups;
   }
+  // Header summaries describe independent work/deadline facts, not the
+  // mutually exclusive groups used by the task list. Never mutate task dates.
+  function daySummary(tasks, date) {
+    const work = new Set(), due = new Set();
+    const parsed = fromDateKey(date);
+    if (!parsed || toDateKey(parsed) !== date) return { workCount: 0, dueCount: 0 };
+    for (const task of Array.isArray(tasks) ? tasks : []) {
+      if (!task || task.completed || task.deleted || task.deleted_at) continue;
+      const identity = task.id ?? task;
+      if (scheduledParts(task)?.date === date) work.add(identity);
+      if (task.dueDate === date) due.add(identity);
+    }
+    return { workCount: work.size, dueCount: due.size };
+  }
   function datesForView(view, selectedDate) {
     if (view === "day") return [selectedDate];
     if (view === "week") return Array.from({ length: 7 }, (_, index) => addDays(startOfWeek(selectedDate), index));
@@ -158,6 +172,7 @@
     DAY_MS,
     addDays,
     datesForView,
+    daySummary,
     deadlineAt,
     fromDateKey,
     groupForDate,

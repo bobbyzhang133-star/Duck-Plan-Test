@@ -1,0 +1,163 @@
+{
+  "tool": "Playwright MCP browser_run_code_unsafe + CDP rendered PNG screencast",
+  "runtime": "Chromium157.0.8103.79 on macOS",
+  "websiteCommit": "653941c",
+  "view": "Week on both sites",
+  "gesture": {
+    "distancePx": 240,
+    "speedPxPerSecond": 1800,
+    "source": "synthesized mouse gesture"
+  },
+  "order": [
+    "googleBefore",
+    "local",
+    "googleAfter"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 12,
+          "firstMotionMs": 65,
+          "firstPeakMs": 184,
+          "returnStartsFromMs": 184,
+          "peakPlateauMs": 0,
+          "returnToBaselineMs": 264,
+          "belowRest": false
+        },
+        "local": {
+          "peakPx": 12,
+          "firstMotionMs": 102,
+          "firstPeakMs": 199,
+          "returnStartsFromMs": 212,
+          "peakPlateauMs": 13,
+          "returnToBaselineMs": 271,
+          "belowRest": false
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "firstMotionMs": 64,
+          "firstPeakMs": 196,
+          "returnStartsFromMs": 196,
+          "peakPlateauMs": 0,
+          "returnToBaselineMs": 263,
+          "belowRest": false
+        }
+      },
+      "comparisons": {
+        "googleBefore": {
+          "peakDifferencePx": 0,
+          "firstMotionDifferenceMs": 37,
+          "releaseAlignedMaxDifferencePx": 1.1838235294117645,
+          "releaseAlignedMeanDifferencePx": 0.36035046067209814,
+          "returnDurationDifferenceMs": 7
+        },
+        "googleAfter": {
+          "peakDifferencePx": 0,
+          "firstMotionDifferenceMs": 38,
+          "releaseAlignedMaxDifferencePx": 1.2895927601809953,
+          "releaseAlignedMeanDifferencePx": 0.32476901960046095,
+          "returnDurationDifferenceMs": 8
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 11,
+          "firstMotionMs": 54,
+          "firstPeakMs": 153,
+          "returnStartsFromMs": 173,
+          "peakPlateauMs": 20,
+          "returnToBaselineMs": 246,
+          "belowRest": false
+        },
+        "local": {
+          "peakPx": 12,
+          "firstMotionMs": 68,
+          "firstPeakMs": 195,
+          "returnStartsFromMs": 208,
+          "peakPlateauMs": 13,
+          "returnToBaselineMs": 270,
+          "belowRest": false
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "firstMotionMs": 58,
+          "firstPeakMs": 172,
+          "returnStartsFromMs": 172,
+          "peakPlateauMs": 0,
+          "returnToBaselineMs": 266,
+          "belowRest": false
+        }
+      },
+      "comparisons": {
+        "googleBefore": {
+          "peakDifferencePx": 1,
+          "firstMotionDifferenceMs": 14,
+          "releaseAlignedMaxDifferencePx": 1.0,
+          "releaseAlignedMeanDifferencePx": 0.4921511748159179,
+          "returnDurationDifferenceMs": 24
+        },
+        "googleAfter": {
+          "peakDifferencePx": 0,
+          "firstMotionDifferenceMs": 10,
+          "releaseAlignedMaxDifferencePx": 1.6911764705882355,
+          "releaseAlignedMeanDifferencePx": 0.6063941293516457,
+          "returnDurationDifferenceMs": 4
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "metrics": {
+        "googleBefore": {
+          "peakPx": 11,
+          "firstMotionMs": 59,
+          "firstPeakMs": 157,
+          "returnStartsFromMs": 178,
+          "peakPlateauMs": 21,
+          "returnToBaselineMs": 247,
+          "belowRest": false
+        },
+        "local": {
+          "peakPx": 12,
+          "firstMotionMs": 70,
+          "firstPeakMs": 199,
+          "returnStartsFromMs": 230,
+          "peakPlateauMs": 31,
+          "returnToBaselineMs": 269,
+          "belowRest": false
+        },
+        "googleAfter": {
+          "peakPx": 12,
+          "firstMotionMs": 73,
+          "firstPeakMs": 193,
+          "returnStartsFromMs": 193,
+          "peakPlateauMs": 0,
+          "returnToBaselineMs": 263,
+          "belowRest": false
+        }
+      },
+      "comparisons": {
+        "googleBefore": {
+          "peakDifferencePx": 1,
+          "firstMotionDifferenceMs": 11,
+          "releaseAlignedMaxDifferencePx": 1.0,
+          "releaseAlignedMeanDifferencePx": 0.47316946778711483,
+          "returnDurationDifferenceMs": 22
+        },
+        "googleAfter": {
+          "peakDifferencePx": 0,
+          "firstMotionDifferenceMs": -3,
+          "releaseAlignedMaxDifferencePx": 1.242647058823529,
+          "releaseAlignedMeanDifferencePx": 0.3812547383625815,
+          "returnDurationDifferenceMs": 6
+        }
+      }
+    }
+  ],
+  "scope": "Authorized public Google Calendar reference; not private calendar or physical trackpad equivalence"
+}

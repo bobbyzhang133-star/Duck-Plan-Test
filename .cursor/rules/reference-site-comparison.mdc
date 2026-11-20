@@ -1,0 +1,21 @@
+---
+description: Inspect the user's named reference and return to it after every implementation or revision to compare the result.
+alwaysApply: true
+---
+
+# Reference-Site Comparison
+
+- Unless the user explicitly requests review only, "use this as a reference" authorizes implementing the requested element and completing the corrective comparison loop. An audit or a list of differences alone does not complete the task.
+- Before tuning, define observable acceptance checks for the requested element, with tolerances appropriate to rendered pixels and frame sampling. Preserve unrelated approved design choices; do not broaden the task to copying the entire reference site.
+- Implement → compare with Playwright MCP → identify remaining mismatches → correct → return to the same reference and compare again. Continue until the requested requirements pass. Do not stop merely because it is "close" or because tests pass while a material reference mismatch remains; do not loosen criteria to manufacture a pass.
+- Finish with evidence of the final comparison and regression checks. Distinguish a verified visual/interaction match from untested physical-device equivalence. A specific access/runtime blocker must be reported honestly; it is not a completed match.
+- Use Playwright MCP for browser-based reference checks when available. Record the tool, actual served version, viewport, input and capture method; use rendered frames for native/compositor rebound instead of relying only on DOM coordinates.
+- Whenever the user names a website as a reference, open the exact relevant page and inspect the requested appearance or interaction before implementation.
+- After each implementation or revision, return to that same reference site, repeat the relevant action, then compare it with DuckPlan. An earlier visit, memory, a screenshot, an embed or a related article does not replace this return visit.
+- For motion, compare the trigger and first gesture, direction, travel/resistance, release delay, return speed, rebound/overshoot and stationary elements. Match browser, input method and viewport where they affect the behavior.
+- Record the reference URL, date, before/after observations, tested runtime/input and remaining differences. Mark the comparison PASS, FAIL or BLOCKED according to actual evidence.
+- If the exact page requires unavailable sign-in/access, or the available input/runtime cannot reproduce the effect, explain that specific limitation and request the recording or access needed. Continue independent work, but leave the dependent implementation/comparison pending instead of guessing a match.
+- If the user explicitly authorizes alternate reference pages, identify the alternate page and apply the same before/after inspection to it. Label its scope; matching a public demo is not proof of equivalence to the private page.
+- Without that authorization, an embed or alternate source supports investigation only. A failed reproduction does not disprove behavior the user observes in another browser; native/compositor motion may require rendered-frame inspection rather than DOM coordinates.
+- Report honestly whether the requested reference behavior was reproduced and matched. Do not claim a verified match or completed reference-based work when the comparison is blocked.
+- Inspect reference UI without modifying the user's records or sending messages to others.

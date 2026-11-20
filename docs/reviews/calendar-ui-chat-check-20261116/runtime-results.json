@@ -1,0 +1,431 @@
+{
+  "runtime": "157.0.8103.78",
+  "sourceCommit": "ca0a00e5e20da741498a63397b760b3961b6f3ea",
+  "mode": "isolated local browser fixtures; no user records",
+  "results": [
+    {
+      "width": 1280,
+      "mode": "day",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 1,
+      "phoneDays": 0,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 464,
+        "y": 415.390625,
+        "width": 773,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 93,
+        "y": 17,
+        "width": 280,
+        "height": 966
+      },
+      "calendarPanel": {
+        "x": 373,
+        "y": 17,
+        "width": 890,
+        "height": 966
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "mode": "week",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 7,
+      "phoneDays": 0,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 464,
+        "y": 415.390625,
+        "width": 105,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 93,
+        "y": 17,
+        "width": 280,
+        "height": 966
+      },
+      "calendarPanel": {
+        "x": 373,
+        "y": 17,
+        "width": 890,
+        "height": 966
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 835,
+      "mode": "day",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 1,
+      "phoneDays": 0,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 434,
+        "y": 461,
+        "width": 368,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 93,
+        "y": 17,
+        "width": 260,
+        "height": 966
+      },
+      "calendarPanel": {
+        "x": 353,
+        "y": 17,
+        "width": 465,
+        "height": 966
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 835,
+      "mode": "week",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 7,
+      "phoneDays": 0,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 434,
+        "y": 461,
+        "width": 105,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 93,
+        "y": 17,
+        "width": 260,
+        "height": 966
+      },
+      "calendarPanel": {
+        "x": 353,
+        "y": 17,
+        "width": 465,
+        "height": 966
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "mode": "day",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 1,
+      "phoneDays": 0,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 74,
+        "y": 401,
+        "width": 291,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 8,
+        "y": 936,
+        "width": 374,
+        "height": 760
+      },
+      "calendarPanel": {
+        "x": 9,
+        "y": 9,
+        "width": 372,
+        "height": 910
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "mode": "week",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 1,
+      "phoneDays": 7,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 74,
+        "y": 465,
+        "width": 291,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 8,
+        "y": 936,
+        "width": 374,
+        "height": 760
+      },
+      "calendarPanel": {
+        "x": 9,
+        "y": 9,
+        "width": 372,
+        "height": 910
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "mode": "day",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 1,
+      "phoneDays": 0,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 74,
+        "y": 401,
+        "width": 221,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 8,
+        "y": 936,
+        "width": 304,
+        "height": 760
+      },
+      "calendarPanel": {
+        "x": 9,
+        "y": 9,
+        "width": 302,
+        "height": 910
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "mode": "week",
+      "status": "PASS",
+      "initial": {
+        "phoneSheetCollapsed": true,
+        "phoneNav": true,
+        "source": [
+          "http://127.0.0.1:8034/app.js?v=native-template-fallback-20261115"
+        ]
+      },
+      "columns": 1,
+      "phoneDays": 7,
+      "topBand": [
+        "Date-only readingEnd of day"
+      ],
+      "points": [
+        {
+          "minute": 1020,
+          "top": 1054
+        },
+        {
+          "minute": 1095,
+          "top": 1131.5
+        }
+      ],
+      "hourHeight": 62,
+      "work": {
+        "x": 74,
+        "y": 465,
+        "width": 221,
+        "height": 62
+      },
+      "workColor": "rgb(255, 243, 191)",
+      "workBorder": "0px",
+      "customColor": "color(srgb 0.898823 0.934118 0.965882)",
+      "taskPanel": {
+        "x": 8,
+        "y": 936,
+        "width": 304,
+        "height": 760
+      },
+      "calendarPanel": {
+        "x": 9,
+        "y": 9,
+        "width": 302,
+        "height": 910
+      },
+      "documentOverflow": false,
+      "hours": 24,
+      "previewActions": true,
+      "pageErrors": []
+    }
+  ]
+}

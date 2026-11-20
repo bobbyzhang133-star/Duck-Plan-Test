@@ -1,0 +1,138 @@
+{
+  "sourceBase": "76516ec",
+  "cache": "duckplan-app-motion-preview-v82",
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local Chromium; phone viewport emulation, not physical Safari/native",
+  "cases": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "day",
+      "theme": "light",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "week",
+      "theme": "light",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "zeroTop": 0,
+      "oneTop": 62,
+      "midnightLabel": "hidden",
+      "hours": 24,
+      "overflow": false
+    }
+  ],
+  "visual": {
+    "midnightPixelBefore": [
+      255,
+      251,
+      228
+    ],
+    "midnightPixelAfter": [
+      238,
+      233,
+      217
+    ],
+    "gutterUnchanged": true
+  },
+  "serviceWorker": {
+    "status": "PASS",
+    "cachedCssMatchesServed": true
+  },
+  "nativePhysicalSignedIn": "NOT RUN"
+}

@@ -1,0 +1,189 @@
+{
+  "sourceBase": "e592335",
+  "cache": "duckplan-app-motion-preview-v81",
+  "functional": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated local browser; phone/iPad emulation, not native or authenticated production",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 160.171875,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 160.171875,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "dynamic empty-band and persistence",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 196,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 196,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "dynamic empty-band and persistence",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 196,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 196,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "dynamic empty-band and persistence",
+        "status": "PASS",
+        "errors": []
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "theme": "light",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 196,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "theme": "dark",
+        "status": "PASS",
+        "compactHeight": 45,
+        "expandedHeight": 196,
+        "scrollPreserved": true
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "dynamic empty-band and persistence",
+        "status": "PASS",
+        "errors": []
+      }
+    ]
+  },
+  "stretchAndOverflow": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "width": 835,
+        "expanded": false,
+        "stretch": "PASS",
+        "headerFixed": true
+      },
+      {
+        "width": 835,
+        "expanded": true,
+        "stretch": "PASS",
+        "headerFixed": true
+      },
+      {
+        "width": 835,
+        "lastOverflowItem": "PASS"
+      },
+      {
+        "width": 390,
+        "expanded": false,
+        "stretch": "PASS",
+        "headerFixed": true
+      },
+      {
+        "width": 390,
+        "expanded": true,
+        "stretch": "PASS",
+        "headerFixed": true
+      },
+      {
+        "width": 390,
+        "lastOverflowItem": "PASS"
+      }
+    ]
+  },
+  "serviceWorker": {
+    "status": "PASS",
+    "matchingAssets": [
+      "app.js",
+      "calendar-date-presentation.js",
+      "calendar-date-clarity.css"
+    ],
+    "offlineExpand": "PASS"
+  },
+  "nativePhysicalSignedIn": "NOT RUN"
+}

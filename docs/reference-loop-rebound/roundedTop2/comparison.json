@@ -1,0 +1,42 @@
+{
+  "phase": "roundedTop2",
+  "status": "PASS",
+  "checks": {
+    "completeCapture": true,
+    "peak": true,
+    "return": true,
+    "firstPaint": true,
+    "path": true,
+    "noExtraOscillation": true
+  },
+  "differences": {
+    "peakPx": 1,
+    "returnMs": 16.6650390625,
+    "firstPaintMs": 0.637939453125,
+    "pathMaxPx": 1.0000937673970407,
+    "pathMeanPx": 0.4725325942202579
+  },
+  "metrics": {
+    "googleBefore": {
+      "peakPx": 12,
+      "returnMs": 266.655029296875,
+      "firstPaintFromInputMs": 8.0361328125,
+      "complete": true,
+      "noExtraOscillation": true
+    },
+    "local": {
+      "peakPx": 12,
+      "returnMs": 266.654052734375,
+      "firstPaintFromInputMs": 14.489013671875,
+      "complete": true,
+      "noExtraOscillation": true
+    },
+    "googleAfter": {
+      "peakPx": 11,
+      "returnMs": 249.989013671875,
+      "firstPaintFromInputMs": 13.85107421875,
+      "complete": true,
+      "noExtraOscillation": true
+    }
+  }
+}

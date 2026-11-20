@@ -1,0 +1,118 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local browser",
+  "results": [
+    {
+      "width": 1280,
+      "mode": "day",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 1280,
+      "mode": "week",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 835,
+      "mode": "day",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 835,
+      "mode": "week",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 390,
+      "mode": "day",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 390,
+      "mode": "week",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 320,
+      "mode": "day",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    },
+    {
+      "width": 320,
+      "mode": "week",
+      "status": "PASS",
+      "state": {
+        "midnightVisibility": "hidden",
+        "nextVisibility": "visible",
+        "hours": 24,
+        "height": 62,
+        "offset": 62,
+        "midnightSlot": true,
+        "slotOffset": 0
+      }
+    }
+  ]
+}

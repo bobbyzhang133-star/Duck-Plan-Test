@@ -1,0 +1,12 @@
+{
+  "tool": "Computer Use; existing in-app browser tab14; native scroll and read-only DOM samples",
+  "loadedViewportScript": "calendar-viewport.js?v=copied-working-spring-20261119",
+  "edge": "bottom",
+  "samples": 110,
+  "maximumPullPx": -48,
+  "observedOvershootPx": 2.80647,
+  "observedNearRestPx": 0.0031688,
+  "headerPositionsPx": [94],
+  "status": "PASS",
+  "scope": "Actual user browser preview; no task mutation; not physical hardware/native iOS acceptance"
+}

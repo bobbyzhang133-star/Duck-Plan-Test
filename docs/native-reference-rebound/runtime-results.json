@@ -1,0 +1,231 @@
+{
+  "date": "2026-11-19",
+  "baseCommit": "efab58d",
+  "node": {
+    "full": 570,
+    "negativeControlFailures": 2,
+    "status": "PASS"
+  },
+  "browser": {
+    "runtime": "157.0.8103.79",
+    "mode": "isolated Chromium macOS with real CDP gestures and responsive/touch emulation; not physical trackpad/native WKWebView",
+    "results": [
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.756
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.756
+      },
+      {
+        "viewport": {
+          "width": 1280,
+          "height": 950
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 835,
+          "height": 1100
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "trusted touch hold and release",
+        "status": "PASS",
+        "held": 21.3642
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "day",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "edge": "top",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "week",
+        "edge": "bottom",
+        "status": "PASS",
+        "peak": 11.7561
+      },
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "mode": "reduced motion, slot editor/cancel, Month, unchanged records",
+        "status": "PASS"
+      }
+    ]
+  },
+  "dragCache": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "case": "real mouse task drag after rebound, reload, preserved deadline",
+        "status": "PASS",
+        "scheduledStart": "2026-11-19T03:00"
+      },
+      {
+        "case": "v89 cache source parity and offline native-style return",
+        "status": "PASS",
+        "duration": 252.60152621764325
+      }
+    ]
+  }
+}

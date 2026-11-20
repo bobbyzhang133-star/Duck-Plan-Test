@@ -1,0 +1,367 @@
+DuckPlan Calendar — Final Source Review
+YES — implemented in the verified source
+
+The current DuckPlan TEST source contains the Calendar redesign we agreed on. I reviewed the exact commit:
+
+View ca0a00e5e20da741498a63397b760b3961b6f3ea on GitHub
+
+There are no confirmed source-level blockers against the agreed Calendar design. I found two smaller areas worth reviewing, but neither justifies rebuilding the interface.
+
+Important distinction: This is a YES for the implementation in source, not an independent PASS for the live page at http://127.0.0.1:8034/#calendar. I cannot access your localhost directly.
+
+1. Feature-by-feature results
+
+Agreed requirement
+
+	
+
+Result
+
+	
+
+Source evidence
+
+
+
+
+Calendar is the default page
+
+	
+
+ YES
+
+	
+
+index.html:96 starts with Calendar active
+
+
+
+
+Desktop/iPad unified task column and timetable
+
+	
+
+ YES
+
+	
+
+index.html:101–115, responsive Calendar styles
+
+
+
+
+Phone full-width Calendar, collapsed Tasks sheet, summary, Add and bottom navigation
+
+	
+
+ YES
+
+	
+
+phone-navigation.css, planner-motion.css:350–405
+
+
+
+
+Phone Week: seven-day selector and one day's timetable
+
+	
+
+ YES
+
+	
+
+app.js:923–950
+
+
+
+
+Full 24-hour timetable
+
+	
+
+ YES
+
+	
+
+planner-ui.js:6–7
+
+
+
+
+Exact-time deadlines inside the time grid
+
+	
+
+ YES
+
+	
+
+calendar-date-presentation.js:59–100
+
+
+
+
+Date-only deadlines in the top band
+
+	
+
+ YES
+
+	
+
+app.js:824–832
+
+
+
+
+Work and deadlines remain separate representations
+
+	
+
+ YES
+
+	
+
+app.js:836–880
+
+
+
+
+Nearby deadlines expandable into full details
+
+	
+
+ YES
+
+	
+
+calendar-date-presentation.js:87–100, calendar-task-preview.js
+
+
+
+
+No duplicate task cards in one selected-day task list
+
+	
+
+ YES
+
+	
+
+planner-model.js:128–140
+
+
+
+
+Due and Work rows, separate warnings
+
+	
+
+ YES
+
+	
+
+app.js:519–550
+
+
+
+
+Calendar opens preview before full editor
+
+	
+
+ YES
+
+	
+
+app.js:1550–1562, calendar-task-preview.js
+
+
+
+
+Preview offers Edit, Reschedule, Complete
+
+	
+
+ YES
+
+	
+
+calendar-task-preview.js:237–269
+
+
+
+
+No colored left stripe on work blocks
+
+	
+
+ YES
+
+	
+
+calendar-date-clarity.css:51–53
+
+
+
+
+Light-yellow Personal, custom class colors and template/drag parity
+
+	
+
+ YES
+
+	
+
+planner-store.js, planner-library.css, calendar-date-clarity.css
+
+
+
+
+Only task-card styling copied from mockup
+
+	
+
+ YES
+
+	
+
+Existing phone timetable retained
+
+
+
+
+Existing Sigma duck and other pages retained
+
+	
+
+ YES
+
+	
+
+Existing layout and assets remain referenced
+
+2. Exact-time deadlines are implemented correctly
+
+This is one of the most important checks.
+
+The current code generates a deadline diamond at the exact minute position in the 24-hour grid.
+
+For example, an assignment with work scheduled from 3:00–4:00 PM and a deadline at 5:15 PM produces two calendar representations:
+
+Friday's timetable
+
+Illustrative layout
+
+3:00 PM
+
+Calculus homework
+
+3:00–4:00 PM · Work
+
+4:00 PM
+
+5:15 PM
+
+Deadline · Calculus homework
+
+The source also handles three harder cases:
+
+Multiple deadlines close together form a grouped control, with an expandable list.
+
+If a deadline label conflicts visually with a work block, the layout reserves a separate annotation area.
+
+A date-only deadline does not get an invented exact-minute marker.
+
+This matches the settled requirement. The older design where all deadlines appeared above the grid has been superseded.
+
+3. Remaining findings, ranked
+P2 — Full Tasks-page Today filter uses only due dates
+
+In landing/app.js:599, the separate Tasks page's Today filter still checks:
+
+JavaScript
+task.dueDate === nowKey() && !task.completed
+
+That means an assignment scheduled for work today but due tomorrow is not included in that particular Today filter.
+
+This does not violate the agreed Calendar task-panel behavior, which uses a separate grouping system. But it is a consistency issue for the overall product.
+
+Recommendation: Later, decide whether Today on the Tasks page means due today, planned today, or both. I would lean toward both, with separate labels.
+
+P2 — Dense deadline/work collisions reduce the work block's width
+
+In landing/app.js:852–871, a work cluster sharing vertical space with a deadline annotation gets approximately 56% of the column width.
+
+This is an intentional collision-handling strategy, and the implementation preserves both objects' interactions. It is not a confirmed bug.
+
+However, a busy seven-column Week view could produce narrow work blocks with truncated titles.
+
+Recommendation: During your local browser check, inspect a day containing overlapping work sessions and several nearby exact-time deadlines. If it feels cramped, refine the collision presentation rather than removing either item.
+
+No longer an issue — “Due, not scheduled” heading
+
+My preceding review flagged this heading as misleading.
+
+The exact current source already fixes it. index.html:109 now uses “Due this day.”
+
+That is the correct wording because the section can contain tasks due on the selected day even when work is scheduled for another day.
+
+No additional change is needed.
+
+4. Files and evidence reviewed
+
+I directly retrieved the following source files from the exact GitHub commit: app.js, planner-model.js, calendar-date-presentation.js, calendar-date-clarity.css, calendar-task-preview.js, calendar-task-preview.css, planner-library.js, planner-library.css, styles.css, index.html, plus the related responsive and store code.
+
+The requested landing/task-date-cards.css does not exist in this commit. Its functionality is implemented in landing/calendar-date-clarity.css.
+
+I also read the documentation in:
+
+docs/timed-deadline-markers/
+
+docs/task-date-cards/
+
+docs/calendar-date-clarity/RESUME-2026-11-15.md
+
+docs/design-parity-library/
+
+docs/native-template-fallback/
+
+Those records report passing targeted tests, including exact-minute markers, task-card handling, 320px/390px phone layouts, 835px tablet layout, dark mode, offline reloads and selected native QA checks.
+
+These are historical test results, not tests I reran. They also do not establish that your current localhost browser has loaded the exact assets or that a physical phone is running the updated version.
+
+5. What I would verify in your local browser
+
+Since you're independently checking 127.0.0.1:8034, these are the most valuable visual checks:
+
+Set one task due at 5:15 PM and work from 3:00–4:00 PM. Confirm the deadline diamond appears at 5:15, separately from the work block.
+
+Put three or more deadlines within a short interval. Confirm grouping opens every deadline without hiding another control.
+
+Schedule an overdue task for today. Confirm it appears only once in the task panel, with both Due/Work rows and a warning.
+
+Check a narrow Week layout and phone Week selector. Confirm the phone shows one selected day, not a seven-column timetable.
+
+Compare Personal, custom-class and template work blocks. Confirm consistent fills and no colored left stripe.
+
+Final verdict
+
+YES — the agreed Calendar UI is implemented in the exact current source.
+
+Live localhost visual verification remains outstanding.
+
+I do not recommend further structural Calendar changes based on this source review. The only confirmed adjacent inconsistency is the separate Tasks-page Today filter; crowded deadline collisions are worth evaluating visually.
+
+Review only: No code, GitHub files, local browser state, task records, deployment, migration or native application was changed.
+
+ChatGPT can make mistakes. Check important info.
+Latest response
+
+
+
+
+Thinking effort
+High
+Response complete

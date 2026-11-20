@@ -1,0 +1,3468 @@
+{
+  "runtime": "157.0.8103.79",
+  "reference": "e592335 first 440ms spring, local8039",
+  "results": [
+    {
+      "edge": "top",
+      "before": {
+        "port": 8039,
+        "width": 1156,
+        "bottom": false,
+        "status": "PASS",
+        "pull": 42,
+        "duration": 440,
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "translate3d(0px, 42px, 0px)"
+          },
+          {
+            "offset": 0.016666666666666666,
+            "transform": "translate3d(0px, 41.7212px, 0px)"
+          },
+          {
+            "offset": 0.03333333333333333,
+            "transform": "translate3d(0px, 40.9437px, 0px)"
+          },
+          {
+            "offset": 0.05,
+            "transform": "translate3d(0px, 39.7506px, 0px)"
+          },
+          {
+            "offset": 0.06666666666666667,
+            "transform": "translate3d(0px, 38.2183px, 0px)"
+          },
+          {
+            "offset": 0.08333333333333333,
+            "transform": "translate3d(0px, 36.4164px, 0px)"
+          },
+          {
+            "offset": 0.1,
+            "transform": "translate3d(0px, 34.4077px, 0px)"
+          },
+          {
+            "offset": 0.11666666666666667,
+            "transform": "translate3d(0px, 32.2486px, 0px)"
+          },
+          {
+            "offset": 0.13333333333333333,
+            "transform": "translate3d(0px, 29.9889px, 0px)"
+          },
+          {
+            "offset": 0.15,
+            "transform": "translate3d(0px, 27.6728px, 0px)"
+          },
+          {
+            "offset": 0.16666666666666666,
+            "transform": "translate3d(0px, 25.3383px, 0px)"
+          },
+          {
+            "offset": 0.18333333333333332,
+            "transform": "translate3d(0px, 23.0184px, 0px)"
+          },
+          {
+            "offset": 0.2,
+            "transform": "translate3d(0px, 20.7409px, 0px)"
+          },
+          {
+            "offset": 0.21666666666666667,
+            "transform": "translate3d(0px, 18.5292px, 0px)"
+          },
+          {
+            "offset": 0.23333333333333334,
+            "transform": "translate3d(0px, 16.4021px, 0px)"
+          },
+          {
+            "offset": 0.25,
+            "transform": "translate3d(0px, 14.3748px, 0px)"
+          },
+          {
+            "offset": 0.26666666666666666,
+            "transform": "translate3d(0px, 12.4588px, 0px)"
+          },
+          {
+            "offset": 0.2833333333333333,
+            "transform": "translate3d(0px, 10.6627px, 0px)"
+          },
+          {
+            "offset": 0.3,
+            "transform": "translate3d(0px, 8.99195px, 0px)"
+          },
+          {
+            "offset": 0.31666666666666665,
+            "transform": "translate3d(0px, 7.44992px, 0px)"
+          },
+          {
+            "offset": 0.3333333333333333,
+            "transform": "translate3d(0px, 6.03767px, 0px)"
+          },
+          {
+            "offset": 0.35,
+            "transform": "translate3d(0px, 4.7544px, 0px)"
+          },
+          {
+            "offset": 0.36666666666666664,
+            "transform": "translate3d(0px, 3.5978px, 0px)"
+          },
+          {
+            "offset": 0.38333333333333336,
+            "transform": "translate3d(0px, 2.56427px, 0px)"
+          },
+          {
+            "offset": 0.4,
+            "transform": "translate3d(0px, 1.64913px, 0px)"
+          },
+          {
+            "offset": 0.4166666666666667,
+            "transform": "translate3d(0px, 0.846846px, 0px)"
+          },
+          {
+            "offset": 0.43333333333333335,
+            "transform": "translate3d(0px, 0.151284px, 0px)"
+          },
+          {
+            "offset": 0.45,
+            "transform": "translate3d(0px, -0.444276px, 0px)"
+          },
+          {
+            "offset": 0.4666666666666667,
+            "transform": "translate3d(0px, -0.946764px, 0px)"
+          },
+          {
+            "offset": 0.48333333333333334,
+            "transform": "translate3d(0px, -1.36332px, 0px)"
+          },
+          {
+            "offset": 0.5,
+            "transform": "translate3d(0px, -1.70117px, 0px)"
+          },
+          {
+            "offset": 0.5166666666666667,
+            "transform": "translate3d(0px, -1.96745px, 0px)"
+          },
+          {
+            "offset": 0.5333333333333333,
+            "transform": "translate3d(0px, -2.16926px, 0px)"
+          },
+          {
+            "offset": 0.55,
+            "transform": "translate3d(0px, -2.3134px, 0px)"
+          },
+          {
+            "offset": 0.5666666666666667,
+            "transform": "translate3d(0px, -2.40652px, 0px)"
+          },
+          {
+            "offset": 0.5833333333333334,
+            "transform": "translate3d(0px, -2.45482px, 0px)"
+          },
+          {
+            "offset": 0.6,
+            "transform": "translate3d(0px, -2.46431px, 0px)"
+          },
+          {
+            "offset": 0.6166666666666667,
+            "transform": "translate3d(0px, -2.44054px, 0px)"
+          },
+          {
+            "offset": 0.6333333333333333,
+            "transform": "translate3d(0px, -2.38867px, 0px)"
+          },
+          {
+            "offset": 0.65,
+            "transform": "translate3d(0px, -2.31353px, 0px)"
+          },
+          {
+            "offset": 0.6666666666666666,
+            "transform": "translate3d(0px, -2.21945px, 0px)"
+          },
+          {
+            "offset": 0.6833333333333333,
+            "transform": "translate3d(0px, -2.1105px, 0px)"
+          },
+          {
+            "offset": 0.7,
+            "transform": "translate3d(0px, -1.99021px, 0px)"
+          },
+          {
+            "offset": 0.7166666666666667,
+            "transform": "translate3d(0px, -1.86182px, 0px)"
+          },
+          {
+            "offset": 0.7333333333333333,
+            "transform": "translate3d(0px, -1.72817px, 0px)"
+          },
+          {
+            "offset": 0.75,
+            "transform": "translate3d(0px, -1.59176px, 0px)"
+          },
+          {
+            "offset": 0.7666666666666667,
+            "transform": "translate3d(0px, -1.4548px, 0px)"
+          },
+          {
+            "offset": 0.7833333333333333,
+            "transform": "translate3d(0px, -1.31909px, 0px)"
+          },
+          {
+            "offset": 0.8,
+            "transform": "translate3d(0px, -1.18621px, 0px)"
+          },
+          {
+            "offset": 0.8166666666666667,
+            "transform": "translate3d(0px, -1.05563px, 0px)"
+          },
+          {
+            "offset": 0.8333333333333334,
+            "transform": "translate3d(0px, -0.92148px, 0px)"
+          },
+          {
+            "offset": 0.85,
+            "transform": "translate3d(0px, -0.781158px, 0px)"
+          },
+          {
+            "offset": 0.8666666666666667,
+            "transform": "translate3d(0px, -0.636594px, 0px)"
+          },
+          {
+            "offset": 0.8833333333333333,
+            "transform": "translate3d(0px, -0.492828px, 0px)"
+          },
+          {
+            "offset": 0.9,
+            "transform": "translate3d(0px, -0.356832px, 0px)"
+          },
+          {
+            "offset": 0.9166666666666666,
+            "transform": "translate3d(0px, -0.236124px, 0px)"
+          },
+          {
+            "offset": 0.9333333333333333,
+            "transform": "translate3d(0px, -0.137424px, 0px)"
+          },
+          {
+            "offset": 0.95,
+            "transform": "translate3d(0px, -0.0655619px, 0px)"
+          },
+          {
+            "offset": 0.9666666666666667,
+            "transform": "translate3d(0px, -0.02184px, 0px)"
+          },
+          {
+            "offset": 0.9833333333333333,
+            "transform": "translate3d(0px, -0.0030659px, 0px)"
+          },
+          {
+            "offset": 1,
+            "transform": "translate3d(0px, 0px, 0px)"
+          }
+        ],
+        "target": "timeline-calendar",
+        "animationCount": 3,
+        "samples": [
+          {
+            "time": 0,
+            "offset": 42,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": 5.45436,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": -1.21185,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": -2.46431,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": -1.22245,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": -0.00989285,
+            "header": 94
+          }
+        ]
+      },
+      "local": {
+        "port": 8034,
+        "width": 1156,
+        "bottom": false,
+        "status": "PASS",
+        "pull": 42,
+        "duration": 440,
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "translate3d(0px, 42px, 0px)"
+          },
+          {
+            "offset": 0.016666666666666666,
+            "transform": "translate3d(0px, 41.7212px, 0px)"
+          },
+          {
+            "offset": 0.03333333333333333,
+            "transform": "translate3d(0px, 40.9437px, 0px)"
+          },
+          {
+            "offset": 0.05,
+            "transform": "translate3d(0px, 39.7506px, 0px)"
+          },
+          {
+            "offset": 0.06666666666666667,
+            "transform": "translate3d(0px, 38.2183px, 0px)"
+          },
+          {
+            "offset": 0.08333333333333333,
+            "transform": "translate3d(0px, 36.4164px, 0px)"
+          },
+          {
+            "offset": 0.1,
+            "transform": "translate3d(0px, 34.4077px, 0px)"
+          },
+          {
+            "offset": 0.11666666666666667,
+            "transform": "translate3d(0px, 32.2486px, 0px)"
+          },
+          {
+            "offset": 0.13333333333333333,
+            "transform": "translate3d(0px, 29.9889px, 0px)"
+          },
+          {
+            "offset": 0.15,
+            "transform": "translate3d(0px, 27.6728px, 0px)"
+          },
+          {
+            "offset": 0.16666666666666666,
+            "transform": "translate3d(0px, 25.3383px, 0px)"
+          },
+          {
+            "offset": 0.18333333333333332,
+            "transform": "translate3d(0px, 23.0184px, 0px)"
+          },
+          {
+            "offset": 0.2,
+            "transform": "translate3d(0px, 20.7409px, 0px)"
+          },
+          {
+            "offset": 0.21666666666666667,
+            "transform": "translate3d(0px, 18.5292px, 0px)"
+          },
+          {
+            "offset": 0.23333333333333334,
+            "transform": "translate3d(0px, 16.4021px, 0px)"
+          },
+          {
+            "offset": 0.25,
+            "transform": "translate3d(0px, 14.3748px, 0px)"
+          },
+          {
+            "offset": 0.26666666666666666,
+            "transform": "translate3d(0px, 12.4588px, 0px)"
+          },
+          {
+            "offset": 0.2833333333333333,
+            "transform": "translate3d(0px, 10.6627px, 0px)"
+          },
+          {
+            "offset": 0.3,
+            "transform": "translate3d(0px, 8.99195px, 0px)"
+          },
+          {
+            "offset": 0.31666666666666665,
+            "transform": "translate3d(0px, 7.44992px, 0px)"
+          },
+          {
+            "offset": 0.3333333333333333,
+            "transform": "translate3d(0px, 6.03767px, 0px)"
+          },
+          {
+            "offset": 0.35,
+            "transform": "translate3d(0px, 4.7544px, 0px)"
+          },
+          {
+            "offset": 0.36666666666666664,
+            "transform": "translate3d(0px, 3.5978px, 0px)"
+          },
+          {
+            "offset": 0.38333333333333336,
+            "transform": "translate3d(0px, 2.56427px, 0px)"
+          },
+          {
+            "offset": 0.4,
+            "transform": "translate3d(0px, 1.64913px, 0px)"
+          },
+          {
+            "offset": 0.4166666666666667,
+            "transform": "translate3d(0px, 0.846846px, 0px)"
+          },
+          {
+            "offset": 0.43333333333333335,
+            "transform": "translate3d(0px, 0.151284px, 0px)"
+          },
+          {
+            "offset": 0.45,
+            "transform": "translate3d(0px, -0.444276px, 0px)"
+          },
+          {
+            "offset": 0.4666666666666667,
+            "transform": "translate3d(0px, -0.946764px, 0px)"
+          },
+          {
+            "offset": 0.48333333333333334,
+            "transform": "translate3d(0px, -1.36332px, 0px)"
+          },
+          {
+            "offset": 0.5,
+            "transform": "translate3d(0px, -1.70117px, 0px)"
+          },
+          {
+            "offset": 0.5166666666666667,
+            "transform": "translate3d(0px, -1.96745px, 0px)"
+          },
+          {
+            "offset": 0.5333333333333333,
+            "transform": "translate3d(0px, -2.16926px, 0px)"
+          },
+          {
+            "offset": 0.55,
+            "transform": "translate3d(0px, -2.3134px, 0px)"
+          },
+          {
+            "offset": 0.5666666666666667,
+            "transform": "translate3d(0px, -2.40652px, 0px)"
+          },
+          {
+            "offset": 0.5833333333333334,
+            "transform": "translate3d(0px, -2.45482px, 0px)"
+          },
+          {
+            "offset": 0.6,
+            "transform": "translate3d(0px, -2.46431px, 0px)"
+          },
+          {
+            "offset": 0.6166666666666667,
+            "transform": "translate3d(0px, -2.44054px, 0px)"
+          },
+          {
+            "offset": 0.6333333333333333,
+            "transform": "translate3d(0px, -2.38867px, 0px)"
+          },
+          {
+            "offset": 0.65,
+            "transform": "translate3d(0px, -2.31353px, 0px)"
+          },
+          {
+            "offset": 0.6666666666666666,
+            "transform": "translate3d(0px, -2.21945px, 0px)"
+          },
+          {
+            "offset": 0.6833333333333333,
+            "transform": "translate3d(0px, -2.1105px, 0px)"
+          },
+          {
+            "offset": 0.7,
+            "transform": "translate3d(0px, -1.99021px, 0px)"
+          },
+          {
+            "offset": 0.7166666666666667,
+            "transform": "translate3d(0px, -1.86182px, 0px)"
+          },
+          {
+            "offset": 0.7333333333333333,
+            "transform": "translate3d(0px, -1.72817px, 0px)"
+          },
+          {
+            "offset": 0.75,
+            "transform": "translate3d(0px, -1.59176px, 0px)"
+          },
+          {
+            "offset": 0.7666666666666667,
+            "transform": "translate3d(0px, -1.4548px, 0px)"
+          },
+          {
+            "offset": 0.7833333333333333,
+            "transform": "translate3d(0px, -1.31909px, 0px)"
+          },
+          {
+            "offset": 0.8,
+            "transform": "translate3d(0px, -1.18621px, 0px)"
+          },
+          {
+            "offset": 0.8166666666666667,
+            "transform": "translate3d(0px, -1.05563px, 0px)"
+          },
+          {
+            "offset": 0.8333333333333334,
+            "transform": "translate3d(0px, -0.92148px, 0px)"
+          },
+          {
+            "offset": 0.85,
+            "transform": "translate3d(0px, -0.781158px, 0px)"
+          },
+          {
+            "offset": 0.8666666666666667,
+            "transform": "translate3d(0px, -0.636594px, 0px)"
+          },
+          {
+            "offset": 0.8833333333333333,
+            "transform": "translate3d(0px, -0.492828px, 0px)"
+          },
+          {
+            "offset": 0.9,
+            "transform": "translate3d(0px, -0.356832px, 0px)"
+          },
+          {
+            "offset": 0.9166666666666666,
+            "transform": "translate3d(0px, -0.236124px, 0px)"
+          },
+          {
+            "offset": 0.9333333333333333,
+            "transform": "translate3d(0px, -0.137424px, 0px)"
+          },
+          {
+            "offset": 0.95,
+            "transform": "translate3d(0px, -0.0655619px, 0px)"
+          },
+          {
+            "offset": 0.9666666666666667,
+            "transform": "translate3d(0px, -0.02184px, 0px)"
+          },
+          {
+            "offset": 0.9833333333333333,
+            "transform": "translate3d(0px, -0.0030659px, 0px)"
+          },
+          {
+            "offset": 1,
+            "transform": "translate3d(0px, 0px, 0px)"
+          }
+        ],
+        "target": "calendar-body-grid",
+        "animationCount": 1,
+        "samples": [
+          {
+            "time": 0,
+            "offset": 42,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": 5.45436,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": -1.21185,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": -2.46431,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": -1.22245,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": -0.00989285,
+            "header": 94
+          }
+        ]
+      },
+      "after": {
+        "port": 8039,
+        "width": 1156,
+        "bottom": false,
+        "status": "PASS",
+        "pull": 42,
+        "duration": 440,
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "translate3d(0px, 42px, 0px)"
+          },
+          {
+            "offset": 0.016666666666666666,
+            "transform": "translate3d(0px, 41.7212px, 0px)"
+          },
+          {
+            "offset": 0.03333333333333333,
+            "transform": "translate3d(0px, 40.9437px, 0px)"
+          },
+          {
+            "offset": 0.05,
+            "transform": "translate3d(0px, 39.7506px, 0px)"
+          },
+          {
+            "offset": 0.06666666666666667,
+            "transform": "translate3d(0px, 38.2183px, 0px)"
+          },
+          {
+            "offset": 0.08333333333333333,
+            "transform": "translate3d(0px, 36.4164px, 0px)"
+          },
+          {
+            "offset": 0.1,
+            "transform": "translate3d(0px, 34.4077px, 0px)"
+          },
+          {
+            "offset": 0.11666666666666667,
+            "transform": "translate3d(0px, 32.2486px, 0px)"
+          },
+          {
+            "offset": 0.13333333333333333,
+            "transform": "translate3d(0px, 29.9889px, 0px)"
+          },
+          {
+            "offset": 0.15,
+            "transform": "translate3d(0px, 27.6728px, 0px)"
+          },
+          {
+            "offset": 0.16666666666666666,
+            "transform": "translate3d(0px, 25.3383px, 0px)"
+          },
+          {
+            "offset": 0.18333333333333332,
+            "transform": "translate3d(0px, 23.0184px, 0px)"
+          },
+          {
+            "offset": 0.2,
+            "transform": "translate3d(0px, 20.7409px, 0px)"
+          },
+          {
+            "offset": 0.21666666666666667,
+            "transform": "translate3d(0px, 18.5292px, 0px)"
+          },
+          {
+            "offset": 0.23333333333333334,
+            "transform": "translate3d(0px, 16.4021px, 0px)"
+          },
+          {
+            "offset": 0.25,
+            "transform": "translate3d(0px, 14.3748px, 0px)"
+          },
+          {
+            "offset": 0.26666666666666666,
+            "transform": "translate3d(0px, 12.4588px, 0px)"
+          },
+          {
+            "offset": 0.2833333333333333,
+            "transform": "translate3d(0px, 10.6627px, 0px)"
+          },
+          {
+            "offset": 0.3,
+            "transform": "translate3d(0px, 8.99195px, 0px)"
+          },
+          {
+            "offset": 0.31666666666666665,
+            "transform": "translate3d(0px, 7.44992px, 0px)"
+          },
+          {
+            "offset": 0.3333333333333333,
+            "transform": "translate3d(0px, 6.03767px, 0px)"
+          },
+          {
+            "offset": 0.35,
+            "transform": "translate3d(0px, 4.7544px, 0px)"
+          },
+          {
+            "offset": 0.36666666666666664,
+            "transform": "translate3d(0px, 3.5978px, 0px)"
+          },
+          {
+            "offset": 0.38333333333333336,
+            "transform": "translate3d(0px, 2.56427px, 0px)"
+          },
+          {
+            "offset": 0.4,
+            "transform": "translate3d(0px, 1.64913px, 0px)"
+          },
+          {
+            "offset": 0.4166666666666667,
+            "transform": "translate3d(0px, 0.846846px, 0px)"
+          },
+          {
+            "offset": 0.43333333333333335,
+            "transform": "translate3d(0px, 0.151284px, 0px)"
+          },
+          {
+            "offset": 0.45,
+            "transform": "translate3d(0px, -0.444276px, 0px)"
+          },
+          {
+            "offset": 0.4666666666666667,
+            "transform": "translate3d(0px, -0.946764px, 0px)"
+          },
+          {
+            "offset": 0.48333333333333334,
+            "transform": "translate3d(0px, -1.36332px, 0px)"
+          },
+          {
+            "offset": 0.5,
+            "transform": "translate3d(0px, -1.70117px, 0px)"
+          },
+          {
+            "offset": 0.5166666666666667,
+            "transform": "translate3d(0px, -1.96745px, 0px)"
+          },
+          {
+            "offset": 0.5333333333333333,
+            "transform": "translate3d(0px, -2.16926px, 0px)"
+          },
+          {
+            "offset": 0.55,
+            "transform": "translate3d(0px, -2.3134px, 0px)"
+          },
+          {
+            "offset": 0.5666666666666667,
+            "transform": "translate3d(0px, -2.40652px, 0px)"
+          },
+          {
+            "offset": 0.5833333333333334,
+            "transform": "translate3d(0px, -2.45482px, 0px)"
+          },
+          {
+            "offset": 0.6,
+            "transform": "translate3d(0px, -2.46431px, 0px)"
+          },
+          {
+            "offset": 0.6166666666666667,
+            "transform": "translate3d(0px, -2.44054px, 0px)"
+          },
+          {
+            "offset": 0.6333333333333333,
+            "transform": "translate3d(0px, -2.38867px, 0px)"
+          },
+          {
+            "offset": 0.65,
+            "transform": "translate3d(0px, -2.31353px, 0px)"
+          },
+          {
+            "offset": 0.6666666666666666,
+            "transform": "translate3d(0px, -2.21945px, 0px)"
+          },
+          {
+            "offset": 0.6833333333333333,
+            "transform": "translate3d(0px, -2.1105px, 0px)"
+          },
+          {
+            "offset": 0.7,
+            "transform": "translate3d(0px, -1.99021px, 0px)"
+          },
+          {
+            "offset": 0.7166666666666667,
+            "transform": "translate3d(0px, -1.86182px, 0px)"
+          },
+          {
+            "offset": 0.7333333333333333,
+            "transform": "translate3d(0px, -1.72817px, 0px)"
+          },
+          {
+            "offset": 0.75,
+            "transform": "translate3d(0px, -1.59176px, 0px)"
+          },
+          {
+            "offset": 0.7666666666666667,
+            "transform": "translate3d(0px, -1.4548px, 0px)"
+          },
+          {
+            "offset": 0.7833333333333333,
+            "transform": "translate3d(0px, -1.31909px, 0px)"
+          },
+          {
+            "offset": 0.8,
+            "transform": "translate3d(0px, -1.18621px, 0px)"
+          },
+          {
+            "offset": 0.8166666666666667,
+            "transform": "translate3d(0px, -1.05563px, 0px)"
+          },
+          {
+            "offset": 0.8333333333333334,
+            "transform": "translate3d(0px, -0.92148px, 0px)"
+          },
+          {
+            "offset": 0.85,
+            "transform": "translate3d(0px, -0.781158px, 0px)"
+          },
+          {
+            "offset": 0.8666666666666667,
+            "transform": "translate3d(0px, -0.636594px, 0px)"
+          },
+          {
+            "offset": 0.8833333333333333,
+            "transform": "translate3d(0px, -0.492828px, 0px)"
+          },
+          {
+            "offset": 0.9,
+            "transform": "translate3d(0px, -0.356832px, 0px)"
+          },
+          {
+            "offset": 0.9166666666666666,
+            "transform": "translate3d(0px, -0.236124px, 0px)"
+          },
+          {
+            "offset": 0.9333333333333333,
+            "transform": "translate3d(0px, -0.137424px, 0px)"
+          },
+          {
+            "offset": 0.95,
+            "transform": "translate3d(0px, -0.0655619px, 0px)"
+          },
+          {
+            "offset": 0.9666666666666667,
+            "transform": "translate3d(0px, -0.02184px, 0px)"
+          },
+          {
+            "offset": 0.9833333333333333,
+            "transform": "translate3d(0px, -0.0030659px, 0px)"
+          },
+          {
+            "offset": 1,
+            "transform": "translate3d(0px, 0px, 0px)"
+          }
+        ],
+        "target": "timeline-calendar",
+        "animationCount": 3,
+        "samples": [
+          {
+            "time": 0,
+            "offset": 42,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": 5.45436,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": -1.21185,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": -2.46431,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": -1.22245,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": -0.00989285,
+            "header": 94
+          }
+        ]
+      }
+    },
+    {
+      "edge": "bottom",
+      "before": {
+        "port": 8039,
+        "width": 1156,
+        "bottom": true,
+        "status": "PASS",
+        "pull": -42,
+        "duration": 440,
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "translate3d(0px, -42px, 0px)"
+          },
+          {
+            "offset": 0.016666666666666666,
+            "transform": "translate3d(0px, -41.7212px, 0px)"
+          },
+          {
+            "offset": 0.03333333333333333,
+            "transform": "translate3d(0px, -40.9437px, 0px)"
+          },
+          {
+            "offset": 0.05,
+            "transform": "translate3d(0px, -39.7506px, 0px)"
+          },
+          {
+            "offset": 0.06666666666666667,
+            "transform": "translate3d(0px, -38.2183px, 0px)"
+          },
+          {
+            "offset": 0.08333333333333333,
+            "transform": "translate3d(0px, -36.4164px, 0px)"
+          },
+          {
+            "offset": 0.1,
+            "transform": "translate3d(0px, -34.4077px, 0px)"
+          },
+          {
+            "offset": 0.11666666666666667,
+            "transform": "translate3d(0px, -32.2486px, 0px)"
+          },
+          {
+            "offset": 0.13333333333333333,
+            "transform": "translate3d(0px, -29.9889px, 0px)"
+          },
+          {
+            "offset": 0.15,
+            "transform": "translate3d(0px, -27.6728px, 0px)"
+          },
+          {
+            "offset": 0.16666666666666666,
+            "transform": "translate3d(0px, -25.3383px, 0px)"
+          },
+          {
+            "offset": 0.18333333333333332,
+            "transform": "translate3d(0px, -23.0184px, 0px)"
+          },
+          {
+            "offset": 0.2,
+            "transform": "translate3d(0px, -20.7409px, 0px)"
+          },
+          {
+            "offset": 0.21666666666666667,
+            "transform": "translate3d(0px, -18.5292px, 0px)"
+          },
+          {
+            "offset": 0.23333333333333334,
+            "transform": "translate3d(0px, -16.4021px, 0px)"
+          },
+          {
+            "offset": 0.25,
+            "transform": "translate3d(0px, -14.3748px, 0px)"
+          },
+          {
+            "offset": 0.26666666666666666,
+            "transform": "translate3d(0px, -12.4588px, 0px)"
+          },
+          {
+            "offset": 0.2833333333333333,
+            "transform": "translate3d(0px, -10.6627px, 0px)"
+          },
+          {
+            "offset": 0.3,
+            "transform": "translate3d(0px, -8.99195px, 0px)"
+          },
+          {
+            "offset": 0.31666666666666665,
+            "transform": "translate3d(0px, -7.44992px, 0px)"
+          },
+          {
+            "offset": 0.3333333333333333,
+            "transform": "translate3d(0px, -6.03767px, 0px)"
+          },
+          {
+            "offset": 0.35,
+            "transform": "translate3d(0px, -4.7544px, 0px)"
+          },
+          {
+            "offset": 0.36666666666666664,
+            "transform": "translate3d(0px, -3.5978px, 0px)"
+          },
+          {
+            "offset": 0.38333333333333336,
+            "transform": "translate3d(0px, -2.56427px, 0px)"
+          },
+          {
+            "offset": 0.4,
+            "transform": "translate3d(0px, -1.64913px, 0px)"
+          },
+          {
+            "offset": 0.4166666666666667,
+            "transform": "translate3d(0px, -0.846846px, 0px)"
+          },
+          {
+            "offset": 0.43333333333333335,
+            "transform": "translate3d(0px, -0.151284px, 0px)"
+          },
+          {
+            "offset": 0.45,
+            "transform": "translate3d(0px, 0.444276px, 0px)"
+          },
+          {
+            "offset": 0.4666666666666667,
+            "transform": "translate3d(0px, 0.946764px, 0px)"
+          },
+          {
+            "offset": 0.48333333333333334,
+            "transform": "translate3d(0px, 1.36332px, 0px)"
+          },
+          {
+            "offset": 0.5,
+            "transform": "translate3d(0px, 1.70117px, 0px)"
+          },
+          {
+            "offset": 0.5166666666666667,
+            "transform": "translate3d(0px, 1.96745px, 0px)"
+          },
+          {
+            "offset": 0.5333333333333333,
+            "transform": "translate3d(0px, 2.16926px, 0px)"
+          },
+          {
+            "offset": 0.55,
+            "transform": "translate3d(0px, 2.3134px, 0px)"
+          },
+          {
+            "offset": 0.5666666666666667,
+            "transform": "translate3d(0px, 2.40652px, 0px)"
+          },
+          {
+            "offset": 0.5833333333333334,
+            "transform": "translate3d(0px, 2.45482px, 0px)"
+          },
+          {
+            "offset": 0.6,
+            "transform": "translate3d(0px, 2.46431px, 0px)"
+          },
+          {
+            "offset": 0.6166666666666667,
+            "transform": "translate3d(0px, 2.44054px, 0px)"
+          },
+          {
+            "offset": 0.6333333333333333,
+            "transform": "translate3d(0px, 2.38867px, 0px)"
+          },
+          {
+            "offset": 0.65,
+            "transform": "translate3d(0px, 2.31353px, 0px)"
+          },
+          {
+            "offset": 0.6666666666666666,
+            "transform": "translate3d(0px, 2.21945px, 0px)"
+          },
+          {
+            "offset": 0.6833333333333333,
+            "transform": "translate3d(0px, 2.1105px, 0px)"
+          },
+          {
+            "offset": 0.7,
+            "transform": "translate3d(0px, 1.99021px, 0px)"
+          },
+          {
+            "offset": 0.7166666666666667,
+            "transform": "translate3d(0px, 1.86182px, 0px)"
+          },
+          {
+            "offset": 0.7333333333333333,
+            "transform": "translate3d(0px, 1.72817px, 0px)"
+          },
+          {
+            "offset": 0.75,
+            "transform": "translate3d(0px, 1.59176px, 0px)"
+          },
+          {
+            "offset": 0.7666666666666667,
+            "transform": "translate3d(0px, 1.4548px, 0px)"
+          },
+          {
+            "offset": 0.7833333333333333,
+            "transform": "translate3d(0px, 1.31909px, 0px)"
+          },
+          {
+            "offset": 0.8,
+            "transform": "translate3d(0px, 1.18621px, 0px)"
+          },
+          {
+            "offset": 0.8166666666666667,
+            "transform": "translate3d(0px, 1.05563px, 0px)"
+          },
+          {
+            "offset": 0.8333333333333334,
+            "transform": "translate3d(0px, 0.92148px, 0px)"
+          },
+          {
+            "offset": 0.85,
+            "transform": "translate3d(0px, 0.781158px, 0px)"
+          },
+          {
+            "offset": 0.8666666666666667,
+            "transform": "translate3d(0px, 0.636594px, 0px)"
+          },
+          {
+            "offset": 0.8833333333333333,
+            "transform": "translate3d(0px, 0.492828px, 0px)"
+          },
+          {
+            "offset": 0.9,
+            "transform": "translate3d(0px, 0.356832px, 0px)"
+          },
+          {
+            "offset": 0.9166666666666666,
+            "transform": "translate3d(0px, 0.236124px, 0px)"
+          },
+          {
+            "offset": 0.9333333333333333,
+            "transform": "translate3d(0px, 0.137424px, 0px)"
+          },
+          {
+            "offset": 0.95,
+            "transform": "translate3d(0px, 0.0655619px, 0px)"
+          },
+          {
+            "offset": 0.9666666666666667,
+            "transform": "translate3d(0px, 0.02184px, 0px)"
+          },
+          {
+            "offset": 0.9833333333333333,
+            "transform": "translate3d(0px, 0.0030659px, 0px)"
+          },
+          {
+            "offset": 1,
+            "transform": "translate3d(0px, 0px, 0px)"
+          }
+        ],
+        "target": "timeline-calendar",
+        "animationCount": 3,
+        "samples": [
+          {
+            "time": 0,
+            "offset": -42,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": -5.45436,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": 1.21185,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": 2.46431,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": 1.22245,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": 0.00989285,
+            "header": 94
+          }
+        ]
+      },
+      "local": {
+        "port": 8034,
+        "width": 1156,
+        "bottom": true,
+        "status": "PASS",
+        "pull": -42,
+        "duration": 440,
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "translate3d(0px, -42px, 0px)"
+          },
+          {
+            "offset": 0.016666666666666666,
+            "transform": "translate3d(0px, -41.7212px, 0px)"
+          },
+          {
+            "offset": 0.03333333333333333,
+            "transform": "translate3d(0px, -40.9437px, 0px)"
+          },
+          {
+            "offset": 0.05,
+            "transform": "translate3d(0px, -39.7506px, 0px)"
+          },
+          {
+            "offset": 0.06666666666666667,
+            "transform": "translate3d(0px, -38.2183px, 0px)"
+          },
+          {
+            "offset": 0.08333333333333333,
+            "transform": "translate3d(0px, -36.4164px, 0px)"
+          },
+          {
+            "offset": 0.1,
+            "transform": "translate3d(0px, -34.4077px, 0px)"
+          },
+          {
+            "offset": 0.11666666666666667,
+            "transform": "translate3d(0px, -32.2486px, 0px)"
+          },
+          {
+            "offset": 0.13333333333333333,
+            "transform": "translate3d(0px, -29.9889px, 0px)"
+          },
+          {
+            "offset": 0.15,
+            "transform": "translate3d(0px, -27.6728px, 0px)"
+          },
+          {
+            "offset": 0.16666666666666666,
+            "transform": "translate3d(0px, -25.3383px, 0px)"
+          },
+          {
+            "offset": 0.18333333333333332,
+            "transform": "translate3d(0px, -23.0184px, 0px)"
+          },
+          {
+            "offset": 0.2,
+            "transform": "translate3d(0px, -20.7409px, 0px)"
+          },
+          {
+            "offset": 0.21666666666666667,
+            "transform": "translate3d(0px, -18.5292px, 0px)"
+          },
+          {
+            "offset": 0.23333333333333334,
+            "transform": "translate3d(0px, -16.4021px, 0px)"
+          },
+          {
+            "offset": 0.25,
+            "transform": "translate3d(0px, -14.3748px, 0px)"
+          },
+          {
+            "offset": 0.26666666666666666,
+            "transform": "translate3d(0px, -12.4588px, 0px)"
+          },
+          {
+            "offset": 0.2833333333333333,
+            "transform": "translate3d(0px, -10.6627px, 0px)"
+          },
+          {
+            "offset": 0.3,
+            "transform": "translate3d(0px, -8.99195px, 0px)"
+          },
+          {
+            "offset": 0.31666666666666665,
+            "transform": "translate3d(0px, -7.44992px, 0px)"
+          },
+          {
+            "offset": 0.3333333333333333,
+            "transform": "translate3d(0px, -6.03767px, 0px)"
+          },
+          {
+            "offset": 0.35,
+            "transform": "translate3d(0px, -4.7544px, 0px)"
+          },
+          {
+            "offset": 0.36666666666666664,
+            "transform": "translate3d(0px, -3.5978px, 0px)"
+          },
+          {
+            "offset": 0.38333333333333336,
+            "transform": "translate3d(0px, -2.56427px, 0px)"
+          },
+          {
+            "offset": 0.4,
+            "transform": "translate3d(0px, -1.64913px, 0px)"
+          },
+          {
+            "offset": 0.4166666666666667,
+            "transform": "translate3d(0px, -0.846846px, 0px)"
+          },
+          {
+            "offset": 0.43333333333333335,
+            "transform": "translate3d(0px, -0.151284px, 0px)"
+          },
+          {
+            "offset": 0.45,
+            "transform": "translate3d(0px, 0.444276px, 0px)"
+          },
+          {
+            "offset": 0.4666666666666667,
+            "transform": "translate3d(0px, 0.946764px, 0px)"
+          },
+          {
+            "offset": 0.48333333333333334,
+            "transform": "translate3d(0px, 1.36332px, 0px)"
+          },
+          {
+            "offset": 0.5,
+            "transform": "translate3d(0px, 1.70117px, 0px)"
+          },
+          {
+            "offset": 0.5166666666666667,
+            "transform": "translate3d(0px, 1.96745px, 0px)"
+          },
+          {
+            "offset": 0.5333333333333333,
+            "transform": "translate3d(0px, 2.16926px, 0px)"
+          },
+          {
+            "offset": 0.55,
+            "transform": "translate3d(0px, 2.3134px, 0px)"
+          },
+          {
+            "offset": 0.5666666666666667,
+            "transform": "translate3d(0px, 2.40652px, 0px)"
+          },
+          {
+            "offset": 0.5833333333333334,
+            "transform": "translate3d(0px, 2.45482px, 0px)"
+          },
+          {
+            "offset": 0.6,
+            "transform": "translate3d(0px, 2.46431px, 0px)"
+          },
+          {
+            "offset": 0.6166666666666667,
+            "transform": "translate3d(0px, 2.44054px, 0px)"
+          },
+          {
+            "offset": 0.6333333333333333,
+            "transform": "translate3d(0px, 2.38867px, 0px)"
+          },
+          {
+            "offset": 0.65,
+            "transform": "translate3d(0px, 2.31353px, 0px)"
+          },
+          {
+            "offset": 0.6666666666666666,
+            "transform": "translate3d(0px, 2.21945px, 0px)"
+          },
+          {
+            "offset": 0.6833333333333333,
+            "transform": "translate3d(0px, 2.1105px, 0px)"
+          },
+          {
+            "offset": 0.7,
+            "transform": "translate3d(0px, 1.99021px, 0px)"
+          },
+          {
+            "offset": 0.7166666666666667,
+            "transform": "translate3d(0px, 1.86182px, 0px)"
+          },
+          {
+            "offset": 0.7333333333333333,
+            "transform": "translate3d(0px, 1.72817px, 0px)"
+          },
+          {
+            "offset": 0.75,
+            "transform": "translate3d(0px, 1.59176px, 0px)"
+          },
+          {
+            "offset": 0.7666666666666667,
+            "transform": "translate3d(0px, 1.4548px, 0px)"
+          },
+          {
+            "offset": 0.7833333333333333,
+            "transform": "translate3d(0px, 1.31909px, 0px)"
+          },
+          {
+            "offset": 0.8,
+            "transform": "translate3d(0px, 1.18621px, 0px)"
+          },
+          {
+            "offset": 0.8166666666666667,
+            "transform": "translate3d(0px, 1.05563px, 0px)"
+          },
+          {
+            "offset": 0.8333333333333334,
+            "transform": "translate3d(0px, 0.92148px, 0px)"
+          },
+          {
+            "offset": 0.85,
+            "transform": "translate3d(0px, 0.781158px, 0px)"
+          },
+          {
+            "offset": 0.8666666666666667,
+            "transform": "translate3d(0px, 0.636594px, 0px)"
+          },
+          {
+            "offset": 0.8833333333333333,
+            "transform": "translate3d(0px, 0.492828px, 0px)"
+          },
+          {
+            "offset": 0.9,
+            "transform": "translate3d(0px, 0.356832px, 0px)"
+          },
+          {
+            "offset": 0.9166666666666666,
+            "transform": "translate3d(0px, 0.236124px, 0px)"
+          },
+          {
+            "offset": 0.9333333333333333,
+            "transform": "translate3d(0px, 0.137424px, 0px)"
+          },
+          {
+            "offset": 0.95,
+            "transform": "translate3d(0px, 0.0655619px, 0px)"
+          },
+          {
+            "offset": 0.9666666666666667,
+            "transform": "translate3d(0px, 0.02184px, 0px)"
+          },
+          {
+            "offset": 0.9833333333333333,
+            "transform": "translate3d(0px, 0.0030659px, 0px)"
+          },
+          {
+            "offset": 1,
+            "transform": "translate3d(0px, 0px, 0px)"
+          }
+        ],
+        "target": "calendar-body-grid",
+        "animationCount": 1,
+        "samples": [
+          {
+            "time": 0,
+            "offset": -42,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": -5.45436,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": 1.21185,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": 2.46431,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": 1.22245,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": 0.00989285,
+            "header": 94
+          }
+        ]
+      },
+      "after": {
+        "port": 8039,
+        "width": 1156,
+        "bottom": true,
+        "status": "PASS",
+        "pull": -42,
+        "duration": 440,
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "translate3d(0px, -42px, 0px)"
+          },
+          {
+            "offset": 0.016666666666666666,
+            "transform": "translate3d(0px, -41.7212px, 0px)"
+          },
+          {
+            "offset": 0.03333333333333333,
+            "transform": "translate3d(0px, -40.9437px, 0px)"
+          },
+          {
+            "offset": 0.05,
+            "transform": "translate3d(0px, -39.7506px, 0px)"
+          },
+          {
+            "offset": 0.06666666666666667,
+            "transform": "translate3d(0px, -38.2183px, 0px)"
+          },
+          {
+            "offset": 0.08333333333333333,
+            "transform": "translate3d(0px, -36.4164px, 0px)"
+          },
+          {
+            "offset": 0.1,
+            "transform": "translate3d(0px, -34.4077px, 0px)"
+          },
+          {
+            "offset": 0.11666666666666667,
+            "transform": "translate3d(0px, -32.2486px, 0px)"
+          },
+          {
+            "offset": 0.13333333333333333,
+            "transform": "translate3d(0px, -29.9889px, 0px)"
+          },
+          {
+            "offset": 0.15,
+            "transform": "translate3d(0px, -27.6728px, 0px)"
+          },
+          {
+            "offset": 0.16666666666666666,
+            "transform": "translate3d(0px, -25.3383px, 0px)"
+          },
+          {
+            "offset": 0.18333333333333332,
+            "transform": "translate3d(0px, -23.0184px, 0px)"
+          },
+          {
+            "offset": 0.2,
+            "transform": "translate3d(0px, -20.7409px, 0px)"
+          },
+          {
+            "offset": 0.21666666666666667,
+            "transform": "translate3d(0px, -18.5292px, 0px)"
+          },
+          {
+            "offset": 0.23333333333333334,
+            "transform": "translate3d(0px, -16.4021px, 0px)"
+          },
+          {
+            "offset": 0.25,
+            "transform": "translate3d(0px, -14.3748px, 0px)"
+          },
+          {
+            "offset": 0.26666666666666666,
+            "transform": "translate3d(0px, -12.4588px, 0px)"
+          },
+          {
+            "offset": 0.2833333333333333,
+            "transform": "translate3d(0px, -10.6627px, 0px)"
+          },
+          {
+            "offset": 0.3,
+            "transform": "translate3d(0px, -8.99195px, 0px)"
+          },
+          {
+            "offset": 0.31666666666666665,
+            "transform": "translate3d(0px, -7.44992px, 0px)"
+          },
+          {
+            "offset": 0.3333333333333333,
+            "transform": "translate3d(0px, -6.03767px, 0px)"
+          },
+          {
+            "offset": 0.35,
+            "transform": "translate3d(0px, -4.7544px, 0px)"
+          },
+          {
+            "offset": 0.36666666666666664,
+            "transform": "translate3d(0px, -3.5978px, 0px)"
+          },
+          {
+            "offset": 0.38333333333333336,
+            "transform": "translate3d(0px, -2.56427px, 0px)"
+          },
+          {
+            "offset": 0.4,
+            "transform": "translate3d(0px, -1.64913px, 0px)"
+          },
+          {
+            "offset": 0.4166666666666667,
+            "transform": "translate3d(0px, -0.846846px, 0px)"
+          },
+          {
+            "offset": 0.43333333333333335,
+            "transform": "translate3d(0px, -0.151284px, 0px)"
+          },
+          {
+            "offset": 0.45,
+            "transform": "translate3d(0px, 0.444276px, 0px)"
+          },
+          {
+            "offset": 0.4666666666666667,
+            "transform": "translate3d(0px, 0.946764px, 0px)"
+          },
+          {
+            "offset": 0.48333333333333334,
+            "transform": "translate3d(0px, 1.36332px, 0px)"
+          },
+          {
+            "offset": 0.5,
+            "transform": "translate3d(0px, 1.70117px, 0px)"
+          },
+          {
+            "offset": 0.5166666666666667,
+            "transform": "translate3d(0px, 1.96745px, 0px)"
+          },
+          {
+            "offset": 0.5333333333333333,
+            "transform": "translate3d(0px, 2.16926px, 0px)"
+          },
+          {
+            "offset": 0.55,
+            "transform": "translate3d(0px, 2.3134px, 0px)"
+          },
+          {
+            "offset": 0.5666666666666667,
+            "transform": "translate3d(0px, 2.40652px, 0px)"
+          },
+          {
+            "offset": 0.5833333333333334,
+            "transform": "translate3d(0px, 2.45482px, 0px)"
+          },
+          {
+            "offset": 0.6,
+            "transform": "translate3d(0px, 2.46431px, 0px)"
+          },
+          {
+            "offset": 0.6166666666666667,
+            "transform": "translate3d(0px, 2.44054px, 0px)"
+          },
+          {
+            "offset": 0.6333333333333333,
+            "transform": "translate3d(0px, 2.38867px, 0px)"
+          },
+          {
+            "offset": 0.65,
+            "transform": "translate3d(0px, 2.31353px, 0px)"
+          },
+          {
+            "offset": 0.6666666666666666,
+            "transform": "translate3d(0px, 2.21945px, 0px)"
+          },
+          {
+            "offset": 0.6833333333333333,
+            "transform": "translate3d(0px, 2.1105px, 0px)"
+          },
+          {
+            "offset": 0.7,
+            "transform": "translate3d(0px, 1.99021px, 0px)"
+          },
+          {
+            "offset": 0.7166666666666667,
+            "transform": "translate3d(0px, 1.86182px, 0px)"
+          },
+          {
+            "offset": 0.7333333333333333,
+            "transform": "translate3d(0px, 1.72817px, 0px)"
+          },
+          {
+            "offset": 0.75,
+            "transform": "translate3d(0px, 1.59176px, 0px)"
+          },
+          {
+            "offset": 0.7666666666666667,
+            "transform": "translate3d(0px, 1.4548px, 0px)"
+          },
+          {
+            "offset": 0.7833333333333333,
+            "transform": "translate3d(0px, 1.31909px, 0px)"
+          },
+          {
+            "offset": 0.8,
+            "transform": "translate3d(0px, 1.18621px, 0px)"
+          },
+          {
+            "offset": 0.8166666666666667,
+            "transform": "translate3d(0px, 1.05563px, 0px)"
+          },
+          {
+            "offset": 0.8333333333333334,
+            "transform": "translate3d(0px, 0.92148px, 0px)"
+          },
+          {
+            "offset": 0.85,
+            "transform": "translate3d(0px, 0.781158px, 0px)"
+          },
+          {
+            "offset": 0.8666666666666667,
+            "transform": "translate3d(0px, 0.636594px, 0px)"
+          },
+          {
+            "offset": 0.8833333333333333,
+            "transform": "translate3d(0px, 0.492828px, 0px)"
+          },
+          {
+            "offset": 0.9,
+            "transform": "translate3d(0px, 0.356832px, 0px)"
+          },
+          {
+            "offset": 0.9166666666666666,
+            "transform": "translate3d(0px, 0.236124px, 0px)"
+          },
+          {
+            "offset": 0.9333333333333333,
+            "transform": "translate3d(0px, 0.137424px, 0px)"
+          },
+          {
+            "offset": 0.95,
+            "transform": "translate3d(0px, 0.0655619px, 0px)"
+          },
+          {
+            "offset": 0.9666666666666667,
+            "transform": "translate3d(0px, 0.02184px, 0px)"
+          },
+          {
+            "offset": 0.9833333333333333,
+            "transform": "translate3d(0px, 0.0030659px, 0px)"
+          },
+          {
+            "offset": 1,
+            "transform": "translate3d(0px, 0px, 0px)"
+          }
+        ],
+        "target": "timeline-calendar",
+        "animationCount": 3,
+        "samples": [
+          {
+            "time": 0,
+            "offset": -42,
+            "header": 94
+          },
+          {
+            "time": 150,
+            "offset": -5.45436,
+            "header": 94
+          },
+          {
+            "time": 210,
+            "offset": 1.21185,
+            "header": 94
+          },
+          {
+            "time": 264,
+            "offset": 2.46431,
+            "header": 94
+          },
+          {
+            "time": 350,
+            "offset": 1.22245,
+            "header": 94
+          },
+          {
+            "time": 430,
+            "offset": 0.00989285,
+            "header": 94
+          }
+        ]
+      }
+    },
+    {
+      "port": 8034,
+      "width": 835,
+      "bottom": false,
+      "status": "PASS",
+      "pull": 42,
+      "duration": 440,
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "translate3d(0px, 42px, 0px)"
+        },
+        {
+          "offset": 0.016666666666666666,
+          "transform": "translate3d(0px, 41.7212px, 0px)"
+        },
+        {
+          "offset": 0.03333333333333333,
+          "transform": "translate3d(0px, 40.9437px, 0px)"
+        },
+        {
+          "offset": 0.05,
+          "transform": "translate3d(0px, 39.7506px, 0px)"
+        },
+        {
+          "offset": 0.06666666666666667,
+          "transform": "translate3d(0px, 38.2183px, 0px)"
+        },
+        {
+          "offset": 0.08333333333333333,
+          "transform": "translate3d(0px, 36.4164px, 0px)"
+        },
+        {
+          "offset": 0.1,
+          "transform": "translate3d(0px, 34.4077px, 0px)"
+        },
+        {
+          "offset": 0.11666666666666667,
+          "transform": "translate3d(0px, 32.2486px, 0px)"
+        },
+        {
+          "offset": 0.13333333333333333,
+          "transform": "translate3d(0px, 29.9889px, 0px)"
+        },
+        {
+          "offset": 0.15,
+          "transform": "translate3d(0px, 27.6728px, 0px)"
+        },
+        {
+          "offset": 0.16666666666666666,
+          "transform": "translate3d(0px, 25.3383px, 0px)"
+        },
+        {
+          "offset": 0.18333333333333332,
+          "transform": "translate3d(0px, 23.0184px, 0px)"
+        },
+        {
+          "offset": 0.2,
+          "transform": "translate3d(0px, 20.7409px, 0px)"
+        },
+        {
+          "offset": 0.21666666666666667,
+          "transform": "translate3d(0px, 18.5292px, 0px)"
+        },
+        {
+          "offset": 0.23333333333333334,
+          "transform": "translate3d(0px, 16.4021px, 0px)"
+        },
+        {
+          "offset": 0.25,
+          "transform": "translate3d(0px, 14.3748px, 0px)"
+        },
+        {
+          "offset": 0.26666666666666666,
+          "transform": "translate3d(0px, 12.4588px, 0px)"
+        },
+        {
+          "offset": 0.2833333333333333,
+          "transform": "translate3d(0px, 10.6627px, 0px)"
+        },
+        {
+          "offset": 0.3,
+          "transform": "translate3d(0px, 8.99195px, 0px)"
+        },
+        {
+          "offset": 0.31666666666666665,
+          "transform": "translate3d(0px, 7.44992px, 0px)"
+        },
+        {
+          "offset": 0.3333333333333333,
+          "transform": "translate3d(0px, 6.03767px, 0px)"
+        },
+        {
+          "offset": 0.35,
+          "transform": "translate3d(0px, 4.7544px, 0px)"
+        },
+        {
+          "offset": 0.36666666666666664,
+          "transform": "translate3d(0px, 3.5978px, 0px)"
+        },
+        {
+          "offset": 0.38333333333333336,
+          "transform": "translate3d(0px, 2.56427px, 0px)"
+        },
+        {
+          "offset": 0.4,
+          "transform": "translate3d(0px, 1.64913px, 0px)"
+        },
+        {
+          "offset": 0.4166666666666667,
+          "transform": "translate3d(0px, 0.846846px, 0px)"
+        },
+        {
+          "offset": 0.43333333333333335,
+          "transform": "translate3d(0px, 0.151284px, 0px)"
+        },
+        {
+          "offset": 0.45,
+          "transform": "translate3d(0px, -0.444276px, 0px)"
+        },
+        {
+          "offset": 0.4666666666666667,
+          "transform": "translate3d(0px, -0.946764px, 0px)"
+        },
+        {
+          "offset": 0.48333333333333334,
+          "transform": "translate3d(0px, -1.36332px, 0px)"
+        },
+        {
+          "offset": 0.5,
+          "transform": "translate3d(0px, -1.70117px, 0px)"
+        },
+        {
+          "offset": 0.5166666666666667,
+          "transform": "translate3d(0px, -1.96745px, 0px)"
+        },
+        {
+          "offset": 0.5333333333333333,
+          "transform": "translate3d(0px, -2.16926px, 0px)"
+        },
+        {
+          "offset": 0.55,
+          "transform": "translate3d(0px, -2.3134px, 0px)"
+        },
+        {
+          "offset": 0.5666666666666667,
+          "transform": "translate3d(0px, -2.40652px, 0px)"
+        },
+        {
+          "offset": 0.5833333333333334,
+          "transform": "translate3d(0px, -2.45482px, 0px)"
+        },
+        {
+          "offset": 0.6,
+          "transform": "translate3d(0px, -2.46431px, 0px)"
+        },
+        {
+          "offset": 0.6166666666666667,
+          "transform": "translate3d(0px, -2.44054px, 0px)"
+        },
+        {
+          "offset": 0.6333333333333333,
+          "transform": "translate3d(0px, -2.38867px, 0px)"
+        },
+        {
+          "offset": 0.65,
+          "transform": "translate3d(0px, -2.31353px, 0px)"
+        },
+        {
+          "offset": 0.6666666666666666,
+          "transform": "translate3d(0px, -2.21945px, 0px)"
+        },
+        {
+          "offset": 0.6833333333333333,
+          "transform": "translate3d(0px, -2.1105px, 0px)"
+        },
+        {
+          "offset": 0.7,
+          "transform": "translate3d(0px, -1.99021px, 0px)"
+        },
+        {
+          "offset": 0.7166666666666667,
+          "transform": "translate3d(0px, -1.86182px, 0px)"
+        },
+        {
+          "offset": 0.7333333333333333,
+          "transform": "translate3d(0px, -1.72817px, 0px)"
+        },
+        {
+          "offset": 0.75,
+          "transform": "translate3d(0px, -1.59176px, 0px)"
+        },
+        {
+          "offset": 0.7666666666666667,
+          "transform": "translate3d(0px, -1.4548px, 0px)"
+        },
+        {
+          "offset": 0.7833333333333333,
+          "transform": "translate3d(0px, -1.31909px, 0px)"
+        },
+        {
+          "offset": 0.8,
+          "transform": "translate3d(0px, -1.18621px, 0px)"
+        },
+        {
+          "offset": 0.8166666666666667,
+          "transform": "translate3d(0px, -1.05563px, 0px)"
+        },
+        {
+          "offset": 0.8333333333333334,
+          "transform": "translate3d(0px, -0.92148px, 0px)"
+        },
+        {
+          "offset": 0.85,
+          "transform": "translate3d(0px, -0.781158px, 0px)"
+        },
+        {
+          "offset": 0.8666666666666667,
+          "transform": "translate3d(0px, -0.636594px, 0px)"
+        },
+        {
+          "offset": 0.8833333333333333,
+          "transform": "translate3d(0px, -0.492828px, 0px)"
+        },
+        {
+          "offset": 0.9,
+          "transform": "translate3d(0px, -0.356832px, 0px)"
+        },
+        {
+          "offset": 0.9166666666666666,
+          "transform": "translate3d(0px, -0.236124px, 0px)"
+        },
+        {
+          "offset": 0.9333333333333333,
+          "transform": "translate3d(0px, -0.137424px, 0px)"
+        },
+        {
+          "offset": 0.95,
+          "transform": "translate3d(0px, -0.0655619px, 0px)"
+        },
+        {
+          "offset": 0.9666666666666667,
+          "transform": "translate3d(0px, -0.02184px, 0px)"
+        },
+        {
+          "offset": 0.9833333333333333,
+          "transform": "translate3d(0px, -0.0030659px, 0px)"
+        },
+        {
+          "offset": 1,
+          "transform": "translate3d(0px, 0px, 0px)"
+        }
+      ],
+      "target": "calendar-body-grid",
+      "animationCount": 1,
+      "samples": [
+        {
+          "time": 0,
+          "offset": 42,
+          "header": 156
+        },
+        {
+          "time": 150,
+          "offset": 5.45436,
+          "header": 156
+        },
+        {
+          "time": 210,
+          "offset": -1.21185,
+          "header": 156
+        },
+        {
+          "time": 264,
+          "offset": -2.46431,
+          "header": 156
+        },
+        {
+          "time": 350,
+          "offset": -1.22245,
+          "header": 156
+        },
+        {
+          "time": 430,
+          "offset": -0.00989285,
+          "header": 156
+        }
+      ]
+    },
+    {
+      "port": 8034,
+      "width": 835,
+      "bottom": true,
+      "status": "PASS",
+      "pull": -42,
+      "duration": 440,
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "translate3d(0px, -42px, 0px)"
+        },
+        {
+          "offset": 0.016666666666666666,
+          "transform": "translate3d(0px, -41.7212px, 0px)"
+        },
+        {
+          "offset": 0.03333333333333333,
+          "transform": "translate3d(0px, -40.9437px, 0px)"
+        },
+        {
+          "offset": 0.05,
+          "transform": "translate3d(0px, -39.7506px, 0px)"
+        },
+        {
+          "offset": 0.06666666666666667,
+          "transform": "translate3d(0px, -38.2183px, 0px)"
+        },
+        {
+          "offset": 0.08333333333333333,
+          "transform": "translate3d(0px, -36.4164px, 0px)"
+        },
+        {
+          "offset": 0.1,
+          "transform": "translate3d(0px, -34.4077px, 0px)"
+        },
+        {
+          "offset": 0.11666666666666667,
+          "transform": "translate3d(0px, -32.2486px, 0px)"
+        },
+        {
+          "offset": 0.13333333333333333,
+          "transform": "translate3d(0px, -29.9889px, 0px)"
+        },
+        {
+          "offset": 0.15,
+          "transform": "translate3d(0px, -27.6728px, 0px)"
+        },
+        {
+          "offset": 0.16666666666666666,
+          "transform": "translate3d(0px, -25.3383px, 0px)"
+        },
+        {
+          "offset": 0.18333333333333332,
+          "transform": "translate3d(0px, -23.0184px, 0px)"
+        },
+        {
+          "offset": 0.2,
+          "transform": "translate3d(0px, -20.7409px, 0px)"
+        },
+        {
+          "offset": 0.21666666666666667,
+          "transform": "translate3d(0px, -18.5292px, 0px)"
+        },
+        {
+          "offset": 0.23333333333333334,
+          "transform": "translate3d(0px, -16.4021px, 0px)"
+        },
+        {
+          "offset": 0.25,
+          "transform": "translate3d(0px, -14.3748px, 0px)"
+        },
+        {
+          "offset": 0.26666666666666666,
+          "transform": "translate3d(0px, -12.4588px, 0px)"
+        },
+        {
+          "offset": 0.2833333333333333,
+          "transform": "translate3d(0px, -10.6627px, 0px)"
+        },
+        {
+          "offset": 0.3,
+          "transform": "translate3d(0px, -8.99195px, 0px)"
+        },
+        {
+          "offset": 0.31666666666666665,
+          "transform": "translate3d(0px, -7.44992px, 0px)"
+        },
+        {
+          "offset": 0.3333333333333333,
+          "transform": "translate3d(0px, -6.03767px, 0px)"
+        },
+        {
+          "offset": 0.35,
+          "transform": "translate3d(0px, -4.7544px, 0px)"
+        },
+        {
+          "offset": 0.36666666666666664,
+          "transform": "translate3d(0px, -3.5978px, 0px)"
+        },
+        {
+          "offset": 0.38333333333333336,
+          "transform": "translate3d(0px, -2.56427px, 0px)"
+        },
+        {
+          "offset": 0.4,
+          "transform": "translate3d(0px, -1.64913px, 0px)"
+        },
+        {
+          "offset": 0.4166666666666667,
+          "transform": "translate3d(0px, -0.846846px, 0px)"
+        },
+        {
+          "offset": 0.43333333333333335,
+          "transform": "translate3d(0px, -0.151284px, 0px)"
+        },
+        {
+          "offset": 0.45,
+          "transform": "translate3d(0px, 0.444276px, 0px)"
+        },
+        {
+          "offset": 0.4666666666666667,
+          "transform": "translate3d(0px, 0.946764px, 0px)"
+        },
+        {
+          "offset": 0.48333333333333334,
+          "transform": "translate3d(0px, 1.36332px, 0px)"
+        },
+        {
+          "offset": 0.5,
+          "transform": "translate3d(0px, 1.70117px, 0px)"
+        },
+        {
+          "offset": 0.5166666666666667,
+          "transform": "translate3d(0px, 1.96745px, 0px)"
+        },
+        {
+          "offset": 0.5333333333333333,
+          "transform": "translate3d(0px, 2.16926px, 0px)"
+        },
+        {
+          "offset": 0.55,
+          "transform": "translate3d(0px, 2.3134px, 0px)"
+        },
+        {
+          "offset": 0.5666666666666667,
+          "transform": "translate3d(0px, 2.40652px, 0px)"
+        },
+        {
+          "offset": 0.5833333333333334,
+          "transform": "translate3d(0px, 2.45482px, 0px)"
+        },
+        {
+          "offset": 0.6,
+          "transform": "translate3d(0px, 2.46431px, 0px)"
+        },
+        {
+          "offset": 0.6166666666666667,
+          "transform": "translate3d(0px, 2.44054px, 0px)"
+        },
+        {
+          "offset": 0.6333333333333333,
+          "transform": "translate3d(0px, 2.38867px, 0px)"
+        },
+        {
+          "offset": 0.65,
+          "transform": "translate3d(0px, 2.31353px, 0px)"
+        },
+        {
+          "offset": 0.6666666666666666,
+          "transform": "translate3d(0px, 2.21945px, 0px)"
+        },
+        {
+          "offset": 0.6833333333333333,
+          "transform": "translate3d(0px, 2.1105px, 0px)"
+        },
+        {
+          "offset": 0.7,
+          "transform": "translate3d(0px, 1.99021px, 0px)"
+        },
+        {
+          "offset": 0.7166666666666667,
+          "transform": "translate3d(0px, 1.86182px, 0px)"
+        },
+        {
+          "offset": 0.7333333333333333,
+          "transform": "translate3d(0px, 1.72817px, 0px)"
+        },
+        {
+          "offset": 0.75,
+          "transform": "translate3d(0px, 1.59176px, 0px)"
+        },
+        {
+          "offset": 0.7666666666666667,
+          "transform": "translate3d(0px, 1.4548px, 0px)"
+        },
+        {
+          "offset": 0.7833333333333333,
+          "transform": "translate3d(0px, 1.31909px, 0px)"
+        },
+        {
+          "offset": 0.8,
+          "transform": "translate3d(0px, 1.18621px, 0px)"
+        },
+        {
+          "offset": 0.8166666666666667,
+          "transform": "translate3d(0px, 1.05563px, 0px)"
+        },
+        {
+          "offset": 0.8333333333333334,
+          "transform": "translate3d(0px, 0.92148px, 0px)"
+        },
+        {
+          "offset": 0.85,
+          "transform": "translate3d(0px, 0.781158px, 0px)"
+        },
+        {
+          "offset": 0.8666666666666667,
+          "transform": "translate3d(0px, 0.636594px, 0px)"
+        },
+        {
+          "offset": 0.8833333333333333,
+          "transform": "translate3d(0px, 0.492828px, 0px)"
+        },
+        {
+          "offset": 0.9,
+          "transform": "translate3d(0px, 0.356832px, 0px)"
+        },
+        {
+          "offset": 0.9166666666666666,
+          "transform": "translate3d(0px, 0.236124px, 0px)"
+        },
+        {
+          "offset": 0.9333333333333333,
+          "transform": "translate3d(0px, 0.137424px, 0px)"
+        },
+        {
+          "offset": 0.95,
+          "transform": "translate3d(0px, 0.0655619px, 0px)"
+        },
+        {
+          "offset": 0.9666666666666667,
+          "transform": "translate3d(0px, 0.02184px, 0px)"
+        },
+        {
+          "offset": 0.9833333333333333,
+          "transform": "translate3d(0px, 0.0030659px, 0px)"
+        },
+        {
+          "offset": 1,
+          "transform": "translate3d(0px, 0px, 0px)"
+        }
+      ],
+      "target": "calendar-body-grid",
+      "animationCount": 1,
+      "samples": [
+        {
+          "time": 0,
+          "offset": -42,
+          "header": 156
+        },
+        {
+          "time": 150,
+          "offset": -5.45436,
+          "header": 156
+        },
+        {
+          "time": 210,
+          "offset": 1.21185,
+          "header": 156
+        },
+        {
+          "time": 264,
+          "offset": 2.46431,
+          "header": 156
+        },
+        {
+          "time": 350,
+          "offset": 1.22245,
+          "header": 156
+        },
+        {
+          "time": 430,
+          "offset": 0.00989285,
+          "header": 156
+        }
+      ]
+    },
+    {
+      "port": 8034,
+      "width": 390,
+      "bottom": false,
+      "status": "PASS",
+      "pull": 42,
+      "duration": 440,
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "translate3d(0px, 42px, 0px)"
+        },
+        {
+          "offset": 0.016666666666666666,
+          "transform": "translate3d(0px, 41.7212px, 0px)"
+        },
+        {
+          "offset": 0.03333333333333333,
+          "transform": "translate3d(0px, 40.9437px, 0px)"
+        },
+        {
+          "offset": 0.05,
+          "transform": "translate3d(0px, 39.7506px, 0px)"
+        },
+        {
+          "offset": 0.06666666666666667,
+          "transform": "translate3d(0px, 38.2183px, 0px)"
+        },
+        {
+          "offset": 0.08333333333333333,
+          "transform": "translate3d(0px, 36.4164px, 0px)"
+        },
+        {
+          "offset": 0.1,
+          "transform": "translate3d(0px, 34.4077px, 0px)"
+        },
+        {
+          "offset": 0.11666666666666667,
+          "transform": "translate3d(0px, 32.2486px, 0px)"
+        },
+        {
+          "offset": 0.13333333333333333,
+          "transform": "translate3d(0px, 29.9889px, 0px)"
+        },
+        {
+          "offset": 0.15,
+          "transform": "translate3d(0px, 27.6728px, 0px)"
+        },
+        {
+          "offset": 0.16666666666666666,
+          "transform": "translate3d(0px, 25.3383px, 0px)"
+        },
+        {
+          "offset": 0.18333333333333332,
+          "transform": "translate3d(0px, 23.0184px, 0px)"
+        },
+        {
+          "offset": 0.2,
+          "transform": "translate3d(0px, 20.7409px, 0px)"
+        },
+        {
+          "offset": 0.21666666666666667,
+          "transform": "translate3d(0px, 18.5292px, 0px)"
+        },
+        {
+          "offset": 0.23333333333333334,
+          "transform": "translate3d(0px, 16.4021px, 0px)"
+        },
+        {
+          "offset": 0.25,
+          "transform": "translate3d(0px, 14.3748px, 0px)"
+        },
+        {
+          "offset": 0.26666666666666666,
+          "transform": "translate3d(0px, 12.4588px, 0px)"
+        },
+        {
+          "offset": 0.2833333333333333,
+          "transform": "translate3d(0px, 10.6627px, 0px)"
+        },
+        {
+          "offset": 0.3,
+          "transform": "translate3d(0px, 8.99195px, 0px)"
+        },
+        {
+          "offset": 0.31666666666666665,
+          "transform": "translate3d(0px, 7.44992px, 0px)"
+        },
+        {
+          "offset": 0.3333333333333333,
+          "transform": "translate3d(0px, 6.03767px, 0px)"
+        },
+        {
+          "offset": 0.35,
+          "transform": "translate3d(0px, 4.7544px, 0px)"
+        },
+        {
+          "offset": 0.36666666666666664,
+          "transform": "translate3d(0px, 3.5978px, 0px)"
+        },
+        {
+          "offset": 0.38333333333333336,
+          "transform": "translate3d(0px, 2.56427px, 0px)"
+        },
+        {
+          "offset": 0.4,
+          "transform": "translate3d(0px, 1.64913px, 0px)"
+        },
+        {
+          "offset": 0.4166666666666667,
+          "transform": "translate3d(0px, 0.846846px, 0px)"
+        },
+        {
+          "offset": 0.43333333333333335,
+          "transform": "translate3d(0px, 0.151284px, 0px)"
+        },
+        {
+          "offset": 0.45,
+          "transform": "translate3d(0px, -0.444276px, 0px)"
+        },
+        {
+          "offset": 0.4666666666666667,
+          "transform": "translate3d(0px, -0.946764px, 0px)"
+        },
+        {
+          "offset": 0.48333333333333334,
+          "transform": "translate3d(0px, -1.36332px, 0px)"
+        },
+        {
+          "offset": 0.5,
+          "transform": "translate3d(0px, -1.70117px, 0px)"
+        },
+        {
+          "offset": 0.5166666666666667,
+          "transform": "translate3d(0px, -1.96745px, 0px)"
+        },
+        {
+          "offset": 0.5333333333333333,
+          "transform": "translate3d(0px, -2.16926px, 0px)"
+        },
+        {
+          "offset": 0.55,
+          "transform": "translate3d(0px, -2.3134px, 0px)"
+        },
+        {
+          "offset": 0.5666666666666667,
+          "transform": "translate3d(0px, -2.40652px, 0px)"
+        },
+        {
+          "offset": 0.5833333333333334,
+          "transform": "translate3d(0px, -2.45482px, 0px)"
+        },
+        {
+          "offset": 0.6,
+          "transform": "translate3d(0px, -2.46431px, 0px)"
+        },
+        {
+          "offset": 0.6166666666666667,
+          "transform": "translate3d(0px, -2.44054px, 0px)"
+        },
+        {
+          "offset": 0.6333333333333333,
+          "transform": "translate3d(0px, -2.38867px, 0px)"
+        },
+        {
+          "offset": 0.65,
+          "transform": "translate3d(0px, -2.31353px, 0px)"
+        },
+        {
+          "offset": 0.6666666666666666,
+          "transform": "translate3d(0px, -2.21945px, 0px)"
+        },
+        {
+          "offset": 0.6833333333333333,
+          "transform": "translate3d(0px, -2.1105px, 0px)"
+        },
+        {
+          "offset": 0.7,
+          "transform": "translate3d(0px, -1.99021px, 0px)"
+        },
+        {
+          "offset": 0.7166666666666667,
+          "transform": "translate3d(0px, -1.86182px, 0px)"
+        },
+        {
+          "offset": 0.7333333333333333,
+          "transform": "translate3d(0px, -1.72817px, 0px)"
+        },
+        {
+          "offset": 0.75,
+          "transform": "translate3d(0px, -1.59176px, 0px)"
+        },
+        {
+          "offset": 0.7666666666666667,
+          "transform": "translate3d(0px, -1.4548px, 0px)"
+        },
+        {
+          "offset": 0.7833333333333333,
+          "transform": "translate3d(0px, -1.31909px, 0px)"
+        },
+        {
+          "offset": 0.8,
+          "transform": "translate3d(0px, -1.18621px, 0px)"
+        },
+        {
+          "offset": 0.8166666666666667,
+          "transform": "translate3d(0px, -1.05563px, 0px)"
+        },
+        {
+          "offset": 0.8333333333333334,
+          "transform": "translate3d(0px, -0.92148px, 0px)"
+        },
+        {
+          "offset": 0.85,
+          "transform": "translate3d(0px, -0.781158px, 0px)"
+        },
+        {
+          "offset": 0.8666666666666667,
+          "transform": "translate3d(0px, -0.636594px, 0px)"
+        },
+        {
+          "offset": 0.8833333333333333,
+          "transform": "translate3d(0px, -0.492828px, 0px)"
+        },
+        {
+          "offset": 0.9,
+          "transform": "translate3d(0px, -0.356832px, 0px)"
+        },
+        {
+          "offset": 0.9166666666666666,
+          "transform": "translate3d(0px, -0.236124px, 0px)"
+        },
+        {
+          "offset": 0.9333333333333333,
+          "transform": "translate3d(0px, -0.137424px, 0px)"
+        },
+        {
+          "offset": 0.95,
+          "transform": "translate3d(0px, -0.0655619px, 0px)"
+        },
+        {
+          "offset": 0.9666666666666667,
+          "transform": "translate3d(0px, -0.02184px, 0px)"
+        },
+        {
+          "offset": 0.9833333333333333,
+          "transform": "translate3d(0px, -0.0030659px, 0px)"
+        },
+        {
+          "offset": 1,
+          "transform": "translate3d(0px, 0px, 0px)"
+        }
+      ],
+      "target": "calendar-body-grid",
+      "animationCount": 1,
+      "samples": [
+        {
+          "time": 0,
+          "offset": 42,
+          "header": 192
+        },
+        {
+          "time": 150,
+          "offset": 5.45436,
+          "header": 192
+        },
+        {
+          "time": 210,
+          "offset": -1.21185,
+          "header": 192
+        },
+        {
+          "time": 264,
+          "offset": -2.46431,
+          "header": 192
+        },
+        {
+          "time": 350,
+          "offset": -1.22245,
+          "header": 192
+        },
+        {
+          "time": 430,
+          "offset": -0.00989285,
+          "header": 192
+        }
+      ]
+    },
+    {
+      "port": 8034,
+      "width": 390,
+      "bottom": true,
+      "status": "PASS",
+      "pull": -42,
+      "duration": 440,
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "translate3d(0px, -42px, 0px)"
+        },
+        {
+          "offset": 0.016666666666666666,
+          "transform": "translate3d(0px, -41.7212px, 0px)"
+        },
+        {
+          "offset": 0.03333333333333333,
+          "transform": "translate3d(0px, -40.9437px, 0px)"
+        },
+        {
+          "offset": 0.05,
+          "transform": "translate3d(0px, -39.7506px, 0px)"
+        },
+        {
+          "offset": 0.06666666666666667,
+          "transform": "translate3d(0px, -38.2183px, 0px)"
+        },
+        {
+          "offset": 0.08333333333333333,
+          "transform": "translate3d(0px, -36.4164px, 0px)"
+        },
+        {
+          "offset": 0.1,
+          "transform": "translate3d(0px, -34.4077px, 0px)"
+        },
+        {
+          "offset": 0.11666666666666667,
+          "transform": "translate3d(0px, -32.2486px, 0px)"
+        },
+        {
+          "offset": 0.13333333333333333,
+          "transform": "translate3d(0px, -29.9889px, 0px)"
+        },
+        {
+          "offset": 0.15,
+          "transform": "translate3d(0px, -27.6728px, 0px)"
+        },
+        {
+          "offset": 0.16666666666666666,
+          "transform": "translate3d(0px, -25.3383px, 0px)"
+        },
+        {
+          "offset": 0.18333333333333332,
+          "transform": "translate3d(0px, -23.0184px, 0px)"
+        },
+        {
+          "offset": 0.2,
+          "transform": "translate3d(0px, -20.7409px, 0px)"
+        },
+        {
+          "offset": 0.21666666666666667,
+          "transform": "translate3d(0px, -18.5292px, 0px)"
+        },
+        {
+          "offset": 0.23333333333333334,
+          "transform": "translate3d(0px, -16.4021px, 0px)"
+        },
+        {
+          "offset": 0.25,
+          "transform": "translate3d(0px, -14.3748px, 0px)"
+        },
+        {
+          "offset": 0.26666666666666666,
+          "transform": "translate3d(0px, -12.4588px, 0px)"
+        },
+        {
+          "offset": 0.2833333333333333,
+          "transform": "translate3d(0px, -10.6627px, 0px)"
+        },
+        {
+          "offset": 0.3,
+          "transform": "translate3d(0px, -8.99195px, 0px)"
+        },
+        {
+          "offset": 0.31666666666666665,
+          "transform": "translate3d(0px, -7.44992px, 0px)"
+        },
+        {
+          "offset": 0.3333333333333333,
+          "transform": "translate3d(0px, -6.03767px, 0px)"
+        },
+        {
+          "offset": 0.35,
+          "transform": "translate3d(0px, -4.7544px, 0px)"
+        },
+        {
+          "offset": 0.36666666666666664,
+          "transform": "translate3d(0px, -3.5978px, 0px)"
+        },
+        {
+          "offset": 0.38333333333333336,
+          "transform": "translate3d(0px, -2.56427px, 0px)"
+        },
+        {
+          "offset": 0.4,
+          "transform": "translate3d(0px, -1.64913px, 0px)"
+        },
+        {
+          "offset": 0.4166666666666667,
+          "transform": "translate3d(0px, -0.846846px, 0px)"
+        },
+        {
+          "offset": 0.43333333333333335,
+          "transform": "translate3d(0px, -0.151284px, 0px)"
+        },
+        {
+          "offset": 0.45,
+          "transform": "translate3d(0px, 0.444276px, 0px)"
+        },
+        {
+          "offset": 0.4666666666666667,
+          "transform": "translate3d(0px, 0.946764px, 0px)"
+        },
+        {
+          "offset": 0.48333333333333334,
+          "transform": "translate3d(0px, 1.36332px, 0px)"
+        },
+        {
+          "offset": 0.5,
+          "transform": "translate3d(0px, 1.70117px, 0px)"
+        },
+        {
+          "offset": 0.5166666666666667,
+          "transform": "translate3d(0px, 1.96745px, 0px)"
+        },
+        {
+          "offset": 0.5333333333333333,
+          "transform": "translate3d(0px, 2.16926px, 0px)"
+        },
+        {
+          "offset": 0.55,
+          "transform": "translate3d(0px, 2.3134px, 0px)"
+        },
+        {
+          "offset": 0.5666666666666667,
+          "transform": "translate3d(0px, 2.40652px, 0px)"
+        },
+        {
+          "offset": 0.5833333333333334,
+          "transform": "translate3d(0px, 2.45482px, 0px)"
+        },
+        {
+          "offset": 0.6,
+          "transform": "translate3d(0px, 2.46431px, 0px)"
+        },
+        {
+          "offset": 0.6166666666666667,
+          "transform": "translate3d(0px, 2.44054px, 0px)"
+        },
+        {
+          "offset": 0.6333333333333333,
+          "transform": "translate3d(0px, 2.38867px, 0px)"
+        },
+        {
+          "offset": 0.65,
+          "transform": "translate3d(0px, 2.31353px, 0px)"
+        },
+        {
+          "offset": 0.6666666666666666,
+          "transform": "translate3d(0px, 2.21945px, 0px)"
+        },
+        {
+          "offset": 0.6833333333333333,
+          "transform": "translate3d(0px, 2.1105px, 0px)"
+        },
+        {
+          "offset": 0.7,
+          "transform": "translate3d(0px, 1.99021px, 0px)"
+        },
+        {
+          "offset": 0.7166666666666667,
+          "transform": "translate3d(0px, 1.86182px, 0px)"
+        },
+        {
+          "offset": 0.7333333333333333,
+          "transform": "translate3d(0px, 1.72817px, 0px)"
+        },
+        {
+          "offset": 0.75,
+          "transform": "translate3d(0px, 1.59176px, 0px)"
+        },
+        {
+          "offset": 0.7666666666666667,
+          "transform": "translate3d(0px, 1.4548px, 0px)"
+        },
+        {
+          "offset": 0.7833333333333333,
+          "transform": "translate3d(0px, 1.31909px, 0px)"
+        },
+        {
+          "offset": 0.8,
+          "transform": "translate3d(0px, 1.18621px, 0px)"
+        },
+        {
+          "offset": 0.8166666666666667,
+          "transform": "translate3d(0px, 1.05563px, 0px)"
+        },
+        {
+          "offset": 0.8333333333333334,
+          "transform": "translate3d(0px, 0.92148px, 0px)"
+        },
+        {
+          "offset": 0.85,
+          "transform": "translate3d(0px, 0.781158px, 0px)"
+        },
+        {
+          "offset": 0.8666666666666667,
+          "transform": "translate3d(0px, 0.636594px, 0px)"
+        },
+        {
+          "offset": 0.8833333333333333,
+          "transform": "translate3d(0px, 0.492828px, 0px)"
+        },
+        {
+          "offset": 0.9,
+          "transform": "translate3d(0px, 0.356832px, 0px)"
+        },
+        {
+          "offset": 0.9166666666666666,
+          "transform": "translate3d(0px, 0.236124px, 0px)"
+        },
+        {
+          "offset": 0.9333333333333333,
+          "transform": "translate3d(0px, 0.137424px, 0px)"
+        },
+        {
+          "offset": 0.95,
+          "transform": "translate3d(0px, 0.0655619px, 0px)"
+        },
+        {
+          "offset": 0.9666666666666667,
+          "transform": "translate3d(0px, 0.02184px, 0px)"
+        },
+        {
+          "offset": 0.9833333333333333,
+          "transform": "translate3d(0px, 0.0030659px, 0px)"
+        },
+        {
+          "offset": 1,
+          "transform": "translate3d(0px, 0px, 0px)"
+        }
+      ],
+      "target": "calendar-body-grid",
+      "animationCount": 1,
+      "samples": [
+        {
+          "time": 0,
+          "offset": -42,
+          "header": 192
+        },
+        {
+          "time": 150,
+          "offset": -5.45436,
+          "header": 192
+        },
+        {
+          "time": 210,
+          "offset": 1.21185,
+          "header": 192
+        },
+        {
+          "time": 264,
+          "offset": 2.46431,
+          "header": 192
+        },
+        {
+          "time": 350,
+          "offset": 1.22245,
+          "header": 192
+        },
+        {
+          "time": 430,
+          "offset": 0.00989285,
+          "header": 192
+        }
+      ]
+    },
+    {
+      "port": 8034,
+      "width": 320,
+      "bottom": false,
+      "status": "PASS",
+      "pull": 42,
+      "duration": 440,
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "translate3d(0px, 42px, 0px)"
+        },
+        {
+          "offset": 0.016666666666666666,
+          "transform": "translate3d(0px, 41.7212px, 0px)"
+        },
+        {
+          "offset": 0.03333333333333333,
+          "transform": "translate3d(0px, 40.9437px, 0px)"
+        },
+        {
+          "offset": 0.05,
+          "transform": "translate3d(0px, 39.7506px, 0px)"
+        },
+        {
+          "offset": 0.06666666666666667,
+          "transform": "translate3d(0px, 38.2183px, 0px)"
+        },
+        {
+          "offset": 0.08333333333333333,
+          "transform": "translate3d(0px, 36.4164px, 0px)"
+        },
+        {
+          "offset": 0.1,
+          "transform": "translate3d(0px, 34.4077px, 0px)"
+        },
+        {
+          "offset": 0.11666666666666667,
+          "transform": "translate3d(0px, 32.2486px, 0px)"
+        },
+        {
+          "offset": 0.13333333333333333,
+          "transform": "translate3d(0px, 29.9889px, 0px)"
+        },
+        {
+          "offset": 0.15,
+          "transform": "translate3d(0px, 27.6728px, 0px)"
+        },
+        {
+          "offset": 0.16666666666666666,
+          "transform": "translate3d(0px, 25.3383px, 0px)"
+        },
+        {
+          "offset": 0.18333333333333332,
+          "transform": "translate3d(0px, 23.0184px, 0px)"
+        },
+        {
+          "offset": 0.2,
+          "transform": "translate3d(0px, 20.7409px, 0px)"
+        },
+        {
+          "offset": 0.21666666666666667,
+          "transform": "translate3d(0px, 18.5292px, 0px)"
+        },
+        {
+          "offset": 0.23333333333333334,
+          "transform": "translate3d(0px, 16.4021px, 0px)"
+        },
+        {
+          "offset": 0.25,
+          "transform": "translate3d(0px, 14.3748px, 0px)"
+        },
+        {
+          "offset": 0.26666666666666666,
+          "transform": "translate3d(0px, 12.4588px, 0px)"
+        },
+        {
+          "offset": 0.2833333333333333,
+          "transform": "translate3d(0px, 10.6627px, 0px)"
+        },
+        {
+          "offset": 0.3,
+          "transform": "translate3d(0px, 8.99195px, 0px)"
+        },
+        {
+          "offset": 0.31666666666666665,
+          "transform": "translate3d(0px, 7.44992px, 0px)"
+        },
+        {
+          "offset": 0.3333333333333333,
+          "transform": "translate3d(0px, 6.03767px, 0px)"
+        },
+        {
+          "offset": 0.35,
+          "transform": "translate3d(0px, 4.7544px, 0px)"
+        },
+        {
+          "offset": 0.36666666666666664,
+          "transform": "translate3d(0px, 3.5978px, 0px)"
+        },
+        {
+          "offset": 0.38333333333333336,
+          "transform": "translate3d(0px, 2.56427px, 0px)"
+        },
+        {
+          "offset": 0.4,
+          "transform": "translate3d(0px, 1.64913px, 0px)"
+        },
+        {
+          "offset": 0.4166666666666667,
+          "transform": "translate3d(0px, 0.846846px, 0px)"
+        },
+        {
+          "offset": 0.43333333333333335,
+          "transform": "translate3d(0px, 0.151284px, 0px)"
+        },
+        {
+          "offset": 0.45,
+          "transform": "translate3d(0px, -0.444276px, 0px)"
+        },
+        {
+          "offset": 0.4666666666666667,
+          "transform": "translate3d(0px, -0.946764px, 0px)"
+        },
+        {
+          "offset": 0.48333333333333334,
+          "transform": "translate3d(0px, -1.36332px, 0px)"
+        },
+        {
+          "offset": 0.5,
+          "transform": "translate3d(0px, -1.70117px, 0px)"
+        },
+        {
+          "offset": 0.5166666666666667,
+          "transform": "translate3d(0px, -1.96745px, 0px)"
+        },
+        {
+          "offset": 0.5333333333333333,
+          "transform": "translate3d(0px, -2.16926px, 0px)"
+        },
+        {
+          "offset": 0.55,
+          "transform": "translate3d(0px, -2.3134px, 0px)"
+        },
+        {
+          "offset": 0.5666666666666667,
+          "transform": "translate3d(0px, -2.40652px, 0px)"
+        },
+        {
+          "offset": 0.5833333333333334,
+          "transform": "translate3d(0px, -2.45482px, 0px)"
+        },
+        {
+          "offset": 0.6,
+          "transform": "translate3d(0px, -2.46431px, 0px)"
+        },
+        {
+          "offset": 0.6166666666666667,
+          "transform": "translate3d(0px, -2.44054px, 0px)"
+        },
+        {
+          "offset": 0.6333333333333333,
+          "transform": "translate3d(0px, -2.38867px, 0px)"
+        },
+        {
+          "offset": 0.65,
+          "transform": "translate3d(0px, -2.31353px, 0px)"
+        },
+        {
+          "offset": 0.6666666666666666,
+          "transform": "translate3d(0px, -2.21945px, 0px)"
+        },
+        {
+          "offset": 0.6833333333333333,
+          "transform": "translate3d(0px, -2.1105px, 0px)"
+        },
+        {
+          "offset": 0.7,
+          "transform": "translate3d(0px, -1.99021px, 0px)"
+        },
+        {
+          "offset": 0.7166666666666667,
+          "transform": "translate3d(0px, -1.86182px, 0px)"
+        },
+        {
+          "offset": 0.7333333333333333,
+          "transform": "translate3d(0px, -1.72817px, 0px)"
+        },
+        {
+          "offset": 0.75,
+          "transform": "translate3d(0px, -1.59176px, 0px)"
+        },
+        {
+          "offset": 0.7666666666666667,
+          "transform": "translate3d(0px, -1.4548px, 0px)"
+        },
+        {
+          "offset": 0.7833333333333333,
+          "transform": "translate3d(0px, -1.31909px, 0px)"
+        },
+        {
+          "offset": 0.8,
+          "transform": "translate3d(0px, -1.18621px, 0px)"
+        },
+        {
+          "offset": 0.8166666666666667,
+          "transform": "translate3d(0px, -1.05563px, 0px)"
+        },
+        {
+          "offset": 0.8333333333333334,
+          "transform": "translate3d(0px, -0.92148px, 0px)"
+        },
+        {
+          "offset": 0.85,
+          "transform": "translate3d(0px, -0.781158px, 0px)"
+        },
+        {
+          "offset": 0.8666666666666667,
+          "transform": "translate3d(0px, -0.636594px, 0px)"
+        },
+        {
+          "offset": 0.8833333333333333,
+          "transform": "translate3d(0px, -0.492828px, 0px)"
+        },
+        {
+          "offset": 0.9,
+          "transform": "translate3d(0px, -0.356832px, 0px)"
+        },
+        {
+          "offset": 0.9166666666666666,
+          "transform": "translate3d(0px, -0.236124px, 0px)"
+        },
+        {
+          "offset": 0.9333333333333333,
+          "transform": "translate3d(0px, -0.137424px, 0px)"
+        },
+        {
+          "offset": 0.95,
+          "transform": "translate3d(0px, -0.0655619px, 0px)"
+        },
+        {
+          "offset": 0.9666666666666667,
+          "transform": "translate3d(0px, -0.02184px, 0px)"
+        },
+        {
+          "offset": 0.9833333333333333,
+          "transform": "translate3d(0px, -0.0030659px, 0px)"
+        },
+        {
+          "offset": 1,
+          "transform": "translate3d(0px, 0px, 0px)"
+        }
+      ],
+      "target": "calendar-body-grid",
+      "animationCount": 1,
+      "samples": [
+        {
+          "time": 0,
+          "offset": 42,
+          "header": 192
+        },
+        {
+          "time": 150,
+          "offset": 5.45436,
+          "header": 192
+        },
+        {
+          "time": 210,
+          "offset": -1.21185,
+          "header": 192
+        },
+        {
+          "time": 264,
+          "offset": -2.46431,
+          "header": 192
+        },
+        {
+          "time": 350,
+          "offset": -1.22245,
+          "header": 192
+        },
+        {
+          "time": 430,
+          "offset": -0.00989285,
+          "header": 192
+        }
+      ]
+    },
+    {
+      "port": 8034,
+      "width": 320,
+      "bottom": true,
+      "status": "PASS",
+      "pull": -42,
+      "duration": 440,
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "translate3d(0px, -42px, 0px)"
+        },
+        {
+          "offset": 0.016666666666666666,
+          "transform": "translate3d(0px, -41.7212px, 0px)"
+        },
+        {
+          "offset": 0.03333333333333333,
+          "transform": "translate3d(0px, -40.9437px, 0px)"
+        },
+        {
+          "offset": 0.05,
+          "transform": "translate3d(0px, -39.7506px, 0px)"
+        },
+        {
+          "offset": 0.06666666666666667,
+          "transform": "translate3d(0px, -38.2183px, 0px)"
+        },
+        {
+          "offset": 0.08333333333333333,
+          "transform": "translate3d(0px, -36.4164px, 0px)"
+        },
+        {
+          "offset": 0.1,
+          "transform": "translate3d(0px, -34.4077px, 0px)"
+        },
+        {
+          "offset": 0.11666666666666667,
+          "transform": "translate3d(0px, -32.2486px, 0px)"
+        },
+        {
+          "offset": 0.13333333333333333,
+          "transform": "translate3d(0px, -29.9889px, 0px)"
+        },
+        {
+          "offset": 0.15,
+          "transform": "translate3d(0px, -27.6728px, 0px)"
+        },
+        {
+          "offset": 0.16666666666666666,
+          "transform": "translate3d(0px, -25.3383px, 0px)"
+        },
+        {
+          "offset": 0.18333333333333332,
+          "transform": "translate3d(0px, -23.0184px, 0px)"
+        },
+        {
+          "offset": 0.2,
+          "transform": "translate3d(0px, -20.7409px, 0px)"
+        },
+        {
+          "offset": 0.21666666666666667,
+          "transform": "translate3d(0px, -18.5292px, 0px)"
+        },
+        {
+          "offset": 0.23333333333333334,
+          "transform": "translate3d(0px, -16.4021px, 0px)"
+        },
+        {
+          "offset": 0.25,
+          "transform": "translate3d(0px, -14.3748px, 0px)"
+        },
+        {
+          "offset": 0.26666666666666666,
+          "transform": "translate3d(0px, -12.4588px, 0px)"
+        },
+        {
+          "offset": 0.2833333333333333,
+          "transform": "translate3d(0px, -10.6627px, 0px)"
+        },
+        {
+          "offset": 0.3,
+          "transform": "translate3d(0px, -8.99195px, 0px)"
+        },
+        {
+          "offset": 0.31666666666666665,
+          "transform": "translate3d(0px, -7.44992px, 0px)"
+        },
+        {
+          "offset": 0.3333333333333333,
+          "transform": "translate3d(0px, -6.03767px, 0px)"
+        },
+        {
+          "offset": 0.35,
+          "transform": "translate3d(0px, -4.7544px, 0px)"
+        },
+        {
+          "offset": 0.36666666666666664,
+          "transform": "translate3d(0px, -3.5978px, 0px)"
+        },
+        {
+          "offset": 0.38333333333333336,
+          "transform": "translate3d(0px, -2.56427px, 0px)"
+        },
+        {
+          "offset": 0.4,
+          "transform": "translate3d(0px, -1.64913px, 0px)"
+        },
+        {
+          "offset": 0.4166666666666667,
+          "transform": "translate3d(0px, -0.846846px, 0px)"
+        },
+        {
+          "offset": 0.43333333333333335,
+          "transform": "translate3d(0px, -0.151284px, 0px)"
+        },
+        {
+          "offset": 0.45,
+          "transform": "translate3d(0px, 0.444276px, 0px)"
+        },
+        {
+          "offset": 0.4666666666666667,
+          "transform": "translate3d(0px, 0.946764px, 0px)"
+        },
+        {
+          "offset": 0.48333333333333334,
+          "transform": "translate3d(0px, 1.36332px, 0px)"
+        },
+        {
+          "offset": 0.5,
+          "transform": "translate3d(0px, 1.70117px, 0px)"
+        },
+        {
+          "offset": 0.5166666666666667,
+          "transform": "translate3d(0px, 1.96745px, 0px)"
+        },
+        {
+          "offset": 0.5333333333333333,
+          "transform": "translate3d(0px, 2.16926px, 0px)"
+        },
+        {
+          "offset": 0.55,
+          "transform": "translate3d(0px, 2.3134px, 0px)"
+        },
+        {
+          "offset": 0.5666666666666667,
+          "transform": "translate3d(0px, 2.40652px, 0px)"
+        },
+        {
+          "offset": 0.5833333333333334,
+          "transform": "translate3d(0px, 2.45482px, 0px)"
+        },
+        {
+          "offset": 0.6,
+          "transform": "translate3d(0px, 2.46431px, 0px)"
+        },
+        {
+          "offset": 0.6166666666666667,
+          "transform": "translate3d(0px, 2.44054px, 0px)"
+        },
+        {
+          "offset": 0.6333333333333333,
+          "transform": "translate3d(0px, 2.38867px, 0px)"
+        },
+        {
+          "offset": 0.65,
+          "transform": "translate3d(0px, 2.31353px, 0px)"
+        },
+        {
+          "offset": 0.6666666666666666,
+          "transform": "translate3d(0px, 2.21945px, 0px)"
+        },
+        {
+          "offset": 0.6833333333333333,
+          "transform": "translate3d(0px, 2.1105px, 0px)"
+        },
+        {
+          "offset": 0.7,
+          "transform": "translate3d(0px, 1.99021px, 0px)"
+        },
+        {
+          "offset": 0.7166666666666667,
+          "transform": "translate3d(0px, 1.86182px, 0px)"
+        },
+        {
+          "offset": 0.7333333333333333,
+          "transform": "translate3d(0px, 1.72817px, 0px)"
+        },
+        {
+          "offset": 0.75,
+          "transform": "translate3d(0px, 1.59176px, 0px)"
+        },
+        {
+          "offset": 0.7666666666666667,
+          "transform": "translate3d(0px, 1.4548px, 0px)"
+        },
+        {
+          "offset": 0.7833333333333333,
+          "transform": "translate3d(0px, 1.31909px, 0px)"
+        },
+        {
+          "offset": 0.8,
+          "transform": "translate3d(0px, 1.18621px, 0px)"
+        },
+        {
+          "offset": 0.8166666666666667,
+          "transform": "translate3d(0px, 1.05563px, 0px)"
+        },
+        {
+          "offset": 0.8333333333333334,
+          "transform": "translate3d(0px, 0.92148px, 0px)"
+        },
+        {
+          "offset": 0.85,
+          "transform": "translate3d(0px, 0.781158px, 0px)"
+        },
+        {
+          "offset": 0.8666666666666667,
+          "transform": "translate3d(0px, 0.636594px, 0px)"
+        },
+        {
+          "offset": 0.8833333333333333,
+          "transform": "translate3d(0px, 0.492828px, 0px)"
+        },
+        {
+          "offset": 0.9,
+          "transform": "translate3d(0px, 0.356832px, 0px)"
+        },
+        {
+          "offset": 0.9166666666666666,
+          "transform": "translate3d(0px, 0.236124px, 0px)"
+        },
+        {
+          "offset": 0.9333333333333333,
+          "transform": "translate3d(0px, 0.137424px, 0px)"
+        },
+        {
+          "offset": 0.95,
+          "transform": "translate3d(0px, 0.0655619px, 0px)"
+        },
+        {
+          "offset": 0.9666666666666667,
+          "transform": "translate3d(0px, 0.02184px, 0px)"
+        },
+        {
+          "offset": 0.9833333333333333,
+          "transform": "translate3d(0px, 0.0030659px, 0px)"
+        },
+        {
+          "offset": 1,
+          "transform": "translate3d(0px, 0px, 0px)"
+        }
+      ],
+      "target": "calendar-body-grid",
+      "animationCount": 1,
+      "samples": [
+        {
+          "time": 0,
+          "offset": -42,
+          "header": 192
+        },
+        {
+          "time": 150,
+          "offset": -5.45436,
+          "header": 192
+        },
+        {
+          "time": 210,
+          "offset": 1.21185,
+          "header": 192
+        },
+        {
+          "time": 264,
+          "offset": 2.46431,
+          "header": 192
+        },
+        {
+          "time": 350,
+          "offset": 1.22245,
+          "header": 192
+        },
+        {
+          "time": 430,
+          "offset": 0.00989285,
+          "header": 192
+        }
+      ]
+    }
+  ]
+}

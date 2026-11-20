@@ -1,0 +1,1452 @@
+{
+  "top": {
+    "historicalBefore": {
+      "kind": "historical",
+      "boundary": "top",
+      "target": "body",
+      "referenceUrl": "http://127.0.0.1:8038/#calendar",
+      "runtime": "157.0.8103.79",
+      "platform": "MacIntel",
+      "probe": {
+        "mode": "hour-rule",
+        "x": 508,
+        "minY": 200,
+        "maxY": 260,
+        "header": {
+          "x": 523,
+          "minY": 97,
+          "maxY": 130
+        }
+      },
+      "applicationAtEnd": null,
+      "gestureStartTime": 1795125901665,
+      "inputEvents": [
+        {
+          "time": 1795125901711,
+          "deltaY": -16.414112091064453
+        },
+        {
+          "time": 1795125901711,
+          "deltaY": -29.03955078125
+        },
+        {
+          "time": 1795125901727,
+          "deltaY": -29.041362762451172
+        },
+        {
+          "time": 1795125901744,
+          "deltaY": -15.088966369628906
+        },
+        {
+          "time": 1795125901760,
+          "deltaY": -30.44249725341797
+        },
+        {
+          "time": 1795125901777,
+          "deltaY": -30.369476318359375
+        },
+        {
+          "time": 1795125901794,
+          "deltaY": -30.263519287109375
+        },
+        {
+          "time": 1795125901810,
+          "deltaY": -29.884613037109375
+        },
+        {
+          "time": 1795125901827,
+          "deltaY": -29.438430786132812
+        },
+        {
+          "time": 1795125901835,
+          "deltaY": -0.0174713134765625
+        }
+      ],
+      "samples": [
+        {
+          "timeMs": -130.614013671875,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 10.68115234375,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 60.677978515625,
+          "paintEdgeY": 222,
+          "headerY": 104
+        },
+        {
+          "timeMs": 77.343994140625,
+          "paintEdgeY": 225,
+          "headerY": 107
+        },
+        {
+          "timeMs": 110.677001953125,
+          "paintEdgeY": 227,
+          "headerY": 109
+        },
+        {
+          "timeMs": 127.343017578125,
+          "paintEdgeY": 229,
+          "headerY": 111
+        },
+        {
+          "timeMs": 144.0078125,
+          "paintEdgeY": 230,
+          "headerY": 112
+        },
+        {
+          "timeMs": 160.675048828125,
+          "paintEdgeY": 232,
+          "headerY": 114
+        },
+        {
+          "timeMs": 177.341064453125,
+          "paintEdgeY": 233,
+          "headerY": 115
+        },
+        {
+          "timeMs": 194.0048828125,
+          "paintEdgeY": 238,
+          "headerY": 120
+        },
+        {
+          "timeMs": 210.673095703125,
+          "paintEdgeY": 241,
+          "headerY": 123
+        },
+        {
+          "timeMs": 227.338134765625,
+          "paintEdgeY": 242,
+          "headerY": 124
+        },
+        {
+          "timeMs": 260.669921875,
+          "paintEdgeY": 241,
+          "headerY": 123
+        },
+        {
+          "timeMs": 277.3369140625,
+          "paintEdgeY": 240,
+          "headerY": 122
+        },
+        {
+          "timeMs": 294.001953125,
+          "paintEdgeY": 239,
+          "headerY": 121
+        },
+        {
+          "timeMs": 310.6689453125,
+          "paintEdgeY": 237,
+          "headerY": 119
+        },
+        {
+          "timeMs": 327.333984375,
+          "paintEdgeY": 235,
+          "headerY": 117
+        },
+        {
+          "timeMs": 344,
+          "paintEdgeY": 234,
+          "headerY": 116
+        },
+        {
+          "timeMs": 360.666015625,
+          "paintEdgeY": 232,
+          "headerY": 114
+        },
+        {
+          "timeMs": 377.3330078125,
+          "paintEdgeY": 231,
+          "headerY": 113
+        },
+        {
+          "timeMs": 393.9990234375,
+          "paintEdgeY": 230,
+          "headerY": 112
+        },
+        {
+          "timeMs": 410.6640625,
+          "paintEdgeY": 229,
+          "headerY": 111
+        },
+        {
+          "timeMs": 427.3310546875,
+          "paintEdgeY": 228,
+          "headerY": 110
+        },
+        {
+          "timeMs": 443.995849609375,
+          "paintEdgeY": 227,
+          "headerY": 109
+        },
+        {
+          "timeMs": 460.6630859375,
+          "paintEdgeY": 226,
+          "headerY": 108
+        },
+        {
+          "timeMs": 477.328857421875,
+          "paintEdgeY": 225,
+          "headerY": 107
+        },
+        {
+          "timeMs": 510.6611328125,
+          "paintEdgeY": 224,
+          "headerY": 106
+        },
+        {
+          "timeMs": 543.991943359375,
+          "paintEdgeY": 223,
+          "headerY": 105
+        },
+        {
+          "timeMs": 593.990966796875,
+          "paintEdgeY": 222,
+          "headerY": 104
+        },
+        {
+          "timeMs": 693.987060546875,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 960.64208984375,
+          "paintEdgeY": 221,
+          "headerY": 103
+        }
+      ],
+      "peakPx": 21,
+      "headerTravelPx": 21,
+      "returnMs": 693.987060546875,
+      "returnAfterLastInputMs": 523.987060546875
+    },
+    "local": {
+      "kind": "local",
+      "boundary": "top",
+      "target": "body",
+      "referenceUrl": "http://127.0.0.1:8034/?qa=original-native-rebound#calendar",
+      "runtime": "157.0.8103.79",
+      "platform": "MacIntel",
+      "probe": {
+        "mode": "hour-rule",
+        "x": 508,
+        "minY": 200,
+        "maxY": 260,
+        "header": {
+          "x": 523,
+          "minY": 97,
+          "maxY": 130
+        }
+      },
+      "applicationAtEnd": {
+        "transform": "none",
+        "animations": 0
+      },
+      "gestureStartTime": 1795125904639,
+      "inputEvents": [
+        {
+          "time": 1795125904681,
+          "deltaY": -29.452354431152344
+        },
+        {
+          "time": 1795125904697,
+          "deltaY": -22.75015640258789
+        },
+        {
+          "time": 1795125904714,
+          "deltaY": -29.027545928955078
+        },
+        {
+          "time": 1795125904731,
+          "deltaY": -30.984161376953125
+        },
+        {
+          "time": 1795125904747,
+          "deltaY": -30.49517822265625
+        },
+        {
+          "time": 1795125904764,
+          "deltaY": -28.766204833984375
+        },
+        {
+          "time": 1795125904781,
+          "deltaY": -29.870529174804688
+        },
+        {
+          "time": 1795125904798,
+          "deltaY": -30.902435302734375
+        },
+        {
+          "time": 1795125904810,
+          "deltaY": -7.751434326171875
+        }
+      ],
+      "samples": [
+        {
+          "timeMs": -134.711181640625,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 8.501953125,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 58.5,
+          "paintEdgeY": 222,
+          "headerY": 103
+        },
+        {
+          "timeMs": 75.167236328125,
+          "paintEdgeY": 224,
+          "headerY": 103
+        },
+        {
+          "timeMs": 91.83203125,
+          "paintEdgeY": 225,
+          "headerY": 103
+        },
+        {
+          "timeMs": 108.498046875,
+          "paintEdgeY": 227,
+          "headerY": 103
+        },
+        {
+          "timeMs": 125.1640625,
+          "paintEdgeY": 228,
+          "headerY": 103
+        },
+        {
+          "timeMs": 141.8310546875,
+          "paintEdgeY": 230,
+          "headerY": 103
+        },
+        {
+          "timeMs": 158.49609375,
+          "paintEdgeY": 231,
+          "headerY": 103
+        },
+        {
+          "timeMs": 175.162109375,
+          "paintEdgeY": 233,
+          "headerY": 103
+        },
+        {
+          "timeMs": 191.827880859375,
+          "paintEdgeY": 237,
+          "headerY": 103
+        },
+        {
+          "timeMs": 208.493896484375,
+          "paintEdgeY": 240,
+          "headerY": 103
+        },
+        {
+          "timeMs": 225.1611328125,
+          "paintEdgeY": 242,
+          "headerY": 103
+        },
+        {
+          "timeMs": 258.492919921875,
+          "paintEdgeY": 241,
+          "headerY": 103
+        },
+        {
+          "timeMs": 275.1591796875,
+          "paintEdgeY": 240,
+          "headerY": 103
+        },
+        {
+          "timeMs": 291.823974609375,
+          "paintEdgeY": 239,
+          "headerY": 103
+        },
+        {
+          "timeMs": 308.490966796875,
+          "paintEdgeY": 237,
+          "headerY": 103
+        },
+        {
+          "timeMs": 325.156005859375,
+          "paintEdgeY": 236,
+          "headerY": 103
+        },
+        {
+          "timeMs": 341.822021484375,
+          "paintEdgeY": 234,
+          "headerY": 103
+        },
+        {
+          "timeMs": 358.489013671875,
+          "paintEdgeY": 233,
+          "headerY": 103
+        },
+        {
+          "timeMs": 375.155029296875,
+          "paintEdgeY": 231,
+          "headerY": 103
+        },
+        {
+          "timeMs": 391.81982421875,
+          "paintEdgeY": 230,
+          "headerY": 103
+        },
+        {
+          "timeMs": 408.487060546875,
+          "paintEdgeY": 229,
+          "headerY": 103
+        },
+        {
+          "timeMs": 425.153076171875,
+          "paintEdgeY": 228,
+          "headerY": 103
+        },
+        {
+          "timeMs": 441.81787109375,
+          "paintEdgeY": 227,
+          "headerY": 103
+        },
+        {
+          "timeMs": 458.484130859375,
+          "paintEdgeY": 226,
+          "headerY": 103
+        },
+        {
+          "timeMs": 475.15087890625,
+          "paintEdgeY": 225,
+          "headerY": 103
+        },
+        {
+          "timeMs": 508.483154296875,
+          "paintEdgeY": 224,
+          "headerY": 103
+        },
+        {
+          "timeMs": 541.81396484375,
+          "paintEdgeY": 223,
+          "headerY": 103
+        },
+        {
+          "timeMs": 591.81298828125,
+          "paintEdgeY": 222,
+          "headerY": 103
+        },
+        {
+          "timeMs": 691.80908203125,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 958.465087890625,
+          "paintEdgeY": 221,
+          "headerY": 103
+        }
+      ],
+      "peakPx": 21,
+      "headerTravelPx": 0,
+      "returnMs": 691.80908203125,
+      "returnAfterLastInputMs": 520.80908203125
+    },
+    "historicalAfter": {
+      "kind": "historical",
+      "boundary": "top",
+      "target": "body",
+      "referenceUrl": "http://127.0.0.1:8038/#calendar",
+      "runtime": "157.0.8103.79",
+      "platform": "MacIntel",
+      "probe": {
+        "mode": "hour-rule",
+        "x": 508,
+        "minY": 200,
+        "maxY": 260,
+        "header": {
+          "x": 523,
+          "minY": 97,
+          "maxY": 130
+        }
+      },
+      "applicationAtEnd": null,
+      "gestureStartTime": 1795125907582,
+      "inputEvents": [
+        {
+          "time": 1795125907628,
+          "deltaY": -15.558706283569336
+        },
+        {
+          "time": 1795125907628,
+          "deltaY": -29.643526077270508
+        },
+        {
+          "time": 1795125907644,
+          "deltaY": -29.63042449951172
+        },
+        {
+          "time": 1795125907660,
+          "deltaY": -30.89745330810547
+        },
+        {
+          "time": 1795125907677,
+          "deltaY": -14.362129211425781
+        },
+        {
+          "time": 1795125907694,
+          "deltaY": -30.312820434570312
+        },
+        {
+          "time": 1795125907710,
+          "deltaY": -46.16448974609375
+        },
+        {
+          "time": 1795125907727,
+          "deltaY": -13.983428955078125
+        },
+        {
+          "time": 1795125907744,
+          "deltaY": -29.447021484375
+        }
+      ],
+      "samples": [
+        {
+          "timeMs": -135.363037109375,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 10.080078125,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 60.077880859375,
+          "paintEdgeY": 223,
+          "headerY": 105
+        },
+        {
+          "timeMs": 76.744140625,
+          "paintEdgeY": 225,
+          "headerY": 107
+        },
+        {
+          "timeMs": 110.075927734375,
+          "paintEdgeY": 227,
+          "headerY": 109
+        },
+        {
+          "timeMs": 126.740966796875,
+          "paintEdgeY": 229,
+          "headerY": 111
+        },
+        {
+          "timeMs": 143.407958984375,
+          "paintEdgeY": 230,
+          "headerY": 112
+        },
+        {
+          "timeMs": 160.074951171875,
+          "paintEdgeY": 232,
+          "headerY": 114
+        },
+        {
+          "timeMs": 176.740966796875,
+          "paintEdgeY": 233,
+          "headerY": 115
+        },
+        {
+          "timeMs": 193.406982421875,
+          "paintEdgeY": 238,
+          "headerY": 120
+        },
+        {
+          "timeMs": 210.072021484375,
+          "paintEdgeY": 241,
+          "headerY": 123
+        },
+        {
+          "timeMs": 226.739013671875,
+          "paintEdgeY": 242,
+          "headerY": 124
+        },
+        {
+          "timeMs": 260.070068359375,
+          "paintEdgeY": 241,
+          "headerY": 123
+        },
+        {
+          "timeMs": 276.737060546875,
+          "paintEdgeY": 240,
+          "headerY": 122
+        },
+        {
+          "timeMs": 293.401123046875,
+          "paintEdgeY": 239,
+          "headerY": 121
+        },
+        {
+          "timeMs": 310.06787109375,
+          "paintEdgeY": 237,
+          "headerY": 119
+        },
+        {
+          "timeMs": 326.73291015625,
+          "paintEdgeY": 235,
+          "headerY": 117
+        },
+        {
+          "timeMs": 343.40087890625,
+          "paintEdgeY": 234,
+          "headerY": 116
+        },
+        {
+          "timeMs": 360.06591796875,
+          "paintEdgeY": 232,
+          "headerY": 114
+        },
+        {
+          "timeMs": 376.733154296875,
+          "paintEdgeY": 231,
+          "headerY": 113
+        },
+        {
+          "timeMs": 393.397216796875,
+          "paintEdgeY": 230,
+          "headerY": 112
+        },
+        {
+          "timeMs": 410.06396484375,
+          "paintEdgeY": 229,
+          "headerY": 111
+        },
+        {
+          "timeMs": 426.73095703125,
+          "paintEdgeY": 228,
+          "headerY": 110
+        },
+        {
+          "timeMs": 443.39697265625,
+          "paintEdgeY": 227,
+          "headerY": 109
+        },
+        {
+          "timeMs": 460.06298828125,
+          "paintEdgeY": 226,
+          "headerY": 108
+        },
+        {
+          "timeMs": 476.72900390625,
+          "paintEdgeY": 225,
+          "headerY": 107
+        },
+        {
+          "timeMs": 510.06005859375,
+          "paintEdgeY": 224,
+          "headerY": 106
+        },
+        {
+          "timeMs": 543.391845703125,
+          "paintEdgeY": 223,
+          "headerY": 105
+        },
+        {
+          "timeMs": 593.389892578125,
+          "paintEdgeY": 222,
+          "headerY": 104
+        },
+        {
+          "timeMs": 693.386962890625,
+          "paintEdgeY": 221,
+          "headerY": 103
+        },
+        {
+          "timeMs": 960.04296875,
+          "paintEdgeY": 221,
+          "headerY": 103
+        }
+      ],
+      "peakPx": 21,
+      "headerTravelPx": 21,
+      "returnMs": 693.386962890625,
+      "returnAfterLastInputMs": 531.386962890625
+    }
+  },
+  "bottom": {
+    "historicalBefore": {
+      "kind": "historical",
+      "boundary": "bottom",
+      "target": "body",
+      "referenceUrl": "http://127.0.0.1:8038/#calendar",
+      "runtime": "157.0.8103.79",
+      "platform": "MacIntel",
+      "probe": {
+        "mode": "hour-rule",
+        "x": 508,
+        "minY": 811,
+        "maxY": 886,
+        "header": {
+          "x": 523,
+          "minY": 97,
+          "maxY": 130
+        }
+      },
+      "applicationAtEnd": null,
+      "gestureStartTime": 1795125910527,
+      "inputEvents": [
+        {
+          "time": 1795125910577,
+          "deltaY": 11.510780334472656
+        },
+        {
+          "time": 1795125910577,
+          "deltaY": 29.616931915283203
+        },
+        {
+          "time": 1795125910594,
+          "deltaY": 30.070568084716797
+        },
+        {
+          "time": 1795125910610,
+          "deltaY": 13.764656066894531
+        },
+        {
+          "time": 1795125910627,
+          "deltaY": 46.951751708984375
+        },
+        {
+          "time": 1795125910644,
+          "deltaY": 30.404998779296875
+        },
+        {
+          "time": 1795125910660,
+          "deltaY": 14.364730834960938
+        },
+        {
+          "time": 1795125910677,
+          "deltaY": 45.69709777832031
+        },
+        {
+          "time": 1795125910694,
+          "deltaY": 17.618484497070312
+        }
+      ],
+      "samples": [
+        {
+          "timeMs": -133.958984375,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 15.27197265625,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 65.27001953125,
+          "paintEdgeY": 846,
+          "headerY": 102
+        },
+        {
+          "timeMs": 81.93603515625,
+          "paintEdgeY": 844,
+          "headerY": 100
+        },
+        {
+          "timeMs": 98.60205078125,
+          "paintEdgeY": 843,
+          "headerY": 99
+        },
+        {
+          "timeMs": 115.267822265625,
+          "paintEdgeY": 841,
+          "headerY": 97
+        },
+        {
+          "timeMs": 131.932861328125,
+          "paintEdgeY": 839,
+          "headerY": 102
+        },
+        {
+          "timeMs": 148.60009765625,
+          "paintEdgeY": 838,
+          "headerY": 101
+        },
+        {
+          "timeMs": 165.265869140625,
+          "paintEdgeY": 837,
+          "headerY": 100
+        },
+        {
+          "timeMs": 181.93310546875,
+          "paintEdgeY": 835,
+          "headerY": 98
+        },
+        {
+          "timeMs": 198.59814453125,
+          "paintEdgeY": 830,
+          "headerY": 106
+        },
+        {
+          "timeMs": 215.263916015625,
+          "paintEdgeY": 827,
+          "headerY": 103
+        },
+        {
+          "timeMs": 231.929931640625,
+          "paintEdgeY": 826,
+          "headerY": 102
+        },
+        {
+          "timeMs": 265.261962890625,
+          "paintEdgeY": 827,
+          "headerY": 103
+        },
+        {
+          "timeMs": 281.927978515625,
+          "paintEdgeY": 828,
+          "headerY": 104
+        },
+        {
+          "timeMs": 298.593994140625,
+          "paintEdgeY": 829,
+          "headerY": 105
+        },
+        {
+          "timeMs": 315.259033203125,
+          "paintEdgeY": 831,
+          "headerY": 107
+        },
+        {
+          "timeMs": 331.926025390625,
+          "paintEdgeY": 833,
+          "headerY": 109
+        },
+        {
+          "timeMs": 348.593017578125,
+          "paintEdgeY": 834,
+          "headerY": 97
+        },
+        {
+          "timeMs": 365.2578125,
+          "paintEdgeY": 836,
+          "headerY": 99
+        },
+        {
+          "timeMs": 381.925048828125,
+          "paintEdgeY": 837,
+          "headerY": 100
+        },
+        {
+          "timeMs": 398.590087890625,
+          "paintEdgeY": 838,
+          "headerY": 101
+        },
+        {
+          "timeMs": 415.255126953125,
+          "paintEdgeY": 839,
+          "headerY": 102
+        },
+        {
+          "timeMs": 431.923095703125,
+          "paintEdgeY": 840,
+          "headerY": 97
+        },
+        {
+          "timeMs": 448.589111328125,
+          "paintEdgeY": 841,
+          "headerY": 97
+        },
+        {
+          "timeMs": 465.2548828125,
+          "paintEdgeY": 842,
+          "headerY": 98
+        },
+        {
+          "timeMs": 481.9189453125,
+          "paintEdgeY": 843,
+          "headerY": 99
+        },
+        {
+          "timeMs": 515.251220703125,
+          "paintEdgeY": 844,
+          "headerY": 100
+        },
+        {
+          "timeMs": 548.583984375,
+          "paintEdgeY": 845,
+          "headerY": 101
+        },
+        {
+          "timeMs": 598.5830078125,
+          "paintEdgeY": 846,
+          "headerY": 102
+        },
+        {
+          "timeMs": 698.578125,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 965.23388671875,
+          "paintEdgeY": 847,
+          "headerY": 103
+        }
+      ],
+      "peakPx": -21,
+      "headerTravelPx": 12,
+      "returnMs": 698.578125,
+      "returnAfterLastInputMs": 531.578125
+    },
+    "local": {
+      "kind": "local",
+      "boundary": "bottom",
+      "target": "body",
+      "referenceUrl": "http://127.0.0.1:8034/?qa=original-native-rebound#calendar",
+      "runtime": "157.0.8103.79",
+      "platform": "MacIntel",
+      "probe": {
+        "mode": "hour-rule",
+        "x": 508,
+        "minY": 810,
+        "maxY": 885,
+        "header": {
+          "x": 523,
+          "minY": 97,
+          "maxY": 130
+        }
+      },
+      "applicationAtEnd": {
+        "transform": "none",
+        "animations": 0
+      },
+      "gestureStartTime": 1795125913482,
+      "inputEvents": [
+        {
+          "time": 1795125913535,
+          "deltaY": 17.607860565185547
+        },
+        {
+          "time": 1795125913535,
+          "deltaY": 25.322017669677734
+        },
+        {
+          "time": 1795125913551,
+          "deltaY": 16.349227905273438
+        },
+        {
+          "time": 1795125913567,
+          "deltaY": 30.28667449951172
+        },
+        {
+          "time": 1795125913585,
+          "deltaY": 44.53981018066406
+        },
+        {
+          "time": 1795125913601,
+          "deltaY": 16.266693115234375
+        },
+        {
+          "time": 1795125913616,
+          "deltaY": 32.92498779296875
+        },
+        {
+          "time": 1795125913635,
+          "deltaY": 27.214752197265625
+        },
+        {
+          "time": 1795125913651,
+          "deltaY": 29.4197998046875
+        },
+        {
+          "time": 1795125913660,
+          "deltaY": 0.06817626953125
+        }
+      ],
+      "samples": [
+        {
+          "timeMs": -136.136962890625,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 17.630859375,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 67.6279296875,
+          "paintEdgeY": 846,
+          "headerY": 103
+        },
+        {
+          "timeMs": 84.2939453125,
+          "paintEdgeY": 844,
+          "headerY": 103
+        },
+        {
+          "timeMs": 100.9599609375,
+          "paintEdgeY": 843,
+          "headerY": 103
+        },
+        {
+          "timeMs": 117.6259765625,
+          "paintEdgeY": 841,
+          "headerY": 103
+        },
+        {
+          "timeMs": 134.2919921875,
+          "paintEdgeY": 839,
+          "headerY": 103
+        },
+        {
+          "timeMs": 150.9580078125,
+          "paintEdgeY": 838,
+          "headerY": 103
+        },
+        {
+          "timeMs": 167.6240234375,
+          "paintEdgeY": 836,
+          "headerY": 103
+        },
+        {
+          "timeMs": 184.2900390625,
+          "paintEdgeY": 835,
+          "headerY": 103
+        },
+        {
+          "timeMs": 200.9560546875,
+          "paintEdgeY": 830,
+          "headerY": 103
+        },
+        {
+          "timeMs": 217.623046875,
+          "paintEdgeY": 827,
+          "headerY": 103
+        },
+        {
+          "timeMs": 234.286865234375,
+          "paintEdgeY": 826,
+          "headerY": 103
+        },
+        {
+          "timeMs": 267.619873046875,
+          "paintEdgeY": 827,
+          "headerY": 103
+        },
+        {
+          "timeMs": 284.285888671875,
+          "paintEdgeY": 828,
+          "headerY": 103
+        },
+        {
+          "timeMs": 300.9521484375,
+          "paintEdgeY": 829,
+          "headerY": 103
+        },
+        {
+          "timeMs": 317.617919921875,
+          "paintEdgeY": 831,
+          "headerY": 103
+        },
+        {
+          "timeMs": 334.284912109375,
+          "paintEdgeY": 832,
+          "headerY": 103
+        },
+        {
+          "timeMs": 350.9501953125,
+          "paintEdgeY": 834,
+          "headerY": 103
+        },
+        {
+          "timeMs": 367.615966796875,
+          "paintEdgeY": 836,
+          "headerY": 103
+        },
+        {
+          "timeMs": 384.281982421875,
+          "paintEdgeY": 837,
+          "headerY": 103
+        },
+        {
+          "timeMs": 400.947998046875,
+          "paintEdgeY": 838,
+          "headerY": 103
+        },
+        {
+          "timeMs": 417.614013671875,
+          "paintEdgeY": 839,
+          "headerY": 103
+        },
+        {
+          "timeMs": 434.281005859375,
+          "paintEdgeY": 840,
+          "headerY": 103
+        },
+        {
+          "timeMs": 450.946044921875,
+          "paintEdgeY": 841,
+          "headerY": 103
+        },
+        {
+          "timeMs": 467.61181640625,
+          "paintEdgeY": 842,
+          "headerY": 103
+        },
+        {
+          "timeMs": 484.278076171875,
+          "paintEdgeY": 843,
+          "headerY": 103
+        },
+        {
+          "timeMs": 517.60986328125,
+          "paintEdgeY": 844,
+          "headerY": 103
+        },
+        {
+          "timeMs": 550.942138671875,
+          "paintEdgeY": 845,
+          "headerY": 103
+        },
+        {
+          "timeMs": 600.940185546875,
+          "paintEdgeY": 846,
+          "headerY": 103
+        },
+        {
+          "timeMs": 700.93603515625,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 967.593017578125,
+          "paintEdgeY": 847,
+          "headerY": 103
+        }
+      ],
+      "peakPx": -21,
+      "headerTravelPx": 0,
+      "returnMs": 700.93603515625,
+      "returnAfterLastInputMs": 522.93603515625
+    },
+    "historicalAfter": {
+      "kind": "historical",
+      "boundary": "bottom",
+      "target": "body",
+      "referenceUrl": "http://127.0.0.1:8038/#calendar",
+      "runtime": "157.0.8103.79",
+      "platform": "MacIntel",
+      "probe": {
+        "mode": "hour-rule",
+        "x": 508,
+        "minY": 811,
+        "maxY": 886,
+        "header": {
+          "x": 523,
+          "minY": 97,
+          "maxY": 130
+        }
+      },
+      "applicationAtEnd": null,
+      "gestureStartTime": 1795125916488,
+      "inputEvents": [
+        {
+          "time": 1795125916531,
+          "deltaY": 29.43631362915039
+        },
+        {
+          "time": 1795125916547,
+          "deltaY": 22.159229278564453
+        },
+        {
+          "time": 1795125916565,
+          "deltaY": 30.43830108642578
+        },
+        {
+          "time": 1795125916581,
+          "deltaY": 30.33197021484375
+        },
+        {
+          "time": 1795125916597,
+          "deltaY": 30.50408935546875
+        },
+        {
+          "time": 1795125916614,
+          "deltaY": 28.931838989257812
+        },
+        {
+          "time": 1795125916630,
+          "deltaY": 32.63554382324219
+        },
+        {
+          "time": 1795125916647,
+          "deltaY": 27.522964477539062
+        },
+        {
+          "time": 1795125916659,
+          "deltaY": 8.039749145507812
+        }
+      ],
+      "samples": [
+        {
+          "timeMs": -133.43603515625,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 9.18798828125,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 59.185791015625,
+          "paintEdgeY": 846,
+          "headerY": 102
+        },
+        {
+          "timeMs": 75.85302734375,
+          "paintEdgeY": 844,
+          "headerY": 100
+        },
+        {
+          "timeMs": 92.51806640625,
+          "paintEdgeY": 843,
+          "headerY": 99
+        },
+        {
+          "timeMs": 109.183837890625,
+          "paintEdgeY": 841,
+          "headerY": 97
+        },
+        {
+          "timeMs": 125.848876953125,
+          "paintEdgeY": 840,
+          "headerY": 97
+        },
+        {
+          "timeMs": 142.51611328125,
+          "paintEdgeY": 838,
+          "headerY": 101
+        },
+        {
+          "timeMs": 159.18115234375,
+          "paintEdgeY": 837,
+          "headerY": 100
+        },
+        {
+          "timeMs": 175.847900390625,
+          "paintEdgeY": 835,
+          "headerY": 98
+        },
+        {
+          "timeMs": 192.51513671875,
+          "paintEdgeY": 831,
+          "headerY": 107
+        },
+        {
+          "timeMs": 209.179931640625,
+          "paintEdgeY": 828,
+          "headerY": 104
+        },
+        {
+          "timeMs": 225.845947265625,
+          "paintEdgeY": 826,
+          "headerY": 102
+        },
+        {
+          "timeMs": 259.177978515625,
+          "paintEdgeY": 827,
+          "headerY": 103
+        },
+        {
+          "timeMs": 275.843994140625,
+          "paintEdgeY": 828,
+          "headerY": 104
+        },
+        {
+          "timeMs": 292.510986328125,
+          "paintEdgeY": 829,
+          "headerY": 105
+        },
+        {
+          "timeMs": 309.177001953125,
+          "paintEdgeY": 831,
+          "headerY": 107
+        },
+        {
+          "timeMs": 325.841064453125,
+          "paintEdgeY": 832,
+          "headerY": 108
+        },
+        {
+          "timeMs": 342.508056640625,
+          "paintEdgeY": 834,
+          "headerY": 97
+        },
+        {
+          "timeMs": 359.1748046875,
+          "paintEdgeY": 835,
+          "headerY": 98
+        },
+        {
+          "timeMs": 375.840087890625,
+          "paintEdgeY": 837,
+          "headerY": 100
+        },
+        {
+          "timeMs": 392.505126953125,
+          "paintEdgeY": 838,
+          "headerY": 101
+        },
+        {
+          "timeMs": 409.1728515625,
+          "paintEdgeY": 839,
+          "headerY": 102
+        },
+        {
+          "timeMs": 425.837890625,
+          "paintEdgeY": 840,
+          "headerY": 97
+        },
+        {
+          "timeMs": 442.504150390625,
+          "paintEdgeY": 841,
+          "headerY": 97
+        },
+        {
+          "timeMs": 459.1708984375,
+          "paintEdgeY": 842,
+          "headerY": 98
+        },
+        {
+          "timeMs": 475.8359375,
+          "paintEdgeY": 843,
+          "headerY": 99
+        },
+        {
+          "timeMs": 509.16796875,
+          "paintEdgeY": 844,
+          "headerY": 100
+        },
+        {
+          "timeMs": 542.5009765625,
+          "paintEdgeY": 845,
+          "headerY": 101
+        },
+        {
+          "timeMs": 592.4970703125,
+          "paintEdgeY": 846,
+          "headerY": 102
+        },
+        {
+          "timeMs": 692.494140625,
+          "paintEdgeY": 847,
+          "headerY": 103
+        },
+        {
+          "timeMs": 959.14990234375,
+          "paintEdgeY": 847,
+          "headerY": 103
+        }
+      ],
+      "peakPx": -21,
+      "headerTravelPx": 11,
+      "returnMs": 692.494140625,
+      "returnAfterLastInputMs": 521.494140625
+    }
+  },
+  "header": {
+    "kind": "local",
+    "boundary": "top",
+    "target": "header",
+    "referenceUrl": "http://127.0.0.1:8034/?qa=original-native-rebound#calendar",
+    "runtime": "157.0.8103.79",
+    "platform": "MacIntel",
+    "probe": {
+      "mode": "hour-rule",
+      "x": 508,
+      "minY": 200,
+      "maxY": 260,
+      "header": {
+        "x": 523,
+        "minY": 97,
+        "maxY": 130
+      }
+    },
+    "applicationAtEnd": {
+      "transform": "none",
+      "animations": 0
+    },
+    "gestureStartTime": 1795125919456,
+    "inputEvents": [
+      {
+        "time": 1795125919506,
+        "deltaY": -11.947872161865234
+      },
+      {
+        "time": 1795125919523,
+        "deltaY": -17.000349044799805
+      },
+      {
+        "time": 1795125919540,
+        "deltaY": -30.20082664489746
+      },
+      {
+        "time": 1795125919555,
+        "deltaY": -25.253395080566406
+      },
+      {
+        "time": 1795125919573,
+        "deltaY": -33.170814514160156
+      },
+      {
+        "time": 1795125919590,
+        "deltaY": -28.365386962890625
+      },
+      {
+        "time": 1795125919606,
+        "deltaY": -35.78819274902344
+      },
+      {
+        "time": 1795125919623,
+        "deltaY": -25.255874633789062
+      },
+      {
+        "time": 1795125919639,
+        "deltaY": -29.746292114257812
+      },
+      {
+        "time": 1795125919657,
+        "deltaY": -3.27099609375
+      }
+    ],
+    "samples": [
+      {
+        "timeMs": -134.891845703125,
+        "paintEdgeY": 221,
+        "headerY": 103
+      },
+      {
+        "timeMs": 15.2119140625,
+        "paintEdgeY": 221,
+        "headerY": 103
+      },
+      {
+        "timeMs": 231.8701171875,
+        "paintEdgeY": 221,
+        "headerY": 103
+      },
+      {
+        "timeMs": 965.173095703125,
+        "paintEdgeY": 221,
+        "headerY": 103
+      }
+    ],
+    "peakPx": 0,
+    "headerTravelPx": 0,
+    "returnMs": 0,
+    "returnAfterLastInputMs": 0
+  }
+}

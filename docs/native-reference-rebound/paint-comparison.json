@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "gesture": {
+    "distancePx": 240,
+    "speed": 1800,
+    "source": "CDP mouse synthesis on macOS Chromium"
+  },
+  "peakPx": {
+    "duckplan": 12,
+    "googleAfter": 11
+  },
+  "peakTimeMs": {
+    "duckplan": 219,
+    "googleAfter": 185
+  },
+  "releaseAlignedComparison": {
+    "sampleStepMs": 10,
+    "maxPixelDifference": 1.2492997198879552,
+    "meanPixelDifference": 0.7412512764642538,
+    "duckplanReturnMs": 267,
+    "googleReturnMs": 245
+  },
+  "scope": "Rendered-frame comparison of authorized public Google Calendar; not private account/physical trackpad equivalence"
+}

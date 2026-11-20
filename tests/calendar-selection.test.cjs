@@ -50,7 +50,7 @@ test("template calendar drops use the target day, including the deadline band, w
   const calendar = {};
   const context = vm.createContext({
     selectedDate: "2026-11-12", calendarFocusSlot: { date: "2026-11-12", time: "09:00" },
-    selectedTaskId: null, tasks: [], PlannerUI, calendarDates: CalendarDates.create(), clearTemplateDrag() {}, showToast() {},
+    selectedTaskId: null, tasks: [{ id: "date-only", title: "Date-only fixture", dueDate: "2026-11-09", dueTime: null }], deadlineRowExpanded: false, expandedDeadlineDates: new Set(), PlannerUI, calendarDates: CalendarDates.create(), clearTemplateDrag() {}, showToast() {},
     CALENDAR_START_HOUR: PlannerUI.TIMELINE_START_HOUR,
     CALENDAR_END_HOUR: PlannerUI.TIMELINE_END_HOUR,
     CALENDAR_HOURS: PlannerUI.TIMELINE_END_HOUR - PlannerUI.TIMELINE_START_HOUR,
@@ -58,7 +58,8 @@ test("template calendar drops use the target day, including the deadline band, w
     templateDrag: { libraryId: "reusable-template", owner: "local:local" },
     dateObject: (date) => new Date(`${date}T12:00:00`),
     nowKey: () => "2026-11-12", formatTime: (time) => time, formatLongDate: (date) => date,
-    deadlineChips: () => "Date-only deadline fixture", layoutEvents: () => [], Model: { scheduledParts: () => null },
+    safeText: value => String(value).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;"),
+    layoutEvents: () => [], Model: { scheduledParts: () => null },
     document: {
       addEventListener(type, handler) { assert.equal(type, "drop"); onDrop = handler; },
       querySelector() { return null; },
@@ -83,7 +84,7 @@ test("template calendar drops use the target day, including the deadline band, w
   }
   assert.match(html, /--hour-count:24;/);
   assert.match(html, /--timeline-height:1488px/);
-  context.deadlineChips = () => "";
+  context.tasks = [];
   const noDeadlineHTML = vm.runInContext('renderTimeline(["2026-11-09", "2026-11-12"])', context);
   assert.doesNotMatch(noDeadlineHTML, /class="deadline-cell"/, "An empty date-only deadline band stays omitted");
   const deadlineCells = [...html.matchAll(/<div class="deadline-cell"([^>]*)>/g)];

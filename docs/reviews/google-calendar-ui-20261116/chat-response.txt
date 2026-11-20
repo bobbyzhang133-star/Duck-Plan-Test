@@ -1,0 +1,515 @@
+DuckPlan Calendar — Google Calendar-Inspired UI Review
+Core functionality passes source review; UI refinement recommended
+
+I successfully inspected the exact TEST commit ddac1c06300f4af0634f4266dee6b884b27a7928, including all four requested synthetic screenshots.
+
+My assessment: DuckPlan already has the right Calendar structure and most of the functionality. It still needs a focused readability and visual-hierarchy pass, rather than another major redesign.
+
+The new cutoff fix addresses a real issue with hour labels and the red current-time indicator. The code and documented tests support that improvement. However, the approach of hiding partially clipped elements is better treated as a defensive measure than as the ideal final scrolling experience.
+
+1. What the current screenshots show
+Google Calendar reference — public UI example, not a signed-in account.
+DuckPlan — saved synthetic 1280px Week screenshot from this commit.
+
+The Google reference emphasizes compact controls, readable typography, restrained grid lines and a strong distinction between events and the surrounding timetable. Google's October 2024 design update explicitly focused on modernized controls, typography and legibility in light and dark themes. 
+workspaceupdates.googleblog.com
+
+DuckPlan already follows several of those principles. What remains is to make the time grid easier to scan at a glance, particularly on iPad, where the task column leaves less room for the week.
+
+The four screenshots confirm:
+
+Desktop: the task list and timetable remain side by side.
+
+iPad: the same arrangement is preserved, although the week extends beyond the visible horizontal space.
+
+Phone portrait: one wide day is readable, with a separate Due row and an exact-time deadline marker.
+
+Phone landscape: the duplicate in-grid date header is removed, reclaiming some vertical space.
+
+Those are screenshot observations. I have not independently accessed or exercised the live 127.0.0.1:8034 page.
+
+2. Prioritized findings and recommended fixes
+
+I found no new P0 functional defect in the reviewed source. The remaining issues are primarily readability, responsive density and interaction polish.
+
+Priority
+
+	
+
+Finding
+
+	
+
+Evidence type and source
+
+	
+
+Recommendation
+
+
+
+
+P1
+
+	
+
+iPad Week view has very narrow event columns
+
+	
+
+Visible in after-835-week.png; planner-motion.css:182 maintains a minimum 650px grid inside a narrower calendar panel
+
+	
+
+Improve horizontal navigation cues and event display at narrow widths
+
+
+
+
+P1
+
+	
+
+Short phone landscape leaves very little timetable visible
+
+	
+
+Visible in after-landscape.png; responsive rules in planner-motion.css:413–421 and calendar-date-clarity.css:340–350
+
+	
+
+Reduce vertical chrome without removing the week selector, deadline access or task summary
+
+
+
+
+P1
+
+	
+
+Work titles and exact-time deadline labels truncate substantially
+
+	
+
+Visible in both Week screenshots; app.js:865–872, styles.css:505–507
+
+	
+
+Use space-aware event labels and a compact crowded-day presentation
+
+
+
+
+P2
+
+	
+
+iPad toolbar wraps into two visually separate rows
+
+	
+
+Visible in the 835px screenshot; planner-motion.css:173–180 and container-width rules
+
+	
+
+Make toolbar grouping deliberate at each breakpoint
+
+
+
+
+P2
+
+	
+
+Current-time indicator can disappear as one unit when its dot is partially clipped
+
+	
+
+Source-confirmed behavior in calendar-viewport.js:35–48 and calendar-date-clarity.css:334–336; visual instability not independently observed
+
+	
+
+Retain the cutoff protection, but compare a dot/line-independent alternative
+
+
+
+
+P2
+
+	
+
+Selected-day yellow wash competes slightly with pale yellow Personal work blocks
+
+	
+
+Visual observation; calendar-date-clarity.css:59
+
+	
+
+Reduce background emphasis while retaining selected-day visibility
+
+
+
+
+P2
+
+	
+
+Task previews are centered dialogs rather than destination-anchored popovers
+
+	
+
+calendar-task-preview.css:1–8, popup-motion.js; this is a design choice, not a defect
+
+	
+
+Refine preview hierarchy first; evaluate anchored desktop placement separately
+
+A. Improve the iPad Week view
+
+This is my highest-priority visual improvement.
+
+Your 835px screenshot preserves the correct task-column-left/timetable-right layout, but the Calendar has limited horizontal space. The visible Friday column is partially cut off, and assignments become very narrow.
+
+I would not remove the task column or force all seven days to fit by shrinking their contents further.
+
+Instead:
+
+Retain horizontal scrolling for the seven-day timetable.
+
+Make the ability to scroll horizontally discoverable, with a restrained edge cue or navigation control.
+
+Keep the time gutter and date headers correctly coordinated during horizontal scrolling.
+
+Allow two title lines when an event has sufficient height and width.
+
+For short blocks, show a concise title with full details accessible on activation.
+
+Keep selection and keyboard navigation functional even when an event is outside the visible horizontal range.
+
+A separate compact iPad week layout could be considered later, but it should not silently replace the established seven-day timetable.
+
+B. Recover usable screen height in phone landscape
+
+The new source correctly removes the redundant in-grid date header in short landscape.
+
+However, after-landscape.png still shows very little of the actual hour grid. The toolbar, seven-day selector, Due band, Tasks summary and bottom navigation collectively occupy most of the available height.
+
+This is a confirmed screenshot-level usability problem, not a failed clipping test.
+
+I recommend a special compact-landscape presentation:
+
+Keep Today, navigation and view controls in one compact toolbar.
+
+Retain the seven-day selector with reduced padding.
+
+Keep date-only deadlines available, but use a compact one-line summary that can expand.
+
+Reduce the collapsed Tasks summary's vertical padding.
+
+Keep the bottom navigation.
+
+Allocate the recovered space to the timetable.
+
+The goal should be to show meaningfully more than one hour at a time, while retaining access to all 24 hours through scrolling.
+
+C. Make dense work/deadline collisions easier to read
+
+The current collision handling deliberately reduces work blocks to 56% of a column when their vertical space overlaps an exact-time deadline annotation (app.js:862).
+
+That protects the deadline annotation, but in an already narrow Week column it may produce nearly unreadable work blocks.
+
+I recommend keeping the exact-minute diamond visible while letting the adjacent text adapt to available space.
+
+For crowded columns, a compact diamond plus time could open the existing grouped details, rather than permanently reserving a large label alongside every work block.
+
+Do not move the deadline out of the grid or convert it into a duration event. The annotation can become smaller; its time coordinate and behavior must stay the same.
+
+D. Improve toolbar hierarchy
+
+PROPOSED COMPACT TOOLBAR
+
+Today
+
+Nov 16–22
+
+Day
+
+Week
+
+Month
+
+Conceptual toolbar arrangement. Preserve DuckPlan's own colors and control behavior.
+
+Google's public Calendar design uses a clear separation between date navigation and view selection. I would use that same hierarchy but retain DuckPlan's existing compact controls.
+
+At intermediate widths, use an intentional responsive arrangement rather than letting flex wrapping determine where controls land.
+
+3. Should the IntersectionObserver suppression remain?
+
+For now, yes. As a final architectural solution, I would evaluate an alternative.
+
+The current implementation is not inherently unsound. calendar-viewport.js uses browser intersection observation rather than forcing geometry reads during every scroll event. It recalculates its observing region when header sizes change and includes generation guards and cleanup.
+
+That is a reasonable bounded fix to the reported cutoff defect.
+
+But it has a tradeoff.
+
+Current behavior
+
+calendar-viewport.js:35–48
+
+A label becomes invisible when its intersection ratio falls below 0.999.
+
+The entire red current-time line is hidden when its observed dot is partially clipped.
+
+The first behavior is intentional: it prevents half-visible hour labels.
+
+The second is more questionable. A red line could still be useful while its dot is passing beneath the sticky header.
+
+I would compare two approaches:
+
+Variant A — Existing observer. Keep current suppression and verify that no visible flicker or unnecessary disappearing line occurs at fractional-scroll positions.
+
+Variant B — Independent indicator visibility. Let the visible portion of the red horizontal line remain visible while hiding or clipping its dot separately at the boundary. Maintain the same sticky header coverage and exact time coordinate.
+
+A structural CSS clipping solution may ultimately be cleaner, but it is only preferable if it also prevents half-visible labels and works with variable-height deadline rows.
+
+Do not replace a tested cutoff fix simply because it uses JavaScript. Require evidence that the alternative is more stable or easier to maintain.
+
+4. Hour-label and grid recommendations
+
+The widened 72px desktop/iPad and 64px phone gutters are appropriate. The synthetic screenshots now show complete, readable time labels at the displayed scroll positions.
+
+I would preserve those widths initially.
+
+For further refinement:
+
+Maintain exact hour-to-line alignment, including midnight.
+
+Keep primary hour lines more visible than half-hour lines.
+
+Reduce the selected-day shading slightly so filled work blocks stand out.
+
+Ensure the red current-time line uses a consistent one-pixel visual weight and an easily recognizable dot.
+
+Keep hour labels stationary horizontally while the timetable scrolls.
+
+Google also announced improved scaling for large monitors in March 2026, emphasizing more useful visible time ranges and less wasted space. That supports considering adaptive calendar density for DuckPlan while still retaining scroll access to all 24 hours. 
+workspaceupdates.googleblog.com
+
+However, DuckPlan currently uses a shared 62px-per-hour scale in app.js:829 for event placement, deadline markers and the grid. Changing CSS row heights alone would misalign them. Any future density setting must update all placement and interaction calculations together.
+
+5. Calendar preview and popup behavior
+
+The current implementation already has useful behavior worth preserving:
+
+Selecting a work block or deadline opens compact details.
+
+Edit, Reschedule and Complete remain available.
+
+The popup animation captures the selected source and morphs toward the preview.
+
+Focus, owner isolation and closure behavior are managed separately.
+
+The existing popup is centered (calendar-task-preview.css:1–8). Google Calendar's public example uses a more context-associated rounded event popover.
+
+I would not change popup positioning in the first pass. Doing so can introduce edge collisions, offscreen placement and source-animation problems.
+
+Instead, improve the current preview's information hierarchy: title first, class/status second, Due and Work clearly separated, warnings next, and actions consistently aligned.
+
+If that remains visually disconnected on large desktop screens, test an event-anchored version as a distinct interaction proposal while retaining the existing source-to-popup continuity.
+
+6. Ordered implementation plan
+
+P1 — Responsive space and toolbar
+
+Refine the 835px Week toolbar and the short-landscape phone layout. Keep all existing Calendar structures and navigation behavior.
+
+P1 — Timetable readability
+
+Improve space-aware event text, dense deadline/work annotations and horizontal Week navigation discoverability. Preserve exact-minute markers, colors and event hit targets.
+
+P2 — Hour labels and current-time rendering
+
+Retain the current cutoff implementation as the baseline. Compare existing observer behavior against independent red-line/dot visibility and any viable CSS clipping approach.
+
+P2 — Grid and theme polish
+
+Tune selected-day shading, line contrast, typography and spacing in both light and dark themes without changing the underlying time scale.
+
+P2 — Preview polish
+
+Refine content hierarchy and verify popup origin, focus and responsive bounds. Do not alter the established morph interaction unless a separate variant demonstrably improves it.
+
+I would implement and review these in small isolated stages, with screenshot comparison after each stage. There is no reason to combine them with Recommend Schedule or modify the task model.
+
+7. Acceptance checks
+
+Test
+
+	
+
+Required behavior
+
+
+
+
+Desktop 1280px
+
+	
+
+Task column and timetable stay side by side; toolbar remains compact
+
+
+
+
+iPad 835px
+
+	
+
+Same unified frame; all seven days remain reachable; event text and navigation usable
+
+
+
+
+Phone 390px / 320px
+
+	
+
+Full-width Calendar, collapsed Tasks sheet, summary/Add and bottom nav preserved
+
+
+
+
+Short landscape
+
+	
+
+Seven-day selector remains; usable timetable height increases
+
+
+
+
+Full 24 hours
+
+	
+
+Midnight through end of day reachable without losing or shifting scheduled items
+
+
+
+
+Hour labels
+
+	
+
+Complete labels at visible positions; no clipping, overlap or unwanted disappearance
+
+
+
+
+Current-time line
+
+	
+
+Accurate minute position, visible red dot/line when appropriate, no flicker or false hiding
+
+
+
+
+Sticky headers
+
+	
+
+Dates, Due band and hour gutter maintain correct relative positions through vertical/horizontal scroll
+
+
+
+
+Deadlines
+
+	
+
+Exact-minute diamonds remain in the grid, with grouped details when crowded
+
+
+
+
+Work blocks
+
+	
+
+Correct duration, drag/schedule hit targets, class fills and no left stripe
+
+
+
+
+Popup
+
+	
+
+Correct source, title, Due/Work information, focus return, Escape, editor handoff and account cleanup
+
+
+
+
+Accessibility
+
+	
+
+Keyboard and touch activation, visible focus, readable light/dark contrast
+
+
+
+
+Reduced motion
+
+	
+
+No unexpected animation; layout and popup actions still work
+
+
+
+
+Data preservation
+
+	
+
+Identical task IDs, due dates, scheduled starts, durations, classes, notes and alert preferences
+
+For the cutoff specifically, test scroll positions immediately before, at and after hour-label/sticky-header boundaries. Check the red line when the dot is fully visible, partially covered and fully behind the header.
+
+Compare screenshot geometry and real interaction behavior, not only whether an element's CSS visibility is toggled.
+
+8. Evidence and review limitations
+
+I directly accessed and reviewed the following exact GitHub files:
+
+landing/app.js, calendar-date-clarity.css, planner-motion.css, calendar-viewport.js, calendar-task-preview.js, calendar-task-preview.css, popup-motion.js, styles.css, index.html, AGENTS.md and plans.md.
+
+I also opened all four requested synthetic screenshots and read docs/calendar-time-cutoff/README.md and source.json.
+
+For Google Calendar, I consulted the official public October 2024 design article, the Google Calendar product page and Help Center, plus Google's March 2026 scaling announcement. I did not access a signed-in Calendar account, inspect private events or conduct a live Google Calendar interaction test. 
+workspaceupdates.googleblog.com
++3
+
+The repository reports 544 passing historical Node tests, 16 browser cutoff cases, eight related regression cases and cache70 verification. These are documented results, not fresh tests I ran.
+
+I did not access the local 127.0.0.1:8034 runtime directly.
+
+Final recommendation
+
+Prioritize three changes:
+
+Make the iPad Week view and its horizontal navigation easier to use.
+
+Recover usable timetable space in phone landscape.
+
+Improve crowded event/deadline readability while preserving the exact-minute deadline system.
+
+Then evaluate the current-time observer's visual behavior before replacing it.
+
+The existing Calendar architecture is sound enough to retain. The best next iteration should make the interface feel clearer and more effortless to scan, borrowing Google's restraint and information hierarchy while preserving DuckPlan's own task-first design.
+
+Review only. No files, deployments, migrations, calendar records or native applications were changed.

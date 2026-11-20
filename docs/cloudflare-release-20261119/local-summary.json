@@ -1,0 +1,18 @@
+{
+  "source": "c5b5aed",
+  "cache": 95,
+  "runtime": "Chromium157.0.8103.79 / actual local Cloudflare workerd + D1 + Durable Object",
+  "accountMode": "dedicated disposable local signed-in account",
+  "schemaMigrations": "0001–0008",
+  "automatedTests": { "pass": 575, "fail": 0 },
+  "dryRun": { "pass": true, "workerBytesKiB": 100.86, "gzipKiB": 24.68 },
+  "browserCases": [
+    { "name": "desktop", "viewport": [1280,900], "passed": true, "pageErrors": [], "unexpectedResponses": [] },
+    { "name": "phone", "viewport": [390,844], "touchEmulated": true, "passed": true, "liveDesktopPeerReceivedNote": true, "pageErrors": [], "unexpectedResponses": [] },
+    { "name": "ipad", "viewport": [835,1112], "touchEmulated": true, "passed": true, "liveDesktopPeerReceivedNote": true, "pageErrors": [], "unexpectedResponses": [] }
+  ],
+  "evidence": "Summary of the completed Playwright MCP browser-baseline-cloud.js result in this task; not a second execution",
+  "productionWrites": false,
+  "remoteDeployment": "PENDING user destination choice",
+  "nativeOrPhysicalAcceptance": "NOT RUN"
+}

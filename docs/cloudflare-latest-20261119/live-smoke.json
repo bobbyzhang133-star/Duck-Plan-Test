@@ -1,0 +1,19 @@
+{
+  "origin": "https://duckplan-latest.ocs-learning.workers.dev",
+  "session": 200,
+  "anonymousPlanner": 401,
+  "ownApi": true,
+  "state": {
+    "view": "calendar",
+    "configured": true,
+    "hasUser": false,
+    "script": "https://duckplan-latest.ocs-learning.workers.dev/calendar-viewport.js?v=immediate-working-spring-20261119",
+    "cacheVersion": true
+  },
+  "motion": {
+    "active": 1,
+    "duration": 440
+  },
+  "errors": [],
+  "verified": true
+}

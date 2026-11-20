@@ -1,0 +1,176 @@
+I want to focus on just the calendar UI layout now
+ChatGPT said:
+
+Agreed. From this point, we'll focus exclusively on DuckPlan's Calendar UI layout—not scheduling algorithms, AI, task-management functionality, or new features.
+
+I think the current Calendar has a solid foundation. What I want to improve is its visual hierarchy, spacing, alignment, and overall readability, using Google Calendar's simplicity as a reference while preserving DuckPlan's identity.
+
+1. Proposed Calendar layout
+
+Here is an interactive layout concept. Switch between desktop/iPad and phone.
+
+Desktop / iPad
+Phone
+
+Tasks
+
+MON, NOV 16
+
+Today
+
+2 remaining
+
+Scheduled
+
+Calculus homework
+
+Due 5:00 PM
+
+Work 3–4 PM
+
+Due this day
+
+Reading response
+
+End of day
+
+Today
+
+Nov 16–22
+
+Day
+
+Week
+
+Month
+
+Due · 1 date-only deadline
+
+Visual layout concept. The illustrated timetable is only a portion of the day; DuckPlan must retain access to all 24 hours.
+2. What I would improve next — layout only
+
+Priority
+
+	
+
+Area
+
+	
+
+Recommendation
+
+
+
+
+1
+
+	
+
+Calendar toolbar
+
+	
+
+Make Today, arrows, date range and Day/Week/Month feel like one organized control area
+
+
+
+
+2
+
+	
+
+Sticky headers
+
+	
+
+Keep date headers; make the Due row compact and expandable
+
+
+
+
+3
+
+	
+
+Timetable
+
+	
+
+Improve hour-label alignment, grid-line contrast and selected-day highlighting
+
+
+
+
+4
+
+	
+
+Current-time indicator
+
+	
+
+Keep the red dot centered on the red line at the grid boundary, clear of time text
+
+
+
+
+5
+
+	
+
+Event blocks
+
+	
+
+Improve spacing and text readability without changing class colors or restoring the left stripe
+
+
+
+
+6
+
+	
+
+Responsive layout
+
+	
+
+Preserve desktop/iPad side-by-side layout and give phones a spacious single-day timetable
+
+
+
+
+7
+
+	
+
+Popovers
+
+	
+
+Refine visual hierarchy and placement without changing task behavior
+
+3. My biggest remaining design recommendation
+
+I would pay particular attention to the vertical space consumed by the headers.
+
+The current Calendar has the date navigation toolbar, day header and Due row before the user reaches the schedule. All three are useful, but on smaller screens they collectively reduce the amount of the timetable visible.
+
+My preferred hierarchy is:
+
+1. Compact calendar toolbar
+
+2. Sticky day/date header
+
+3. Compact sticky date-only deadlines
+
+4. Primary timetable
+
+Receives the largest share of available space
+
+I would avoid adding another permanent header, summary, legend or panel above the calendar. That would make the UI more complicated without improving the main scheduling experience.
+
+My recommendation: Finish polishing these seven layout areas before considering any additional Calendar functionality. The objective is a simpler, more readable Calendar—not a more feature-heavy one.
+
+We'll keep this discussion limited to Calendar layout and visual design.
+

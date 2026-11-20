@@ -1,0 +1,21 @@
+{
+  "runtime": "157.0.8103.79",
+  "origin": "https://duckplan-latest.ocs-learning.workers.dev",
+  "pushAvailable": true,
+  "publicKeyBytes": 65,
+  "keyConsistentAcrossSessions": true,
+  "ui": {
+    "copy": "Enable this device to receive normal task notifications, including while DuckPlan is closed. On iPhone, open DuckPlan from your Home Screen first.",
+    "action": "Enable normal notifications",
+    "buttonDisabled": false,
+    "permission": "default",
+    "canSave": true,
+    "availableOnThisDevice": false
+  },
+  "savedNotificationTimeSeenByPeer": true,
+  "cancelSeenByPeer": true,
+  "errors": [],
+  "physicalPushDelivery": "NOT RUN: this disposable browser was not enrolled for push",
+  "testDevicesRegistered": 0,
+  "status": "PASS"
+}

@@ -1,0 +1,15 @@
+{
+  "requestedElement": "first upward boundary stretch and rebound, mirrored at the lower boundary",
+  "reference": "authorized public Google Calendar Week page",
+  "comparison": "matching Week view, viewport and gesture; rendered hour rules on both sites; compositor frame timestamps",
+  "peakDifferencePxMax": 1,
+  "releaseAlignedPathDifferencePxMax": 1.5,
+  "returnDurationDifferenceMsMax": 16.7,
+  "firstPaintDifferenceAfterFirstWheelMsMax": 16.7,
+  "extraOscillationAllowed": false,
+  "fixedHeaderMovementPxMax": 0.1,
+  "repeatRequirement": "three fresh final comparison runs",
+  "rationale": "one-pixel peak and one-frame timing precision; path allows a half-pixel interpolation margin between integer raster samples",
+  "regressions": ["normal scrolling", "touch hold/release", "drag and reload", "reduced motion", "both edges", "phone/tablet layout", "offline current source"],
+  "scope": "measured browser behavior; physical trackpad equivalence is not implied"
+}
