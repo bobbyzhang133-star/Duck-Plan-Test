@@ -11,21 +11,22 @@
   function createNativeScroll({ calendar, view } = {}) {
     const doc = calendar?.ownerDocument || view?.document;
     if (!doc?.querySelector || !calendar?.addEventListener) return { refresh() {}, destroy() {} };
-    let finger = null, headerNodes = [];
+    let finger = null, headerNodes = [], surface = calendar, header = null, grid = null;
     const inHeader = target => {
       const header = target?.closest?.(".calendar-header-viewport");
       return Boolean(header && calendar.contains(header)) || Boolean(target?.closest?.("#phone-week-strip"));
     };
-    const syncHeader = () => {
-      const surface = scroller(calendar), header = calendar.querySelector(".calendar-header-viewport"), grid = calendar.querySelector(".calendar-header-grid");
+    const syncHeader = (resize = false) => {
       if (!header || !grid || surface === calendar) return;
-      const width = `${surface.scrollWidth}px`;
-      if (grid.style.width !== width) grid.style.width = width;
+      // Width belongs to the render/resize path, never the vertical scroll path.
+      if (resize) {
+        const width = `${surface.scrollWidth}px`;
+        if (grid.style.width !== width) grid.style.width = width;
+      }
       if (header.scrollLeft !== surface.scrollLeft) header.scrollLeft = surface.scrollLeft;
     };
     const wheel = event => {
       if (!inHeader(event.target) || event.ctrlKey || !event.cancelable) return;
-      const surface = scroller(calendar);
       if (surface === calendar) return;
       const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? surface.clientHeight : 1;
       event.preventDefault();
@@ -42,7 +43,6 @@
       if (!finger || event.touches.length !== 1 || !event.cancelable) return;
       const next = event.touches[0], dx = finger.x - next.clientX, dy = finger.y - next.clientY;
       finger = { x: next.clientX, y: next.clientY };
-      const surface = scroller(calendar);
       if (surface === calendar) return;
       event.preventDefault();
       if (Math.abs(dx) > Math.abs(dy)) surface.scrollLeft += dx;
@@ -51,7 +51,6 @@
     };
     const touchend = () => { finger = null; };
     const onScroll = event => {
-      const surface = scroller(calendar), header = calendar.querySelector(".calendar-header-viewport");
       if (event.target === surface) syncHeader();
       else if (header && event.target === header && surface.scrollLeft !== header.scrollLeft) surface.scrollLeft = header.scrollLeft;
     };
@@ -62,14 +61,17 @@
       headerNodes = [];
     };
     const refresh = () => {
-      const next = [calendar.querySelector(".calendar-header-viewport"), doc.querySelector("#phone-week-strip")].filter(Boolean);
+      surface = scroller(calendar);
+      header = calendar.querySelector(".calendar-header-viewport");
+      grid = calendar.querySelector(".calendar-header-grid");
+      const next = [header, doc.querySelector("#phone-week-strip")].filter(Boolean);
       if (next.length !== headerNodes.length || next.some((node, index) => node !== headerNodes[index])) {
         unbindHeaders(); finger = null; headerNodes = next;
         // Attach cancellable input only to headers, never to the document or
         // timetable: native schedule scrolling must stay off the JS input path.
         for (const node of headerNodes) for (const [name, handler, options] of events) node.addEventListener(name, handler, options);
       }
-      syncHeader();
+      syncHeader(true);
     };
     calendar.addEventListener("scroll", onScroll, { passive: true, capture: true });
     return { refresh, destroy() {
@@ -82,8 +84,15 @@
     if (!calendar || !view?.IntersectionObserver) return { refresh() {}, destroy() {} };
     const nativeScroll = createNativeScroll({ calendar, view });
     let frame = null, generation = 0, destroyed = false, labelObserver, indicatorObserver;
+    let foldSurface = calendar, hasTimeline = false, folded = null;
     const observedSizes = new Set(), clipped = new Set();
-    const paintFold = () => calendar.classList.toggle("is-timeline-scrolled", Boolean(calendar.querySelector(".time-axis")) && scroller(calendar).scrollTop > 1);
+    const paintFold = event => {
+      if (event && event.target !== foldSurface) return;
+      const next = hasTimeline && foldSurface.scrollTop > 1;
+      if (next === folded) return;
+      folded = next;
+      calendar.classList.toggle("is-timeline-scrolled", next);
+    };
     calendar.addEventListener("scroll", paintFold, { passive: true, capture: true });
     const schedule = () => { if (!destroyed && frame === null) frame = view.requestAnimationFrame(() => { frame = null; refresh(); }); };
     const sizes = view.ResizeObserver ? new view.ResizeObserver(schedule) : null;
@@ -96,19 +105,23 @@
     function refresh() {
       if (destroyed) return;
       nativeScroll.refresh();
+      foldSurface = scroller(calendar);
+      const axisElement = calendar.querySelector(".time-axis");
+      hasTimeline = Boolean(axisElement);
+      folded = null;
       paintFold();
       disconnectPaint();
       const headers = [...calendar.querySelectorAll(".timeline-days,.timeline-deadlines")];
-      const surface = scroller(calendar);
+      const surface = foldSurface;
       const currentSizes = new Set([calendar, surface, ...headers]);
       for (const element of observedSizes) if (!currentSizes.has(element)) { sizes?.unobserve(element); observedSizes.delete(element); }
       for (const element of currentSizes) if (!observedSizes.has(element)) { sizes?.observe(element); observedSizes.add(element); }
-      if (!surface.clientHeight || !calendar.querySelector(".time-axis")) return;
+      if (!surface.clientHeight || !hasTimeline) return;
       const bounds = surface.getBoundingClientRect();
       const headerBottom = Math.max(bounds.top + surface.clientTop, ...headers.map(element => element.getBoundingClientRect().bottom));
       const top = Math.max(0, headerBottom - bounds.top), right = Math.max(0, surface.offsetWidth - surface.clientWidth - surface.clientLeft);
       const bottom = Math.max(0, surface.offsetHeight - surface.clientHeight - surface.clientTop);
-      const axis = calendar.querySelector(".time-axis").getBoundingClientRect();
+      const axis = axisElement.getBoundingClientRect();
       // The 8px dot is centred on today's column boundary. Its gutter-side
       // half is intentional; keep that half visible without exposing it when
       // the column has scrolled behind the sticky hour labels.
@@ -120,6 +133,7 @@
           const element = indicator ? entry.target.parentElement : entry.target;
           if (!element) continue;
           const hidden = !entry.isIntersecting || entry.intersectionRatio < 0.999;
+          if (hidden === clipped.has(element)) continue;
           element.classList.toggle("is-viewport-clipped", hidden);
           if (hidden) clipped.add(element); else clipped.delete(element);
         }

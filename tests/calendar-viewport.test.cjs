@@ -91,3 +91,18 @@ test("fold shadow follows only timetable scroll, resets for Month and releases i
   assert.equal(f.calendar.classes.has("is-timeline-scrolled"), false);
   f.controller.destroy(); assert.equal(f.scrollListeners.size, 0);
 });
+
+test("fold paint changes only when crossing the edge, without querying geometry on scroll", () => {
+  const f = fixture(); let paints = 0, queries = 0;
+  const toggle = f.calendar.classList.toggle, query = f.calendar.querySelector;
+  f.calendar.classList.toggle = (...args) => { paints += 1; return toggle(...args); };
+  f.calendar.querySelector = selector => { queries += 1; return query(selector); };
+  for (const top of [10, 20, 30, 20, 10]) {
+    f.calendar.scrollTop = top; [...f.scrollListeners][0]();
+  }
+  assert.equal(paints, 1, "Interior scrolling must not rewrite the ancestor's fold class");
+  f.calendar.scrollTop = 0; [...f.scrollListeners][0]();
+  assert.equal(paints, 2, "Reaching the edge removes the fold once");
+  assert.equal(queries, 0, "Fold paint uses the current rendered timeline, not a new search");
+  f.controller.destroy();
+});

@@ -80,3 +80,23 @@ test("destroy releases the native header adapter without leaving a gesture handl
   const f = fixture(); f.controller.destroy(); f.controller.destroy();
   assert.equal(f.registrations.length, 0);
 });
+
+test("vertical scrolling reuses header geometry; rerender/resize refreshes it", () => {
+  const f = fixture();
+  let queries = 0, widthReads = 0, contentWidth = 900;
+  const query = f.calendar.querySelector;
+  f.calendar.querySelector = selector => { queries += 1; return query(selector); };
+  Object.defineProperty(f.surface, "scrollWidth", { get() { widthReads += 1; return contentWidth; } });
+  for (let index = 0; index < 20; index += 1) {
+    f.surface.scrollTop += 10;
+    f.emit(f.calendar, "scroll", { target: f.surface });
+  }
+  assert.equal(queries, 0, "Scrolling must not repeatedly search the calendar tree");
+  assert.equal(widthReads, 0, "Vertical scrolling must not measure horizontal layout");
+  f.surface.scrollLeft = 130;
+  f.emit(f.calendar, "scroll", { target: f.surface });
+  assert.equal(f.header.scrollLeft, 130, "Horizontal alignment remains immediate");
+  contentWidth = 1100; f.controller.refresh();
+  assert.equal(f.grid.style.width, "1100px", "Resize/rerender still measures the new layout");
+  f.controller.destroy();
+});

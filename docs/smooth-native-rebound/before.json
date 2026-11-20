@@ -1,0 +1,102 @@
+[
+  {
+    "cpuRate": 1,
+    "runtime": "157.0.8103.79",
+    "metrics": {
+      "frameCount": 277,
+      "p95FrameMs": 16.700000000000728,
+      "maxFrameMs": 33.40000000000009,
+      "framesOver25ms": 3,
+      "queries": {
+        ".calendar-timeline-scroller": 416,
+        ".calendar-header-viewport": 208,
+        ".calendar-header-grid": 104,
+        ".time-axis": 104
+      },
+      "mutations": 114,
+      "longtasks": []
+    },
+    "work": {
+      "FunctionCall": {
+        "count": 1029,
+        "totalMs": 37.66900000000004,
+        "maxMs": 0.348
+      },
+      "EventDispatch:wheel": {
+        "count": 138,
+        "totalMs": 7.564000000000002,
+        "maxMs": 0.243
+      },
+      "EventDispatch:scroll": {
+        "count": 104,
+        "totalMs": 20.346,
+        "maxMs": 0.481
+      },
+      "UpdateLayoutTree": {
+        "count": 82,
+        "totalMs": 9.757000000000001,
+        "maxMs": 0.289
+      },
+      "Paint": {
+        "count": 196,
+        "totalMs": 16.535,
+        "maxMs": 0.277
+      },
+      "EventDispatch:scrollend": {
+        "count": 6,
+        "totalMs": 0.10200000000000001,
+        "maxMs": 0.049
+      }
+    }
+  },
+  {
+    "cpuRate": 4,
+    "runtime": "157.0.8103.79",
+    "metrics": {
+      "frameCount": 282,
+      "p95FrameMs": 16.799999999999955,
+      "maxFrameMs": 33.40000000000009,
+      "framesOver25ms": 3,
+      "queries": {
+        ".calendar-timeline-scroller": 416,
+        ".calendar-header-viewport": 208,
+        ".calendar-header-grid": 104,
+        ".time-axis": 104
+      },
+      "mutations": 114,
+      "longtasks": []
+    },
+    "work": {
+      "FunctionCall": {
+        "count": 1005,
+        "totalMs": 99.46500000000032,
+        "maxMs": 1.668
+      },
+      "EventDispatch:wheel": {
+        "count": 138,
+        "totalMs": 18.005999999999997,
+        "maxMs": 0.851
+      },
+      "EventDispatch:scroll": {
+        "count": 104,
+        "totalMs": 67.69700000000005,
+        "maxMs": 2.08
+      },
+      "UpdateLayoutTree": {
+        "count": 70,
+        "totalMs": 29.628,
+        "maxMs": 1.225
+      },
+      "Paint": {
+        "count": 184,
+        "totalMs": 27.621999999999993,
+        "maxMs": 0.835
+      },
+      "EventDispatch:scrollend": {
+        "count": 6,
+        "totalMs": 0.67,
+        "maxMs": 0.621
+      }
+    }
+  }
+]
