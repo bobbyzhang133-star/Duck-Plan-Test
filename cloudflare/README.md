@@ -1,5 +1,12 @@
 # DuckPlan Cloudflare backend
 
+## Separate latest site (November 19, 2026)
+
+The user authorized a separate live site at [duckplan-latest.ocs-learning.workers.dev](https://duckplan-latest.ocs-learning.workers.dev/#calendar).
+It has its own D1 database/accounts and uses `wrangler.latest.jsonc`; the original dev/production configuration remains separate.
+For an authorized future update, run `npm run db:migrate:latest` when schema changes are needed, then `npm run deploy:latest`.
+Verification, active version and notification activation status are recorded in `../docs/cloudflare-latest-20261119/README.md`.
+
 Implements the **Backend Plan** in `plans.md` on Cloudflare (it replaced the earlier Supabase backend).
 One Worker serves the static site in `landing/` **and** the API under `/api`, on the same origin, so
 sign-in is a plain first-party HttpOnly cookie.

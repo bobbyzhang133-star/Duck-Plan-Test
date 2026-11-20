@@ -1,0 +1,18 @@
+{
+  "site": "https://duckplan-latest.ocs-learning.workers.dev",
+  "worker": "duckplan-latest",
+  "sourceApplicationCommit": "c5b5aedc080f88605f2349cbdcda84a89b61288f",
+  "cacheVersion": 95,
+  "deploymentId": "92f152ab-8b15-40af-9b73-c87b16ae9817",
+  "versionId": "75697393-6451-4d20-8f1d-523da2ef9c51",
+  "trafficPercent": 100,
+  "createdUTC": "2026-11-20T05:34:01.714251Z",
+  "config": "cloudflare/wrangler.latest.jsonc",
+  "database": "duckplan-latest",
+  "databaseId": "cc1e0a1f-6def-44e1-a111-b79ad30a356f",
+  "migrations": "0001–0008",
+  "pushSecrets": "NOT UPLOADED: automatic approval review rejected private credential upload; explicit user approval requested",
+  "googleSignIn": "Not configured; email/password signup verified",
+  "nativeApp": "Unchanged; not synchronized or installed by this task",
+  "billingSettingsChanged": false
+}

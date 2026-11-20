@@ -1,0 +1,716 @@
+{
+  "applicationCommit": "c5b5aedc080f88605f2349cbdcda84a89b61288f",
+  "deploymentProfile": "cloudflare/wrangler.latest.jsonc",
+  "files": [
+    {
+      "path": "landing/FUR_MATERIAL.md",
+      "sha256": "de03685bd32fb3e359616eb871693d7059ce4bcfed3ca3395296ec3667269517",
+      "bytes": 90842
+    },
+    {
+      "path": "landing/_headers",
+      "sha256": "b9e7af7e1ca0bd7a3420aff56dd4a8347a72f520fd1694724ecd35cd174a7615",
+      "bytes": 289
+    },
+    {
+      "path": "landing/app-install.js",
+      "sha256": "40be35c99fedd8d783f18e1f3ffdbb1c87e82e7098ad3113e50526e01ffe9e32",
+      "bytes": 2878
+    },
+    {
+      "path": "landing/app.js",
+      "sha256": "d290540ac4514512010a9fbd74f27edb2721cb480595e71ee27179fa2ea6cec8",
+      "bytes": 133399
+    },
+    {
+      "path": "landing/app.webmanifest",
+      "sha256": "c79e611ea10ced785eba74933ebe3b1d0ca327c584622beee5bd0c015f12511f",
+      "bytes": 1532
+    },
+    {
+      "path": "landing/assets/animal-fur-topdown-v1.png",
+      "sha256": "dc0eebb412e3976a094965e4b131d31f4a52d257f3e4e2af2bd79f2c0c102691",
+      "bytes": 449318
+    },
+    {
+      "path": "landing/assets/duck-fur-end-on-v2.png",
+      "sha256": "bb07e2bf04b860e96e831656432bd02b4bb0c9bc9379607fa95b7962389d6065",
+      "bytes": 491745
+    },
+    {
+      "path": "landing/assets/duckplan-app-icon-192.png",
+      "sha256": "780e8e0c8f5cbd5869efd9cb63ad928f8bfccbb8be2efe7f694b60cf71f29d5f",
+      "bytes": 12737
+    },
+    {
+      "path": "landing/assets/duckplan-app-icon-512.png",
+      "sha256": "ca816471165699b50a13e876f100de0a014443742664ee2b3277ce94329bfd1d",
+      "bytes": 26228
+    },
+    {
+      "path": "landing/assets/duckplan-app-icon.svg",
+      "sha256": "df73e62823464886c7627e0363534866abbbc5ef539a3b4ffbdf32ad74827499",
+      "bytes": 693
+    },
+    {
+      "path": "landing/assets/duckplan-mark.svg",
+      "sha256": "233fa87b3f6b03ee57678608a64ab296f5669f4765d5da85364e5c9c1637e3d2",
+      "bytes": 433
+    },
+    {
+      "path": "landing/assets/duckplan-mascot-v2.png",
+      "sha256": "875374a45b0e6076095b336e367c15988b2b947f450a0e08611f5458f6cc3415",
+      "bytes": 99584
+    },
+    {
+      "path": "landing/assets/duckplan-mascot-v3.png",
+      "sha256": "0989719770f0ec9b997e1c57b2e2aaae1635799e4d9a2a6fe7978c086ee4a50e",
+      "bytes": 97464
+    },
+    {
+      "path": "landing/assets/duckplan-mascot-v8.png",
+      "sha256": "708a307a9429eed4406061460beb05043bbcd3a19371ffad0f59c836baf8d934",
+      "bytes": 100599
+    },
+    {
+      "path": "landing/assets/duckplan-mascot.png",
+      "sha256": "76fdd477b323b2670aec79be8ee5f4cdcde642dd3be068733d65385e63218bdd",
+      "bytes": 204683
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-notes.md",
+      "sha256": "01ee9245162dd0ab0430d2683d856ba1182be3ff4ca390dd553cc37066847b71",
+      "bytes": 17863
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v10.png",
+      "sha256": "3292cff6019652a1cce76fd43334d54308fa179f7a80ecc2cc0028bf3fa79d26",
+      "bytes": 483471
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v11-transparent.png",
+      "sha256": "8964decdb6dc2448a21beb1ea5fa92ebc979cd1f7c2eb19b61e1320e70eb78db",
+      "bytes": 525288
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v11.png",
+      "sha256": "7714bd8afc68d05399841291712d57cfcb62ad729eec3cd58e570670156501f5",
+      "bytes": 503648
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v2.png",
+      "sha256": "c6d3efd885bdd3b224a1713b16928d2886dde814bc287bec176f951ebcc1c20f",
+      "bytes": 1512264
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v3.png",
+      "sha256": "7e1bbf2174c2e4991bb9d50dfb79b69d2b3dfcaf3040da3309caf5d40499b53d",
+      "bytes": 1447013
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v4.png",
+      "sha256": "a65cb359f6bd162a9f8642512302c7dd7abd6a3f63ccfd8b9d3e092d167d6caf",
+      "bytes": 1132845
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v5.png",
+      "sha256": "995640030be2aadc8c9c586343d58269db4e786ff53b28758a286b79da04fd77",
+      "bytes": 1119820
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v6.png",
+      "sha256": "df574252fcfea9c4e23441f50c4b34d7243537d083bfa20d0b75b46c452d5ef4",
+      "bytes": 536194
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v7.png",
+      "sha256": "e1066810f6cd5b40d50a8c359acfeebc381210171ab1539a920bf40e81819ab8",
+      "bytes": 533205
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v8.png",
+      "sha256": "9326fabf07ea65972d82e23033e18efeb787af41dda5786fb0a83a26f652df7a",
+      "bytes": 486270
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head-v9.png",
+      "sha256": "7c2047813fb29d78c0f3862cda19e15ff51c302e3735f3cc334ddcdcddb7a65a",
+      "bytes": 485604
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-head.png",
+      "sha256": "a80feb6da2714d083b744f47f3d861cc1a335c7c9b94d4cb8d02d742cf5adc21",
+      "bytes": 1180139
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-192.png",
+      "sha256": "6f039b13780598a8e7d74d6f259d248fa1889d4eb17cf948f2e546a5b2206ee3",
+      "bytes": 34471
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-512.png",
+      "sha256": "93a7414e172f3f4d0b4b5a7716657ea3280ce591d72dcc8a689427ec43d94baf",
+      "bytes": 245431
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v10-192.png",
+      "sha256": "30c43f316972cc4c6595ee07e24c1806173931ec1e22fa060f2b75bc18863e2d",
+      "bytes": 36311
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v10-512.png",
+      "sha256": "e80d77d37a5666d346a71712c741662160ebd5b4549c8bccfa3653c3e79516eb",
+      "bytes": 169857
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v11-192.png",
+      "sha256": "b97dd4b8d603359e9612143f311ec929b7c4865de56a880efa1879ed436c7f77",
+      "bytes": 35433
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v11-512.png",
+      "sha256": "7c6e55d67949e07310b4a6abf6ebdcfb2a199084e07def1d58585c7c40429d1f",
+      "bytes": 170820
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v11-transparent-192.png",
+      "sha256": "cd6c62abeb39b3e03d4e78c3aa60b933780a1aaa5572bc8caeeb57739fb8a220",
+      "bytes": 34491
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v11-transparent-512.png",
+      "sha256": "b27878a0f5f7fbc9be4891b294f8b5eff2155a7990e2df200e938fe06db443fb",
+      "bytes": 174964
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v2-192.png",
+      "sha256": "a07b1f3e98129413820b8fd12ff8cbd98fba6577b6b9567228d108c17436cfc8",
+      "bytes": 37009
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v2-512.png",
+      "sha256": "a4a2e46ee17eb7e4cf172c5156298a4553a0379e9ab88b7dd93e7320f7c4cbc8",
+      "bytes": 259076
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v3-192.png",
+      "sha256": "58fa4e80c834426e74fff774beed647f14d7131ff04406293f0dccdb8e22baa8",
+      "bytes": 35033
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v3-512.png",
+      "sha256": "9069650aa5f9e6096f28bf2876dbcc2391537949c1422341a67a4b83cf86fa6f",
+      "bytes": 254399
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v4-192.png",
+      "sha256": "bbb05a6ed46511f8493616154a52dc69597a9bb748b98c554e4aaed9afd40007",
+      "bytes": 33977
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v4-512.png",
+      "sha256": "6b3b3e29cbcac26ffbe92ff37c89a780094f1682ab6e9085153ac50b6926f43c",
+      "bytes": 238697
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v5-192.png",
+      "sha256": "a9f3547cd154f33fc6226ff99890e8f7729bc3469d035056bc3c6c4981165666",
+      "bytes": 27546
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v5-512.png",
+      "sha256": "2867bd7db0e62205a47961db9921dd1c605bcc6529b0d2c873cbfb7e3511567a",
+      "bytes": 229056
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v6-192.png",
+      "sha256": "e9852d698845ceed45ca593c41d4c46c1389a15943a29e193081764a97044369",
+      "bytes": 39088
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v6-512.png",
+      "sha256": "6904e878241d78460c62d76822e6d570588cac51e8026479c3619602303c0b67",
+      "bytes": 187248
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v7-192.png",
+      "sha256": "82084f6c77208839c65672bba40e9d85b197e70c6a7e6165db8b6d04767c0b81",
+      "bytes": 39686
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v7-512.png",
+      "sha256": "8af30bcc300e900ee56daafe1694236a6c7e9391bc017e6148e1229f7479d739",
+      "bytes": 188360
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v8-192.png",
+      "sha256": "f94ca8aacb71f293392ee1cb13552211f6b4d353b350ed9e033d7e1c530aeb1b",
+      "bytes": 36439
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v8-512.png",
+      "sha256": "c18fbb68f12886f6957256be70f6167278d3f9557c0c164ca1a014c756be1781",
+      "bytes": 171916
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v9-192.png",
+      "sha256": "dec8613affd2fe962e7f57b622f7d9536605f123f45479b832e20e601da8d86d",
+      "bytes": 36347
+    },
+    {
+      "path": "landing/assets/duckplan-sigma-icon-v9-512.png",
+      "sha256": "1581f2b7165ce040b52d0ed1116b245d82dea53d4ff59ccc4807bf5b25f54314",
+      "bytes": 170454
+    },
+    {
+      "path": "landing/assets/plan-mark.svg",
+      "sha256": "f2fecae699ec014f54d009b9e375976ee5edd63af82b8856269b72ca58c8ad24",
+      "bytes": 301
+    },
+    {
+      "path": "landing/browser-notifications.js",
+      "sha256": "995aa576b7dbe61c607d0fa004ac655eaffae086049a5f4a9e07714b71535ef0",
+      "bytes": 4242
+    },
+    {
+      "path": "landing/button-interactions.js",
+      "sha256": "9acab5e3ca9330e41cb1673e634ab44df1d602f6848d362c9420b1ece2a3965a",
+      "bytes": 3918
+    },
+    {
+      "path": "landing/calendar-date-clarity.css",
+      "sha256": "30647c5b3f78f463067b517c1b9c31b8ecfb3565ed880a22c9ef483d93411379",
+      "bytes": 41006
+    },
+    {
+      "path": "landing/calendar-date-presentation.js",
+      "sha256": "f55af3cdd4d301825d17272ea3be5229b33cc4a2d960f0b79fbcb5832b1979e3",
+      "bytes": 18240
+    },
+    {
+      "path": "landing/calendar-library-tabs.css",
+      "sha256": "a595412e50c97c001e6b2a5170bdf48ae1713fff9fa8688e8a9f3dc8dc88ffa8",
+      "bytes": 2250
+    },
+    {
+      "path": "landing/calendar-library-tabs.js",
+      "sha256": "29981d18c02092cb7fd0f9047ce7a741b6600725c465008b7b914f624da80f16",
+      "bytes": 3422
+    },
+    {
+      "path": "landing/calendar-task-preview.css",
+      "sha256": "d95dee50f0889ec260a9c5cfe9d0c7c35c88f6076f3509bb6bcb0d47b3b48ba0",
+      "bytes": 6367
+    },
+    {
+      "path": "landing/calendar-task-preview.js",
+      "sha256": "e2d2a3d12e50c42f22d875c452b43039636b3cc9d0434d74ace7b79b82c94f50",
+      "bytes": 19597
+    },
+    {
+      "path": "landing/calendar-viewport.js",
+      "sha256": "8ecea3aaa74018467f43bc0b762c958786f5f3726ce6de44de5e08bf5a23138c",
+      "bytes": 16328
+    },
+    {
+      "path": "landing/cloud-config.js",
+      "sha256": "0979e867feaf260d0ff656d069ee6851885d26f614ca71220760988eb5bc3543",
+      "bytes": 404
+    },
+    {
+      "path": "landing/duck-interactions.js",
+      "sha256": "a19a3db005918d29e9b6eb6508a3868c819212c44094052890947c90e27fa1a6",
+      "bytes": 10282
+    },
+    {
+      "path": "landing/duck-mascot.js",
+      "sha256": "5f7973011c0f8d154bad122c5494dc4eca3e425f436d7ccc37206fb57a2248ee",
+      "bytes": 5589
+    },
+    {
+      "path": "landing/duck-theme.css",
+      "sha256": "d77e9d2e1090a70330fcf3841713854a7019eafbbaa9fee1c9ad236cdabdcd2b",
+      "bytes": 21211
+    },
+    {
+      "path": "landing/formation-surface.js",
+      "sha256": "71f1f4cf6e1d1ebe5c4e7285e5546b645ac09b4f13d1565b5de89ee828dfad66",
+      "bytes": 13873
+    },
+    {
+      "path": "landing/fur-dispersal.js",
+      "sha256": "34c68a8b4c83ecbdfcbfbb3d2cd8f8096c167ddcfb436a39cb9a35c9023cff88",
+      "bytes": 6984
+    },
+    {
+      "path": "landing/fur-lab.html",
+      "sha256": "c8fd344877f0509b7b30e978ec7ba1e2c21a405294525ea25724ea316f6a71c8",
+      "bytes": 15914
+    },
+    {
+      "path": "landing/fur-lab.js",
+      "sha256": "b8e6a60ede443b9f09056fedc4a16c4f10735ba696ad8cface5c6afd6b934744",
+      "bytes": 3134
+    },
+    {
+      "path": "landing/fur-material.js",
+      "sha256": "d6309d8a94e0f325d2b4daddd2b215745b4b6bbae5dbdd21fb56ea0e502a276e",
+      "bytes": 77606
+    },
+    {
+      "path": "landing/fur-physics-lab.html",
+      "sha256": "9206150452e15d7751877a82ec1deb928c0cf13c3e25d6ab6018f04d2ffab0bb",
+      "bytes": 8777
+    },
+    {
+      "path": "landing/fur-physics-lab.js",
+      "sha256": "4fa97f3a4b1a8ae8f81f0d587e40c9a0a2134c934120355ab42a9574cedda7ad",
+      "bytes": 15343
+    },
+    {
+      "path": "landing/fur-pile.js",
+      "sha256": "dc06eb3fda3efb2b6d78dc207ccd53245c84c9c24bebac522b1dfa7258ca41c1",
+      "bytes": 3615
+    },
+    {
+      "path": "landing/fur-recording.js",
+      "sha256": "1a0ff35301a8d26c8d5c432dc5d530defac310028e0cfe03b089d4a6beb37a56",
+      "bytes": 3796
+    },
+    {
+      "path": "landing/fur-response.js",
+      "sha256": "8851c3da3b37c89c17cff7cb0abc61009f0dad2aee7dd213eef01ff02f0d35ca",
+      "bytes": 4188
+    },
+    {
+      "path": "landing/fur-ribbon.js",
+      "sha256": "12d17420828540cddb2aee4778a6e2ab2cda5caab37b845c93f147718fb422f6",
+      "bytes": 15187
+    },
+    {
+      "path": "landing/fur-sheet.js",
+      "sha256": "5f053727fe7b098c37607a553a3a6617b50c6a1ac66576394e0236fe747e007c",
+      "bytes": 47112
+    },
+    {
+      "path": "landing/ical-parser.js",
+      "sha256": "041a2f2abf6a148da3fd888eafd1a7bf93cbaeff85a1ec4b890b4fdb7da76483",
+      "bytes": 8261
+    },
+    {
+      "path": "landing/index.html",
+      "sha256": "10a03b8e2dff33a2ab6b252f00615fafbe493724fea373f462cfdb4bcaa7d22e",
+      "bytes": 37544
+    },
+    {
+      "path": "landing/material-transitions.js",
+      "sha256": "d2f2ec05570a329156ccd47b47477a2cf9da942eac9c372a99647d93e37b8358",
+      "bytes": 35155
+    },
+    {
+      "path": "landing/motion-tokens.js",
+      "sha256": "3d3640252c7fb8dc9ba8be4e5ebdc9911dd650a571a3d8de655f8efaf987174b",
+      "bytes": 1165
+    },
+    {
+      "path": "landing/native-task-alarms.js",
+      "sha256": "8a5d165e48c3e448783cd2598b118af4b4ab6946bc4746068207bb88215781e5",
+      "bytes": 6391
+    },
+    {
+      "path": "landing/native-task-notifications.js",
+      "sha256": "832ad4cedb8c4246d347c8865448c184da52173db2a541d66e20d1b862a594e3",
+      "bytes": 6961
+    },
+    {
+      "path": "landing/page-navigation-feedback.js",
+      "sha256": "a15eb73e59eb14ed045c12f42bdfde0af149c8d25a5a5d7b3bb937a24a6e337b",
+      "bytes": 2326
+    },
+    {
+      "path": "landing/page-stack.css",
+      "sha256": "624e19a3c7f32939f59cfdb98e9c3e551577ac2c7943ad4bbbb93db7a1ec80f1",
+      "bytes": 8921
+    },
+    {
+      "path": "landing/personal-goals.css",
+      "sha256": "6058e538c63ae428761342ab8b8c83d6157ea439fc40710a5e387c1b82e0eda0",
+      "bytes": 9175
+    },
+    {
+      "path": "landing/personal-goals.js",
+      "sha256": "114b07f77834c3ab0f32e6083811f9fda4bf82bbed142666caa5f7f04962935e",
+      "bytes": 26103
+    },
+    {
+      "path": "landing/personal-notes.css",
+      "sha256": "fa08c24fe046f415ef725196480f93f90a9f0b1c64be1a1b9b46256dd64233f1",
+      "bytes": 3593
+    },
+    {
+      "path": "landing/personal-notes.js",
+      "sha256": "fdb22c35e7706e12d96b0b8ced1ec63d0dfe60867ce626a4a9470b12912b313d",
+      "bytes": 12788
+    },
+    {
+      "path": "landing/phone-navigation.css",
+      "sha256": "2150dbdf722fdb19525d1ce91774e901c2917b9c8df58f521449f9451cc516d0",
+      "bytes": 6001
+    },
+    {
+      "path": "landing/phone-navigation.js",
+      "sha256": "16a0e234d2537b70e626fce9d3aa8a5925dcba1ffd76d75a1582124d9aa1f71c",
+      "bytes": 3511
+    },
+    {
+      "path": "landing/planner-clarity.css",
+      "sha256": "d6dd83a7a34a49407a47b602aed396ac7b355e0f013df8df7a0603b06ae9d5bc",
+      "bytes": 27872
+    },
+    {
+      "path": "landing/planner-clarity.js",
+      "sha256": "91128b816036a0eb183c80cf3ba1fede431971f503b3ebe13849d4e5492571cc",
+      "bytes": 8027
+    },
+    {
+      "path": "landing/planner-library.css",
+      "sha256": "ff2c8fb05c84a7d76261ad9556a8db9dd6ee176193f84698a493ae3ec50c599e",
+      "bytes": 17497
+    },
+    {
+      "path": "landing/planner-library.js",
+      "sha256": "8e50a4cbf2f1e0face82f83dc55754358376036c3460d863d6828caa038f19e0",
+      "bytes": 41885
+    },
+    {
+      "path": "landing/planner-model.js",
+      "sha256": "25d5997a36fd0df022716433013b3b8e8871ab5ef8fdad6afcd75730148a7601",
+      "bytes": 8703
+    },
+    {
+      "path": "landing/planner-motion.css",
+      "sha256": "605a847045e4fb9691db4c662bb3847925c204b18f85dc2a6e62c14acb52657c",
+      "bytes": 34769
+    },
+    {
+      "path": "landing/planner-presentation.js",
+      "sha256": "b357fed36a78e000273760a255c3245f6d8c25bb30c9aba19c3f70cd69b527e5",
+      "bytes": 9524
+    },
+    {
+      "path": "landing/planner-store.js",
+      "sha256": "64b3fab59e377850e219ec1ab50f7f787dd5087b206a61ef1af6ba21b3f936a9",
+      "bytes": 82121
+    },
+    {
+      "path": "landing/planner-ui.css",
+      "sha256": "071bc30b3f10706ba03f6c9965e561c71643c12b6c08f9c5e22cf679ef2eef8a",
+      "bytes": 36682
+    },
+    {
+      "path": "landing/planner-ui.js",
+      "sha256": "a92a4017d9e7f55bdbcf86bf7bf8f763544d6e0ea67a20d160bb2cc9846eb34c",
+      "bytes": 5818
+    },
+    {
+      "path": "landing/popup-motion.js",
+      "sha256": "494a24d93a83571be26d80ea518118bc429c4185752cd86a5200d0835292659f",
+      "bytes": 27817
+    },
+    {
+      "path": "landing/product-feedback.css",
+      "sha256": "b93ab0f52349d4661f482c277950b59567f35917b49be871653af75799e83edd",
+      "bytes": 1529
+    },
+    {
+      "path": "landing/reminder-domain.js",
+      "sha256": "3bf88f0e0be683cd98fd6bf8be11bde862ae7f522e8cc3f4500e8738193a4ae8",
+      "bytes": 6077
+    },
+    {
+      "path": "landing/reminder-ledger.js",
+      "sha256": "ab8dc7af80af1928c2a8aa86e5a99c7425ec4701222f2e92781e6f46296202a3",
+      "bytes": 4580
+    },
+    {
+      "path": "landing/service-worker.js",
+      "sha256": "57e00119a21ffd7bafe38c31648e14f379eb0eace0490d31bd139a04289f6d5f",
+      "bytes": 6057
+    },
+    {
+      "path": "landing/sheet-lab.js",
+      "sha256": "3b10d04a0ffe6fbd0f76b3197f4ec653288960e92fefe1ef3b97871a652a6e08",
+      "bytes": 11230
+    },
+    {
+      "path": "landing/styles.css",
+      "sha256": "a9619eefff72dd613d5a5995293e98fd6e14f923bf38020a06f46d08e36af5cd",
+      "bytes": 95153
+    },
+    {
+      "path": "landing/task-alarms.js",
+      "sha256": "e0be40e93016d8a4d026f05e0ea2133838e9d5f6e94b67031124b7737f67bc1e",
+      "bytes": 12948
+    },
+    {
+      "path": "landing/task-list-drag.js",
+      "sha256": "92880204ec3bee0757d9d4ec2ee4fe95e6ec1af1b026fe9f0957c6eaccfdd3f2",
+      "bytes": 7155
+    },
+    {
+      "path": "landing/task-matrix.css",
+      "sha256": "a47c72f74e89c7fcfd136d096e043dbd564b8c7c66bae19edbdf49a29de0b0bb",
+      "bytes": 7788
+    },
+    {
+      "path": "landing/task-matrix.js",
+      "sha256": "ed94286bcbc8c5ad1e2a6f64e04e311a3205972abeddbc808e469bf0653bda7b",
+      "bytes": 18573
+    },
+    {
+      "path": "landing/view-transitions.js",
+      "sha256": "c3769ef831ef0ddf07bc9ca45b342c9023d694c9ee320564a030a4f5f5140f70",
+      "bytes": 15383
+    },
+    {
+      "path": "landing/wave-lab.js",
+      "sha256": "607f2e4aec6c702bcda3d829c426b72b3513121a2a8fa42d6c5464f4a230ccf0",
+      "bytes": 3993
+    },
+    {
+      "path": "landing/work-alert-controller.js",
+      "sha256": "41b61e464d7fdd9de70f828350c9d37c16789a5171783326af658bd37f50db45",
+      "bytes": 11671
+    },
+    {
+      "path": "landing/work-alerts.css",
+      "sha256": "2433f08607ffe23d664c4f8c0af4bd1225e1cdd2a4030d59db206ed94cc32e08",
+      "bytes": 870
+    },
+    {
+      "path": "landing/work-alerts.js",
+      "sha256": "d6d0daa437e6efd5b9dd55e24fde24cefbd9ca04bbb47a6a9202b8ebe14e8bf2",
+      "bytes": 10092
+    },
+    {
+      "path": "cloudflare/src/alarms.js",
+      "sha256": "8facc61cecbe5e2e7fcb827a909d084896f860f024a0bca6a432f247d6136383",
+      "bytes": 8228
+    },
+    {
+      "path": "cloudflare/src/auth.js",
+      "sha256": "bb1e8e15f90c8fc08f735ee8a43a9dd75756f50fb84561b5623b663fcff2904d",
+      "bytes": 17635
+    },
+    {
+      "path": "cloudflare/src/axis.js",
+      "sha256": "554ee63ed5ca0424f8574d5ffaefe32ec258a0864aed103a6a2a428e2b44910b",
+      "bytes": 9269
+    },
+    {
+      "path": "cloudflare/src/http.js",
+      "sha256": "0a051d5ecec1a0cebdc33da8c0487551ce75c34ef9aa7ff082e08bb1a83659f0",
+      "bytes": 3233
+    },
+    {
+      "path": "cloudflare/src/index.js",
+      "sha256": "b816bb590bd85ecd2fa016d6cd5e2c079e0a2ef45907adc2a8c49c2713311ca0",
+      "bytes": 3172
+    },
+    {
+      "path": "cloudflare/src/live.js",
+      "sha256": "296786b0bb42811379b8c572469955de9a91bff1aaed1a39bd11ef2977965896",
+      "bytes": 2238
+    },
+    {
+      "path": "cloudflare/src/native-sync.js",
+      "sha256": "a4c6e0350366e412fc9517fe6a7bf8860e78e976636fbca5d1cd6912081da835",
+      "bytes": 13299
+    },
+    {
+      "path": "cloudflare/src/organization.js",
+      "sha256": "209b2dbfb7d9d2c73d72dfde542f781636fc5314efe9c89f21b948ee5bdf5957",
+      "bytes": 8477
+    },
+    {
+      "path": "cloudflare/src/personal.js",
+      "sha256": "95a319e082e849b2ead52e9eea30dba3c208a54578535a8e5e6d507f1e4797ce",
+      "bytes": 10066
+    },
+    {
+      "path": "cloudflare/src/planner.js",
+      "sha256": "ba4bdfd6c8dc291bbd72f5df1584be9fbcd1668d4066feab69616558e6fd2c88",
+      "bytes": 17743
+    },
+    {
+      "path": "cloudflare/src/task-details.js",
+      "sha256": "e042370893e965408ebae1a18156665e40edeae22d2441c5bd17735a7aca88e1",
+      "bytes": 1161
+    },
+    {
+      "path": "cloudflare/src/work-alerts.js",
+      "sha256": "00158dd0d14ef2ea49eba89e848ee890f2965c6377f51adb2d0b2aae68a0006d",
+      "bytes": 2473
+    },
+    {
+      "path": "cloudflare/migrations/0001_initial_schema.sql",
+      "sha256": "030f8c1936c5e05080853479ef518e080cc1cc6514312d8e15e02c103c29595f",
+      "bytes": 7094
+    },
+    {
+      "path": "cloudflare/migrations/0002_password_sign_in.sql",
+      "sha256": "d6d8893d1e8cba703371ae8826d6b52bd5c3f9a53cce067d87cfdd94d97483c3",
+      "bytes": 1049
+    },
+    {
+      "path": "cloudflare/migrations/0003_task_alarms.sql",
+      "sha256": "d75ec49687e805ac7b272128ffd818160eabfc67404137d58e142236d763adc2",
+      "bytes": 820
+    },
+    {
+      "path": "cloudflare/migrations/0004_product_organization.sql",
+      "sha256": "cf380b81d77d5a393c6fedd5931c0c80d6708df950e1d2a7c6194e75d8dd5ae1",
+      "bytes": 5042
+    },
+    {
+      "path": "cloudflare/migrations/0005_personal_planning.sql",
+      "sha256": "a05c7f28adc736c1b622c734c743e3551e4697eef50b268741806ddc146bfa2a",
+      "bytes": 5735
+    },
+    {
+      "path": "cloudflare/migrations/0006_work_alerts.sql",
+      "sha256": "5d25c1eb7fe3c4efb22477d67b60bae234178c5d34d17091f985eff0ff204cd9",
+      "bytes": 176
+    },
+    {
+      "path": "cloudflare/migrations/0007_shared_task_details.sql",
+      "sha256": "9154f10b97cd536948a249bd84f659c337b494e925dcfd08baa9b4f140630e1e",
+      "bytes": 563
+    },
+    {
+      "path": "cloudflare/migrations/0008_native_background_sync.sql",
+      "sha256": "5ecf43a4f4794995b2450798f55f55548fed68fed3792f13f9c7e0977ada8c02",
+      "bytes": 2355
+    },
+    {
+      "path": "cloudflare/package.json",
+      "sha256": "6f20622c05af790ea2aec403bd0941318c4b7812942b0af724ae9000108184d4",
+      "bytes": 965
+    },
+    {
+      "path": "cloudflare/package-lock.json",
+      "sha256": "e99dfcd97898c9ea34bdd9aa8ca4b17428b657164a5bb195ccd998d878a47ec8",
+      "bytes": 50116
+    },
+    {
+      "path": "cloudflare/wrangler.jsonc",
+      "sha256": "14c343feff846f7d667ca9b4fee9de751fa0709e3b37b47a2e5bb37f20dd12b1",
+      "bytes": 2077
+    },
+    {
+      "path": "cloudflare/wrangler.latest.jsonc",
+      "sha256": "0c0bed978874bf1308b80777a79a7dae70ecf07628bc54e3b5ab89ca8d0220d7",
+      "bytes": 1048
+    }
+  ]
+}
