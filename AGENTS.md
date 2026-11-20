@@ -57,6 +57,8 @@ Recent commits favor short, imperative subjects such as “Hide navigation sideb
 
 ## Website and App Design Alignment
 
+Mobile app release gate (November 20, 2026): update the bundled iPhone/iPad Xcode app only when the user says **"Publish to public"**. Local website edits/reviews, GitHub uploads and app-version questions do not trigger native source synchronization, builds or installation. Continue responsive phone/iPad website development normally. Keep the existing app checkpoint until that instruction; do not revert already-synced changes without a request. Website/app parity and native runtime verification are release requirements, not a reason to bypass this gate. See `.cursor/rules/mobile-app-release-gate.mdc`.
+
 Keep the website and existing iPhone/iPad app aligned with the same approved task/calendar design, preserving the confirmed responsive layouts. Timed deadlines belong at their exact times in the schedule on every platform; date-only deadlines remain date-only. Default Personal/no-class work blocks use light yellow; custom class colors remain. Shared default/class materials must match between templates, drag previews and saved work blocks. Verify canonical, bundled, installed and backend versions separately, including actual native and signed-in feature checks. Never hide a server-capability warning or claim parity from a GitHub push/build alone. Follow `.cursor/rules/website-app-design-parity.mdc` in the website and native checkouts and the platform testing procedure.
 
 ## Shared GitHub release pointer

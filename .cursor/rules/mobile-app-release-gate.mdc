@@ -1,0 +1,13 @@
+---
+description: Sync the iPhone/iPad app only when the user says Publish to public.
+alwaysApply: true
+---
+
+# Mobile App Release Gate
+
+- Confirmed November 20, 2026: load new website changes into the existing iPhone/iPad Xcode app only when the user says **"Publish to public"**.
+- Local website edits, local approval, GitHub uploads and questions such as "Is Xcode up to date?" do not trigger native bundle synchronization, app builds or installation.
+- Continue developing/testing the website's responsive phone/iPad layouts normally; this gate applies to the separate native app project and installed app.
+- Until the release instruction, preserve the existing native checkpoint and record that newer local web work is pending app sync. Do not roll back changes already synced before this preference unless requested.
+- Website/app parity and native runtime testing are requirements at the authorized release; do not update the native app during ordinary web work just to satisfy those requirements.
+- At "Publish to public", sync the approved version with native overlays/signing preserved, perform the documented platform checks, and distinguish source/build/deployed/installed versions. Physical phone installation remains separate; never claim it from a build alone.

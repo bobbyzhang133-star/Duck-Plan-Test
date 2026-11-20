@@ -11,7 +11,8 @@ alwaysApply: true
 - Test affected create/edit/delete, Schedule/drag, reload/relaunch persistence and failure feedback. Keep unrelated data unchanged.
 - Cover local mode and signed-in mode when supported; verify the real target API contract and required migrations, not only a synthetic transport response.
 - For Templates, exercise desktop drag and touch/keyboard Schedule, saved settings, independent task copies, source-template retention and reload.
-- App updates require actual WKWebView functional checks in an isolated iPhone/iPad simulator or device, native transport tests, preserved signing/native customizations and built-web-file parity.
+- Ordinary local website work must respect `mobile-app-release-gate.mdc`: do not sync/build/install the native app before the user says **"Publish to public"**. Record the unchanged native checkpoint as pending release sync; test responsive web layouts normally.
+- Authorized app updates require actual WKWebView functional checks in an isolated iPhone/iPad simulator or device, native transport tests, preserved signing/native customizations and built-web-file parity.
 - Treat web, installed PWA and bundled native app as separate runtimes. Browser viewport emulation is layout/input evidence, not native or physical Safari verification.
 - Check phone/iPad layouts, touch targets, keyboard/focus, reduced motion and supported offline behavior where affected.
 - Check account/owner isolation and pending/error states for persistence or authentication changes.
