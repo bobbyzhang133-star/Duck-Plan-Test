@@ -123,7 +123,7 @@
 }
 .motion-preview #view-calendar .calendar-day-counts > [data-day-due-count] {
   color: var(--calendar-count-due-ink);
-  background: color-mix(in srgb,var(--calendar-count-due-accent) 10%,var(--calendar-header-surface,var(--card)));
+  background: color-mix(in srgb,var(--calendar-count-due-accent) 24%,var(--calendar-header-surface,var(--card)));
 }
 .motion-preview #view-calendar .calendar-day-counts span { color: inherit; font: inherit; letter-spacing: 0; text-transform: none; }
 .motion-preview #view-calendar .calendar-day-counts .calendar-count-label { font-size: 10px; }
@@ -480,6 +480,7 @@
   cursor: pointer; touch-action: manipulation;
 }
 .motion-preview #view-calendar .calendar-day-counts.is-interactive > button:is(:hover,:active,.interaction-pressed) { filter: brightness(.95); transform: none; }
+.motion-preview #view-calendar .calendar-day-counts.is-interactive > button[data-day-due-count] { border: 2px solid var(--calendar-count-due-accent); }
 .motion-preview #view-calendar .calendar-day-counts.is-interactive > button:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
 .motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-interactive .calendar-count-label { display: none; }
 .motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-single .calendar-count-label,
