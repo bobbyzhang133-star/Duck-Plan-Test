@@ -1,0 +1,59 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1156,
+      "theme": "light",
+      "status": "PASS",
+      "transparentFields": 17,
+      "workSurface": "rgb(232, 240, 254)",
+      "dueSurface": "rgb(251, 238, 237)",
+      "otherSurface": "rgb(255, 255, 255)",
+      "overflow": 0
+    },
+    {
+      "width": 1156,
+      "theme": "dark",
+      "status": "PASS",
+      "transparentFields": 17,
+      "workSurface": "rgb(36, 58, 86)",
+      "dueSurface": "rgb(74, 48, 46)",
+      "otherSurface": "rgb(43, 43, 36)",
+      "overflow": 0
+    },
+    {
+      "width": 1156,
+      "status": "PASS",
+      "offlineCache": [
+        "duckplan-app-motion-preview-v105"
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "status": "PASS",
+      "transparentFields": 17,
+      "workSurface": "rgb(232, 240, 254)",
+      "dueSurface": "rgb(251, 238, 237)",
+      "otherSurface": "rgb(255, 255, 255)",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS",
+      "transparentFields": 17,
+      "workSurface": "rgb(36, 58, 86)",
+      "dueSurface": "rgb(74, 48, 46)",
+      "otherSurface": "rgb(43, 43, 36)",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "offlineCache": [
+        "duckplan-app-motion-preview-v105"
+      ]
+    }
+  ]
+}
