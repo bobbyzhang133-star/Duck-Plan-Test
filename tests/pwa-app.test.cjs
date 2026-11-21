@@ -29,7 +29,7 @@ test("planner markup exposes install metadata and an accessible install control"
 
 test("service worker caches the shell, leaves APIs online-only, and handles notification clicks", () => {
   const worker = fs.readFileSync(path.join(landing, "service-worker.js"), "utf8");
-  assert.match(worker, /const CACHE_VERSION = "duckplan-app-motion-preview-v105"/);
+  assert.match(worker, /const CACHE_VERSION = "duckplan-app-motion-preview-v106"/);
   assert.ok(worker.includes('"./task-list-drag.js"'), "Offline planner includes the scheduling controller");
   for (const asset of ["planner-clarity.css", "planner-clarity.js", "planner-presentation.js", "duck-mascot.js", "phone-navigation.css", "phone-navigation.js", "calendar-library-tabs.js", "calendar-library-tabs.css", "view-transitions.js", "page-stack.css"]) assert.ok(worker.includes(asset), `Offline shell includes ${asset}`);
   assert.match(worker, /event\.request\.mode === "navigate"/);

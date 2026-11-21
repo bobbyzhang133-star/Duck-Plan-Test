@@ -1,0 +1,65 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1156,
+      "theme": "light",
+      "status": "PASS",
+      "fields": 16,
+      "work": "rgb(232, 240, 254)",
+      "workField": "rgb(220, 232, 252)",
+      "due": "rgb(251, 238, 237)",
+      "dueField": "rgb(246, 222, 221)",
+      "overflow": 0
+    },
+    {
+      "width": 1156,
+      "theme": "dark",
+      "status": "PASS",
+      "fields": 16,
+      "work": "rgb(36, 58, 86)",
+      "workField": "rgb(46, 72, 106)",
+      "due": "rgb(74, 48, 46)",
+      "dueField": "rgb(96, 62, 58)",
+      "overflow": 0
+    },
+    {
+      "width": 1156,
+      "status": "PASS",
+      "offlineCache": [
+        "duckplan-app-motion-preview-v106"
+      ],
+      "focus": "PASS"
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "status": "PASS",
+      "fields": 16,
+      "work": "rgb(232, 240, 254)",
+      "workField": "rgb(220, 232, 252)",
+      "due": "rgb(251, 238, 237)",
+      "dueField": "rgb(246, 222, 221)",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS",
+      "fields": 16,
+      "work": "rgb(36, 58, 86)",
+      "workField": "rgb(46, 72, 106)",
+      "due": "rgb(74, 48, 46)",
+      "dueField": "rgb(96, 62, 58)",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "offlineCache": [
+        "duckplan-app-motion-preview-v106"
+      ],
+      "focus": "PASS"
+    }
+  ]
+}

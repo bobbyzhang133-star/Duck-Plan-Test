@@ -1,5 +1,6 @@
 /* Google Calendar's compact task-entry hierarchy, with DuckPlan materials. */
 .motion-preview .task-modal {
+  --task-editor-field: var(--surface);
   width: min(448px,calc(100vw - 28px)); max-width: calc(100vw - 28px);
   border-radius: 28px; color: var(--ink-deep);
 }
@@ -27,7 +28,7 @@
 .motion-preview .task-modal label { min-width: 0; gap: 4px; margin: 0; font-size: 12px; line-height: 18px; font-weight: 500; }
 .motion-preview .task-modal :is(input,select,textarea):not([type="checkbox"]) {
   box-sizing: border-box; min-width: 0; width: 100%; height: 40px; min-height: 40px; padding: 7px 9px;
-  border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--ink-deep); box-shadow: none;
+  border: 1px solid transparent; border-radius: 6px; background: var(--task-editor-field); color: var(--ink-deep); box-shadow: none;
   font-size: 14px; line-height: 20px; font-weight: 400;
 }
 .motion-preview .task-modal .task-editor-title input { height: 40px; min-height: 40px; padding: 4px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; font-size: 22px; line-height: 30px; }
@@ -55,9 +56,9 @@
 .motion-preview .task-modal .field-help { margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 17px; font-weight: 400; }
 .motion-preview .task-modal #task-detail-options > :not(summary) { margin-left: 42px; margin-right: 10px; }
 .motion-preview .task-modal #task-detail-options > label { margin-top: 10px; }
-.motion-preview .task-modal .editor-work { background: #e8f0fe; }
+.motion-preview .task-modal .editor-work { --task-editor-field: #dce8fc; background: #e8f0fe; }
 .motion-preview .task-modal .editor-work > summary:is(:hover,:focus-visible) { background: #dce8fc; }
-.motion-preview .task-modal .task-editor-deadline { display: grid; grid-template-columns: 20px minmax(0,1fr); align-items: start; gap: 12px; margin-top: 8px; padding: 10px; border-radius: 10px; background: #fbeeed; }
+.motion-preview .task-modal .task-editor-deadline { --task-editor-field: #f6dedd; display: grid; grid-template-columns: 20px minmax(0,1fr); align-items: start; gap: 12px; margin-top: 8px; padding: 10px; border-radius: 10px; background: #fbeeed; }
 .motion-preview .task-modal .task-editor-deadline > .editor-row-icon { margin-top: 21px; }
 .motion-preview .task-modal .editor-deadline-fields { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 8px; }
 .motion-preview .task-modal #task-alarm-options .form-section + .form-section { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); }
@@ -73,9 +74,9 @@
 #task-form [aria-invalid="true"] { border-color: #be6551; }
 .motion-preview .task-modal .task-editor-error-stack { position: sticky; bottom: 64px; z-index: 6; background: var(--card); }
 .motion-preview .task-modal form:has(.form-error:not([hidden]):not(:empty)) { scroll-padding-bottom: 160px; }
-:root[data-theme="dark"] .motion-preview .task-modal .editor-work { background: #243a56; }
+:root[data-theme="dark"] .motion-preview .task-modal .editor-work { --task-editor-field: #2e486a; background: #243a56; }
 :root[data-theme="dark"] .motion-preview .task-modal .editor-work > summary:is(:hover,:focus-visible) { background: #2e486a; }
-:root[data-theme="dark"] .motion-preview .task-modal .task-editor-deadline { background: #4a302e; }
+:root[data-theme="dark"] .motion-preview .task-modal .task-editor-deadline { --task-editor-field: #603e3a; background: #4a302e; }
 @media (max-width: 700px), (pointer: coarse) {
   .motion-preview .task-modal .modal-heading .close-button { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
   .motion-preview .task-modal :is(input,select,textarea):not([type="checkbox"]) { min-height: 44px; font-size: 16px; }
