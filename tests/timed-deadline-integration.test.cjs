@@ -25,7 +25,7 @@ function fixture(tasks) {
     taskScheduleText: () => "Scheduled work", Date, Intl,
   });
   vm.runInContext(functions.join("\n"), context);
-  return { render: () => context.renderTimeline([date]), relevant: () => context.relevantCalendarMinutes([date]) };
+  return { render: () => context.renderTimeline([date]), relevant: () => context.relevantCalendarMinutes([date]), layout: () => context.layoutEvents(tasks) };
 }
 
 test("timed deadlines retain exact times while date-only deadlines stay accessible in the heading Due list without a duplicate band", () => {
@@ -48,13 +48,13 @@ test("a timed-only day removes the empty top strip and initially scrolls to its 
   assert.equal(fixture([task("date-only")]).relevant(), 540, "A date-only deadline does not invent a23:59 visual location");
 });
 
-test("deadline labels share space with overlapping work without changing either time", () => {
+test("deadline labels overlay full-width work without changing either time", () => {
   const settings = { version: 1, alarm: { enabled: false } };
   const tasks = [task("work", { scheduledStart: `${date}T16:30`, durationMinutes: 90, dueTime: "17:00", workAlerts: settings }),
     task("near", { dueTime: "17:05" }), task("separate", { scheduledStart: `${date}T11:00`, dueDate: null })];
   const before = structuredClone(tasks), html = fixture(tasks).render();
-  assert.match(html, /data-calendar-drag-task="work"[^>]*width:calc\(56% - 6px\)/);
-  assert.match(html, /data-calendar-drag-task="separate"[^>]*width:calc\(100% - 6px\)/);
+  assert.match(html, /data-calendar-drag-task="work"[^>]*width:100%/);
+  assert.match(html, /data-calendar-drag-task="separate"[^>]*width:100%/);
   assert.match(html, /data-overlaps-work="true"/);
   assert.match(html, /data-timed-deadline-group="2030-05-02-1020"/);
   assert.match(html, /data-deadline-minute="1020"/);
@@ -62,12 +62,60 @@ test("deadline labels share space with overlapping work without changing either 
   assert.deepEqual(tasks, before);
 });
 
-test("overlapping work keeps a shared horizontal area when only its longer session reaches a deadline", () => {
+test("close work headings share overlapping columns independently of a deadline", () => {
   const tasks = [task("short", { scheduledStart: `${date}T16:00`, durationMinutes: 30, dueDate: null }),
     task("long", { scheduledStart: `${date}T16:00`, durationMinutes: 120, dueDate: null }), task("due", { dueTime: "17:00" })];
   const html = fixture(tasks).render();
-  assert.match(html, /data-calendar-drag-task="short"[^>]*left:calc\(0% \+ 3px\);width:calc\(28% - 6px\)/);
-  assert.match(html, /data-calendar-drag-task="long"[^>]*left:calc\(28% \+ 3px\);width:calc\(28% - 6px\)/);
+  assert.match(html, /data-calendar-drag-task="long"[^>]*left:0%;width:85%/);
+  assert.match(html, /data-calendar-drag-task="short"[^>]*left:50%;width:50%/);
+});
+
+test("separated overlapping headings keep full width with a five percent inset", () => {
+  const tasks = [task("earlier", { scheduledStart: `${date}T14:00`, durationMinutes: 135 }),
+    task("later", { scheduledStart: `${date}T14:45`, durationMinutes: 90 })];
+  const before = structuredClone(tasks), layout = fixture(tasks).layout();
+  assert.deepEqual(Array.from(layout, e => [e.task.id, e.left, e.width, e.stack]), [["earlier", 0, 100, 1], ["later", 5, 95, 2]]);
+  assert.deepEqual(tasks, before);
+});
+
+test("one connected conflict group shares its peak columns, including earlier cards", () => {
+  const tasks = [task("long", { scheduledStart: `${date}T09:00`, durationMinutes: 180 }),
+    task("first", { scheduledStart: `${date}T09:00`, durationMinutes: 45 }),
+    task("second", { scheduledStart: `${date}T09:30`, durationMinutes: 90 }),
+    task("separate", { scheduledStart: `${date}T14:00`, durationMinutes: 60 })];
+  const layout = fixture(tasks).layout();
+  assert.ok(layout.slice(0, 3).every(e => e.lanes === 3));
+  assert.deepEqual(Array.from(layout, e => e.left), [0, 100 / 3, 200 / 3, 0]);
+  assert.equal(layout[3].width, 100);
+  assert.equal(layout[3].overlapping, false);
+});
+
+test("adjacent sessions separate cleanly, while minimum-height short cards avoid hidden headings", () => {
+  let layout = fixture([task("a", { scheduledStart: `${date}T09:00`, durationMinutes: 60 }), task("b", { scheduledStart: `${date}T10:00`, durationMinutes: 60 })]).layout();
+  assert.ok(layout.every(e => e.left === 0 && e.width === 100 && !e.overlapping));
+  layout = fixture([task("a", { scheduledStart: `${date}T09:00`, durationMinutes: 10 }), task("b", { scheduledStart: `${date}T09:10`, durationMinutes: 10 })]).layout();
+  assert.equal(layout[0].height, 30);
+  assert.deepEqual(Array.from(layout, e => e.left), [0, 50]);
+});
+
+test("reused lanes and input reordering keep deterministic bounded overlap geometry", () => {
+  const tasks = [task("long", { scheduledStart: `${date}T09:00`, durationMinutes: 180 }),
+    task("early", { scheduledStart: `${date}T09:00`, durationMinutes: 45 }),
+    task("reuse", { scheduledStart: `${date}T10:00`, durationMinutes: 45 })];
+  const layout = fixture(tasks).layout(), reverse = fixture([...tasks].reverse()).layout();
+  const values = list => Array.from(list, e => [e.task.id, e.left, e.width, e.stack]);
+  assert.deepEqual(values(layout), values(reverse));
+  assert.equal(layout[1].lane, layout[2].lane);
+  assert.ok(layout.every(e => e.left >= 0 && e.width > 0 && e.left + e.width <= 100));
+});
+
+test("a long chain caps the inset and resets full width after the conflict ends", () => {
+  const tasks = Array.from({ length: 14 }, (_, i) => task(`chain-${i}`, { scheduledStart: `${date}T${String(1 + Math.floor(i * 45 / 60)).padStart(2, "0")}:${String(i * 45 % 60).padStart(2, "0")}`, durationMinutes: 60 }));
+  tasks.push(task("separate", { scheduledStart: `${date}T20:00`, durationMinutes: 45 }));
+  const layout = fixture(tasks).layout();
+  assert.ok(layout.slice(0, -1).every(e => e.left <= 40 && e.width >= 60));
+  assert.equal(layout.at(-1).left, 0);
+  assert.equal(layout.at(-1).width, 100);
 });
 
 test("pointer activation resolves a visible diamond to its own group while keyboard activation keeps its focused control", () => {

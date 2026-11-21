@@ -1,0 +1,34 @@
+{
+  "runtime": "157.0.8103.79",
+  "surface": "browser tab with service worker, not installed PWA",
+  "results": [
+    {
+      "width": 1470,
+      "status": "PASS",
+      "cache": [
+        "duckplan-app-motion-preview-v109"
+      ],
+      "state": {
+        "ratio": 0.04999673117154812,
+        "widthRatio": 0.9499869246861925,
+        "workLayer": "2",
+        "dueLayer": "5"
+      },
+      "offlineTasks": 2
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "cache": [
+        "duckplan-app-motion-preview-v109"
+      ],
+      "state": {
+        "ratio": 0.04998867753623189,
+        "widthRatio": 0.9499547101449275,
+        "workLayer": "2",
+        "dueLayer": "5"
+      },
+      "offlineTasks": 2
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "cloud": false,
+      "checks": [
+        {
+          "kind": "real pointer drag",
+          "status": "PASS",
+          "geometry": {
+            "inWorkLayer": true,
+            "position": "absolute",
+            "width": 956,
+            "layerWidth": 956,
+            "workZ": "2",
+            "dueZ": "5",
+            "pointer": "none"
+          },
+          "cancelPreservesData": true
+        },
+        {
+          "kind": "synthetic HTML5 task drag",
+          "status": "PASS",
+          "fitFreeFit": true,
+          "scheduled": "14:15"
+        },
+        {
+          "kind": "synthetic HTML5 template drag",
+          "status": "PASS",
+          "fitFreeFit": true,
+          "scheduled": "14:15"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "cloud": true,
+      "checks": [
+        {
+          "kind": "real pointer drag",
+          "status": "PASS",
+          "geometry": {
+            "inWorkLayer": true,
+            "position": "absolute",
+            "width": 956,
+            "layerWidth": 956,
+            "workZ": "2",
+            "dueZ": "5",
+            "pointer": "none"
+          },
+          "cancelPreservesData": true
+        },
+        {
+          "kind": "synthetic HTML5 task drag",
+          "status": "PASS",
+          "fitFreeFit": true,
+          "scheduled": "14:15"
+        },
+        {
+          "kind": "synthetic HTML5 template drag",
+          "status": "PASS",
+          "fitFreeFit": true,
+          "scheduled": "14:15"
+        }
+      ],
+      "status": "PASS"
+    }
+  ]
+}

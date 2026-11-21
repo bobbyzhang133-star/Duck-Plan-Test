@@ -856,19 +856,43 @@ function deadlineControlAtPointer(event) {
     .sort((a, b) => Math.abs(event.clientY - (a.rect.top + a.rect.bottom) / 2) - Math.abs(event.clientY - (b.rect.top + b.rect.bottom) / 2));
   return points[0]?.element.closest(".timed-deadline-anchor")?.querySelector(".timed-deadline-marker,.timed-deadline-group-trigger") || null;
 }
-function layoutEvents(dayTasks) {
+function layoutEvents(dayTasks, { hourHeight = 62 } = {}) {
   const sorted = dayTasks.map((task) => {
     const start = Model.scheduledParts(task).minutes;
-    return { task, start, end: start + Number(task.durationMinutes || 45), lane: 0, lanes: 1 };
-  }).sort((a, b) => a.start - b.start || a.end - b.end);
-  const active = [];
+    const end = start + Number(task.durationMinutes || 45);
+    return { task, start, end, top: start * hourHeight / 60, height: Math.max(30, (end - start) * hourHeight / 60), lane: 0 };
+  }).sort((a, b) => a.start - b.start || b.end - a.end || String(a.task.id).localeCompare(String(b.task.id)));
+  const clusters = [];
   for (const event of sorted) {
-    for (let index = active.length - 1; index >= 0; index -= 1) if (active[index].end <= event.start) active.splice(index, 1);
-    const used = new Set(active.map((item) => item.lane));
-    while (used.has(event.lane)) event.lane += 1;
-    active.push(event);
-    const count = Math.max(...active.map((item) => item.lane)) + 1;
-    active.forEach((item) => { item.lanes = Math.max(item.lanes, count); });
+    let cluster = clusters.at(-1);
+    if (!cluster || event.top >= cluster.bottom) {
+      cluster = { bottom: event.top + event.height, events: [] };
+      clusters.push(cluster);
+    }
+    cluster.events.push(event);
+    cluster.bottom = Math.max(cluster.bottom, event.top + event.height);
+  }
+  for (const cluster of clusters) {
+    const active = [];
+    let lanes = 1, crowdedHeadings = false;
+    for (const event of cluster.events) {
+      for (let index = active.length - 1; index >= 0; index -= 1) if (active[index].top + active[index].height <= event.top) active.splice(index, 1);
+      // Keep both title/time lines exposed; short cards only have a title.
+      crowdedHeadings ||= active.some(other => event.top - other.top < (other.height < 48 ? 28 : 42));
+      const used = new Set(active.map(item => item.lane));
+      while (used.has(event.lane)) event.lane += 1;
+      active.push(event);
+      lanes = Math.max(lanes, event.lane + 1);
+    }
+    cluster.events.forEach((event, index) => {
+      event.lanes = lanes;
+      event.overlapping = cluster.events.length > 1;
+      event.stack = index + 1;
+      // Like Calendar: close headings share overlapping columns; otherwise a
+      // small inset preserves nearly the entire width and earlier headings.
+      event.left = crowdedHeadings ? event.lane * 100 / lanes : Math.min(index * 5, 40);
+      event.width = crowdedHeadings ? Math.min(100 - event.left, 170 / lanes) : 100 - event.left;
+    });
   }
   return sorted;
 }
@@ -888,30 +912,12 @@ function renderTimeline(dates) {
       : "";
     const scheduled = tasks.filter((task) => Model.scheduledParts(task)?.date === date && !task.completed);
     const deadlineGroups = calendarDates.timedDeadlineGroups(tasks, date, { hourHeight });
-    const workEvents = layoutEvents(scheduled).map(event => ({ ...event,
-      top: ((event.start - startHour * 60) / 60) * hourHeight,
-      height: Math.max(30, ((event.end - event.start) / 60) * hourHeight),
-    }));
+    const workEvents = layoutEvents(scheduled, { hourHeight });
     const overlapsDeadline = (event, group) => event.top < group.bottom + 2 && event.top + event.height > group.top - 2;
-    // A connected set of overlapping work cards must share one horizontal area;
-    // shrinking only its later card would move that card over an earlier lane.
-    const workClusters = [];
-    for (const event of workEvents) {
-      let cluster = workClusters.at(-1);
-      if (!cluster || event.top >= cluster.bottom) {
-        cluster = { bottom: event.top + event.height, events: [] };
-        workClusters.push(cluster);
-      }
-      cluster.events.push(event); cluster.bottom = Math.max(cluster.bottom, event.top + event.height);
-    }
-    for (const cluster of workClusters) {
-      const availableWidth = cluster.events.some(event => deadlineGroups.some(group => overlapsDeadline(event, group))) ? 56 : 100;
-      for (const event of cluster.events) event.availableWidth = availableWidth;
-    }
-    const events = workEvents.map(({ task, start, end, lane, lanes, top, height, availableWidth }) => {
+    const events = workEvents.map(({ task, top, height, left, width, stack, overlapping }) => {
       const info = classInfo(task);
       const timing = Model.taskTiming(task);
-      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};--course-default-fill:${info.defaultWorkFill || 'initial'};top:${top}px;height:${height}px;left:calc(${(lane / lanes) * availableWidth}% + 3px);width:calc(${availableWidth / lanes}% - 6px)"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
+      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" data-overlapping-work="${overlapping}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};--course-default-fill:${info.defaultWorkFill || 'initial'};--work-stack:${stack};top:${top}px;height:${height}px;left:${left}%;width:${width}%"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
     }).join("");
     const timedDeadlines = deadlineGroups.map(group => {
       const overlapsWork = workEvents.some(event => overlapsDeadline(event, group));
@@ -923,7 +929,7 @@ function renderTimeline(dates) {
       const isFocusSlot = calendarFocusSlot.date === date && calendarFocusSlot.time === time;
       return `<button type="button" class="calendar-slot" tabindex="${isFocusSlot ? "0" : "-1"}" data-slot-date="${date}" data-slot-time="${time}" aria-label="Plan work on ${formatLongDate(date)} at ${formatTime(time)}"></button>`;
     }).join("");
-    return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}${events}${timedDeadlines}</div>`;
+    return `<div class="timeline-column ${[0, 6].includes(dateObject(date).getDay()) ? "weekend" : ""} ${date === selectedDate ? "selected-day" : ""}" data-column-date="${date}" style="--timeline-height:${(endHour - startHour) * hourHeight}px">${slots}${currentTimeLine}<div class="calendar-work-layer">${events}</div>${timedDeadlines}</div>`;
   }).join("");
   return `<div class="timeline-calendar${hasTimedDeadlineWorkOverlap ? " has-timed-deadline-work-overlap" : ""}" style="--day-count:${dates.length};--hour-count:${endHour - startHour};--hour-height:${hourHeight}px"><div class="calendar-header-viewport"><div class="calendar-header-grid"><div class="timeline-corner" aria-hidden="true"></div><div class="timeline-days">${headers}</div></div></div><div class="calendar-timeline-scroller" role="region" aria-label="Hourly schedule" tabindex="0"><div class="calendar-body-grid"><div class="time-axis">${timeLabels}</div><div class="timeline-columns">${columns}</div></div></div></div>`;
 }
@@ -1303,9 +1309,12 @@ function updateCalendarDragPosition(clientX, clientY) {
   calendarDrag.drop = drop;
   column.classList.add("calendar-drop-target");
   calendarDrag.ghost.hidden = false;
-  calendarDrag.ghost.style.left = `${rect.left + 3}px`;
-  calendarDrag.ghost.style.top = `${top}px`;
-  calendarDrag.ghost.style.width = `${Math.max(32, rect.width - 6)}px`;
+  const layer = column.querySelector(".calendar-work-layer");
+  if (layer && calendarDrag.ghost.parentElement !== layer) layer.append(calendarDrag.ghost);
+  const layerRect = layer?.getBoundingClientRect();
+  calendarDrag.ghost.style.left = layer ? "0px" : `${rect.left + 3}px`;
+  calendarDrag.ghost.style.top = `${top - (layerRect?.top || 0)}px`;
+  calendarDrag.ghost.style.width = `${layerRect?.width || Math.max(32, rect.width - 6)}px`;
   calendarDrag.ghost.querySelector("small").textContent = formatTime(drop.time);
   const viewport = calendarScrollElement().getBoundingClientRect();
   const edge = 52;
@@ -1356,6 +1365,7 @@ function clearCalendarDrag() {
 
 function cancelCalendarDrag({ announce = false } = {}) {
   if (!calendarDrag?.started) { calendarDrag = null; return; }
+  suppressCalendarEventClickUntil = performance.now() + 650;
   clearCalendarDrag();
   if (announce) showToast("Calendar move cancelled.");
 }
@@ -1729,6 +1739,7 @@ function showFreeCalendarPreview(clientX, clientY, time = null) {
   if (!templateDrag || !Number.isFinite(clientX) || !Number.isFinite(clientY)) return;
   clearTemplateTarget();
   const preview = templateDrag.preview;
+  if (preview.parentElement !== document.body) document.body.append(preview);
   const columnRect = els.calendar.querySelector(".timeline-column")?.getBoundingClientRect();
   const width = Math.min(180, Math.max(88, columnRect?.width > 6 ? columnRect.width - 6 : 148));
   const height = Math.min(156, Math.max(30, Number(templateDrag.template.durationMinutes || 45) * 62 / 60));
@@ -1742,9 +1753,13 @@ function showFreeCalendarPreview(clientX, clientY, time = null) {
 
 function fitCalendarDropPreview({ left, top, width, height }, mode) {
   const preview = templateDrag.preview, viewport = calendarScrollElement().getBoundingClientRect();
+  const layer = mode === "timeline" ? templateDrag.column?.querySelector(".calendar-work-layer") : null;
+  const parent = layer || document.body;
+  if (preview.parentElement !== parent) parent.append(preview);
+  const layerRect = layer?.getBoundingClientRect();
   Object.assign(preview.style, {
-    left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`,
-    clipPath: `inset(${Math.max(0, viewport.top - top)}px ${Math.max(0, left + width - viewport.right)}px ${Math.max(0, top + height - viewport.bottom)}px ${Math.max(0, viewport.left - left)}px)`,
+    left: layer ? "0px" : `${left}px`, top: `${top - (layerRect?.top || 0)}px`, width: `${layerRect?.width || width}px`, height: `${height}px`,
+    clipPath: layer ? "none" : `inset(${Math.max(0, viewport.top - top)}px ${Math.max(0, left + width - viewport.right)}px ${Math.max(0, top + height - viewport.bottom)}px ${Math.max(0, viewport.left - left)}px)`,
   });
   preview.dataset.dragPlacement = mode;
   preview.hidden = false;

@@ -1,0 +1,32 @@
+{
+  url: 'https://calendar.google.com/calendar/u/0/r',
+  observations: {
+    pairs: [
+      {
+        frontAbove: true,
+        offsetRatio: 0.049988700564971754,
+        sameStart: false,
+        widthRatio: 0.9499661016949152
+      },
+      {
+        frontAbove: true,
+        offsetRatio: 0.5882384218641995,
+        sameStart: true,
+        widthRatio: 0.5882384218641995
+      },
+      {
+        frontAbove: true,
+        offsetRatio: 0.049986441290789115,
+        sameStart: false,
+        widthRatio: 0.9499683630118412
+      },
+      {
+        frontAbove: true,
+        offsetRatio: 0.5882384218641995,
+        sameStart: true,
+        widthRatio: 0.5882384218641995
+      }
+    ],
+    viewport: { height: 745, width: 1470 }
+  }
+}
