@@ -1,0 +1,178 @@
+{
+  "runtime": "157.0.8103.79",
+  "viewport": "390x844",
+  "input": "checkbox click",
+  "result": "PASS: original animation name, full keyframes including opacity, duration, easing and rendered samples match",
+  "results": [
+    {
+      "port": 8042,
+      "name": "task-finish",
+      "duration": 430,
+      "easing": "ease",
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "scale(1)",
+          "opacity": "0.96"
+        },
+        {
+          "offset": 0.35,
+          "transform": "scale(1.012) translateY(-2px)",
+          "opacity": "0.9"
+        },
+        {
+          "offset": 1,
+          "transform": "scale(0.99) translateY(1px)",
+          "opacity": "0"
+        }
+      ],
+      "samples": [
+        {
+          "time": 0,
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "opacity": 0.96
+        },
+        {
+          "time": 75,
+          "matrix": [
+            1.00961,
+            0,
+            0,
+            1.00961,
+            0,
+            -1.61688
+          ],
+          "opacity": 0.911955
+        },
+        {
+          "time": 150.5,
+          "matrix": [
+            1.012,
+            0,
+            0,
+            1.012,
+            0,
+            -2.024
+          ],
+          "opacity": 0.9
+        },
+        {
+          "time": 300,
+          "matrix": [
+            0.993632,
+            0,
+            0,
+            0.993632,
+            0,
+            0.50157
+          ],
+          "opacity": 0.148565
+        },
+        {
+          "time": 420,
+          "matrix": [
+            0.990015,
+            0,
+            0,
+            0.990015,
+            0,
+            0.987942
+          ],
+          "opacity": 0.000628181
+        }
+      ]
+    },
+    {
+      "port": 8034,
+      "name": "task-finish",
+      "duration": 430,
+      "easing": "ease",
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "scale(1)",
+          "opacity": "0.96"
+        },
+        {
+          "offset": 0.35,
+          "transform": "scale(1.012) translateY(-2px)",
+          "opacity": "0.9"
+        },
+        {
+          "offset": 1,
+          "transform": "scale(0.99) translateY(1px)",
+          "opacity": "0"
+        }
+      ],
+      "samples": [
+        {
+          "time": 0,
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "opacity": 0.96
+        },
+        {
+          "time": 75,
+          "matrix": [
+            1.00961,
+            0,
+            0,
+            1.00961,
+            0,
+            -1.61688
+          ],
+          "opacity": 0.911955
+        },
+        {
+          "time": 150.5,
+          "matrix": [
+            1.012,
+            0,
+            0,
+            1.012,
+            0,
+            -2.024
+          ],
+          "opacity": 0.9
+        },
+        {
+          "time": 300,
+          "matrix": [
+            0.993632,
+            0,
+            0,
+            0.993632,
+            0,
+            0.50157
+          ],
+          "opacity": 0.148565
+        },
+        {
+          "time": 420,
+          "matrix": [
+            0.990015,
+            0,
+            0,
+            0.990015,
+            0,
+            0.987942
+          ],
+          "opacity": 0.000628181
+        }
+      ]
+    }
+  ]
+}

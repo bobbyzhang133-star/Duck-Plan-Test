@@ -138,18 +138,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .task-completion-echo {
   position: fixed; z-index: 89; pointer-events: none; box-sizing: border-box; min-width: 0; margin: 0;
   color: var(--ink-deep); transform-origin: center;
-  animation: completion-into-void 240ms cubic-bezier(.45,0,.8,.45) 430ms both;
+  animation: task-finish 430ms ease both;
 }
 .task-completion-gesture {
   position: fixed; z-index: 90; width: 96px; height: 96px; pointer-events: none;
-  transform-origin: 50% 80%; animation: completion-duck-alongside 670ms both;
+  transform-origin: 50% 80%; animation: completion-duck-alongside 430ms both;
 }
 .task-completion-gesture > .duck-character { display: block; width: 96px; height: 96px; }
 .task-completion-gesture .duck-thumbs-up-wing {
-  transform-origin: 129px 116px; animation: completion-wing-alongside 670ms both;
-}
-.completion-exit-card {
-  transform-origin: center; animation: completion-original-pop 430ms ease both;
+  transform-origin: 129px 116px; animation: completion-wing-alongside 430ms both;
 }
 .completion-exit-source { opacity: 0 !important; pointer-events: none !important; }
 .completion-note { position: fixed; right: 22px; bottom: 22px; z-index: 55; display: flex; align-items: center; gap: 12px; width: min(390px,calc(100% - 32px)); padding: 15px 18px 15px 10px; border: 1px solid #daba55; border-radius: 18px; background: var(--card); box-shadow: 0 12px 45px #66522225; animation: duck-page-in 200ms ease; }
@@ -164,16 +161,8 @@ body:has(.completion-note:not([hidden])) .toast { bottom: 150px; }
 @keyframes duck-bob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-2deg); } }
 @keyframes duck-stars { 0%,100% { opacity: .6; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.1); } }
 @keyframes duck-confetti { from { opacity: 1; transform: translate(0,0) rotate(0); } to { opacity: 0; transform: translate(var(--particle-x),var(--particle-y)) rotate(var(--particle-rotation)); } }
-/* Original pop first; the outer card then contracts completely instead of leaving a ghost. */
-@keyframes completion-original-pop {
-  0% { opacity: .96; transform: scale(1); }
-  35% { opacity: .9; transform: scale(1.012) translateY(-2px); }
-  100% { opacity: .86; transform: scale(.99) translateY(1px); }
-}
-@keyframes completion-into-void {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(0); }
-}
+/* Copied directly from the original buggy version (76bffd7). */
+@keyframes task-finish { 0% { opacity: .96; transform: scale(1); } 35% { opacity: .9; transform: scale(1.012) translateY(-2px); } 100% { opacity: 0; transform: scale(.99) translateY(1px); } }
 @keyframes completion-duck-alongside {
   0% { opacity: 0; transform: translateY(8px) scale(.88); animation-timing-function: ease-out; }
   22% { opacity: 1; transform: translateY(-2px) scale(1.04); animation-timing-function: ease-out; }

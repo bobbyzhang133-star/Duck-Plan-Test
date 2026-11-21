@@ -1,0 +1,143 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "kind": "rapid",
+      "mode": "local",
+      "mid": {
+        "held": 2,
+        "invisible": true,
+        "echoes": 1
+      },
+      "after": {
+        "first": true,
+        "second": true,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Task completed. Nice work!",
+        "note": true,
+        "signedIn": false
+      }
+    },
+    {
+      "kind": "reopen",
+      "mode": "local",
+      "mid": null,
+      "after": {
+        "first": false,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Task returned to your plan.",
+        "note": false,
+        "signedIn": false
+      }
+    },
+    {
+      "kind": "filter",
+      "mode": "local",
+      "mid": null,
+      "after": {
+        "first": true,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Task completed. Nice work!",
+        "note": false,
+        "signedIn": false
+      }
+    },
+    {
+      "kind": "navigate",
+      "mode": "local",
+      "mid": null,
+      "after": {
+        "first": true,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Task completed. Nice work!",
+        "note": false,
+        "signedIn": false
+      }
+    },
+    {
+      "kind": "reduce-during-exit",
+      "mode": "local",
+      "mid": null,
+      "after": {
+        "first": true,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Task completed. Nice work!",
+        "note": false,
+        "signedIn": false
+      }
+    },
+    {
+      "kind": "success",
+      "mode": "signed-in loopback Worker/D1 fixture",
+      "mid": null,
+      "after": {
+        "first": true,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Task completed. Nice work!",
+        "note": false,
+        "signedIn": true
+      }
+    },
+    {
+      "kind": "early-failure",
+      "mode": "signed-in loopback Worker/D1 fixture",
+      "mid": null,
+      "after": {
+        "first": false,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Synthetic delayed completion failure",
+        "note": false,
+        "signedIn": true
+      }
+    },
+    {
+      "kind": "late-failure",
+      "mode": "signed-in loopback Worker/D1 fixture",
+      "mid": null,
+      "after": {
+        "first": false,
+        "second": false,
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "Synthetic delayed completion failure",
+        "note": false,
+        "signedIn": true
+      }
+    },
+    {
+      "kind": "sign-out-pending",
+      "mode": "signed-in loopback Worker/D1 fixture",
+      "mid": null,
+      "after": {
+        "echoes": 0,
+        "held": 0,
+        "particles": 0,
+        "toast": "",
+        "note": false,
+        "signedIn": false
+      }
+    }
+  ],
+  "note": "503 failures and delays are injected at the transport boundary; account/task storage and reload use the actual loopback Worker/D1 fixture."
+}

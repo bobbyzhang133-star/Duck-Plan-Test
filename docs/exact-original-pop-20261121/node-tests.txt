@@ -1,0 +1,16 @@
+✔ list rendering waits for the exit, uses the latest data render, then restores focus (1.706125ms)
+✔ rapid completions retain list geometry until all outgoing cards finish (0.153375ms)
+✔ failure cancels the animation and promptly renders the rollback (0.13375ms)
+✔ owner or view changes discard old renders, callbacks and timers (0.14925ms)
+✔ explicit navigation/motion cancellation flushes once after retiring every source (0.633167ms)
+✔ focus is sampled immediately before the final shared render, even for an earlier finished card (0.197292ms)
+✔ a new script version fetches updated startup code instead of matching the old base entry (23.233417ms)
+✔ an uncached script version can still use the precached shell when offline (1.13175ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 209.809459

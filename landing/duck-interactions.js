@@ -252,7 +252,7 @@
     operations.add(operation); checkboxOperations.set(checkbox, operation);
     if (echo) {
       ticket = renderHold.hold({
-        duration: 740,
+        duration: 500,
         onRelease({ cancelled: interrupted }) {
           if (interrupted) { cancelled = true; operations.delete(operation); }
           clean({ restore: interrupted });
@@ -269,7 +269,7 @@
         }
       });
       echo.addEventListener("animationend", event => {
-        if (event.target === echo && event.animationName === "completion-into-void") ticket.finish();
+        if (event.target === echo && event.animationName === "task-finish") ticket.finish();
       });
       card.classList.add("completion-exit-source"); card.setAttribute("aria-busy", "true");
       controls.forEach(([element]) => { if (element !== checkbox) element.tabIndex = -1; });
