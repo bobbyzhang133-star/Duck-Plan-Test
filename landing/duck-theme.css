@@ -116,7 +116,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* All poses keep the original Sigma duck's white silhouette and ink outline. */
 .duck-character { display: block; width: 100%; height: 100%; overflow: visible; }
-.duck-closed-eyes,.duck-sleep-eyes,.duck-glasses,.duck-check-flag,.duck-sparkles,.duck-snooze,.duck-water,.duck-wing { display: none; }
+.duck-closed-eyes,.duck-sleep-eyes,.duck-glasses,.duck-check-flag,.duck-sparkles,.duck-snooze,.duck-water,.duck-wing,.duck-thumbs-up-wing { display: none; }
+.duck-thumbsup .duck-thumbs-up-wing { display: inline; }
 /* A resting front view has a plain chest; a lifted wing appears only to wave. */
 .welcome-duck:is(.is-greeting,.is-reacting) .duck-wing,.duck-celebrating .duck-wing { display: inline; }
 .duck-sleepy .duck-open-eyes { display: none; }.duck-sleepy .duck-sleep-eyes,.duck-sleepy .duck-snooze { display: inline; }.duck-sleepy .duck-head { transform-origin: 89px 83px; transform: rotate(5deg); }
@@ -139,21 +140,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   color: var(--ink-deep); animation: completion-together-out 1600ms both;
 }
 .completion-echo-duck {
-  position: absolute; right: 6px; top: calc(50% - 44px); width: 88px; height: 88px;
+  position: absolute; right: 4px; top: calc(50% - 52px); width: 104px; height: 104px;
   transform-origin: 50% 80%; animation: completion-duck-in 1600ms both;
 }
-.completion-echo-duck > img { display: block; width: 80px; height: 80px; object-fit: contain; }
-.completion-duck-thumb {
-  position: absolute; right: 0; top: 40px; width: 32px; height: 32px;
-  fill: #fffefa; stroke: #111113; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
-  transform-origin: 20% 90%; animation: completion-thumb-up 1600ms both;
+.completion-echo-duck > .duck-character { display: block; width: 104px; height: 104px; }
+.completion-echo-duck .duck-thumbs-up-wing {
+  transform-origin: 129px 116px; animation: completion-thumb-up 1600ms both;
 }
 .completion-echo-copy {
   position: absolute; inset: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center;
-  gap: 5px; min-width: 0; padding: 12px 100px 12px 16px; overflow: hidden;
+  gap: 5px; min-width: 0; padding: 12px 116px 12px 16px; overflow: hidden;
   border: 1px solid color-mix(in srgb,var(--duck-gold) 45%,var(--line)); border-radius: 14px;
   background: color-mix(in srgb,var(--duck-gold) 9%,var(--card)); box-shadow: 0 2px 12px #66522212;
-  transform-origin: center; animation: completion-block-bounce 1600ms both;
+  transform-origin: center; animation: completion-original-pop 430ms ease both;
 }
 .completion-echo-copy > strong { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; font-size: 15px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
 .completion-echo-copy > span { color: var(--muted); font-size: 12px; line-height: 1.35; }
@@ -169,11 +168,11 @@ body:has(.completion-note:not([hidden])) .toast { bottom: 150px; }
 @keyframes duck-bob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-2deg); } }
 @keyframes duck-stars { 0%,100% { opacity: .6; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.1); } }
 @keyframes duck-confetti { from { opacity: 1; transform: translate(0,0) rotate(0); } to { opacity: 0; transform: translate(var(--particle-x),var(--particle-y)) rotate(var(--particle-rotation)); } }
-@keyframes completion-block-bounce {
-  0% { transform: scale(.99); animation-timing-function: cubic-bezier(.16,.8,.32,1); }
-  10% { transform: scale(1.035) translateY(-6px); animation-timing-function: ease-out; }
-  19% { transform: scale(.99) translateY(1px); animation-timing-function: ease-out; }
-  28%,100% { transform: none; }
+/* Original 76bffd7 task-finish transform/timing. The shared parent now owns the later fade. */
+@keyframes completion-original-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.012) translateY(-2px); }
+  100% { transform: scale(.99) translateY(1px); }
 }
 @keyframes completion-duck-in {
   0%,34% { opacity: 0; transform: translateY(16px) scale(.8); animation-timing-function: cubic-bezier(.16,.8,.32,1); }

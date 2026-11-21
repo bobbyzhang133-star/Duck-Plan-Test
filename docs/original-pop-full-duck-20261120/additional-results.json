@@ -1,0 +1,84 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "view": "calendar",
+      "width": 1156,
+      "keyboard": true,
+      "shown": {
+        "fullBody": true,
+        "feet": true,
+        "wing": true,
+        "profileImages": 0
+      },
+      "reopenClears": true,
+      "stateCheck": {
+        "before": "none",
+        "up": "inline",
+        "after": "none",
+        "sameHead": true
+      }
+    },
+    {
+      "view": "calendar",
+      "width": 390,
+      "keyboard": true,
+      "shown": {
+        "fullBody": true,
+        "feet": true,
+        "wing": true,
+        "profileImages": 0
+      },
+      "reopenClears": true,
+      "stateCheck": {
+        "before": "none",
+        "up": "inline",
+        "after": "none",
+        "sameHead": true
+      }
+    },
+    {
+      "view": "home",
+      "width": 1156,
+      "keyboard": true,
+      "shown": {
+        "fullBody": true,
+        "feet": true,
+        "wing": true,
+        "profileImages": 0
+      },
+      "reopenClears": true,
+      "stateCheck": {
+        "before": "none",
+        "up": "inline",
+        "after": "none",
+        "sameHead": true
+      }
+    },
+    {
+      "view": "matrix",
+      "width": 835,
+      "keyboard": true,
+      "shown": {
+        "fullBody": true,
+        "feet": true,
+        "wing": true,
+        "profileImages": 0
+      },
+      "reopenClears": true,
+      "stateCheck": {
+        "before": "none",
+        "up": "inline",
+        "after": "none",
+        "sameHead": true
+      }
+    },
+    {
+      "mode": "signed-in",
+      "backend": "real loopback Worker/D1 fixture8798",
+      "width": 390,
+      "fullDuck": true,
+      "persistedAfterReload": true
+    }
+  ]
+}

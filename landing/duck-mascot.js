@@ -1,7 +1,7 @@
 /* Sigma duck poses, matching the original white, black-outline brand drawing. */
 (() => {
   "use strict";
-  const states = new Set(["happy", "sleepy", "focused", "encouraging", "celebrating", "swimming"]);
+  const states = new Set(["happy", "sleepy", "focused", "encouraging", "celebrating", "swimming", "thumbsup"]);
 
   function sideMarkup(mood) {
     return `<svg class="duck-character duck-sigma duck-side-profile duck-${mood}" data-mood="${mood}" data-profile="side" viewBox="0 0 180 170" fill="none" aria-hidden="true" focusable="false">
@@ -39,6 +39,10 @@
         </g>
       </g>
       <g class="duck-wing"><path d="M44 113c-14-1-24-13-20-20 5-8 14 5 23 8" fill="#FFFEFA" stroke="#111113" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g class="duck-thumbs-up-wing" fill="#FFFEFA" stroke="#111113" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M129 112c6-1 10-5 12-10l4-8 1-13c0-5 6-5 8-1l1 12h10c5 0 7 4 6 8l-4 15c-1 4-4 6-9 6h-13l-9-3c-4 0-7-2-7-6Z"/>
+        <path d="M156 101h13m-15 8h13" fill="none" stroke-width="2.5"/>
+      </g>
       <g class="duck-check-flag"><path d="m131 139 12-43" stroke="#111113" stroke-width="3" stroke-linecap="round"/><path d="m143 96 27 5-4 22-28-7Z" fill="#FFF1B5" stroke="#111113" stroke-width="2.5" stroke-linejoin="round"/><path d="m146 108 4 5 9-7" stroke="#397459" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
       <g class="duck-sparkles" fill="#FFD93D"><path d="m26 36 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/><path d="m156 33 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/></g>
       <g class="duck-snooze" stroke="#111113" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M150 35h9l-9 10h9m2-26h7l-7 8h7"/></g>
