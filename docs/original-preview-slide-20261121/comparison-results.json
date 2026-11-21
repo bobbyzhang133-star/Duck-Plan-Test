@@ -1,0 +1,105 @@
+{
+  "result": "PASS",
+  "runtime": "157.0.8103.79",
+  "comparison": "8042 approved 807a456 interaction versus current 8042; matching 390x900 viewport and sampled animation phases",
+  "results": [
+    {
+      "duration": 430,
+      "easing": "ease",
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "scale(1)",
+          "opacity": "0.96"
+        },
+        {
+          "offset": 0.35,
+          "transform": "scale(1.012) translateY(-2px)",
+          "opacity": "0.9"
+        },
+        {
+          "offset": 1,
+          "transform": "scale(0.99) translateY(1px)",
+          "opacity": "0"
+        }
+      ],
+      "samples": [
+        {
+          "t": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "0.96"
+        },
+        {
+          "t": 75,
+          "transform": "matrix(1.00961, 0, 0, 1.00961, 0, -1.61688)",
+          "opacity": "0.911955"
+        },
+        {
+          "t": 150.5,
+          "transform": "matrix(1.012, 0, 0, 1.012, 0, -2.024)",
+          "opacity": "0.9"
+        },
+        {
+          "t": 300,
+          "transform": "matrix(0.993632, 0, 0, 0.993632, 0, 0.50157)",
+          "opacity": "0.148565"
+        },
+        {
+          "t": 420,
+          "transform": "matrix(0.990015, 0, 0, 0.990015, 0, 0.987942)",
+          "opacity": "0.000628181"
+        }
+      ],
+      "ducks": 1
+    },
+    {
+      "duration": 430,
+      "easing": "ease",
+      "frames": [
+        {
+          "offset": 0,
+          "transform": "scale(1)",
+          "opacity": "0.96"
+        },
+        {
+          "offset": 0.35,
+          "transform": "scale(1.012) translateY(-2px)",
+          "opacity": "0.9"
+        },
+        {
+          "offset": 1,
+          "transform": "scale(0.99) translateY(1px)",
+          "opacity": "0"
+        }
+      ],
+      "samples": [
+        {
+          "t": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "0.96"
+        },
+        {
+          "t": 75,
+          "transform": "matrix(1.00961, 0, 0, 1.00961, 0, -1.61688)",
+          "opacity": "0.911955"
+        },
+        {
+          "t": 150.5,
+          "transform": "matrix(1.012, 0, 0, 1.012, 0, -2.024)",
+          "opacity": "0.9"
+        },
+        {
+          "t": 300,
+          "transform": "matrix(0.993632, 0, 0, 0.993632, 0, 0.50157)",
+          "opacity": "0.148565"
+        },
+        {
+          "t": 420,
+          "transform": "matrix(0.990015, 0, 0, 0.990015, 0, 0.987942)",
+          "opacity": "0.000628181"
+        }
+      ],
+      "ducks": 1
+    }
+  ]
+}

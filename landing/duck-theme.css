@@ -139,6 +139,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .task-completion-echo .completion-approval-duck { display: block; width: min(144px,100%); height: 136px; margin: 4px auto 2px; }
 .task-completion-echo .completion-approval-duck > .duck-character { width: 100%; height: 100%; }
 .task-completion-echo .task-timing-badges svg { width: 12px; height: 12px; }
+.completion-exit-source { opacity: 0 !important; pointer-events: none !important; }
 .completion-note { position: fixed; right: 22px; bottom: 22px; z-index: 55; display: flex; align-items: center; gap: 12px; width: min(390px,calc(100% - 32px)); padding: 15px 18px 15px 10px; border: 1px solid #daba55; border-radius: 18px; background: var(--card); box-shadow: 0 12px 45px #66522225; animation: duck-page-in 200ms ease; }
 .completion-note[hidden] { display: none; }.completion-note-duck { width: 73px; height: 73px; flex-shrink: 0; }.completion-note strong { font-size: 13px; font-weight: 650; }.completion-note p { margin: 5px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }.completion-note > button { align-self: flex-start; width: 28px; height: 28px; flex-shrink: 0; padding: 0; border: 0; border-radius: 8px; background: var(--surface); cursor: pointer; }
 body:has(.completion-note:not([hidden])) .toast { bottom: 150px; }
