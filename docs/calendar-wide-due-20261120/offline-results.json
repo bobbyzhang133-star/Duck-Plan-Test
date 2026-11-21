@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.79",
+  "cache": [
+    "duckplan-app-motion-preview-v110"
+  ],
+  "measured": {
+    "ratio": 0.95,
+    "z": "5",
+    "workZ": "2"
+  },
+  "surface": "ordinary browser tab with service worker, not installed PWA"
+}

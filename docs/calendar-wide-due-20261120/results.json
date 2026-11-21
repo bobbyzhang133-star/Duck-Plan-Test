@@ -1,0 +1,278 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local; touch-emulated tablet/phone; Day/Week light/dark",
+  "cases": [
+    {
+      "width": 1156,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500142884358925,
+        0.9500142884358925,
+        0.9500142884358925,
+        0.9500142884358925
+      ],
+      "insetRatio": 0.04998571156410745,
+      "minLabelPaintRatio": 0.9317250904934273,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 1156,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500142884358925,
+        0.9500142884358925,
+        0.9500142884358925,
+        0.9500142884358925
+      ],
+      "insetRatio": 0.04998571156410745,
+      "minLabelPaintRatio": 0.9317250904934273,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 1156,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "insetRatio": 0.05,
+      "minLabelPaintRatio": 0.8357142857142857,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 1156,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "insetRatio": 0.05,
+      "minLabelPaintRatio": 0.8357142857142857,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 835,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500086565096952,
+        0.9500086565096952,
+        0.9500086565096952,
+        0.9500086565096952
+      ],
+      "insetRatio": 0.04999134349030471,
+      "minLabelPaintRatio": 0.9167676592797784,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 835,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500086565096952,
+        0.9500086565096952,
+        0.9500086565096952,
+        0.9500086565096952
+      ],
+      "insetRatio": 0.04999134349030471,
+      "minLabelPaintRatio": 0.9167676592797784,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 835,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "insetRatio": 0.05,
+      "minLabelPaintRatio": 0.8357142857142857,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 835,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "insetRatio": 0.05,
+      "minLabelPaintRatio": 0.8357142857142857,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 390,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681
+      ],
+      "insetRatio": 0.04998867753623189,
+      "minLabelPaintRatio": 0.9065330615942029,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 390,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681
+      ],
+      "insetRatio": 0.04998867753623189,
+      "minLabelPaintRatio": 0.9065330615942029,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 390,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681
+      ],
+      "insetRatio": 0.04998867753623189,
+      "minLabelPaintRatio": 0.9065330615942029,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 390,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681,
+        0.9500113224637681
+      ],
+      "insetRatio": 0.04998867753623189,
+      "minLabelPaintRatio": 0.9065330615942029,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 320,
+      "view": "day",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126
+      ],
+      "insetRatio": 0.04998483009708738,
+      "minLabelPaintRatio": 0.8917627427184466,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 320,
+      "view": "day",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126
+      ],
+      "insetRatio": 0.04998483009708738,
+      "minLabelPaintRatio": 0.8917627427184466,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 320,
+      "view": "week",
+      "theme": "light",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126
+      ],
+      "insetRatio": 0.04998483009708738,
+      "minLabelPaintRatio": 0.8917627427184466,
+      "dueZ": "5",
+      "workZ": "2"
+    },
+    {
+      "width": 320,
+      "view": "week",
+      "theme": "dark",
+      "status": "PASS",
+      "overlapAnchors": 4,
+      "widthRatios": [
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126,
+        0.9500151699029126
+      ],
+      "insetRatio": 0.04998483009708738,
+      "minLabelPaintRatio": 0.8917627427184466,
+      "dueZ": "5",
+      "workZ": "2"
+    }
+  ]
+}

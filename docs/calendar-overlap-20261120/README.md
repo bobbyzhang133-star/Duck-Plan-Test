@@ -2,6 +2,8 @@
 
 Local website change following `6478cf6`, on `codex/calendar-deadline-editor-20261120`. The user confirmed **Due/deadline markers must stay above scheduled work**. Final shell cache v109; app/CSS key `calendar-overlap-20261120-final`.
 
+Follow-up: [wide Due markers](../calendar-wide-due-20261120/README.md), cache v110, supersede this checkpoint's half-column Due offset with a 5% inset / 95% marker width.
+
 ## Reference comparison
 
 **PASS for the requested overlap treatment.** Inspected the same signed-in Google Calendar tab at `https://calendar.google.com/calendar/u/0/r` before implementation, returned after the revisions, and repeated the final comparison. Used the installed browser-control connection's documented Playwright API through Node REPL because the isolated Playwright MCP browser does not share that Google session. Local comparisons ran through Playwright MCP. Reference viewport 1470×745, actual Chrome on macOS with mouse input; browser version was not exposed by the reference connection. Local Chromium version 157.0.8103.79. No Google events were created, edited, deleted or saved; only existing events' geometry and read-only details were inspected. Private event labels/crops are not committed.

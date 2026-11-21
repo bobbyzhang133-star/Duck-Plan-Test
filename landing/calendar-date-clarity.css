@@ -165,7 +165,8 @@
   pointer-events: none; --timed-deadline-gutter: 18px;
 }
 .motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) {
-  left: 50%; right: 2px; --timed-deadline-gutter: 12px;
+  /* Inset 5% of the usable width between the shared 3px day gutters. */
+  left: calc(5% + 2.7px); right: 3px; --timed-deadline-gutter: 12px;
 }
 .motion-preview #view-calendar .timed-deadline-point {
   position: absolute; z-index: 2; left: 0; display: flex; align-items: center;

@@ -1,0 +1,11 @@
+# Wide overlapping Due markers — November 20, 2026
+
+Local website follow-up to 5f283a9. The reported deadline label still reserved half the date column. Replaced that offset with 5% of the usable column width, leaving a 95%-wide front marker. The point diamond keeps its 12px receiving gutter, exact due time, red surface and priority over work/drag previews. No JS, storage, API or task-data changes. Cache v110; CSS wide-due-overlap-20261120.
+
+Reference PASS for the requested small-offset/front-width relationship: returned to the same signed-in Google Calendar at https://calendar.google.com/calendar/u/0/r through the installed browser connection's Playwright API before implementation and again afterward. Two existing overlaps still measured approximately 5% inset, 95% width and a higher front layer. Reference viewport 1470×745, actual signed-in Chrome; comparison to DuckPlan uses the same normalized width relationship. The small diamond gutter is an intentional DuckPlan difference. No Google records were changed. The isolated Playwright MCP browser does not share the Google session; DuckPlan runtime checks use Playwright MCP. See the previous overlap checkpoint for the original rendered reference inspection.
+
+PASS: 16 local browser cases (1156/835/390/320px × Day/Week × light/dark), Chromium 157.0.8103.79 with touch emulation below 1000px. Checked all four overlapping single/grouped/00:00/23:59 marker anchors per case: 95% usable width within 0.2 percentage points, 5% inset, painted label over 80% of the narrowest day width, Due layer above work, correct point times and column bounds. Single/group previews still open the right task(s), Escape closes, page does not overflow and viewing preserves records. Reviewed desktop Week and phone Day screenshots. results.json; reproducible runtime.js.
+
+PASS: final service-worker v110 browser-tab offline reload retains the 95% marker and front Due layer. offline-results.json. Existing deadline presentation/integration/preview/PWA suites: 50 passed; git diff --check passed. No new tests for this CSS adjustment.
+
+No public deployment or native sync. Native app remains at the Publish to public gate. Signed-in transport behavior is unchanged; no new signed-in mutation checks were needed for this style-only fix. Native WKWebView, physical devices, other engines and installed-PWA launch NOT RUN.
