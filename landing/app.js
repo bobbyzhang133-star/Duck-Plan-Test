@@ -1920,6 +1920,17 @@ window.addEventListener("hashchange", () => { if (location.hash === "#planner-si
 document.querySelector("#calendar-previous").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, -1)));
 document.querySelector("#calendar-next").addEventListener("click", () => selectDate(Model.shiftView(calendarView, selectedDate, 1)));
 document.querySelector("#calendar-today").addEventListener("click", () => selectDate(nowKey()));
+const calendarSwipe = window.DuckCalendarSwipe?.create({
+  roots: [els.calendar, els.phoneWeekStrip], getScroller: calendarScrollElement,
+  enabled: () => window.matchMedia("(any-pointer: coarse)").matches && document.body.dataset.view === "calendar"
+    && !document.querySelector("dialog[open]") && !document.body.matches(".task-panel-open,.sidebar-open") && !calendarDrag && !templateDrag,
+  getContext: () => `${store.mode}:${store.user?.id || "local"}:${calendarView}:${selectedDate}:${phonePlannerQuery.matches}`,
+  ignoreTarget: target => Boolean(target.closest("input,select,textarea,a,[contenteditable]")
+    || (!phonePlannerQuery.matches && target.closest("[data-calendar-drag-task]"))),
+  navigate: direction => selectDate(Model.shiftView(calendarView, selectedDate, direction)),
+});
+window.addEventListener("blur", () => calendarSwipe?.cancel());
+window.addEventListener("pagehide", () => calendarSwipe?.cancel());
 els.calendar.addEventListener("scroll", event => {
   if (event.target === calendarScrollElement() && !calendarProgrammaticScroll) calendarUserScrolled = true;
 }, { passive: true, capture: true });

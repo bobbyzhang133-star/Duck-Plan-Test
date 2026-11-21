@@ -1,0 +1,21 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 390,
+      "status": "PASS",
+      "action": "swipe from a work block changes date only",
+      "date": "2026-11-21",
+      "workStart": "2026-11-20T14:00",
+      "deadline": "17:00"
+    },
+    {
+      "width": 835,
+      "status": "PASS",
+      "action": "touch drag moves work 30 minutes without date navigation",
+      "date": "2026-11-20",
+      "workStart": "2026-11-20T14:30",
+      "deadline": "17:00"
+    }
+  ]
+}

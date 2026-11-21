@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.79",
+  "input": "CDP native touch",
+  "rebound": {
+    "held": "matrix(1, 0, 0, 1, 0, 23.2388)",
+    "returned": "none"
+  },
+  "cache": {
+    "keys": [
+      "duckplan-app-motion-preview-v112"
+    ],
+    "swipe": true
+  },
+  "offlineSwipe": "PASS",
+  "surface": "browser tab service worker, not installed PWA"
+}

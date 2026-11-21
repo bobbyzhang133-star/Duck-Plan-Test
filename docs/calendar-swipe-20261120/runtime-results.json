@@ -1,0 +1,151 @@
+{
+  "runtime": "157.0.8103.79",
+  "input": "CDP Input.dispatchTouchEvent, not DOM-dispatched touch events",
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "checks": [
+        {
+          "mode": "day",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "day"
+        },
+        {
+          "mode": "week",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "week"
+        },
+        {
+          "mode": "month",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "month"
+        },
+        {
+          "phoneStrip": "PASS"
+        },
+        {
+          "verticalScroll": "PASS",
+          "scrollTop": 1017
+        },
+        {
+          "tapAddCancel": "PASS"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "reduce": true,
+      "checks": [
+        {
+          "mode": "day",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "day"
+        },
+        {
+          "mode": "week",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "week"
+        },
+        {
+          "mode": "month",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "month"
+        },
+        {
+          "phoneStrip": "PASS"
+        },
+        {
+          "verticalScroll": "PASS",
+          "scrollTop": 1266
+        },
+        {
+          "tapAddCancel": "PASS"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "checks": [
+        {
+          "mode": "day",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "day"
+        },
+        {
+          "mode": "week",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "week"
+        },
+        {
+          "mode": "month",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "month"
+        },
+        {
+          "phoneStrip": "PASS"
+        },
+        {
+          "verticalScroll": "PASS",
+          "scrollTop": 695
+        },
+        {
+          "tapAddCancel": "PASS"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "width": 835,
+      "height": 1112,
+      "checks": [
+        {
+          "mode": "day",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "day"
+        },
+        {
+          "mode": "week",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "week"
+        },
+        {
+          "mode": "month",
+          "left": "PASS",
+          "right": "PASS",
+          "unit": "month"
+        },
+        {
+          "ipadNativePan": "PASS",
+          "pan": {
+            "left": 211,
+            "max": 211
+          }
+        },
+        {
+          "verticalScroll": "PASS",
+          "scrollTop": 642
+        },
+        {
+          "tapAddCancel": "PASS"
+        }
+      ],
+      "status": "PASS"
+    }
+  ]
+}
