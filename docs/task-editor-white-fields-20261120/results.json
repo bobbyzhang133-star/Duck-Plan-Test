@@ -1,0 +1,315 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1156,
+      "theme": "light",
+      "status": "PASS",
+      "fields": [
+        {
+          "name": "scheduledDate",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "scheduledTime",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "durationMinutes",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "dueDate",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "dueTime",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "classId",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "priority",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "reminderChoice",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "importance",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "urgency",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "notes",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "actualMinutes",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "alarmAt",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "alarmSound",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "alarmSnooze",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "notificationAt",
+          "background": "rgb(255, 255, 255)"
+        }
+      ],
+      "surface": "#f6f3e9",
+      "work": "rgb(232, 240, 254)",
+      "due": "rgb(251, 238, 237)",
+      "overflow": 0
+    },
+    {
+      "width": 1156,
+      "theme": "dark",
+      "status": "PASS",
+      "fields": [
+        {
+          "name": "scheduledDate",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "scheduledTime",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "durationMinutes",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "dueDate",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "dueTime",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "classId",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "priority",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "reminderChoice",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "importance",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "urgency",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "notes",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "actualMinutes",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "alarmAt",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "alarmSound",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "alarmSnooze",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "notificationAt",
+          "background": "rgb(52, 52, 43)"
+        }
+      ],
+      "surface": "#34342b",
+      "work": "rgb(36, 58, 86)",
+      "due": "rgb(74, 48, 46)",
+      "overflow": 0
+    },
+    {
+      "width": 1156,
+      "status": "PASS",
+      "offlineCache": "v104"
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "status": "PASS",
+      "fields": [
+        {
+          "name": "scheduledDate",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "scheduledTime",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "durationMinutes",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "dueDate",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "dueTime",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "classId",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "priority",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "reminderChoice",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "importance",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "urgency",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "notes",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "actualMinutes",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "alarmAt",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "alarmSound",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "alarmSnooze",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "notificationAt",
+          "background": "rgb(255, 255, 255)"
+        }
+      ],
+      "surface": "#f6f3e9",
+      "work": "rgb(232, 240, 254)",
+      "due": "rgb(251, 238, 237)",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS",
+      "fields": [
+        {
+          "name": "scheduledDate",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "scheduledTime",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "durationMinutes",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "dueDate",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "dueTime",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "classId",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "priority",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "reminderChoice",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "importance",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "urgency",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "notes",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "actualMinutes",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "alarmAt",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "alarmSound",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "alarmSnooze",
+          "background": "rgb(52, 52, 43)"
+        },
+        {
+          "name": "notificationAt",
+          "background": "rgb(52, 52, 43)"
+        }
+      ],
+      "surface": "#34342b",
+      "work": "rgb(36, 58, 86)",
+      "due": "rgb(74, 48, 46)",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "offlineCache": "v104"
+    }
+  ]
+}
