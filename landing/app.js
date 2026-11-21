@@ -157,6 +157,7 @@ const taskLibrary = window.DuckPlanLibrary?.create({
 const calendarLibraryTabs = window.DuckCalendarLibraryTabs?.create({
   getOwner: () => `${store.mode}:${store.user?.id || "local"}`,
   onChange: () => {
+    window.DuckTaskCompletion?.cancel();
     taskLibrary?.closeTemplateMenu?.();
     updatePrimaryAction(document.body.dataset.view || "calendar");
   },
@@ -237,6 +238,7 @@ function setSidebar(open) {
 
 
 function setTaskPanel(open, moveFocus = true, source = null) {
+  if (!open) window.DuckTaskCompletion?.cancel();
   const phone = phonePlannerQuery.matches;
   const compact = phone || (compactPlannerQuery.matches && !document.body.classList.contains("motion-preview"));
   const wasOpen = document.body.classList.contains("task-panel-open");
@@ -1044,6 +1046,7 @@ function setupButtonMaterial(root = document) {
 }
 function renderAll({ autoScrollCalendar = false } = {}) {
   tasks = store.listItems();
+  if (window.DuckTaskCompletion?.deferRender(() => renderAll({ autoScrollCalendar }))) return;
   renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
   renderCalendar({ autoScroll: autoScrollCalendar });
   taskLibrary?.render();
@@ -1144,6 +1147,7 @@ function openClassEditor(source) {
 }
 
 function applyView(name, preserveDrawer = false) {
+  window.DuckTaskCompletion?.cancel();
   const requested = name === "today" ? "home" : name;
   const next = els.views.find((view) => view.id === `view-${requested}`) || document.querySelector("#view-calendar");
   const normalized = next.id.replace("view-", "");
@@ -1193,8 +1197,9 @@ function showToast(message, { actionLabel = "", onAction = null, duration = 2600
   els.toast.classList.add("show");
   toastTimer = setTimeout(hideToast, duration);
 }
-function selectDate(date) { calendarTaskPreview.close({ immediate: true, restoreFocus: false }); selectedDate = date; selectedTaskId = null; calendarFocusSlot = { date, time: calendarFocusSlot.time }; renderDailyPlan(); renderCalendar({ autoScroll: true }); requestAnimationFrame(() => setupButtonMaterial()); }
+function selectDate(date) { window.DuckTaskCompletion?.cancel(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); selectedDate = date; selectedTaskId = null; calendarFocusSlot = { date, time: calendarFocusSlot.time }; renderDailyPlan(); renderCalendar({ autoScroll: true }); requestAnimationFrame(() => setupButtonMaterial()); }
 function selectTask(id) {
+  window.DuckTaskCompletion?.cancel();
   selectedTaskId = selectedTaskId === id ? null : id;
   renderDailyPlan();
   // Keep the launcher attached so popup motion and focus use its real calendar bounds.
@@ -1665,20 +1670,29 @@ document.addEventListener("click", (event) => {
     document.querySelector("#class-library")?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     document.querySelector("#library-class-select")?.focus({ preventScroll: true });
   }
-  const collapse = event.target.closest("[data-collapse]"); if (collapse) { collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
+  const collapse = event.target.closest("[data-collapse]"); if (collapse) { window.DuckTaskCompletion?.cancel(); collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
 });
 document.addEventListener("change", (event) => {
   const checkbox = event.target.closest("[data-task-id]");
   if (!checkbox) return;
   const task = tasks.find((item) => item.id === checkbox.dataset.taskId); if (!task) return;
-  store.toggleComplete(task.id, checkbox.checked)
-    .then(() => showToast(checkbox.checked ? "Task completed. Nice work!" : "Task returned to your plan."), reportError);
+  const completed = checkbox.checked, owner = plannerOwnerVersion;
+  const feedback = window.DuckTaskCompletion?.forCheckbox(checkbox);
+  store.toggleComplete(task.id, completed).then(() => {
+    if (owner !== plannerOwnerVersion || feedback?.saved() === false) return;
+    showToast(completed ? "Task completed. Nice work!" : "Task returned to your plan.");
+  }, error => {
+    feedback?.failed();
+    if (owner === plannerOwnerVersion) reportError(error);
+  });
 });
 document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListener("click", () => {
+  window.DuckTaskCompletion?.cancel();
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
 document.querySelectorAll("[data-task-layout]").forEach((button) => button.addEventListener("click", () => {
+  window.DuckTaskCompletion?.cancel();
   taskLayout = button.dataset.taskLayout;
   renderAllTasks(); setupButtonMaterial();
 }));
@@ -2026,7 +2040,7 @@ els.modal.addEventListener("click", event => {
   const box=els.modal.getBoundingClientRect();
   if(event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom)closeModal();
 });
-els.search.addEventListener("input", () => { searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
+els.search.addEventListener("input", () => { window.DuckTaskCompletion?.cancel(); searchTerm = els.search.value.trim().toLowerCase(); if (searchTerm) setView("tasks"); renderAllTasks(); });
 els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (els.saveTask.disabled) return;
@@ -2212,6 +2226,7 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  if (["context", "error"].includes(reason)) window.DuckTaskCompletion?.cancel({ flush: false });
   if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); }
   const owner = store.user?.id || "local";
   if (owner !== renderedPlannerOwner) {

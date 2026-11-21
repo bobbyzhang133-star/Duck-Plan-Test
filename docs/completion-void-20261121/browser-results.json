@@ -1,0 +1,529 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "before": {
+        "top": 513.53125,
+        "left": 20
+      },
+      "samples": [
+        {
+          "nextY": 513.53125,
+          "nextX": 20,
+          "before": {
+            "top": 513.53125,
+            "left": 20
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.984456,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 513.53125,
+          "nextX": 20,
+          "before": {
+            "top": 513.53125,
+            "left": 20
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 0.999856,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 319.375,
+        "left": 20
+      },
+      "focused": "void-first",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 835
+      },
+      "before": {
+        "top": 507.53125,
+        "left": 16
+      },
+      "samples": [
+        {
+          "nextY": 507.53125,
+          "nextX": 16,
+          "before": {
+            "top": 507.53125,
+            "left": 16
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.932575,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 507.53125,
+          "nextX": 16,
+          "before": {
+            "top": 507.53125,
+            "left": 16
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 313.375,
+        "left": 16
+      },
+      "focused": "void-first",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "before": {
+        "top": 432.5,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 432.49998474121094,
+          "nextX": 17,
+          "before": {
+            "top": 432.5,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.853818,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 432.5,
+          "nextX": 17,
+          "before": {
+            "top": 432.5,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 293.375,
+        "left": 17
+      },
+      "focused": "void-first",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 1156
+      },
+      "before": {
+        "top": 355.171875,
+        "left": 25
+      },
+      "samples": [
+        {
+          "nextY": 355.171875,
+          "nextX": 25,
+          "before": {
+            "top": 355.171875,
+            "left": 25
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.752236,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 355.171875,
+          "nextX": 25,
+          "before": {
+            "top": 355.171875,
+            "left": 25
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 237.09375,
+        "left": 25
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "before": {
+        "top": 433.671875,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 433.671875,
+          "nextX": 17,
+          "before": {
+            "top": 433.671875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.853648,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 433.671875,
+          "nextX": 17,
+          "before": {
+            "top": 433.671875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 320
+      },
+      "before": {
+        "top": 521.65625,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 521.65625,
+          "nextX": 17,
+          "before": {
+            "top": 521.65625,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.853807,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 521.65625,
+          "nextX": 17,
+          "before": {
+            "top": 521.65625,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 334.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "home",
+        "width": 1156
+      },
+      "before": {
+        "top": 394.5,
+        "left": 21
+      },
+      "samples": [
+        {
+          "nextY": 394.5,
+          "nextX": 21,
+          "before": {
+            "top": 394.5,
+            "left": 21
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.751815,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 394.5,
+          "nextX": 21,
+          "before": {
+            "top": 394.5,
+            "left": 21
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 229.890625,
+        "left": 21
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "matrix",
+        "width": 835
+      },
+      "before": {
+        "top": 258.5,
+        "left": 337.5
+      },
+      "samples": [
+        {
+          "nextY": 258.5,
+          "nextX": 337.5,
+          "before": {
+            "top": 258.5,
+            "left": 337.5
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.853714,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 258.5,
+          "nextX": 337.5,
+          "before": {
+            "top": 258.5,
+            "left": 337.5
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 258.5,
+        "left": 17
+      },
+      "focused": "matrix-main-heading",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "dark": true
+      },
+      "before": {
+        "top": 433.671875,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 433.671875,
+          "nextX": 17,
+          "before": {
+            "top": 433.671875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 0.853763,
+          "scale": 1,
+          "overflow": false
+        },
+        {
+          "nextY": 433.671875,
+          "nextX": 17,
+          "before": {
+            "top": 433.671875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": true,
+          "duckVisible": 1,
+          "scale": 1,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "reduced": true
+      },
+      "before": {
+        "top": 433.671875,
+        "left": 17
+      },
+      "samples": [],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "motionOff": true
+      },
+      "before": {
+        "top": 433.671875,
+        "left": 17
+      },
+      "samples": [],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "completedAfterReload": true
+    }
+  ]
+}

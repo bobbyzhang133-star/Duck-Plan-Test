@@ -15,6 +15,19 @@
   let gazeFrame = null;
   let baseMood = "focused";
   const motionTimers = new Set();
+  const operations = new Set(), checkboxOperations = new WeakMap();
+  const completionContext = () => `${store.mode}:${store.user?.id || "local"}:${plannerOwnerVersion}:${document.body.dataset.view}`;
+  const renderHold = window.DuckCompletionRenderHold.create({ getContext: completionContext });
+
+  function cancelCompletions(options) {
+    renderHold.cancel(options);
+    for (const operation of [...operations]) operation.cancel();
+  }
+  window.DuckTaskCompletion = Object.freeze({
+    deferRender: callback => renderHold.deferRender(callback),
+    forCheckbox: checkbox => checkboxOperations.get(checkbox),
+    cancel: cancelCompletions
+  });
 
   document.querySelectorAll("[data-duck-state]").forEach((element) => Mascot.mount(element, element.dataset.duckState));
   try { motionControl.checked = localStorage.getItem("duckplan-ui-mascot-motion") !== "off"; } catch { /* Keep motion available when storage is blocked. */ }
@@ -26,6 +39,7 @@
   function applyMotion() {
     document.documentElement.dataset.mascotMotion = motionAllowed() ? "on" : "off";
     if (!motionAllowed()) {
+      cancelCompletions();
       effects.replaceChildren();
       document.querySelectorAll(".task-completion-echo").forEach((element) => element.remove());
       motionTimers.forEach(clearTimeout);
@@ -52,10 +66,7 @@
   }
   function syncCharacter() {
     // Reopening/deleting a task or switching accounts must retire its lingering completion card.
-    const owner = `${store.mode}:${store.user?.id || "local"}`;
-    document.querySelectorAll(".task-completion-echo").forEach((echo) => {
-      if (echo.dataset.completionOwner !== owner || !tasks.some((task) => task.id === echo.dataset.completionTaskId && task.completed)) echo.remove();
-    });
+    for (const operation of [...operations]) operation.sync();
     const summary = dailySummary();
     const hour = new Date().getHours();
     if (summary.unfinished.length > 0 || summary.total === 0) { celebration.hidden = true; clearTimeout(celebrationTimer); }
@@ -130,61 +141,71 @@
     clearTimeout(celebrationTimer);
   });
 
-  // Use a self-contained completion card: cloning a task loses its page-scoped Due/Work styles.
-  function completionEcho(task, overdue, rect) {
+  // Resolve the original task card's styles before detaching it from its page context.
+  function completionEcho(card, rect) {
     const echo = document.createElement("div");
     echo.className = "task-completion-echo";
-    echo.dataset.completionTaskId = task.id;
-    echo.dataset.completionOwner = `${store.mode}:${store.user?.id || "local"}`;
     echo.setAttribute("aria-hidden", "true");
     echo.inert = true;
-    const copy = document.createElement("span");
-    copy.className = "completion-echo-copy";
-    const title = document.createElement("strong");
-    title.textContent = task.title || "Task";
-    const status = document.createElement("span");
-    status.textContent = overdue ? "Overdue task completed" : "Completed";
-    copy.append(title, status);
-    const duck = document.createElement("span");
-    duck.className = "completion-echo-duck";
-    duck.innerHTML = Mascot.markup("thumbsup");
-    echo.append(copy, duck);
-    const height = Math.min(Math.max(rect.height, 132), 180);
-    const width = Math.min(rect.width, window.innerWidth - 24);
-    Object.assign(echo.style, {
-      left: `${Math.max(12, Math.min(rect.left, window.innerWidth - width - 12))}px`,
-      top: `${Math.max(12, Math.min(rect.top + (rect.height - height) / 2, window.innerHeight - height - 12))}px`,
-      width: `${width}px`, height: `${height}px`
-    });
+    echo.append(window.DuckCompletionCard.snapshot(card));
+    Object.assign(echo.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
     return echo;
   }
 
-  // Capture the source position before the app re-renders it. React after its change handler finishes.
+  function completionDuck(rect) {
+    const duck = document.createElement("span");
+    duck.className = "task-completion-gesture";
+    duck.setAttribute("aria-hidden", "true"); duck.inert = true;
+    duck.innerHTML = Mascot.markup("thumbsup");
+    const left = rect.right + 104 < window.innerWidth ? rect.right + 4 : rect.right - 96;
+    const top = rect.top >= 104 ? rect.top - 88 : rect.top + Math.max(0, (rect.height - 96) / 2);
+    Object.assign(duck.style, {
+      left: `${Math.max(8, Math.min(left, window.innerWidth - 104))}px`,
+      top: `${Math.max(8, Math.min(top, window.innerHeight - 104))}px`
+    });
+    return duck;
+  }
+
+  function restoreCompletionFocus(checkbox, keyboard, view) {
+    if (!keyboard || document.body.dataset.view !== view || ![document.body, checkbox].includes(document.activeElement)) return;
+    const scope = document.querySelector(view === "calendar" ? "#daily-task-panel" : view === "home" ? "#view-home" : "#view-tasks");
+    if (!scope) return;
+    const visible = element => element.getClientRects().length && element.checkVisibility?.() !== false && !element.closest("details:not([open]),[hidden],[inert]");
+    const matches = [...scope.querySelectorAll("input[data-task-id]")].filter(visible);
+    let replacement;
+    if (checkbox.dataset.editTask) {
+      const selector = checkbox.classList.contains("task-edit") ? ".task-edit[data-edit-task]" : ".task-select[data-edit-task]";
+      replacement = [...scope.querySelectorAll(selector)].find(button => button.dataset.editTask === checkbox.dataset.editTask && visible(button));
+    } else replacement = matches.find(input => input.dataset.taskId === checkbox.dataset.taskId);
+    replacement ||= matches[0];
+    const selector = view === "calendar" ? "#plan-selected-date,[data-collapse]" : view === "home" ? ".dashboard-completed > summary" : ".filter-chip.active,[data-task-layout][aria-pressed=true]";
+    const fallback = [...scope.querySelectorAll(selector)].find(element => element.checkVisibility?.() !== false);
+    (replacement || fallback)?.focus({ preventScroll: true });
+  }
+
+  // Capture before the persisted completion path runs. Hold only rendering, never the save.
   document.addEventListener("change", (event) => {
     const checkbox = event.target.closest("input[data-task-id]");
     if (!checkbox) return;
-    // The app replaces list markup after a toggle. Preserve keyboard position in the new markup.
-    if (checkbox.matches(":focus-visible")) {
-      const listId = checkbox.closest(".daily-task-list,.dashboard-task-list,#dashboard-completed-list,#all-task-list")?.id;
-      const id = checkbox.dataset.taskId;
-      setTimeout(() => {
-        const candidates = [...(document.getElementById(listId)?.querySelectorAll("input[data-task-id]") || [])];
-        const replacement = candidates.find((input) => input.dataset.taskId === id) || candidates[0];
-        const fallback = document.body.dataset.view === "home" ? ".dashboard-completed > summary" : document.body.dataset.view === "calendar" ? "#plan-selected-date" : "#view-tasks .filter-chip.active";
-        (replacement || document.querySelector(fallback))?.focus({ preventScroll: true });
-      }, 0);
-    }
+    checkboxOperations.get(checkbox)?.cancel();
+    checkboxOperations.delete(checkbox);
     if (!checkbox.checked) return;
-    const task = tasks.find((item) => item.id === checkbox.dataset.taskId);
+    const task = store.listItems().find(item => item.id === checkbox.dataset.taskId);
     if (!task || task.completed) return;
-    const before = dailySummary();
-    const isToday = before.unfinished.some((item) => item.id === task.id);
+    const before = dailySummary(), view = document.body.dataset.view, context = completionContext();
+    const isToday = before.unfinished.some(item => item.id === task.id), keyboard = checkbox.matches(":focus-visible");
     const rect = checkbox.getBoundingClientRect();
     const card = checkbox.closest(".daily-task-card,.all-task-row,.matrix-task-card");
     const cardRect = card?.getBoundingClientRect();
-    const echo = motionAllowed() && cardRect?.width ? completionEcho(task, Model.taskTiming(task).overdue, cardRect) : null;
-    setTimeout(() => {
-      if (!tasks.find((item) => item.id === task.id)?.completed) return;
+    const echo = motionAllowed() && cardRect?.width ? completionEcho(card, cardRect) : null;
+    const duck = echo ? completionDuck(cardRect) : null;
+    const controls = echo ? [...card.querySelectorAll("input,button,a,[tabindex]")].map(element => [element, element.getAttribute("tabindex")]) : [];
+    const previousBusy = card?.getAttribute("aria-busy");
+    let ticket = null, settled = !echo, confirmed = false, cancelled = false, reacted = false, focusAtRender = null, focusWasVisible = false;
+    const current = () => !cancelled && context === completionContext();
+    function react() {
+      if (!current() || !settled || !confirmed || reacted || !store.listItems().some(item => item.id === task.id && item.completed)) return;
+      reacted = true; operations.delete(operation);
       const summary = dailySummary();
       const finishedDay = isToday && before.unfinished.length === 1 && summary.total > 0 && summary.unfinished.length === 0;
       Mascot.setState(hero, finishedDay ? "celebrating" : "happy");
@@ -195,17 +216,7 @@
         pond.classList.add("is-swimming");
         clearTimeout(swimTimer);
         swimTimer = setTimeout(() => pond.classList.remove("is-swimming"), 1500);
-        if (echo && cardRect?.width) {
-          document.body.append(echo);
-          scheduleCleanup(() => echo.remove(), 1640);
-          // Celebrate after the block settles and the duck's thumbs-up arrives.
-          scheduleCleanup(() => {
-            if (motionAllowed() && echo.isConnected && tasks.find((item) => item.id === task.id)?.completed) {
-              const landing = echo.getBoundingClientRect();
-              burst(landing.right - 42, landing.top + landing.height / 2, finishedDay);
-            }
-          }, 700);
-        } else burst(rect.left + rect.width / 2, rect.top + rect.height / 2, finishedDay);
+        burst(rect.left + rect.width / 2, rect.top + rect.height / 2, finishedDay);
       }
       if (finishedDay) showDayComplete(summary);
       clearTimeout(reactionTimer);
@@ -213,6 +224,58 @@
         hero.classList.remove("is-reacting");
         Mascot.setState(hero, baseMood);
       }, 1900);
-    }, 0);
+    }
+    function restoreSource() {
+      card?.classList.remove("completion-exit-source");
+      if (previousBusy == null) card?.removeAttribute("aria-busy"); else card.setAttribute("aria-busy", previousBusy);
+      controls.forEach(([element, tabindex]) => { if (tabindex === null) element.removeAttribute("tabindex"); else element.setAttribute("tabindex", tabindex); });
+    }
+    function clean({ restore = true } = {}) {
+      if (restore) restoreSource();
+      echo?.remove(); duck?.remove();
+    }
+    const operation = {
+      saved() {
+        if (!current()) return false;
+        confirmed = true;
+        if (!echo) restoreCompletionFocus(checkbox, keyboard, view);
+        react(); return true;
+      },
+      failed() { operation.cancel(); if (context === completionContext()) restoreCompletionFocus(checkbox, keyboard, view); },
+      sync() { if (!current() || !store.listItems().some(item => item.id === task.id && item.completed)) operation.cancel(); },
+      cancel() {
+        if (cancelled) return;
+        cancelled = true; operations.delete(operation);
+        ticket?.cancel(); clean();
+      }
+    };
+    operations.add(operation); checkboxOperations.set(checkbox, operation);
+    if (echo) {
+      ticket = renderHold.hold({
+        duration: 740,
+        onRelease({ cancelled: interrupted }) {
+          if (interrupted) { cancelled = true; operations.delete(operation); }
+          clean({ restore: interrupted });
+        },
+        beforeRender() {
+          const active = document.activeElement;
+          focusAtRender = active?.matches("input[data-task-id],button[data-edit-task]") ? active : null;
+          focusWasVisible = focusAtRender?.matches(":focus-visible");
+        },
+        afterRelease() {
+          restoreSource();
+          settled = true;
+          if (current()) { restoreCompletionFocus(focusAtRender || checkbox, Boolean(focusAtRender) && focusWasVisible, view); react(); }
+        }
+      });
+      echo.addEventListener("animationend", event => {
+        if (event.target === echo && event.animationName === "completion-into-void") ticket.finish();
+      });
+      card.classList.add("completion-exit-source"); card.setAttribute("aria-busy", "true");
+      controls.forEach(([element]) => { if (element !== checkbox) element.tabIndex = -1; });
+      document.body.append(echo, duck);
+    }
   }, true);
+  window.addEventListener("resize", () => cancelCompletions());
+  document.addEventListener("visibilitychange", () => { if (document.hidden) cancelCompletions(); });
 })();

@@ -1,0 +1,10 @@
+{
+  "runtime": "157.0.8103.79",
+  "cache": "v119",
+  "cached": {
+    "gate": true,
+    "snapshot": true
+  },
+  "offlineCompletion": true,
+  "completedAfterReload": true
+}
