@@ -18,128 +18,61 @@ I inspected the new review brief, both screenshots, and the exact-commit sources
 
 Severity
 
-	
-
 Finding
-
-	
 
 Evidence status
 
-
-
-
 P1 — High
-
-	
 
 Outgoing card loses its layout; icons become enormous
 
-	
-
 Visually verified, fresh
 
-
-
-
 P1 — High
-
-	
 
 Success particles and congratulations can precede successful persistence
 
-	
-
 Source-confirmed risk; failure not exercised
-
-
-
 
 P1 — High
 
-	
-
 Calendar preview has no equivalent local completion effect
-
-	
 
 Source-confirmed inconsistency
 
-
-
-
 P2 — Medium
-
-	
 
 Completion toast lacks an explicit Undo action
 
-	
-
 Verified in source
 
-
-
-
 P2 — Medium
-
-	
 
 Rapid toggles and owner/view changes can leave stale feedback
 
-	
-
 Source-level risk; not tested
 
-
-
-
 P2 — Medium
-
-	
 
 Focus restoration relies on timing and old-list lookup
 
-	
-
 Source-level risk; not freshly tested
-
-
-
 
 P2 — Medium
 
-	
-
 Final-task congratulations competes with toast feedback
-
-	
 
 Source-confirmed design issue; placement not tested
 
-
-
-
 P3 — Low
-
-	
 
 Sigma reaction is not necessarily visible outside Dashboard
 
-	
-
 Design observation
-
-
-
 
 P3 — Low
 
-	
-
 Particle intensity and mobile smoothness need refinement
-
-	
 
 Optional polish; performance untested
 
@@ -239,89 +172,43 @@ Design decision: Retain the existing short card motion and golden particles, but
 
 Finding
 
-	
-
 Exact current cause
-
-	
 
 Smallest sensible change
 
-
-
-
 P2 — Missing Undo
-
-	
 
 app.js:1670–1675 calls showToast() without an action, although app.js:1187–1195 supports actionLabel and onAction
 
-	
-
 Add a guarded Undo action to the confirmed-completion toast
-
-
-
 
 P2 — Rapid toggles
 
-	
-
 planner-store.js:1118–1119 allows overlapping mutations; duck-interactions.js:152–182 has no per-task generation check for effects
-
-	
 
 Serialize or guard each task's pending intent; cancel stale animations
 
-
-
-
 P2 — Focus
-
-	
 
 duck-interactions.js:133–142 restores focus with setTimeout(0) and an old-list fallback
 
-	
-
 Track task ID, origin, owner and view; restore only within a valid context
-
-
-
 
 P2 — Final-task feedback
 
-	
-
 duck-interactions.js:113–125 shows a separate note, while line 115 forcibly hides the normal toast
-
-	
 
 Integrate Undo into the final-task acknowledgement instead of competing with a second toast
 
-
-
-
 P3 — Invisible mascot reaction
-
-	
 
 duck-interactions.js:156–163 reacts through Dashboard's Sigma and pond instances
 
-	
-
 Keep Dashboard reaction; optionally add one tiny local Sigma gesture near confirmations elsewhere
-
-
-
 
 P3 — Mobile performance
 
-	
-
 duck-theme.css:134–150 uses fixed overlays and particle animations
-
-	
 
 Limit simultaneous effects and test actual rendered frames before changing motion physics
 
@@ -393,187 +280,85 @@ Preserve motion-off and reduced-motion behavior: checked state, task movement, s
 
 Test
 
-	
-
 Required result
-
-
-
 
 Desktop 1280×900
 
-	
-
 Detached Due/Work icons remain 14×14px; no text overlap
-
-
-
 
 Phone 390×844 and 320px
 
-	
-
 Same icon/layout integrity; bottom navigation unobstructed
-
-
-
 
 Ordinary completion
 
-	
-
 Exactly one bounded effect, with no duplicate echo
-
-
-
 
 Animation cleanup
 
-	
-
 Echo removed within about 0.5s; particles within 1s
-
-
-
 
 Checked-state feedback
 
-	
-
 Appears immediately, without waiting for a network round trip
-
-
-
 
 Confirmed success
 
-	
-
 Correct task state, visible acknowledgement and Undo
-
-
-
 
 Delayed success
 
-	
-
 No stale snapshot animation using outdated screen coordinates
-
-
-
 
 Simulated failed save
 
-	
-
 Rollback and error; no success particles or congratulations
-
-
-
 
 Calendar preview
 
-	
-
 Equivalent confirmed completion acknowledgement
-
-
-
 
 Tasks priority matrix
 
-	
-
 No missing response or broken card styling
-
-
-
 
 Complete all overdue
 
-	
-
 One batch summary, not repeated confetti
-
-
-
 
 Rapid complete/reopen
 
-	
-
 Latest confirmed state wins; no stale messages
-
-
-
 
 Undo
 
-	
-
 Task returns to unfinished; persisted state survives reload
-
-
-
 
 Final task today
 
-	
-
 Exactly one accurate, dismissible congratulations with Undo
-
-
-
 
 Remote sync/Axis import
 
-	
-
 No completion celebration without explicit local user action
-
-
-
 
 Keyboard
 
-	
-
 Space/Enter behavior and visible focus survive rerenders
-
-
-
 
 Reduced motion and motion off
 
-	
-
 No echo/particles; status and Undo still available
-
-
-
 
 Dark mode
 
-	
-
 Correct icon sizing, contrast and completed styling
-
-
-
 
 Native WKWebView / physical devices
 
-	
-
 Separate verification required before a native release
 
-
-
-
 Mobile performance
-
-	
 
 Profile actual frame timing and animation cleanup; no claim of smoothness from screenshots alone
 
@@ -594,4 +379,3 @@ Those changes address the biggest usability problem: completion should feel good
 The current animation concept is worth retaining. The improvement is mostly about visual integrity, timing, consistency and error recovery—not adding more particles or making the duck dramatically larger.
 
 Review status: Exact current commit, fresh evidence and relevant sources inspected. No code modified, no push, no deployment, no public publication and no iPhone app update performed.
-
