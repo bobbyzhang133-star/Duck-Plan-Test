@@ -1,0 +1,597 @@
+ChatGPT said:
+DuckPlan — Task Completion Feedback Review
+Review only · No changes made
+
+Exact TEST commit: 79ea6f85f77c193e55e4dbcf6da8cd8901010177
+Branch: codex/calendar-deadline-editor-20261120
+Application baseline: 4ccfd0fe981c327de8c23c330fac98ea9fee019e
+
+Overall assessment
+
+I recommend keeping DuckPlan's existing individual-piece animation concept, but changing how the completion acknowledgement is sequenced. The checkbox should respond instantly, the card should leave gracefully, and the success confirmation should be noticeable, reversible, and truthful.
+
+The current experience has one confirmed visual defect and several source-established consistency and reliability gaps.
+
+I inspected the new review brief, both screenshots, and the exact-commit sources. GitHub's commit comparison confirms that the latest commit adds only those three evidence files; the application code is unchanged from the specified baseline.
+
+1. Prioritized findings
+
+Severity
+
+	
+
+Finding
+
+	
+
+Evidence status
+
+
+
+
+P1 — High
+
+	
+
+Outgoing card loses its layout; icons become enormous
+
+	
+
+Visually verified, fresh
+
+
+
+
+P1 — High
+
+	
+
+Success particles and congratulations can precede successful persistence
+
+	
+
+Source-confirmed risk; failure not exercised
+
+
+
+
+P1 — High
+
+	
+
+Calendar preview has no equivalent local completion effect
+
+	
+
+Source-confirmed inconsistency
+
+
+
+
+P2 — Medium
+
+	
+
+Completion toast lacks an explicit Undo action
+
+	
+
+Verified in source
+
+
+
+
+P2 — Medium
+
+	
+
+Rapid toggles and owner/view changes can leave stale feedback
+
+	
+
+Source-level risk; not tested
+
+
+
+
+P2 — Medium
+
+	
+
+Focus restoration relies on timing and old-list lookup
+
+	
+
+Source-level risk; not freshly tested
+
+
+
+
+P2 — Medium
+
+	
+
+Final-task congratulations competes with toast feedback
+
+	
+
+Source-confirmed design issue; placement not tested
+
+
+
+
+P3 — Low
+
+	
+
+Sigma reaction is not necessarily visible outside Dashboard
+
+	
+
+Design observation
+
+
+
+
+P3 — Low
+
+	
+
+Particle intensity and mobile smoothness need refinement
+
+	
+
+Optional polish; performance untested
+
+P1 — The outgoing card is still broken
+
+Desktop evidence
+
+1280×900: approximately 128px detached icon; overlapping card text.
+
+Phone evidence
+
+390×844: approximately 248px detached icon, visibly obscuring neighboring task cards.
+
+The fresh screenshots are available here: Desktop mid-animation and Phone mid-animation.
+
+Cause: landing/duck-interactions.js:149–172 clones a live .daily-task-card or .all-task-row, then appends that clone directly to document.body.
+
+The Due/Work layout rules in landing/calendar-date-clarity.css:227–307 are scoped to #daily-task-panel, #view-home, and #view-tasks. The detached clone no longer matches them, so its icon sizing, grid and typography fall back to other styles.
+
+The fresh measurements are conclusive: the live icons are 14×14px, while the outgoing echo icons expand to roughly 128px on desktop and 248px on phone.
+
+Smallest fix: Give the outgoing completion snapshot a dedicated, self-contained layout class that preserves the full live-card geometry, including 14px icons, date columns, text wrapping, checkbox placement and theme variables. Avoid fixing only the SVG width while leaving the card's layout broken.
+
+P1 — Feedback can celebrate an optimistic save
+
+duck-interactions.js:128–182 captures the checkbox change and, after a zero-delay callback, checks the task's in-memory completed state before playing particles and reactions.
+
+But planner-store.js:835–855 updates state optimistically before awaiting persistence. A failed write can subsequently roll back.
+
+The existing feedback can therefore signal success even though the write is still pending. This is a source-level timing risk, not a failure reproduced in the current Playwright run.
+
+Smallest fix: Separate immediate visual acknowledgement from confirmed success. Checking the box may respond instantly; success particles, the final-task notice and Undo should be linked to the successful completion operation.
+
+P1 — Completion differs by entry point
+
+app.js:1670–1675 completes checkbox tasks through the store. calendar-task-preview.js:126–146 also calls the store, but does not fire a checkbox change. The current effect only watches checkbox changes.
+
+This means the Calendar preview receives a toast and status change but not the same completion animation. In the Tasks priority matrix, the checkbox observer can run, but the card selector does not recognize .matrix-task-card, so there is no normal card-exit snapshot.
+
+Smallest fix: Give both paths a shared, presentation-only completion-feedback coordinator. Do not synthesize fake checkbox events or tie animation to all store updates.
+
+The current code's finite particle cleanup remains a positive finding: both fresh local runs produced 10 ordinary particles and removed the echo and particles afterward. That is worth preserving.
+
+2. Recommended completion interaction
+
+I would replace the current feeling of checkbox changes → card disappears → toast with a more coherent sequence:
+
+Proposed timing
+
+Fast successful save
+
+01
+
+Immediate
+
+0–100 ms
+
+Checkbox becomes green; checkmark settles into place
+
+02
+
+Card exits
+
+150–450 ms
+
+Card fades and moves upward a few pixels, preserving all text and icons
+
+03
+
+Confirmed acknowledgement
+
+On success
+
+Small golden particle burst and brief Sigma reaction after persistence succeeds
+
+04
+
+Reversible confirmation
+
+~5 seconds
+
+A compact Completed message with Undo stays accessible
+
+The sequence distinguishes an action being acknowledged from the action being saved successfully. That's important both psychologically and technically.
+
+The checkmark gives immediate feedback. The card's restrained exit communicates that the item has moved out of the active list. Particles and a success message provide a clear reward, but only after success is established. Undo supports recovery from accidental clicks.
+
+Code-built interaction concept
+
+The following is a self-contained visual simulation of the proposed effect. It does not call DuckPlan's store or modify repository code.
+
+Polishing the visuals
+
+Design decision: Retain the existing short card motion and golden particles, but make them visually coherent. The desired effect is a small, satisfying acknowledgement—not a large celebration interrupting the user's workflow.
+
+3. Remaining review findings
+
+Finding
+
+	
+
+Exact current cause
+
+	
+
+Smallest sensible change
+
+
+
+
+P2 — Missing Undo
+
+	
+
+app.js:1670–1675 calls showToast() without an action, although app.js:1187–1195 supports actionLabel and onAction
+
+	
+
+Add a guarded Undo action to the confirmed-completion toast
+
+
+
+
+P2 — Rapid toggles
+
+	
+
+planner-store.js:1118–1119 allows overlapping mutations; duck-interactions.js:152–182 has no per-task generation check for effects
+
+	
+
+Serialize or guard each task's pending intent; cancel stale animations
+
+
+
+
+P2 — Focus
+
+	
+
+duck-interactions.js:133–142 restores focus with setTimeout(0) and an old-list fallback
+
+	
+
+Track task ID, origin, owner and view; restore only within a valid context
+
+
+
+
+P2 — Final-task feedback
+
+	
+
+duck-interactions.js:113–125 shows a separate note, while line 115 forcibly hides the normal toast
+
+	
+
+Integrate Undo into the final-task acknowledgement instead of competing with a second toast
+
+
+
+
+P3 — Invisible mascot reaction
+
+	
+
+duck-interactions.js:156–163 reacts through Dashboard's Sigma and pond instances
+
+	
+
+Keep Dashboard reaction; optionally add one tiny local Sigma gesture near confirmations elsewhere
+
+
+
+
+P3 — Mobile performance
+
+	
+
+duck-theme.css:134–150 uses fixed overlays and particle animations
+
+	
+
+Limit simultaneous effects and test actual rendered frames before changing motion physics
+
+The earlier task-completion-20261120 review identified the same underlying issues. Its later README also records a limited Chromium reduced-motion/keyboard/final-task pass. That is useful historical evidence, but it does not establish a fresh pass at 79ea6f8, nor does it verify native performance.
+
+A specific recommendation about final-task celebrations
+
+When a user completes their final outstanding task for today, use the existing small Sigma congratulations card, but give it an Undo action.
+
+The interface should communicate accomplishment without implying the student has finished everything in the account. For example:
+
+Today's plan is complete!
+You've finished all 3 tasks for today.
+Undo · Dismiss
+
+That is more accurate and useful than a generic large celebration.
+
+If a task is completed for another day, the regular completion toast is enough.
+
+4. Implementation plan for Codex
+
+Stage 1 — Repair the completion snapshot (P1)
+
+Touch duck-interactions.js, calendar-date-clarity.css and duck-theme.css.
+
+Build a self-contained snapshot style shared with the live card's essential layout rules. Preserve width, height, typography, grid geometry and 14px date icons. Keep the clone inert, decorative, pointer-transparent and short-lived.
+
+Do not merely force svg { width:14px } globally; that risks breaking Sigma illustrations and unrelated icons.
+
+Stage 2 — Establish one presentation-only feedback coordinator (P1)
+
+Keep planner-store.js's optimistic mutation behavior and existing persistence calls.
+
+Use the same coordinator from checkbox completion in app.js and explicit completion in calendar-task-preview.js.
+
+Capture the source element and previous task state before toggling. Apply immediate checkbox feedback, await the existing store promise, and trigger genuine success effects only when the operation is confirmed and still current.
+
+If the save is slow and the source geometry is stale, skip the floating card exit and use a location-independent confirmation. Do not animate a stale snapshot across an unrelated page.
+
+Stage 3 — Provide source-appropriate feedback everywhere (P1/P2)
+
+The Calendar task panel, Dashboard and Tasks list use the normal card exit.
+
+Calendar previews use a compact completion check and confirmation near the preview, not a fabricated checkbox event.
+
+The Tasks priority matrix receives an appropriate small row or checkbox effect without assuming it uses .daily-task-card.
+
+Complete all overdue should use one batch-level summary, rather than launching multiple particle bursts. Account refreshes, remote changes and automatic Axis imports must never be interpreted as user completion gestures.
+
+Stage 4 — Undo, focus, rapid-toggle and error protection (P2)
+
+Add a guarded Undo action through the existing toast API, preferably visible for approximately five seconds.
+
+Use a per-task operation token, and cancel pending effects when completion is reversed, a newer operation begins, the route/account context changes, or the task is removed.
+
+On persistence failure, let the store roll back, announce the error, restore a sensible focus target and suppress success particles and congratulations.
+
+Keep any keyboard-focused control accessible without automatically focusing the success toast.
+
+Stage 5 — Refine the final-task and Sigma feedback (P2/P3)
+
+Keep the approved Sigma artwork and small congratulatory note. Include Undo and Dismiss without introducing a new full-screen overlay.
+
+Show the note only when a confirmed user completion changes today's unfinished count from one to zero. Do not replay it on reload, sync or previously completed tasks.
+
+Preserve motion-off and reduced-motion behavior: checked state, task movement, success status and Undo must remain usable without animation.
+
+5. Measurable acceptance criteria
+
+Test
+
+	
+
+Required result
+
+
+
+
+Desktop 1280×900
+
+	
+
+Detached Due/Work icons remain 14×14px; no text overlap
+
+
+
+
+Phone 390×844 and 320px
+
+	
+
+Same icon/layout integrity; bottom navigation unobstructed
+
+
+
+
+Ordinary completion
+
+	
+
+Exactly one bounded effect, with no duplicate echo
+
+
+
+
+Animation cleanup
+
+	
+
+Echo removed within about 0.5s; particles within 1s
+
+
+
+
+Checked-state feedback
+
+	
+
+Appears immediately, without waiting for a network round trip
+
+
+
+
+Confirmed success
+
+	
+
+Correct task state, visible acknowledgement and Undo
+
+
+
+
+Delayed success
+
+	
+
+No stale snapshot animation using outdated screen coordinates
+
+
+
+
+Simulated failed save
+
+	
+
+Rollback and error; no success particles or congratulations
+
+
+
+
+Calendar preview
+
+	
+
+Equivalent confirmed completion acknowledgement
+
+
+
+
+Tasks priority matrix
+
+	
+
+No missing response or broken card styling
+
+
+
+
+Complete all overdue
+
+	
+
+One batch summary, not repeated confetti
+
+
+
+
+Rapid complete/reopen
+
+	
+
+Latest confirmed state wins; no stale messages
+
+
+
+
+Undo
+
+	
+
+Task returns to unfinished; persisted state survives reload
+
+
+
+
+Final task today
+
+	
+
+Exactly one accurate, dismissible congratulations with Undo
+
+
+
+
+Remote sync/Axis import
+
+	
+
+No completion celebration without explicit local user action
+
+
+
+
+Keyboard
+
+	
+
+Space/Enter behavior and visible focus survive rerenders
+
+
+
+
+Reduced motion and motion off
+
+	
+
+No echo/particles; status and Undo still available
+
+
+
+
+Dark mode
+
+	
+
+Correct icon sizing, contrast and completed styling
+
+
+
+
+Native WKWebView / physical devices
+
+	
+
+Separate verification required before a native release
+
+
+
+
+Mobile performance
+
+	
+
+Profile actual frame timing and animation cleanup; no claim of smoothness from screenshots alone
+
+The implementation should not introduce any extra network requests. The existing toggleComplete() operation and its persistence result are sufficient.
+
+6. Final recommendation
+
+I would prioritize three changes together for the first Codex iteration:
+
+Fix the detached card's CSS geometry.
+
+Make completion effects persistence-aware and consistent across entry points.
+
+Add a clear Undo action to the success acknowledgement.
+
+Those changes address the biggest usability problem: completion should feel good immediately, but its success message must always be trustworthy and reversible.
+
+The current animation concept is worth retaining. The improvement is mostly about visual integrity, timing, consistency and error recovery—not adding more particles or making the duck dramatically larger.
+
+Review status: Exact current commit, fresh evidence and relevant sources inspected. No code modified, no push, no deployment, no public publication and no iPhone app update performed.
+

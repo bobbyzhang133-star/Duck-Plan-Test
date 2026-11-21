@@ -37,6 +37,18 @@ The desired feedback should feel immediate, clear, satisfying and restrained: ch
 
 Not run in this evidence pass: signed-in completion, delayed persistence failure, rapid toggles, keyboard focus lifecycle, native WKWebView, physical phone/iPad, PWA, performance profiling or final-task note placement. Previous narrower passes are documented in the earlier review and must not be promoted to a new platform pass. Native source remains frozen until the user says “Publish to public.”
 
-## External response
+## Completed external response
 
-Pending submission/reply. The reviewer cannot access localhost; exact GitHub source and these rendered frames are the review evidence.
+The review was sent to the established Repository Overview conversation through its signed-in Chrome page after the conversation connector reported no readable match. TEST commit `79ea6f85f77c193e55e4dbcf6da8cd8901010177` was verified with `git ls-remote` before submission. The reviewer completed its response against that exact commit and reported inspecting the brief, both screenshots, relevant source and earlier design/review. The [submitted request](request.txt) and [response text](response.txt) are preserved here; the conversation also contains its proposed interaction concept. That concept is a simulation, not a DuckPlan implementation or test.
+
+Recommended sequence:
+
+1. **P1, freshly demonstrated:** repair the outgoing snapshot's full layout inheritance, retaining the live card's geometry, typography, wrapping, theme variables and 14px icons. Avoid a global SVG-size rule. Keep the decorative copy inert, hidden from assistive technology, pointer-transparent and finite.
+2. **Persistence risk, established by source rather than a fresh failing cloud test:** acknowledge the checkbox immediately, but make particles, success messages and final-task celebration depend on the existing persistence promise and a still-current user operation. No extra network requests. If geometry becomes stale during a slow save, skip the old floating-card exit.
+3. **Entry-point inconsistency, established by source:** use a presentation-only completion coordinator across checkbox paths and Calendar compact preview. Priority matrix cards need appropriate source-specific feedback. Do not manufacture checkbox events, celebrate remote refresh/Axis imports or issue repeated bursts for Complete all overdue.
+4. **Usability and robustness:** use the existing actionable-toast API for a guarded Undo, protect against stale per-task operations and route/account changes, preserve keyboard focus, and suppress success after failure. A final-task note should accurately refer to today's plan and include Undo/Dismiss.
+5. **Optional visual polish:** retain restrained individual-piece motion and approved Sigma artwork. The proposed immediate checkmark, short fading card exit and small confirmed golden burst are a design proposal, not measured timing/performance requirements. Its suggested green checkmark is optional; no approved palette change has been made. Reduced-motion/motion-off must retain useful status and Undo without animation.
+
+The requested acceptance matrix includes desktop/phone icon geometry, effect cleanup, immediate checked state, confirmed save and delayed failure, entry-point consistency, rapid reopen/Undo/reload, batch completion, remote/Axis updates, focus, reduced motion, dark mode and actual native/device performance. These are future implementation checks, not tests performed by the external reviewer. This review did not access localhost or establish native/PWA/physical-device parity.
+
+Local source inspection corroborated the three main causes and the existing toast action API. Review artifacts are the only repository changes. No recommendations have been implemented, no public deployment occurred, and the native app was not updated.
