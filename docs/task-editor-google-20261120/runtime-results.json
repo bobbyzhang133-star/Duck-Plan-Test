@@ -1,0 +1,285 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1470,
+      "height": 745,
+      "mode": "local",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 511,
+          "y": 121.5,
+          "width": 448,
+          "height": 502,
+          "top": 121.5,
+          "right": 959,
+          "bottom": 623.5,
+          "left": 511
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 511,
+          "y": 559.5,
+          "width": 448,
+          "height": 64,
+          "top": 559.5,
+          "right": 959,
+          "bottom": 623.5,
+          "left": 511
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 1156,
+      "height": 746,
+      "mode": "local",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 354,
+          "y": 122,
+          "width": 448,
+          "height": 502,
+          "top": 122,
+          "right": 802,
+          "bottom": 624,
+          "left": 354
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 354,
+          "y": 560,
+          "width": 448,
+          "height": 64,
+          "top": 560,
+          "right": 802,
+          "bottom": 624,
+          "left": 354
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 835,
+      "height": 1000,
+      "touch": true,
+      "mode": "local",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 193.5,
+          "y": 240.5,
+          "width": 448,
+          "height": 519,
+          "top": 240.5,
+          "right": 641.5,
+          "bottom": 759.5,
+          "left": 193.5
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 193.5,
+          "y": 694.5,
+          "width": 448,
+          "height": 65,
+          "top": 694.5,
+          "right": 641.5,
+          "bottom": 759.5,
+          "left": 193.5
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "mode": "local",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 14,
+          "y": 154,
+          "width": 362,
+          "height": 536,
+          "top": 154,
+          "right": 376,
+          "bottom": 690,
+          "left": 14
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 14,
+          "y": 625,
+          "width": 362,
+          "height": 65,
+          "top": 625,
+          "right": 376,
+          "bottom": 690,
+          "left": 14
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "reduce": true,
+      "mode": "local",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 14,
+          "y": 16,
+          "width": 292,
+          "height": 536,
+          "top": 16,
+          "right": 306,
+          "bottom": 552,
+          "left": 14
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 14,
+          "y": 487,
+          "width": 292,
+          "height": 65,
+          "top": 487,
+          "right": 306,
+          "bottom": 552,
+          "left": 14
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "mode": "local",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 198,
+          "y": 16,
+          "width": 448,
+          "height": 358,
+          "top": 16,
+          "right": 646,
+          "bottom": 374,
+          "left": 198
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 198,
+          "y": 309,
+          "width": 448,
+          "height": 65,
+          "top": 309,
+          "right": 646,
+          "bottom": 374,
+          "left": 198
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 1470,
+      "height": 745,
+      "cloud": true,
+      "mode": "signed-in/current local Worker D1",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 511,
+          "y": 121.5,
+          "width": 448,
+          "height": 502,
+          "top": 121.5,
+          "right": 959,
+          "bottom": 623.5,
+          "left": 511
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 511,
+          "y": 559.5,
+          "width": 448,
+          "height": 64,
+          "top": 559.5,
+          "right": 959,
+          "bottom": 623.5,
+          "left": 511
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "cloud": true,
+      "mode": "signed-in/current local Worker D1",
+      "checks": [
+        "Calendar create, invalid title/work, linked defaults, manual notification, independent deadline, details",
+        "Tasks edit/reload, manual-link preservation, cancel/Escape, shared Add, dark, delete/reload"
+      ],
+      "initial": {
+        "rect": {
+          "x": 14,
+          "y": 154,
+          "width": 362,
+          "height": 536,
+          "top": 154,
+          "right": 376,
+          "bottom": 690,
+          "left": 14
+        },
+        "overflow": 0,
+        "page": 0,
+        "footer": {
+          "x": 14,
+          "y": 625,
+          "width": 362,
+          "height": 65,
+          "top": 625,
+          "right": 376,
+          "bottom": 690,
+          "left": 14
+        }
+      },
+      "status": "PASS"
+    }
+  ]
+}

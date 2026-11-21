@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.79",
+  "surface": "browser tab with service worker, not installed PWA",
+  "cache": {
+    "keys": [
+      "duckplan-app-motion-preview-v103"
+    ],
+    "css": true,
+    "js": true
+  },
+  "checks": [
+    "Current shell includes both new assets",
+    "Offline compact editor style and summaries",
+    "Offline save and reload persistence"
+  ]
+}

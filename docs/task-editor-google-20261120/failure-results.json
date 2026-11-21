@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "runtime": "157.0.8103.79",
+  "mode": "signed-in current loopback Worker/D1; one deliberate PUT 503",
+  "checks": [
+    "Visible error outside collapsed disclosures",
+    "Data preserved and retry enabled",
+    "Successful retry exactly once after reload"
+  ],
+  "geometry": {
+    "rect": {
+      "x": 30,
+      "y": 584.5,
+      "width": 330,
+      "height": 41.5,
+      "top": 584.5,
+      "right": 360,
+      "bottom": 626,
+      "left": 30
+    },
+    "viewport": 844
+  }
+}

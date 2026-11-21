@@ -2,6 +2,8 @@
 
 November 20, 2026. Website branch `codex/calendar-deadline-editor-20261120`, parent `90e675a`. Web cache 101 and affected asset key `due-header-tints-20261120`. This checkpoint implements browser comments 1–2; comment 3's Google Calendar task-editor redesign is pending reference access.
 
+Follow-up: reference access was recovered through the existing signed-in Chrome connection. The shared task-editor redesign and final comparison are completed in [the compact editor checkpoint](../task-editor-google-20261120/README.md), cache v103. The BLOCKED section below records the earlier checkpoint's state.
+
 ## Implemented
 
 - Removed the duplicate date-only Due row from the timetable render, including its row-expansion state and click handler. Header/body now meet directly in one header grid row. Date-only deadlines are still counted and listed by the date header's Due button, retain End of day, and never receive an invented clock position. Timed deadlines stay at their exact schedule times. Task-list due details and Month entries remain available.

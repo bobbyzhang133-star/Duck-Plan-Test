@@ -162,8 +162,8 @@
     // An early click never synchronously lays out the full form. Reserve a bounded
     // fallback frame; its content scrolls inside it rather than resizing the shell.
     const width=Math.max(1,Math.min(Number(element.dataset.popupWidth)||680,(window.innerWidth||1000)-28));
-    const height=Math.max(1,Math.min((window.innerWidth||1000)<=700?860:680,(window.innerHeight||800)-32));
-    const shape=cached?.key===key?cached:{key,width,height,radius:24,titleX:26,titleY:52,titleFont:'21.6px',titleWeight:'700'};
+    const height=Math.max(1,Math.min(Number(element.dataset.popupHeight)||((window.innerWidth||1000)<=700?860:680),(window.innerHeight||800)-32));
+    const shape=cached?.key===key?cached:{key,width,height,radius:Number(element.dataset.popupRadius)||24,titleX:20,titleY:24,titleFont:'14px',titleWeight:'550'};
     return {...shape,left:Math.max(0,((window.innerWidth||1000)-shape.width)/2),top:Math.max(0,((window.innerHeight||800)-shape.height)/2),prepared:cached?.key===key};
   }
   function reserve(element,box) {
@@ -326,7 +326,7 @@
         // percentage form heights on an auto-height dialog can overflow it.
         const form=element.querySelector('form'),heading=element.querySelector('#modal-title');
         const box=form.getBoundingClientRect(),title=heading.getBoundingClientRect(),font=getComputedStyle(heading);
-        reserve(element,{left:box.left,top:box.top,width:box.width,height:box.height,radius:24,titleX:title.left-box.left,titleY:title.top-box.top,titleFont:font.fontSize,titleWeight:font.fontWeight,titleLineHeight:font.lineHeight,titleFamily:font.fontFamily,titleSpacing:font.letterSpacing,prepared:false});
+        reserve(element,{left:box.left,top:box.top,width:box.width,height:box.height,radius:parseFloat(getComputedStyle(form).borderRadius)||24,titleX:title.left-box.left,titleY:title.top-box.top,titleFont:font.fontSize,titleWeight:font.fontWeight,titleLineHeight:font.lineHeight,titleFamily:font.fontFamily,titleSpacing:font.letterSpacing,prepared:false});
       }else schedulePrepare(element);
     }
   }

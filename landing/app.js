@@ -1562,7 +1562,7 @@ function openModal(prefill = {}) {
     reportError(error);
   }) : Promise.resolve();
   document.querySelector('#task-alarm-save-error').textContent='';
-  document.querySelector("#task-alarm-options").open = Boolean(taskAlertDraft().scheduledStart || values.workAlerts);
+  document.querySelector("#task-alarm-options").open = false;
   // Set this before synchronous reduced-motion focus measures the form; the
   // clarity observer applies the same state after the dialog opens.
   document.querySelector("#task-detail-options").open = Boolean(editingTaskId);
