@@ -1,0 +1,381 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1156,
+      "label": "today Day",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": true,
+          "color": "rgb(196, 89, 73)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "selected tomorrow Day",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "selected yesterday Day",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "Week mixed dates",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": true,
+          "color": "rgb(196, 89, 73)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "next Week no today",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "today Day",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": true,
+          "color": "rgb(239, 155, 133)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "selected tomorrow Day",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "selected yesterday Day",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "Week mixed dates",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        },
+        {
+          "today": true,
+          "color": "rgb(239, 155, 133)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 1156,
+      "label": "next Week no today",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "today Day",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": true,
+          "color": "rgb(196, 89, 73)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "selected tomorrow Day",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "selected yesterday Day",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "Week mixed dates",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": true,
+          "color": "rgb(196, 89, 73)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": true,
+          "color": "rgb(196, 89, 73)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "phone selects tomorrow",
+      "theme": "light",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": true,
+          "color": "rgb(196, 89, 73)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.944471 0.843765 0.828706)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "today Day",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": true,
+          "color": "rgb(239, 155, 133)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "selected tomorrow Day",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "selected yesterday Day",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "Week mixed dates",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.353098 0.274039 0.232471)"
+        },
+        {
+          "today": true,
+          "color": "rgb(239, 155, 133)",
+          "width": "2px",
+          "tint": "color(srgb 0.353098 0.274039 0.232471)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.353098 0.274039 0.232471)"
+        },
+        {
+          "today": true,
+          "color": "rgb(239, 155, 133)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "phone selects tomorrow",
+      "theme": "dark",
+      "status": "PASS",
+      "rows": [
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.353098 0.274039 0.232471)"
+        },
+        {
+          "today": true,
+          "color": "rgb(239, 155, 133)",
+          "width": "2px",
+          "tint": "color(srgb 0.353098 0.274039 0.232471)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.353098 0.274039 0.232471)"
+        },
+        {
+          "today": false,
+          "color": "rgba(0, 0, 0, 0)",
+          "width": "2px",
+          "tint": "color(srgb 0.428919 0.34986 0.310795)"
+        }
+      ]
+    }
+  ]
+}

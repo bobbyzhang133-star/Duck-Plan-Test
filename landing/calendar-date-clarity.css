@@ -487,8 +487,10 @@
   cursor: pointer; touch-action: manipulation;
 }
 .motion-preview #view-calendar .calendar-day-counts.is-interactive > button:is(:hover,:active,.interaction-pressed) { filter: brightness(.95); transform: none; }
-.motion-preview #view-calendar .calendar-day-counts.is-interactive > button[data-day-due-count] { border: 2px solid var(--calendar-count-due-accent); }
+.motion-preview #view-calendar .calendar-day-counts.is-interactive > button[data-day-due-count] { border: 2px solid transparent; }
+.motion-preview #view-calendar :is(.calendar-day-heading[aria-current="date"],.phone-week-day:has(> .phone-week-date[aria-current="date"])) .calendar-day-counts.is-interactive > button[data-day-due-count] { border-color: var(--calendar-count-due-accent); }
 .motion-preview #view-calendar .calendar-day-counts.is-interactive > button:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+.motion-preview #view-calendar .calendar-day-counts.is-interactive > button[data-day-due-count]:focus-visible { outline-color: var(--accent-strong,var(--accent)); }
 .motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-interactive .calendar-count-label { display: none; }
 .motion-preview #view-calendar .calendar-day-heading .calendar-day-counts.is-single .calendar-count-label,
 .motion-preview #view-calendar :is(.day-view,.phone-single-day) .calendar-day-heading .calendar-day-counts.is-interactive .calendar-count-label { display: inline; }
