@@ -168,11 +168,11 @@ body:has(.completion-note:not([hidden])) .toast { bottom: 150px; }
 @keyframes duck-bob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-2deg); } }
 @keyframes duck-stars { 0%,100% { opacity: .6; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.1); } }
 @keyframes duck-confetti { from { opacity: 1; transform: translate(0,0) rotate(0); } to { opacity: 0; transform: translate(var(--particle-x),var(--particle-y)) rotate(var(--particle-rotation)); } }
-/* Original 76bffd7 task-finish transform/timing. The shared parent now owns the later fade. */
+/* Original 76bffd7 pop/timing with a gentle fade; hold for the shared duck/card exit. */
 @keyframes completion-original-pop {
-  0% { transform: scale(1); }
-  35% { transform: scale(1.012) translateY(-2px); }
-  100% { transform: scale(.99) translateY(1px); }
+  0% { opacity: .96; transform: scale(1); }
+  35% { opacity: .9; transform: scale(1.012) translateY(-2px); }
+  100% { opacity: .86; transform: scale(.99) translateY(1px); }
 }
 @keyframes completion-duck-in {
   0%,34% { opacity: 0; transform: translateY(16px) scale(.8); animation-timing-function: cubic-bezier(.16,.8,.32,1); }

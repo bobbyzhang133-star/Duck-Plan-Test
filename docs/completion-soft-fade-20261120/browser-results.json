@@ -1,0 +1,163 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "results": [
+    {
+      "config": {
+        "width": 1156
+      },
+      "phases": [
+        {
+          "time": 0,
+          "cardOpacity": 0.96,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 150.5,
+          "cardOpacity": 0.9,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 430,
+          "cardOpacity": 0.86,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 950,
+          "cardOpacity": 0.86,
+          "groupOpacity": 1,
+          "duckOpacity": 1,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 1440,
+          "cardOpacity": 0.86,
+          "groupOpacity": 0.684643,
+          "duckOpacity": 1,
+          "fullDuck": true,
+          "overflow": false
+        }
+      ],
+      "completedAfterReload": true,
+      "cleanup": true
+    },
+    {
+      "config": {
+        "width": 390
+      },
+      "phases": [
+        {
+          "time": 0,
+          "cardOpacity": 0.96,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 150.5,
+          "cardOpacity": 0.9,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 430,
+          "cardOpacity": 0.86,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 950,
+          "cardOpacity": 0.86,
+          "groupOpacity": 1,
+          "duckOpacity": 1,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 1440,
+          "cardOpacity": 0.86,
+          "groupOpacity": 0.684643,
+          "duckOpacity": 1,
+          "fullDuck": true,
+          "overflow": false
+        }
+      ],
+      "completedAfterReload": true,
+      "cleanup": true
+    },
+    {
+      "config": {
+        "width": 390,
+        "dark": true
+      },
+      "phases": [
+        {
+          "time": 0,
+          "cardOpacity": 0.96,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 150.5,
+          "cardOpacity": 0.9,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 430,
+          "cardOpacity": 0.86,
+          "groupOpacity": 1,
+          "duckOpacity": 0,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 950,
+          "cardOpacity": 0.86,
+          "groupOpacity": 1,
+          "duckOpacity": 1,
+          "fullDuck": true,
+          "overflow": false
+        },
+        {
+          "time": 1440,
+          "cardOpacity": 0.86,
+          "groupOpacity": 0.684643,
+          "duckOpacity": 1,
+          "fullDuck": true,
+          "overflow": false
+        }
+      ],
+      "completedAfterReload": true,
+      "cleanup": true
+    },
+    {
+      "config": {
+        "width": 390,
+        "reduced": true
+      },
+      "phases": [],
+      "completedAfterReload": true,
+      "cleanup": true
+    }
+  ]
+}
