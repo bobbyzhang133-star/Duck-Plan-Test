@@ -1,0 +1,505 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "results": [
+    {
+      "config": {
+        "width": 1280,
+        "height": 900
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Finish the overdue reading response",
+        "caption": "Overdue task completed",
+        "icon": {
+          "width": 24.066268920898438,
+          "height": 24.0662841796875
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 1280,
+        "height": 900
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Prepare tomorrow's practice questions",
+        "caption": "Completed",
+        "icon": {
+          "width": 24.142013549804688,
+          "height": 24.14202880859375
+        },
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "height": 1112
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Finish the overdue reading response",
+        "caption": "Overdue task completed",
+        "icon": {
+          "width": 24.142059326171875,
+          "height": 24.14208984375
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "height": 1112
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Prepare tomorrow's practice questions",
+        "caption": "Completed",
+        "icon": {
+          "width": 24.163375854492188,
+          "height": 24.16339111328125
+        },
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Finish the overdue reading response",
+        "caption": "Overdue task completed",
+        "icon": {
+          "width": 24.11017608642578,
+          "height": 24.11016845703125
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Prepare tomorrow's practice questions",
+        "caption": "Completed",
+        "icon": {
+          "width": 24.16336441040039,
+          "height": 24.163330078125
+        },
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 320,
+        "height": 740
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Finish the overdue reading response",
+        "caption": "Overdue task completed",
+        "icon": {
+          "width": 24.141925811767578,
+          "height": 24.14190673828125
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 320,
+        "height": 740
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Prepare tomorrow's practice questions",
+        "caption": "Completed",
+        "icon": {
+          "width": 24.141891479492188,
+          "height": 24.14190673828125
+        },
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844,
+        "dark": true
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Finish the overdue reading response",
+        "caption": "Overdue task completed",
+        "icon": {
+          "width": 24.141868591308594,
+          "height": 24.14190673828125
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844,
+        "dark": true
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Prepare tomorrow's practice questions",
+        "caption": "Completed",
+        "icon": {
+          "width": 24.16333770751953,
+          "height": 24.163330078125
+        },
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844,
+        "reducedMotion": "reduce"
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": false,
+        "icons": 0,
+        "oldIcons": 0,
+        "controls": 0,
+        "icon": null,
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844,
+        "reducedMotion": "reduce"
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": false,
+        "icons": 0,
+        "oldIcons": 0,
+        "controls": 0,
+        "icon": null,
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844,
+        "motionOff": true
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": false,
+        "icons": 0,
+        "oldIcons": 0,
+        "controls": 0,
+        "icon": null,
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "height": 844,
+        "motionOff": true
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 1
+      },
+      "during": {
+        "echo": false,
+        "icons": 0,
+        "oldIcons": 0,
+        "controls": 0,
+        "icon": null,
+        "overflow": false,
+        "focusedTask": "feedback-future"
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "height": 1112,
+        "matrix": true
+      },
+      "id": "feedback-overdue",
+      "before": {
+        "checked": false,
+        "dateIcons": 0
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Finish the overdue reading response",
+        "caption": "Overdue task completed",
+        "icon": {
+          "width": 24.14208984375,
+          "height": 24.14208984375
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "height": 1112,
+        "matrix": true
+      },
+      "id": "feedback-future",
+      "before": {
+        "checked": false,
+        "dateIcons": 0
+      },
+      "during": {
+        "echo": true,
+        "icons": 1,
+        "oldIcons": 0,
+        "controls": 0,
+        "inert": true,
+        "hidden": "true",
+        "title": "Prepare tomorrow's practice questions",
+        "caption": "Completed",
+        "icon": {
+          "width": 24.14202880859375,
+          "height": 24.14202880859375
+        },
+        "overflow": false
+      },
+      "after": {
+        "completed": true,
+        "echoes": 0,
+        "particles": 0
+      },
+      "errors": []
+    }
+  ]
+}

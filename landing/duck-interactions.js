@@ -125,7 +125,37 @@
     clearTimeout(celebrationTimer);
   });
 
-  // Capture the outgoing card before the app re-renders it. React only after its change handler finishes.
+  // Use a self-contained completion card: cloning a task loses its page-scoped Due/Work styles.
+  function completionEcho(task, overdue, rect) {
+    const echo = document.createElement("div");
+    echo.className = "task-completion-echo";
+    echo.setAttribute("aria-hidden", "true");
+    echo.inert = true;
+    const mark = document.createElement("span");
+    mark.className = "completion-echo-mark";
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("width", "24");
+    icon.setAttribute("height", "24");
+    icon.setAttribute("aria-hidden", "true");
+    const check = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    check.setAttribute("d", "m5 12 4 4 10-10");
+    icon.append(check);
+    mark.append(icon);
+    const copy = document.createElement("span");
+    copy.className = "completion-echo-copy";
+    const title = document.createElement("strong");
+    title.textContent = task.title || "Task";
+    const status = document.createElement("span");
+    status.textContent = overdue ? "Overdue task completed" : "Completed";
+    copy.append(title, status);
+    echo.append(mark, copy);
+    const height = Math.min(rect.height, 88);
+    Object.assign(echo.style, { left: `${rect.left}px`, top: `${rect.top + (rect.height - height) / 2}px`, width: `${rect.width}px`, height: `${height}px` });
+    return echo;
+  }
+
+  // Capture the source position before the app re-renders it. React after its change handler finishes.
   document.addEventListener("change", (event) => {
     const checkbox = event.target.closest("input[data-task-id]");
     if (!checkbox) return;
@@ -146,9 +176,9 @@
     const before = dailySummary();
     const isToday = before.unfinished.some((item) => item.id === task.id);
     const rect = checkbox.getBoundingClientRect();
-    const card = checkbox.closest(".daily-task-card,.all-task-row");
+    const card = checkbox.closest(".daily-task-card,.all-task-row,.matrix-task-card");
     const cardRect = card?.getBoundingClientRect();
-    const echo = motionAllowed() && card ? card.cloneNode(true) : null;
+    const echo = motionAllowed() && cardRect?.width ? completionEcho(task, Model.taskTiming(task).overdue, cardRect) : null;
     setTimeout(() => {
       if (!tasks.find((item) => item.id === task.id)?.completed) return;
       const summary = dailySummary();
@@ -162,12 +192,6 @@
         clearTimeout(swimTimer);
         swimTimer = setTimeout(() => pond.classList.remove("is-swimming"), 1500);
         if (echo && cardRect?.width) {
-          echo.classList.add("task-completion-echo", "completed");
-          echo.setAttribute("aria-hidden", "true");
-          echo.inert = true;
-          echo.querySelectorAll("[id]").forEach((element) => element.removeAttribute("id"));
-          echo.querySelectorAll("input").forEach((input) => { input.checked = true; });
-          Object.assign(echo.style, { left: `${cardRect.left}px`, top: `${cardRect.top}px`, width: `${cardRect.width}px`, height: `${cardRect.height}px` });
           document.body.append(echo);
           scheduleCleanup(() => echo.remove(), 470);
         }
