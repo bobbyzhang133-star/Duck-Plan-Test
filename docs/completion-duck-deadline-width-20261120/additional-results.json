@@ -1,0 +1,52 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "view": "calendar",
+      "width": 1156,
+      "keyboard": true,
+      "shown": {
+        "duck": true,
+        "opacity": "1"
+      },
+      "reopenClears": true
+    },
+    {
+      "view": "calendar",
+      "width": 390,
+      "keyboard": true,
+      "shown": {
+        "duck": true,
+        "opacity": "1"
+      },
+      "reopenClears": true
+    },
+    {
+      "view": "home",
+      "width": 1156,
+      "keyboard": true,
+      "shown": {
+        "duck": true,
+        "opacity": "1"
+      },
+      "reopenClears": true
+    },
+    {
+      "view": "matrix",
+      "width": 835,
+      "keyboard": true,
+      "shown": {
+        "duck": true,
+        "opacity": "1"
+      },
+      "reopenClears": true
+    },
+    {
+      "mode": "signed-in",
+      "backend": "real loopback Worker/D1 fixture8798",
+      "width": 390,
+      "duck": true,
+      "persistedAfterReload": true
+    }
+  ]
+}

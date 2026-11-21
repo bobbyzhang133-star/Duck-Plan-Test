@@ -51,6 +51,11 @@
     return { unfinished, total, completed: groups.completed.length, percent: total ? Math.round(groups.completed.length / total * 100) : 0 };
   }
   function syncCharacter() {
+    // Reopening/deleting a task or switching accounts must retire its lingering completion card.
+    const owner = `${store.mode}:${store.user?.id || "local"}`;
+    document.querySelectorAll(".task-completion-echo").forEach((echo) => {
+      if (echo.dataset.completionOwner !== owner || !tasks.some((task) => task.id === echo.dataset.completionTaskId && task.completed)) echo.remove();
+    });
     const summary = dailySummary();
     const hour = new Date().getHours();
     if (summary.unfinished.length > 0 || summary.total === 0) { celebration.hidden = true; clearTimeout(celebrationTimer); }
@@ -129,19 +134,10 @@
   function completionEcho(task, overdue, rect) {
     const echo = document.createElement("div");
     echo.className = "task-completion-echo";
+    echo.dataset.completionTaskId = task.id;
+    echo.dataset.completionOwner = `${store.mode}:${store.user?.id || "local"}`;
     echo.setAttribute("aria-hidden", "true");
     echo.inert = true;
-    const mark = document.createElement("span");
-    mark.className = "completion-echo-mark";
-    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    icon.setAttribute("viewBox", "0 0 24 24");
-    icon.setAttribute("width", "44");
-    icon.setAttribute("height", "44");
-    icon.setAttribute("aria-hidden", "true");
-    const check = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    check.setAttribute("d", "m5 12 4 4 10-10");
-    icon.append(check);
-    mark.append(icon);
     const copy = document.createElement("span");
     copy.className = "completion-echo-copy";
     const title = document.createElement("strong");
@@ -149,9 +145,29 @@
     const status = document.createElement("span");
     status.textContent = overdue ? "Overdue task completed" : "Completed";
     copy.append(title, status);
-    echo.append(copy, mark);
-    const height = Math.min(rect.height, 88);
-    Object.assign(echo.style, { left: `${rect.left}px`, top: `${rect.top + (rect.height - height) / 2}px`, width: `${rect.width}px`, height: `${height}px` });
+    const duck = document.createElement("span");
+    duck.className = "completion-echo-duck";
+    const logo = document.createElement("img");
+    logo.src = "./assets/duckplan-sigma-icon-v11-transparent-192.png";
+    logo.alt = "";
+    logo.width = 80; logo.height = 80;
+    const thumb = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    thumb.setAttribute("viewBox", "0 0 48 48");
+    thumb.setAttribute("width", "32"); thumb.setAttribute("height", "32");
+    thumb.setAttribute("aria-hidden", "true");
+    thumb.classList.add("completion-duck-thumb");
+    const outline = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    outline.setAttribute("d", "M10 23h8l7-9 2-9c1-3 6-2 7 2 1 4-1 10-2 13h6c5 0 6 4 5 7l-4 13c-1 3-3 4-6 4H19l-4-3h-5Z");
+    thumb.append(outline);
+    duck.append(logo, thumb);
+    echo.append(copy, duck);
+    const height = Math.min(Math.max(rect.height, 132), 180);
+    const width = Math.min(rect.width, window.innerWidth - 24);
+    Object.assign(echo.style, {
+      left: `${Math.max(12, Math.min(rect.left, window.innerWidth - width - 12))}px`,
+      top: `${Math.max(12, Math.min(rect.top + (rect.height - height) / 2, window.innerHeight - height - 12))}px`,
+      width: `${width}px`, height: `${height}px`
+    });
     return echo;
   }
 
@@ -193,13 +209,14 @@
         swimTimer = setTimeout(() => pond.classList.remove("is-swimming"), 1500);
         if (echo && cardRect?.width) {
           document.body.append(echo);
-          scheduleCleanup(() => echo.remove(), 740);
-          // Let the card arrive at the check before the small burst, using the same landing point.
+          scheduleCleanup(() => echo.remove(), 1640);
+          // Celebrate after the block settles and the duck's thumbs-up arrives.
           scheduleCleanup(() => {
             if (motionAllowed() && echo.isConnected && tasks.find((item) => item.id === task.id)?.completed) {
-              burst(cardRect.left + cardRect.width / 2, cardRect.top + cardRect.height / 2, finishedDay);
+              const landing = echo.getBoundingClientRect();
+              burst(landing.right - 42, landing.top + landing.height / 2, finishedDay);
             }
-          }, 180);
+          }, 700);
         } else burst(rect.left + rect.width / 2, rect.top + rect.height / 2, finishedDay);
       }
       if (finishedDay) showDayComplete(summary);

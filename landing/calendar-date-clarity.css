@@ -162,14 +162,13 @@
 }
 .motion-preview #view-calendar .timed-deadline-anchor {
   position: absolute; z-index: 5; left: 3px; right: 3px; min-width: 0;
-  pointer-events: none; --timed-deadline-gutter: 18px;
+  pointer-events: none; --timed-deadline-gutter: 0px;
 }
 .motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) {
-  /* Inset 5% of the usable width between the shared 3px day gutters. */
-  left: calc(5% + 2.7px); right: 3px; --timed-deadline-gutter: 12px;
+  left: 3px; right: 3px;
 }
 .motion-preview #view-calendar .timed-deadline-point {
-  position: absolute; z-index: 2; left: 0; display: flex; align-items: center;
+  position: absolute; z-index: 2; left: -3px; display: flex; align-items: center;
   width: 10px; height: 0; color: var(--timed-deadline-accent); pointer-events: none;
 }
 .motion-preview #view-calendar .timed-deadline-diamond { display: block; flex: 0 0 10px; width: 10px; height: 10px; }
@@ -185,7 +184,7 @@
   position: absolute; z-index: 1; top: 0; left: 0; display: grid; align-content: start;
   grid-template-columns: minmax(0,1fr); grid-template-rows: 14px 16px; gap: 1px;
   box-sizing: border-box; width: 100%; min-width: 0; height: 44px; min-height: 44px;
-  margin: 0; padding: 6px 5px 6px calc(var(--timed-deadline-gutter) + 4px);
+  margin: 0; padding: 6px 5px 6px 12px;
   border: 0; border-radius: 6px; outline: none; color: var(--timed-deadline-ink);
   background: transparent; box-shadow: none; font: inherit; text-align: left;
   cursor: pointer; touch-action: manipulation; pointer-events: auto; isolation: isolate;
@@ -212,7 +211,7 @@
   font-size: 12px; font-weight: 650; line-height: 16px; text-overflow: ellipsis; white-space: nowrap;
 }
 .motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) :is(.timed-deadline-kind,.calendar-kind-icon) { display: none; }
-.motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) :is(.timed-deadline-marker,.timed-deadline-group-trigger) { padding-left: calc(var(--timed-deadline-gutter) + 2px); padding-right: 3px; }
+.motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) :is(.timed-deadline-marker,.timed-deadline-group-trigger) { padding-left: 12px; padding-right: 3px; }
 .motion-preview #view-calendar .timed-deadline-anchor:is(.has-work-overlap,.is-over-work,[data-overlaps-work="true"]) .timed-deadline-count::after { content: " due"; }
 .motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):is(:hover,:active,.interaction-pressed,:focus-visible) { background: transparent; box-shadow: none; transform: none; filter: none; }
 .motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):hover::before { background: color-mix(in srgb,var(--timed-deadline-surface) 82%,var(--timed-deadline-line)); }

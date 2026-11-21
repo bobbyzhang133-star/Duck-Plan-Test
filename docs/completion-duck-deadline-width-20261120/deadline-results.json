@@ -1,0 +1,718 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "results": [
+    {
+      "config": {
+        "width": 1156
+      },
+      "mode": "day",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 662.125,
+          "markerWidth": 656.125,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 662.125,
+          "markerWidth": 656.125,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 662.125,
+          "markerWidth": 656.125,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 662.125,
+          "markerWidth": 656.125,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 662.125,
+          "markerWidth": 656.125,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 1156
+      },
+      "mode": "week",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 835
+      },
+      "mode": "day",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 367,
+          "markerWidth": 361,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 367,
+          "markerWidth": 361,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 367,
+          "markerWidth": 361,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 367,
+          "markerWidth": 361,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 367,
+          "markerWidth": 361,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 835
+      },
+      "mode": "week",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 112,
+          "markerWidth": 105,
+          "leftInset": 4,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 390
+      },
+      "mode": "day",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 390
+      },
+      "mode": "week",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 320
+      },
+      "mode": "day",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 320
+      },
+      "mode": "week",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 212,
+          "markerWidth": 206,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 390,
+        "dark": true
+      },
+      "mode": "day",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    },
+    {
+      "config": {
+        "width": 390,
+        "dark": true
+      },
+      "mode": "week",
+      "measurements": [
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": true,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": true,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        },
+        {
+          "overlap": false,
+          "group": false,
+          "columnWidth": 282,
+          "markerWidth": 276,
+          "leftInset": 3,
+          "rightInset": 3,
+          "backgroundLeft": "0px",
+          "diamondDelta": 2,
+          "diamondInsideColumn": true,
+          "layer": 5
+        }
+      ],
+      "preview": true,
+      "group": true,
+      "unchanged": true
+    }
+  ]
+}
