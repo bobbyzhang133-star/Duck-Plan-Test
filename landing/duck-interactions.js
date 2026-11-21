@@ -167,6 +167,15 @@
           echo.inert = true;
           echo.querySelectorAll("[id]").forEach((element) => element.removeAttribute("id"));
           echo.querySelectorAll("input").forEach((input) => { input.checked = true; });
+          const dateIcons = [...echo.querySelectorAll(".task-date-icon")];
+          if (dateIcons.length) {
+            const duck = document.createElement("span");
+            duck.className = "completion-approval-duck";
+            duck.setAttribute("aria-hidden", "true");
+            duck.innerHTML = Mascot.markup("thumbsup");
+            dateIcons[0].replaceWith(duck);
+            dateIcons.slice(1).forEach((icon) => icon.remove());
+          }
           Object.assign(echo.style, { left: `${cardRect.left}px`, top: `${cardRect.top}px`, width: `${cardRect.width}px`, height: `${cardRect.height}px` });
           document.body.append(echo);
           scheduleCleanup(() => echo.remove(), 470);

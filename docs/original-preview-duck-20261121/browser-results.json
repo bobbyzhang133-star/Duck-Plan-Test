@@ -1,0 +1,239 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "normalIcons": 5,
+      "graphic": {
+        "name": "task-finish",
+        "duration": 430,
+        "easing": "ease",
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "scale(1)",
+            "opacity": "0.96"
+          },
+          {
+            "offset": 0.35,
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9"
+          },
+          {
+            "offset": 1,
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0"
+          }
+        ],
+        "oldIcons": 0,
+        "ducks": 1,
+        "fullBody": true,
+        "wingVisible": true,
+        "width": 114.22950744628906,
+        "height": 137.63198852539062,
+        "inert": true
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 835
+      },
+      "normalIcons": 5,
+      "graphic": {
+        "name": "task-finish",
+        "duration": 430,
+        "easing": "ease",
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "scale(1)",
+            "opacity": "0.96"
+          },
+          {
+            "offset": 0.35,
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9"
+          },
+          {
+            "offset": 1,
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0"
+          }
+        ],
+        "oldIcons": 0,
+        "ducks": 1,
+        "fullBody": true,
+        "wingVisible": true,
+        "width": 116.38002014160156,
+        "height": 137.6319580078125,
+        "inert": true
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "normalIcons": 5,
+      "graphic": {
+        "name": "task-finish",
+        "duration": 430,
+        "easing": "ease",
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "scale(1)",
+            "opacity": "0.96"
+          },
+          {
+            "offset": 0.35,
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9"
+          },
+          {
+            "offset": 1,
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0"
+          }
+        ],
+        "oldIcons": 0,
+        "ducks": 1,
+        "fullBody": true,
+        "wingVisible": true,
+        "width": 145.72799682617188,
+        "height": 137.6319580078125,
+        "inert": true
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "normalIcons": 7,
+      "graphic": {
+        "name": "task-finish",
+        "duration": 430,
+        "easing": "ease",
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "scale(1)",
+            "opacity": "0.96"
+          },
+          {
+            "offset": 0.35,
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9"
+          },
+          {
+            "offset": 1,
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0"
+          }
+        ],
+        "oldIcons": 0,
+        "ducks": 1,
+        "fullBody": true,
+        "wingVisible": true,
+        "width": 145.72799682617188,
+        "height": 137.63201904296875,
+        "inert": true
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 320
+      },
+      "normalIcons": 7,
+      "graphic": {
+        "name": "task-finish",
+        "duration": 430,
+        "easing": "ease",
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "scale(1)",
+            "opacity": "0.96"
+          },
+          {
+            "offset": 0.35,
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9"
+          },
+          {
+            "offset": 1,
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0"
+          }
+        ],
+        "oldIcons": 0,
+        "ducks": 1,
+        "fullBody": true,
+        "wingVisible": true,
+        "width": 145.72799682617188,
+        "height": 137.63201904296875,
+        "inert": true
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "dark": true
+      },
+      "normalIcons": 7,
+      "graphic": {
+        "name": "task-finish",
+        "duration": 430,
+        "easing": "ease",
+        "frames": [
+          {
+            "offset": 0,
+            "transform": "scale(1)",
+            "opacity": "0.96"
+          },
+          {
+            "offset": 0.35,
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9"
+          },
+          {
+            "offset": 1,
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0"
+          }
+        ],
+        "oldIcons": 0,
+        "ducks": 1,
+        "fullBody": true,
+        "wingVisible": true,
+        "width": 145.72799682617188,
+        "height": 137.63201904296875,
+        "inert": true
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "reduced": true
+      },
+      "normalIcons": 7,
+      "graphic": null,
+      "completedAfterReload": true
+    }
+  ]
+}
