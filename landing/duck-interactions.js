@@ -108,7 +108,7 @@
       batch.append(particle);
     }
     effects.append(batch);
-    scheduleCleanup(() => batch.remove(), 950);
+    scheduleCleanup(() => batch.remove(), 750);
   }
   function showDayComplete(summary) {
     celebration.hidden = false;
@@ -135,8 +135,8 @@
     mark.className = "completion-echo-mark";
     const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     icon.setAttribute("viewBox", "0 0 24 24");
-    icon.setAttribute("width", "24");
-    icon.setAttribute("height", "24");
+    icon.setAttribute("width", "44");
+    icon.setAttribute("height", "44");
     icon.setAttribute("aria-hidden", "true");
     const check = document.createElementNS("http://www.w3.org/2000/svg", "path");
     check.setAttribute("d", "m5 12 4 4 10-10");
@@ -149,7 +149,7 @@
     const status = document.createElement("span");
     status.textContent = overdue ? "Overdue task completed" : "Completed";
     copy.append(title, status);
-    echo.append(mark, copy);
+    echo.append(copy, mark);
     const height = Math.min(rect.height, 88);
     Object.assign(echo.style, { left: `${rect.left}px`, top: `${rect.top + (rect.height - height) / 2}px`, width: `${rect.width}px`, height: `${height}px` });
     return echo;
@@ -193,9 +193,14 @@
         swimTimer = setTimeout(() => pond.classList.remove("is-swimming"), 1500);
         if (echo && cardRect?.width) {
           document.body.append(echo);
-          scheduleCleanup(() => echo.remove(), 470);
-        }
-        burst(rect.left + rect.width / 2, rect.top + rect.height / 2, finishedDay);
+          scheduleCleanup(() => echo.remove(), 740);
+          // Let the card arrive at the check before the small burst, using the same landing point.
+          scheduleCleanup(() => {
+            if (motionAllowed() && echo.isConnected && tasks.find((item) => item.id === task.id)?.completed) {
+              burst(cardRect.left + cardRect.width / 2, cardRect.top + cardRect.height / 2, finishedDay);
+            }
+          }, 180);
+        } else burst(rect.left + rect.width / 2, rect.top + rect.height / 2, finishedDay);
       }
       if (finishedDay) showDayComplete(summary);
       clearTimeout(reactionTimer);

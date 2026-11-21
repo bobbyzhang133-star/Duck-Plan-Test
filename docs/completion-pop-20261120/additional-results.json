@@ -1,0 +1,45 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "view": "calendar",
+      "width": 1280,
+      "visual": {
+        "icons": 1,
+        "markBase": 72,
+        "copyOpacity": "0"
+      },
+      "persisted": true
+    },
+    {
+      "view": "calendar",
+      "width": 390,
+      "visual": {
+        "icons": 1,
+        "markBase": 72,
+        "copyOpacity": "0"
+      },
+      "persisted": true
+    },
+    {
+      "view": "home",
+      "width": 1280,
+      "visual": {
+        "icons": 1,
+        "markBase": 72,
+        "copyOpacity": "0"
+      },
+      "persisted": true
+    },
+    {
+      "mode": "signed-in",
+      "backend": "real loopback Worker/D1 fixture8798",
+      "width": 390,
+      "visual": {
+        "icons": 1,
+        "markBase": 72
+      },
+      "persistedAfterReload": true
+    }
+  ]
+}

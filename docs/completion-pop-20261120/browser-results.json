@@ -1,0 +1,821 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "sampling": "paused rendered WAAPI phases plus live cleanup/persistence",
+  "results": [
+    {
+      "config": {
+        "width": 1280
+      },
+      "id": "pop-overdue",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 1098,
+          "copyOpacity": 1,
+          "markWidth": 21.5999755859375,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 602.655517578125,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 131.760009765625,
+          "copyOpacity": 0,
+          "markWidth": 83.52001953125,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 131.760009765625,
+          "copyOpacity": 0,
+          "markWidth": 68.4000244140625,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 131.760009765625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 1280
+      },
+      "id": "pop-future",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 1098,
+          "copyOpacity": 1,
+          "markWidth": 21.5999755859375,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 602.655517578125,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 131.760009765625,
+          "copyOpacity": 0,
+          "markWidth": 83.52001953125,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 131.760009765625,
+          "copyOpacity": 0,
+          "markWidth": 68.4000244140625,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 131.760009765625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 835
+      },
+      "id": "pop-overdue",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 665,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.0000152587890625,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 364.996337890625,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 79.79998779296875,
+          "copyOpacity": 0,
+          "markWidth": 83.51998901367188,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.0000152587890625,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 79.79998779296875,
+          "copyOpacity": 0,
+          "markWidth": 68.39999389648438,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.0000152587890625,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 79.79998779296875,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 835
+      },
+      "id": "pop-future",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 665,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.0000152587890625,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 364.996337890625,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 79.79998779296875,
+          "copyOpacity": 0,
+          "markWidth": 83.51998901367188,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.0000152587890625,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 79.79998779296875,
+          "copyOpacity": 0,
+          "markWidth": 68.39999389648438,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.0000152587890625,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 79.79998779296875,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 390
+      },
+      "id": "pop-overdue",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 332,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 182.22373962402344,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 83.52000427246094,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 68.40000915527344,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 390
+      },
+      "id": "pop-future",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 332,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 182.22373962402344,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 83.52000427246094,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 68.40000915527344,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 320
+      },
+      "id": "pop-overdue",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 262,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 143.80303955078125,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 31.44000244140625,
+          "copyOpacity": 0,
+          "markWidth": 83.52000427246094,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 31.44000244140625,
+          "copyOpacity": 0,
+          "markWidth": 68.40000915527344,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 31.44000244140625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 320
+      },
+      "id": "pop-future",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 262,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 143.80303955078125,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 31.44000244140625,
+          "copyOpacity": 0,
+          "markWidth": 83.52000427246094,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 31.44000244140625,
+          "copyOpacity": 0,
+          "markWidth": 68.40000915527344,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 31.44000244140625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 390,
+        "dark": true
+      },
+      "id": "pop-overdue",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 332,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 182.22373962402344,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 83.52000427246094,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 68.40000915527344,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Overdue task completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 390,
+        "dark": true
+      },
+      "id": "pop-future",
+      "phases": [
+        {
+          "time": 0,
+          "copyWidth": 332,
+          "copyOpacity": 1,
+          "markWidth": 21.600006103515625,
+          "markOpacity": 0,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 180,
+          "copyWidth": 182.22373962402344,
+          "copyOpacity": 0.487348,
+          "markWidth": 69.095458984375,
+          "markOpacity": 0.767045,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 322,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 83.52000427246094,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 434,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 68.40000915527344,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0.00000762939453125,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        },
+        {
+          "time": 550,
+          "copyWidth": 39.839996337890625,
+          "copyOpacity": 0,
+          "markWidth": 72,
+          "markOpacity": 1,
+          "markBase": 72,
+          "checkSize": "44px",
+          "centerDelta": 0,
+          "caption": "Completed",
+          "icons": 1,
+          "inert": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "config": {
+        "width": 390,
+        "reduced": true
+      },
+      "id": "pop-overdue",
+      "phases": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "reduced": true
+      },
+      "id": "pop-future",
+      "phases": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "motionOff": true
+      },
+      "id": "pop-overdue",
+      "phases": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "motionOff": true
+      },
+      "id": "pop-future",
+      "phases": []
+    }
+  ]
+}
