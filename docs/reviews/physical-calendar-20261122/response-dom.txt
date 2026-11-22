@@ -1,0 +1,504 @@
+    - heading "ChatGPT said:" [level=4]
+    - heading "DuckPlan Physical Calendar — Feasibility Review" [level=1]:
+      - strong: DuckPlan Physical Calendar — Feasibility Review
+    - paragraph: "Research date: November 22, 2026 · Exact TEST commit: 11b593fcbe4230d44820984a533d712196703ea3"
+    - heading "Initial verdict" [level=2]:
+      - strong: Initial verdict
+    - paragraph:
+      - strong: A working prototype under $150 looks feasible, but a custom Raspberry Pi device is not necessarily the most cost-effective first prototype.
+    - paragraph: The strongest finding from the current supplier research is that an Android tablet already provides the touchscreen, processor, battery, speaker and Wi-Fi in one package. A Raspberry Pi requires those components separately and adds assembly and operating-system work.
+    - paragraph:
+      - text: For example, Walmart currently lists a 2026 7-inch onn Core tablet at
+      - strong: $87
+      - text: ", with 4GB RAM and Android 16. That is a materially better memory allowance than the proposed 1GB Pi for running a modern calendar interface. The tablet still needs a power adapter, mounting solution and custom alarm software before it becomes the intended appliance."
+      - button "Walmart.com +1":
+        - generic: Walmart.com
+        - generic: "+1"
+    - paragraph:
+      - text: I have inspected the exact
+      - link "physical-calendar research brief":
+        - /url: https://github.com/bobbyzhang133-star/Duck-Plan-Test/blob/11b593fcbe4230d44820984a533d712196703ea3/docs/reviews/physical-calendar-20261122/README.md?utm_source=chatgpt.com
+        - generic: physical-calendar research brief
+      - text: . It correctly identifies several blockers, particularly the incomplete delivered-cost calculation, the danger of treating browser notifications as alarms, and the need to verify enclosure fit rather than assuming all 7-inch Pi displays are interchangeable.
+    - heading "1. Hardware paths and realistic costs" [level=2]:
+      - strong: 1. Hardware paths and realistic costs
+    - paragraph:
+      - text: These prices were checked against retailer/manufacturer listings for the November 22, 2026 review. Stock, promotional pricing and delivery eligibility can change.
+      - strong: None of these totals is a confirmed delivered checkout quote.
+    - img "onn 8\" Kids Tablet, 64 GB, Android 16, Blue (2026 Model) - Walmart.com"
+    - button "Open onn 8\" Kids Tablet, 64 GB, Android 16, Blue (2026 Model) - Walmart.com"
+    - button "Share image":
+    - button "Add to Favorites":
+    - paragraph:
+      - strong: "1."
+      - strong: onn 8-inch Kids Tablet (2026)
+      - strong: — best for younger children
+    - paragraph: Android 16 · 4GB RAM · 64GB · 8-inch 1524×1000 touchscreen
+    - paragraph:
+      - text: The included protective bumper has a handle that doubles as a desk kickstand. A built-in speaker, battery and Wi-Fi eliminate several components required by a Pi build. The blue and orange versions were listed for sale.
+      - button "Walmart.com +2":
+        - generic: Walmart.com
+        - generic: "+2"
+    - table:
+      - rowgroup:
+        - row "Tablet, Walmart $106.00":
+          - cell "Tablet, Walmart":
+            - link "Tablet, Walmart":
+              - /url: https://www.walmart.com/ip/18674065715?utm_source=chatgpt.com
+              - generic: Tablet, Walmart
+          - cell "$106.00"
+        - row "USB wall charger $9.88":
+          - cell "USB wall charger":
+            - link "USB wall charger":
+              - /url: https://www.walmart.com/ip/14725956078?utm_source=chatgpt.com
+              - generic: USB wall charger
+          - cell "$9.88"
+        - row "Included cable and desk kickstand $0":
+          - cell "Included cable and desk kickstand"
+          - cell "$0"
+        - row "Hardware subtotal $115.88":
+          - cell "Hardware subtotal":
+            - paragraph:
+              - strong: Hardware subtotal
+          - cell "$115.88":
+            - paragraph:
+              - strong: $115.88
+    - paragraph: "With an illustrative 9% sales tax: $126.31 before delivery. Walmart advertises free shipping for the tablet listing, but the combined checkout, any accessory shipping and exact tax remain unverified. A secure wall mount is not included."
+    - img "onn 7\" Core Tablet, 64 GB, Android 16, Navy (2026 Model) - Walmart.com"
+    - button "Open onn 7\" Core Tablet, 64 GB, Android 16, Navy (2026 Model) - Walmart.com"
+    - button "Share image":
+    - button "Add to Favorites":
+    - paragraph:
+      - strong: "2."
+      - strong: onn 7-inch Core Tablet (2026)
+      - strong: — lowest-cost new desk prototype
+    - paragraph: Android 16 · 4GB RAM · 64GB · 7-inch 1024×600 touchscreen
+    - paragraph:
+      - text: Walmart showed the Navy version at a promotional
+      - strong: $87
+      - text: ", down from $97. Other colors were marked out of stock. Its box contains a charging cable but not a listed AC adapter or stand."
+      - button "Walmart.com +2":
+        - generic: Walmart.com
+        - generic: "+2"
+    - table:
+      - rowgroup:
+        - row "Tablet, Walmart $87.00":
+          - cell "Tablet, Walmart":
+            - link "Tablet, Walmart":
+              - /url: https://www.walmart.com/ip/18523851311?utm_source=chatgpt.com
+              - generic: Tablet, Walmart
+          - cell "$87.00"
+        - row "USB wall charger $9.88":
+          - cell "USB wall charger":
+            - link "USB wall charger":
+              - /url: https://www.walmart.com/ip/14725956078?utm_source=chatgpt.com
+              - generic: USB wall charger
+          - cell "$9.88"
+        - row "UGREEN desktop stand $9.99":
+          - cell "UGREEN desktop stand":
+            - link "UGREEN desktop stand":
+              - /url: https://www.walmart.com/ip/458483597?utm_source=chatgpt.com
+              - generic: UGREEN desktop stand
+          - cell "$9.99"
+        - row "Included cable $0":
+          - cell "Included cable"
+          - cell "$0"
+        - row "Hardware subtotal $106.87":
+          - cell "Hardware subtotal":
+            - paragraph:
+              - strong: Hardware subtotal
+          - cell "$106.87":
+            - paragraph:
+              - strong: $106.87
+    - paragraph:
+      - text: "With illustrative 9% tax: $116.49 before delivery. The stand price is seller-listed and the final delivered amount has not been checked. No wall mount or separate physical alarm button is included."
+      - button "Walmart.com +1":
+        - generic: Walmart.com
+        - generic: "+1"
+    - heading "3. Raspberry Pi 4 + Waveshare 7-inch — best for custom electronics, but not yet budget-approved" [level=3]:
+      - strong: 3. Raspberry Pi 4 + Waveshare 7-inch — best for custom electronics, but not yet budget-approved
+    - paragraph:
+      - text: This is the strongest
+      - emphasis: modular enclosure-development
+      - text: path, because individual components can eventually be fitted into a designed Sigma duck housing.
+    - table:
+      - rowgroup:
+        - row "Exact component Price Verification":
+          - columnheader "Exact component":
+            - paragraph: Exact component
+          - columnheader "Price":
+            - paragraph: Price
+          - columnheader "Verification":
+            - paragraph: Verification
+        - row "Pi 4 Model B 1GB, PiShop SKU 1GB-9002 $35.00 Listed in stock SC0192(11)":
+          - cell "Pi 4 Model B 1GB, PiShop SKU 1GB-9002":
+            - paragraph:
+              - link "Pi 4 Model B 1GB, PiShop SKU 1GB-9002":
+                - /url: https://www.pishop.us/product/raspberry-pi-4-model-b-1gb/?utm_source=chatgpt.com
+                - generic: Pi 4 Model B 1GB, PiShop SKU 1GB-9002
+          - cell "$35.00":
+            - paragraph: $35.00
+          - cell "Listed in stock SC0192(11)":
+            - paragraph:
+              - text: Listed in stock
+              - button "SC0192(11)":
+                - generic: SC0192(11)
+        - row "Waveshare 7inch DSI LCD (C), SKU 20429 $62.99 Indexed manufacturer price; live stock/checkout not established 7inch DSI LCD (C)":
+          - cell "Waveshare 7inch DSI LCD (C), SKU 20429":
+            - paragraph:
+              - link "Waveshare 7inch DSI LCD (C), SKU 20429":
+                - /url: https://www.waveshare.com/7inch-dsi-lcd-c.htm?utm_source=chatgpt.com
+                - generic: Waveshare 7inch DSI LCD (C), SKU 20429
+          - cell "$62.99":
+            - paragraph: $62.99
+          - cell "Indexed manufacturer price; live stock/checkout not established 7inch DSI LCD (C)":
+            - paragraph:
+              - text: Indexed manufacturer price; live stock/checkout not established
+              - button "7inch DSI LCD (C)":
+                - generic: 7inch DSI LCD (C)
+        - row "Adafruit USB speaker, PID 3369 $12.50 Price and availability supported learn.adafruit.com +1":
+          - cell "Adafruit USB speaker, PID 3369":
+            - paragraph:
+              - link "Adafruit USB speaker, PID 3369":
+                - /url: https://www.adafruit.com/product/3369?utm_source=chatgpt.com
+                - generic: Adafruit USB speaker, PID 3369
+          - cell "$12.50":
+            - paragraph: $12.50
+          - cell "Price and availability supported learn.adafruit.com +1":
+            - paragraph:
+              - text: Price and availability supported
+              - button "learn.adafruit.com +1":
+                - generic: learn.adafruit.com
+                - generic: "+1"
+        - row "PiShop 5.1V/3A PSU, SKU 1203 $8.95 Listed in stock PiShop.us":
+          - cell "PiShop 5.1V/3A PSU, SKU 1203":
+            - paragraph:
+              - link "PiShop 5.1V/3A PSU, SKU 1203":
+                - /url: https://www.pishop.us/product/usb-c-power-supply-5-1v-3-0a-black-ul-listed/?utm_source=chatgpt.com
+                - generic: PiShop 5.1V/3A PSU, SKU 1203
+          - cell "$8.95":
+            - paragraph: $8.95
+          - cell "Listed in stock PiShop.us":
+            - paragraph:
+              - text: Listed in stock
+              - button "PiShop.us":
+                - generic: PiShop.us
+        - row "32GB preloaded microSD, SKU 1337-1 $19.95 Listed in stock PiShop US":
+          - cell "32GB preloaded microSD, SKU 1337-1":
+            - paragraph:
+              - link "32GB preloaded microSD, SKU 1337-1":
+                - /url: https://www.pishop.us/product/class-10-microsd-card-with-raspberry-pi-os-bookworm-32gb/?utm_source=chatgpt.com
+                - generic: 32GB preloaded microSD, SKU 1337-1
+          - cell "$19.95":
+            - paragraph: $19.95
+          - cell "Listed in stock PiShop US":
+            - paragraph:
+              - text: Listed in stock
+              - button "PiShop US":
+                - generic: PiShop US
+        - row "Heatsinks, Stop button, wiring $6–11 Allowance only; exact items and stock not quoted":
+          - cell "Heatsinks, Stop button, wiring":
+            - paragraph: Heatsinks, Stop button, wiring
+          - cell "$6–11":
+            - paragraph: $6–11
+          - cell "Allowance only; exact items and stock not quoted":
+            - paragraph:
+              - strong: Allowance only; exact items and stock not quoted
+        - row "Parts subtotal $145.39–$150.39 Before taxes, shipping and printed case":
+          - cell "Parts subtotal":
+            - paragraph:
+              - strong: Parts subtotal
+          - cell "$145.39–$150.39":
+            - paragraph:
+              - strong: $145.39–$150.39
+          - cell "Before taxes, shipping and printed case":
+            - paragraph: Before taxes, shipping and printed case
+    - paragraph: "This corrects the earlier provisional $133.49–$139.49 estimate: a verified preloaded 32GB card costs substantially more than the original $8–$12 allowance."
+    - paragraph: A cheaper, blank microSD could reduce the subtotal, but would require flashing an OS with an available computer/card reader. It would still leave separate-vendor shipping, tax, display-cable fit, and any unpriced fixings to resolve.
+    - paragraph:
+      - strong: "Verdict: Do not treat this Pi basket as meeting the $150 limit."
+      - text: In fact, the Waveshare catalog has shown inconsistent availability, and I could not establish a checkout-ready delivered price or independently verify the complete cable/driver bundle.
+    - paragraph:
+      - text: The Pi 4's DSI interface, Wi-Fi and USB make the architecture plausible; Waveshare's variant C is
+      - strong: not interchangeable
+      - text: with HDMI panels, the official Raspberry Pi Touch Display 2, or other Waveshare DSI revisions. Its required driver and current Raspberry Pi OS compatibility must be verified using the exact SKU before purchase.
+    - heading "2. Which screen size is actually useful?" [level=2]:
+      - strong: 2. Which screen size is actually useful?
+    - img "DAKboard | Turn Any Screen Into A Digital Calendar For Your Family"
+    - button "Open DAKboard | Turn Any Screen Into A Digital Calendar For Your Family"
+    - button "Share image":
+    - button "Add to Favorites":
+    - paragraph: 5–7 inches
+    - paragraph: Personal desk or bedside calendar; best viewed up close.
+    - 'img "Echo Hub: Amazons Smart-Home-Zentrale startet in Deutschland - WinFuture.de"'
+    - 'button "Open Echo Hub: Amazons Smart-Home-Zentrale startet in Deutschland - WinFuture.de"'
+    - button "Share image":
+    - button "Add to Favorites":
+    - paragraph: 8 inches
+    - paragraph: Better touch targets and daily tasks, still primarily close-up.
+    - img "Skylight | How to Create a Family Calendar and Organize It Like a Pro"
+    - button "Open Skylight | How to Create a Family Calendar and Organize It Like a Pro"
+    - button "Share image":
+    - button "Add to Favorites":
+    - paragraph: 10+ inches
+    - paragraph: More credible wall display, though text still needs deliberate sizing.
+    - generic: Illustrative size references, not tested DuckPlan hardware or actual scale comparisons.
+    - paragraph:
+      - text: For a
+      - strong: child-facing wall calendar
+      - text: ", I would not simply show seven densely packed DuckPlan timetable columns on a 7-inch screen. Instead, the dedicated device interface should prioritize a large day/date, the next task, an obvious alarm status and a short list of today's assignments. The existing DuckPlan website layout should remain unchanged."
+    - paragraph:
+      - text: For across-the-room viewing, a larger panel and much larger typography will matter more than pixel resolution. A 7–8-inch device is principally a
+      - strong: desk companion or close-up wall display
+      - text: ", not a substitute for a large family calendar several feet away."
+    - paragraph:
+      - text: The Pi's
+      - strong: 1GB RAM
+      - text: is also a significant uncertainty. Chromium, Linux desktop services, GPU/display memory and DuckPlan's interface all share that limited space. It might handle a single optimized kiosk tab, but it could also become sluggish or reload under memory pressure. This must be benchmarked rather than assumed. The 4GB tablets offer more headroom, though they too remain untested with DuckPlan.
+    - heading "3. A real alarm must be separate from the browser" [level=2]:
+      - strong: 3. A real alarm must be separate from the browser
+    - paragraph:
+      - text: This is the most important software requirement.
+      - strong: A screen with a speaker and an open DuckPlan webpage is not yet an alarm appliance.
+    - paragraph: "The proposed design should be:"
+    - button "Diagram options":
+    - button "Expand diagram":
+    - img "Mermaid diagram":
+      - generic: DuckPlan account and task
+      - generic: data
+      - generic: Authenticated device sync
+      - generic: Local alarm database
+      - generic: OS-level alarm scheduler
+      - generic: Speaker rings
+      - generic: Child action
+      - generic: Stop
+      - generic: Snooze
+      - generic: Device calendar screen
+      - generic: Task changed or completed
+      - generic: Cancel / reschedule old alarm
+    - paragraph:
+      - text: The critical design rule is that
+      - strong: the alarm scheduler must not depend on the calendar UI remaining open
+      - text: .
+    - heading "Android path — recommended for the first prototype" [level=3]:
+      - strong: Android path — recommended for the first prototype
+    - paragraph:
+      - text: This requires
+      - emphasis: new Android software
+      - text: ", not the existing web app alone."
+    - paragraph:
+      - text: An Android companion could render a dedicated DuckPlan display while storing a local cache of upcoming alarm instructions. It should schedule alarms through Android's
+      - code: AlarmManager
+      - text: ", use the device speaker to play a looping sound, provide full-screen or prominent"
+      - strong: Stop
+      - text: and
+      - strong: Snooze
+      - text: controls, and restore pending schedules after boot.
+    - paragraph:
+      - text: Android's official documentation specifies that exact-alarm permissions require deliberate handling and that scheduled alarms are normally canceled at shutdown, requiring boot-time rescheduling. Some eligible calendar/alarm applications can use
+      - code: USE_EXACT_ALARM
+      - text: ", while other apps must handle exact-alarm access appropriately; eligibility and behavior must not be assumed."
+      - button "developer.android.com +1":
+        - generic: developer.android.com
+        - generic: "+1"
+    - paragraph: For children, the interface should make Stop immediately accessible without navigating menus. On the first tablet prototype, large on-screen Stop/Snooze controls are acceptable. A dedicated physical Stop button would require a separate compatible accessory/interface and additional cost.
+    - heading "Raspberry Pi path — best for a later custom appliance" [level=3]:
+      - strong: Raspberry Pi path — best for a later custom appliance
+    - paragraph:
+      - text: A Linux alarm daemon started by
+      - code: systemd
+      - text: could own the local schedule and directly play audio through the USB speaker, independent of Chromium. A GPIO-connected, debounced physical Stop/Snooze button would send commands to that service.
+    - paragraph: The daemon would need persistent local storage, restart recovery, clock/timezone management, missed-alarm policy, and reconciliation when DuckPlan tasks change.
+    - paragraph: "Both paths require:"
+    - list:
+      - paragraph: An authenticated way to obtain task/alarm changes, with safe credential handling and a local cache.
+      - paragraph:
+        - text: Exact instructions for which reminders produce an audible alarm.
+        - strong: A date-only deadline must not silently become a midnight alarm.
+      - paragraph: Reliable cancellation after rescheduling, completion, deletion, account switching or sign-out.
+      - paragraph: Defined behavior when Wi-Fi is unavailable, including showing when schedules were last synced.
+    - paragraph:
+      - text: Existing DuckPlan web notifications and the iPhone's Apple AlarmKit implementation do
+      - strong: not
+      - text: establish that these new Android/Linux alarms already work. They are separate platform development tasks.
+    - paragraph:
+      - strong: "Power limitation:"
+      - text: "A tablet's built-in battery provides some protection against unplugging, but long-term continuous charging and battery heat require testing. The proposed Pi has no battery backup: an outage stops the device and its alarm. An RTC alone would preserve time information, not power the speaker."
+    - 'heading "4. Printable enclosures: what is actually available?" [level=2]':
+      - strong: "4. Printable enclosures: what is actually available?"
+    - img "Overview | Articulated Pi Display V2 Mount | Adafruit Learning System"
+    - button "Open Overview | Articulated Pi Display V2 Mount | Adafruit Learning System"
+    - paragraph:
+      - link "Adafruit Articulated Pi Display V2 Mount":
+        - /url: https://learn.adafruit.com/pi-wall-mount/3d-printing?utm_source=chatgpt.com
+        - strong: Adafruit Articulated Pi Display V2 Mount
+    - paragraph:
+      - text: Actual printable STL links and editable
+      - strong: STEP/Fusion (.f3d)
+      - text: design files are offered. This design targets the
+      - strong: official 7-inch Raspberry Pi Touch Display 2 with Pi 5 hardware
+      - text: ", not Waveshare DSI LCD (C). It is a useful mechanical reference but not a direct-fit enclosure for the proposed Pi 4 build. The exact reuse/license terms still require checking."
+      - button "Adafruit Learning System":
+        - generic: Adafruit Learning System
+    - img "RPID2D1 tok (Raspberry Pi Touch Display 2 doboz Pi 5-höz)"
+    - button "Open RPID2D1 tok (Raspberry Pi Touch Display 2 doboz Pi 5-höz)"
+    - paragraph:
+      - link "Rojikku's Raspberry Pi Touch Display 2 case":
+        - /url: https://www.printables.com/model/1071718-raspberry-pi-touch-display-2-case?utm_source=chatgpt.com
+        - strong: Rojikku's Raspberry Pi Touch Display 2 case
+    - paragraph:
+      - text: The indexed model describes a printable case for the
+      - strong: official 7-inch Touch Display 2
+      - text: ", using the display's small mounting screws. A print file is listed. I could not directly inspect the complete download, editable CAD files or license, so commercial/remix permissions and Pi 4 fit remain"
+      - strong: unverified
+      - text: . It does not establish compatibility with the Waveshare C panel, speaker or physical buttons.
+      - button "Printables.com":
+        - generic: Printables.com
+    - paragraph:
+      - text: I did
+      - strong: not
+      - text: "verify an exact ready-to-print case combining all of these: Waveshare 7-inch DSI LCD (C), Raspberry Pi 4, USB speaker and accessible Stop/Snooze controls."
+    - paragraph: Likewise, neither of the proposed Android tablets has a verified downloadable duck-shaped enclosure that can simply be printed without measurement and modification. Their supplied cases or stands are usable for prototyping, not substitutes for a designed wall enclosure.
+    - heading "What the eventual Sigma duck case must add" [level=3]:
+      - strong: What the eventual Sigma duck case must add
+    - paragraph: "It should use the approved Sigma duck identity while keeping the engineering practical: a removable front bezel and back shell, correct display mounting features, ventilation, accessible buttons, a speaker grille, secure power-cable strain relief, cable clearances and a stable desk/wall mounting method."
+    - paragraph: For a device meant for children, prioritize rounded edges, protected wiring, restrained sound volume, secure wall mounting and adult-only access to the electronics. Use an external certified power adapter instead of exposing mains wiring inside the print. For a battery-powered tablet, don't tightly enclose or obstruct a battery that could become hot.
+    - paragraph:
+      - strong: No printable fit, structural strength or child-safety certification has been verified.
+    - heading "5. Recommended first steps and measurable acceptance tests" [level=2]:
+      - strong: 5. Recommended first steps and measurable acceptance tests
+    - paragraph: "I would proceed in this order:"
+    - list:
+      - paragraph:
+        - strong: Settle the form factor before purchasing.
+        - text: Compare an 8-inch child-facing desk concept with a more distant wall-use mockup. If wall visibility from across a room is essential, do not force the design onto a small screen solely to meet the current budget.
+      - paragraph:
+        - strong: Confirm an actual checkout basket.
+        - text: Check the tablet, charger, stand or included case, tax and shipping together for the intended delivery address. Approve nothing above $150 before the printed case.
+      - paragraph:
+        - strong: Prototype the alarm architecture separately.
+        - text: Establish OS-level ringing, local persistence, Stop/Snooze, and reboot behavior before investing in a custom enclosure.
+      - paragraph:
+        - strong: Build a device-specific DuckPlan display.
+        - text: Reuse current task data and Sigma artwork, but keep the display simplified and child-friendly. The existing website, backend and iPhone app should not be altered during this research phase.
+      - paragraph:
+        - strong: Design the print only after measuring the selected hardware
+        - text: ", charging and speaker clearances, mounting points, heat, and any physical buttons."
+    - heading "Real-hardware pass criteria" [level=3]:
+      - strong: Real-hardware pass criteria
+    - table:
+      - rowgroup:
+        - row "Test Required observable behavior":
+          - columnheader "Test":
+            - paragraph: Test
+          - columnheader "Required observable behavior":
+            - paragraph: Required observable behavior
+        - row "Display visibility Date, next task and alarm status readable at the intended desk/wall distance":
+          - cell "Display visibility":
+            - paragraph: Display visibility
+          - cell "Date, next task and alarm status readable at the intended desk/wall distance":
+            - paragraph: Date, next task and alarm status readable at the intended desk/wall distance
+        - row "Alarm with browser closed Audible alarm rings without the DuckPlan page open":
+          - cell "Alarm with browser closed":
+            - paragraph: Alarm with browser closed
+          - cell "Audible alarm rings without the DuckPlan page open":
+            - paragraph: Audible alarm rings without the DuckPlan page open
+        - row "Stop Stops sound promptly and prevents that alarm from restarting inadvertently":
+          - cell "Stop":
+            - paragraph: Stop
+          - cell "Stops sound promptly and prevents that alarm from restarting inadvertently":
+            - paragraph: Stops sound promptly and prevents that alarm from restarting inadvertently
+        - row "Snooze Rings again at the configured delay, once per snooze operation":
+          - cell "Snooze":
+            - paragraph: Snooze
+          - cell "Rings again at the configured delay, once per snooze operation":
+            - paragraph: Rings again at the configured delay, once per snooze operation
+        - row "Offline Previously synced future alarm rings without internet":
+          - cell "Offline":
+            - paragraph: Offline
+          - cell "Previously synced future alarm rings without internet":
+            - paragraph: Previously synced future alarm rings without internet
+        - row "Reboot Pending alarms restored; no duplicated ringing":
+          - cell "Reboot":
+            - paragraph: Reboot
+          - cell "Pending alarms restored; no duplicated ringing":
+            - paragraph: Pending alarms restored; no duplicated ringing
+        - row "Timezone/DST Correct local alarm time across clock and timezone changes":
+          - cell "Timezone/DST":
+            - paragraph: Timezone/DST
+          - cell "Correct local alarm time across clock and timezone changes":
+            - paragraph: Correct local alarm time across clock and timezone changes
+        - row "Edit, cancel, complete Old alarm removed and updated schedule reflected":
+          - cell "Edit, cancel, complete":
+            - paragraph: Edit, cancel, complete
+          - cell "Old alarm removed and updated schedule reflected":
+            - paragraph: Old alarm removed and updated schedule reflected
+        - row "Account switch/sign-out Prior user's cached alarms cannot ring or remain exposed":
+          - cell "Account switch/sign-out":
+            - paragraph: Account switch/sign-out
+          - cell "Prior user's cached alarms cannot ring or remain exposed":
+            - paragraph: Prior user's cached alarms cannot ring or remain exposed
+        - row "Power interruption Recovery policy works; Pi without UPS is not expected to ring during outage":
+          - cell "Power interruption":
+            - paragraph: Power interruption
+          - cell "Recovery policy works; Pi without UPS is not expected to ring during outage":
+            - paragraph: Recovery policy works; Pi without UPS is not expected to ring during outage
+        - row "Thermal/continuous use No unsafe heating, throttling or unexpected shutdown during an extended trial":
+          - cell "Thermal/continuous use":
+            - paragraph: Thermal/continuous use
+          - cell "No unsafe heating, throttling or unexpected shutdown during an extended trial":
+            - paragraph: No unsafe heating, throttling or unexpected shutdown during an extended trial
+        - row "Mobile responsiveness Touch, calendar navigation and alarm dismissal remain responsive":
+          - cell "Mobile responsiveness":
+            - paragraph: Mobile responsiveness
+          - cell "Touch, calendar navigation and alarm dismissal remain responsive":
+            - paragraph: Touch, calendar navigation and alarm dismissal remain responsive
+        - row "Physical assembly Buttons, ventilation, speaker, cables and mounts fit measured hardware":
+          - cell "Physical assembly":
+            - paragraph: Physical assembly
+          - cell "Buttons, ventilation, speaker, cables and mounts fit measured hardware":
+            - paragraph: Buttons, ventilation, speaker, cables and mounts fit measured hardware
+        - row "Child use Stop is obvious; children cannot readily contact exposed electronics":
+          - cell "Child use":
+            - paragraph: Child use
+          - cell "Stop is obvious; children cannot readily contact exposed electronics":
+            - paragraph: Stop is obvious; children cannot readily contact exposed electronics
+    - paragraph:
+      - text: These are
+      - strong: acceptance targets, not completed tests
+      - text: . In particular, signed-in device sync, offline alarms, sound output, low-end performance, native Android behavior and enclosure fit have not yet been tested.
+    - heading "Final recommendation" [level=2]:
+      - strong: Final recommendation
+    - paragraph:
+      - text: For the first sub-$150 experiment, I would choose the
+      - strong: onn 8-inch Kids Tablet
+      - text: ", because its protective kickstand case and integrated components make it practical for young children without custom electronics. The 7-inch Core tablet is the cheaper alternative when the primary use is a desk companion."
+    - paragraph:
+      - text: If the long-term product goal is a distinctive
+      - strong: 3D-printed Sigma duck wall appliance with real physical buttons
+      - text: ", the Raspberry Pi route remains attractive—but I would not authorize the current Pi 4/Waveshare basket until its delivered cost, actual stock, screen compatibility and 1GB performance are resolved."
+    - paragraph:
+      - strong: "Research status:"
+      - text: Exact repository brief reviewed, supplier and platform sources checked. No purchase, code modification, deployment, CAD output or iPhone/iPad publication was performed.
+    - button "Copy":
+    - button "Feedback":
+    - button "Read aloud":
+    - button "Share":
+    - button "More actions":
+    - generic: ChatGPT can make mistakes. Check important info.
+    - button "Scroll to bottom":
+    - heading "Latest response" [level=4]
+    - button "Add files and more":
+    - textbox "Ask ChatGPT":
+      - paragraph: Ask ChatGPT
+    - button "Select ChatGPT model":
+      - generic: High
+    - button "Dictate":
+    - button "Start Voice":
+    - status
+- status
+- status: Response complete
+- status
+- status
+- status
+- status
