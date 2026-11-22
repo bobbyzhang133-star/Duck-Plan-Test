@@ -1,0 +1,145 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "peak": {
+        "scale": 1.12,
+        "inside": true,
+        "contentClipped": false,
+        "duration": 430,
+        "checked": true,
+        "checkBackground": "rgb(70, 118, 93)",
+        "checkboxTransition": "0s"
+      },
+      "state": {
+        "completed": true,
+        "rows": [
+          {
+            "checked": true,
+            "inCompletedGroup": true,
+            "visible": true
+          }
+        ],
+        "echo": false,
+        "held": false,
+        "duck": false
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 835
+      },
+      "peak": {
+        "scale": 1.12,
+        "inside": true,
+        "contentClipped": false,
+        "duration": 430,
+        "checked": true,
+        "checkBackground": "rgb(70, 118, 93)",
+        "checkboxTransition": "0s"
+      },
+      "state": {
+        "completed": true,
+        "rows": [
+          {
+            "checked": true,
+            "inCompletedGroup": true,
+            "visible": true
+          }
+        ],
+        "echo": false,
+        "held": false,
+        "duck": false
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "peak": {
+        "scale": 1.1,
+        "inside": true,
+        "contentClipped": false,
+        "duration": 430,
+        "checked": true,
+        "checkBackground": "rgb(70, 118, 93)",
+        "checkboxTransition": "0s"
+      },
+      "state": {
+        "completed": true,
+        "rows": [
+          {
+            "checked": true,
+            "inCompletedGroup": true,
+            "visible": true
+          }
+        ],
+        "echo": false,
+        "held": false,
+        "duck": false
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "peak": {
+        "scale": 1.12,
+        "inside": true,
+        "contentClipped": false,
+        "duration": 430,
+        "checked": true,
+        "checkBackground": "rgb(70, 118, 93)",
+        "checkboxTransition": "0s"
+      },
+      "state": {
+        "completed": true,
+        "rows": [
+          {
+            "checked": true,
+            "inCompletedGroup": false,
+            "visible": true
+          }
+        ],
+        "echo": false,
+        "held": false,
+        "duck": false
+      },
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 320,
+        "today": true
+      },
+      "peak": {
+        "scale": 1.12,
+        "inside": true,
+        "contentClipped": false,
+        "duration": 430,
+        "checked": true,
+        "checkBackground": "rgb(70, 118, 93)",
+        "checkboxTransition": "0s"
+      },
+      "state": {
+        "completed": true,
+        "rows": [],
+        "echo": false,
+        "held": false,
+        "duck": false
+      },
+      "completedAfterReload": true
+    }
+  ]
+}

@@ -162,7 +162,7 @@
     "line-height", "letter-spacing", "text-align", "white-space", "overflow-wrap", "word-break",
     "color", "background-color", "border-width", "border-style", "border-color", "border-radius"
   ];
-  // Keep this preview's original clone and exact task-finish animation.
+  // Preserve the card's formatting while the stronger pop scales its snapshot.
   function completionEcho(card, rect) {
     const echo = card.cloneNode(true);
     const sourceNodes = [card, ...card.querySelectorAll("*")];
@@ -182,7 +182,13 @@
     echo.setAttribute("aria-hidden", "true"); echo.inert = true;
     echo.removeAttribute("id");
     echo.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
-    echo.querySelectorAll("input").forEach(input => { input.checked = true; });
+    echo.querySelectorAll('input[type="checkbox"]').forEach(input => {
+      input.checked = true;
+      // Do not freeze the source checkbox's first, still-white transition frame.
+      input.style.removeProperty("background-color");
+      input.style.removeProperty("border-color");
+      input.style.transition = "none";
+    });
     const dateIcons = [...echo.querySelectorAll(".task-date-icon")];
     dateIcons.forEach(icon => {
       const space = document.createElement("span");
@@ -192,6 +198,12 @@
       icon.replaceWith(space);
     });
     Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
+    const scale = Math.max(1, Math.min(1.12, (innerWidth - 16) / rect.width));
+    const peakLeft = rect.left - rect.width * (scale - 1) / 2;
+    const peakRight = rect.right + rect.width * (scale - 1) / 2;
+    const shift = Math.max(8 - peakLeft, Math.min(0, innerWidth - 8 - peakRight));
+    echo.style.setProperty("--completion-pop-scale", String(scale));
+    echo.style.setProperty("--completion-pop-x", `${shift}px`);
     return echo;
   }
 
