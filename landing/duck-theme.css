@@ -137,7 +137,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .completion-effects { position: fixed; inset: 0; z-index: 90; overflow: hidden; pointer-events: none; }
 .completion-particle { position: absolute; width: 6px; height: 9px; border-radius: 2px; background: var(--duck-gold); animation: duck-confetti 850ms cubic-bezier(.12,.6,.4,1) both; }
 .completion-particle:nth-child(3n) { border-radius: 50%; background: #7eac94; width: 5px; height: 5px; }.completion-particle:nth-child(3n+1) { background: #ffdb55; }
-.task-completion-echo { position: fixed; z-index: 89; pointer-events: none; margin: 0; border: 1px solid #c0cf9c; box-shadow: 0 0 0 3px #ffd93d20; animation: task-finish 430ms ease both; }
+.task-completion-echo { position: fixed; z-index: 89; pointer-events: none; margin: 0; border: 1px solid #c0cf9c; box-shadow: 0 0 0 3px #ffd93d20; animation: task-finish 300ms ease both; }
 .task-completion-echo .task-timing-badges svg { width: 12px; height: 12px; }
 .completion-exit-source { opacity: 0 !important; pointer-events: none !important; }
 .completion-duck-reaction { position: fixed; z-index: 91; pointer-events: none; transform-origin: 50% 85%; animation: completion-duck-approval 1500ms linear both; }
@@ -162,7 +162,7 @@ body:has(.completion-note:not([hidden])) .toast { bottom: 150px; }
 @keyframes duck-bob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-2deg); } }
 @keyframes duck-stars { 0%,100% { opacity: .6; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.1); } }
 @keyframes duck-confetti { from { opacity: 1; transform: translate(0,0) rotate(0); } to { opacity: 0; transform: translate(var(--particle-x),var(--particle-y)) rotate(var(--particle-rotation)); } }
-@keyframes task-finish { 0% { opacity: .96; transform: scale(1); } 35% { opacity: .9; transform: translate(var(--completion-pop-x,0px),var(--completion-pop-y,-20px)) scale(var(--completion-pop-scale,2)); } 100% { opacity: 0; transform: scale(.99) translateY(1px); } }
+@keyframes task-finish { 0%,15% { opacity: .96; transform: translate(var(--completion-pop-x,0px),var(--completion-pop-y,-20px)) scale(var(--completion-pop-scale,2)); } 100% { opacity: 0; transform: scale(.99) translateY(1px); } }
 :root[data-mascot-motion="off"] .duck-character *,:root[data-mascot-motion="off"] .duck-character,:root[data-mascot-motion="off"] .pond-duck { animation: none !important; transition: none !important; }
 :root[data-mascot-motion="off"] .completion-particle,:root[data-mascot-motion="off"] .task-completion-echo,:root[data-mascot-motion="off"] .completion-duck-reaction { display: none; }
 @media (max-width:1200px) {
