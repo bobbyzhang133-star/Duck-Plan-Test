@@ -108,7 +108,7 @@
               <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot scheduled-dot"></span>Scheduled</span><strong id="scheduled-count">0</strong></div><div class="daily-task-list" id="scheduled-task-list"></div></div>
               <div class="task-section backlog-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Unscheduled</span><strong id="backlog-count">0</strong></div><div class="daily-task-list" id="backlog-task-list"></div></div>
               <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Due this day</span><strong id="unscheduled-count">0</strong></div><div class="daily-task-list" id="unscheduled-task-list"></div></div>
-              <div class="task-section completed-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list"></div></div>
+              <div class="task-section completed-section"><button class="task-section-heading" type="button" aria-expanded="false" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list" hidden></div></div>
               <div class="daily-empty" id="daily-empty" hidden><span class="empty-duck" data-duck-state="swimming" aria-hidden="true"></span><h3>Clear day ahead.</h3><p>Click a calendar slot or plan a task when you are ready.</p></div>
               </div>
               <div id="calendar-assignment-templates" role="tabpanel" aria-labelledby="calendar-templates-tab" tabindex="0" hidden inert></div>
@@ -138,7 +138,7 @@
         <section class="view" id="view-tasks" data-page-title="Tasks" data-eyebrow="A clear view of everything"><section class="panel tasks-panel">
           <div id="assignment-templates"></div>
           <div class="task-layout-switch" role="group" aria-label="Task display"><button type="button" data-task-layout="list" aria-pressed="true">List</button><button type="button" data-task-layout="matrix" aria-pressed="false">Priority matrix</button></div>
-          <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>All tasks</h2></div><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All</button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today</button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done</button></div></div>
+          <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>Tasks</h2></div><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Active</button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today</button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done</button></div></div>
           <button class="secondary-button overdue-complete-button" type="button" data-complete-overdue hidden>Complete all overdue</button>
           <div class="task-list expanded" id="all-task-list"></div><div class="empty-state" id="task-empty" hidden><span class="empty-duck" data-duck-state="encouraging" aria-hidden="true"></span><h3>A little room to plan.</h3><p>Try another filter or add a new task.</p></div>
           <div id="task-matrix-root" hidden></div>
@@ -274,7 +274,7 @@
     <script src="./task-list-drag.js?v=calendar-drag-preview-20261114"></script>
     <script src="./completion-render-hold.js?v=original-preview-slide-20261121"></script>
     <script src="./completion-list-motion.js?v=delayed-duck-slide-20261121"></script>
-    <script src="./app.js?v=original-preview-slide-20261121"></script>
+    <script src="./app.js?v=completed-archive-20261122"></script>
     <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
     <script src="./duck-mascot.js?v=profile-mascots-20261121"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>

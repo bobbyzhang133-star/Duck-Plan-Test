@@ -1,5 +1,7 @@
 # Stronger task pop-out and completion diagnosis — November 21, 2026
 
+November22 follow-up: the user confirmed the remaining row was checked. The completed-display behavior is now changed in the local preview; see [the resolved follow-up](../completed-archive-20261122/README.md). The pending status below records the earlier checkpoint before that clarification.
+
 Scope: selected [8042 local preview](http://127.0.0.1:8042/?v=stronger-completion-20261121#calendar), starting from `202f9e4`. Canonical 8034, native app and public sites are unchanged.
 
 The user requested a larger expansion and reported that a task sometimes does not disappear after one click. The larger expansion is implemented. The broader reported disappearance issue remains **pending clarification/reproduction**; it is not claimed fixed.

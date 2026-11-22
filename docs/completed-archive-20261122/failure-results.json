@@ -1,0 +1,26 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "kind": "early-failure",
+      "completed": false,
+      "visible": 1,
+      "artifact": 0,
+      "toast": "Synthetic archive save failure"
+    },
+    {
+      "kind": "late-failure",
+      "completed": false,
+      "visible": 1,
+      "artifact": 0,
+      "toast": "Synthetic archive save failure"
+    },
+    {
+      "kind": "reduced",
+      "completed": true,
+      "visible": 0,
+      "artifact": 0,
+      "toast": "Task completed. Nice work!"
+    }
+  ]
+}

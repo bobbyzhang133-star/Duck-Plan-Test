@@ -61,7 +61,8 @@ let taskLayout = "list";
 let axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
 let localImportCount = 0;
 let accountStateVersion = 0;
-let collapsed = { overdue: false, completed: false };
+let collapsed = { overdue: false, completed: true };
+let foldCompletedAfterFinish = false;
 let toastTimer;
 let notificationConstructorFailed = false;
 let observedToday = nowKey();
@@ -651,7 +652,7 @@ function renderAllTasks() {
     if (currentFilter === "today") return task.dueDate === nowKey() && !task.completed;
     if (currentFilter === "upcoming") return task.dueDate > nowKey() && !task.completed;
     if (currentFilter === "done") return task.completed;
-    return true;
+    return !task.completed;
   });
   els.allList.innerHTML = filtered.map(allTaskMarkup).join("");
   els.allList.hidden = taskLayout !== "list";
@@ -1045,8 +1046,15 @@ function setupButtonMaterial(root = document) {
   });
 }
 function renderAll({ autoScrollCalendar = false } = {}) {
+  const unfinishedBefore = new Set(tasks.filter(task => !task.completed).map(task => task.id));
   tasks = store.listItems();
+  if (tasks.some(task => task.completed && unfinishedBefore.has(task.id))) foldCompletedAfterFinish = true;
   if (window.DuckTaskCompletion?.deferRender(() => renderAll({ autoScrollCalendar }))) return;
+  if (foldCompletedAfterFinish) {
+    collapsed.completed = true;
+    document.querySelector(".dashboard-completed").open = false;
+    foldCompletedAfterFinish = false;
+  }
   renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
   renderCalendar({ autoScroll: autoScrollCalendar });
   taskLibrary?.render();
