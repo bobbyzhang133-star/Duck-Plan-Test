@@ -8,7 +8,7 @@ A working prototype under $150 looks feasible, but a custom Raspberry Pi device 
 
 The strongest finding from the current supplier research is that an Android tablet already provides the touchscreen, processor, battery, speaker and Wi-Fi in one package. A Raspberry Pi requires those components separately and adds assembly and operating-system work.
 
-For example, Walmart currently lists a 2026 7-inch onn Core tablet at $87, with 4GB RAM and Android 16. That is a materially better memory allowance than the proposed 1GB Pi for running a modern calendar interface. The tablet still needs a power adapter, mounting solution and custom alarm software before it becomes the intended appliance. 
+For example, Walmart currently lists a 2026 7-inch onn Core tablet at $87, with 4GB RAM and Android 16. That is a materially better memory allowance than the proposed 1GB Pi for running a modern calendar interface. The tablet still needs a power adapter, mounting solution and custom alarm software before it becomes the intended appliance.
 Walmart.com
 +1
 
@@ -22,7 +22,7 @@ These prices were checked against retailer/manufacturer listings for the Novembe
 
 Android 16 · 4GB RAM · 64GB · 8-inch 1524×1000 touchscreen
 
-The included protective bumper has a handle that doubles as a desk kickstand. A built-in speaker, battery and Wi-Fi eliminate several components required by a Pi build. The blue and orange versions were listed for sale. 
+The included protective bumper has a handle that doubles as a desk kickstand. A built-in speaker, battery and Wi-Fi eliminate several components required by a Pi build. The blue and orange versions were listed for sale.
 Walmart.com
 +2
 
@@ -33,7 +33,7 @@ Included cable and desk kickstand	$0
 
 Hardware subtotal
 
-	
+
 
 $115.88
 
@@ -43,7 +43,7 @@ With an illustrative 9% sales tax: $126.31 before delivery. Walmart advertises f
 
 Android 16 · 4GB RAM · 64GB · 7-inch 1024×600 touchscreen
 
-Walmart showed the Navy version at a promotional $87, down from $97. Other colors were marked out of stock. Its box contains a charging cable but not a listed AC adapter or stand. 
+Walmart showed the Navy version at a promotional $87, down from $97. Other colors were marked out of stock. Its box contains a charging cable but not a listed AC adapter or stand.
 Walmart.com
 +2
 
@@ -55,11 +55,11 @@ Included cable	$0
 
 Hardware subtotal
 
-	
+
 
 $106.87
 
-With illustrative 9% tax: $116.49 before delivery. The stand price is seller-listed and the final delivered amount has not been checked. No wall mount or separate physical alarm button is included. 
+With illustrative 9% tax: $116.49 before delivery. The stand price is seller-listed and the final delivered amount has not been checked. No wall mount or separate physical alarm button is included.
 Walmart.com
 +1
 
@@ -69,11 +69,11 @@ This is the strongest modular enclosure-development path, because individual com
 
 Exact component
 
-	
+
 
 Price
 
-	
+
 
 Verification
 
@@ -82,13 +82,13 @@ Verification
 
 Pi 4 Model B 1GB, PiShop SKU 1GB-9002
 
-	
+
 
 $35.00
 
-	
 
-Listed in stock 
+
+Listed in stock
 SC0192(11)
 
 
@@ -96,13 +96,13 @@ SC0192(11)
 
 Waveshare 7inch DSI LCD (C), SKU 20429
 
-	
+
 
 $62.99
 
-	
 
-Indexed manufacturer price; live stock/checkout not established 
+
+Indexed manufacturer price; live stock/checkout not established
 7inch DSI LCD (C)
 
 
@@ -110,13 +110,13 @@ Indexed manufacturer price; live stock/checkout not established
 
 Adafruit USB speaker, PID 3369
 
-	
+
 
 $12.50
 
-	
 
-Price and availability supported 
+
+Price and availability supported
 learn.adafruit.com
 +1
 
@@ -125,13 +125,13 @@ learn.adafruit.com
 
 PiShop 5.1V/3A PSU, SKU 1203
 
-	
+
 
 $8.95
 
-	
 
-Listed in stock 
+
+Listed in stock
 PiShop.us
 
 
@@ -139,13 +139,13 @@ PiShop.us
 
 32GB preloaded microSD, SKU 1337-1
 
-	
+
 
 $19.95
 
-	
 
-Listed in stock 
+
+Listed in stock
 PiShop US
 
 
@@ -153,11 +153,11 @@ PiShop US
 
 Heatsinks, Stop button, wiring
 
-	
+
 
 $6–11
 
-	
+
 
 Allowance only; exact items and stock not quoted
 
@@ -166,11 +166,11 @@ Allowance only; exact items and stock not quoted
 
 Parts subtotal
 
-	
+
 
 $145.39–$150.39
 
-	
+
 
 Before taxes, shipping and printed case
 
@@ -230,7 +230,7 @@ This requires new Android software, not the existing web app alone.
 
 An Android companion could render a dedicated DuckPlan display while storing a local cache of upcoming alarm instructions. It should schedule alarms through Android's AlarmManager, use the device speaker to play a looping sound, provide full-screen or prominent Stop and Snooze controls, and restore pending schedules after boot.
 
-Android's official documentation specifies that exact-alarm permissions require deliberate handling and that scheduled alarms are normally canceled at shutdown, requiring boot-time rescheduling. Some eligible calendar/alarm applications can use USE_EXACT_ALARM, while other apps must handle exact-alarm access appropriately; eligibility and behavior must not be assumed. 
+Android's official documentation specifies that exact-alarm permissions require deliberate handling and that scheduled alarms are normally canceled at shutdown, requiring boot-time rescheduling. Some eligible calendar/alarm applications can use USE_EXACT_ALARM, while other apps must handle exact-alarm access appropriately; eligibility and behavior must not be assumed.
 developer.android.com
 +1
 
@@ -260,12 +260,12 @@ Power limitation: A tablet's built-in battery provides some protection against u
 
 Adafruit Articulated Pi Display V2 Mount
 
-Actual printable STL links and editable STEP/Fusion (.f3d) design files are offered. This design targets the official 7-inch Raspberry Pi Touch Display 2 with Pi 5 hardware, not Waveshare DSI LCD (C). It is a useful mechanical reference but not a direct-fit enclosure for the proposed Pi 4 build. The exact reuse/license terms still require checking. 
+Actual printable STL links and editable STEP/Fusion (.f3d) design files are offered. This design targets the official 7-inch Raspberry Pi Touch Display 2 with Pi 5 hardware, not Waveshare DSI LCD (C). It is a useful mechanical reference but not a direct-fit enclosure for the proposed Pi 4 build. The exact reuse/license terms still require checking.
 Adafruit Learning System
 
 Rojikku's Raspberry Pi Touch Display 2 case
 
-The indexed model describes a printable case for the official 7-inch Touch Display 2, using the display's small mounting screws. A print file is listed. I could not directly inspect the complete download, editable CAD files or license, so commercial/remix permissions and Pi 4 fit remain unverified. It does not establish compatibility with the Waveshare C panel, speaker or physical buttons. 
+The indexed model describes a printable case for the official 7-inch Touch Display 2, using the display's small mounting screws. A print file is listed. I could not directly inspect the complete download, editable CAD files or license, so commercial/remix permissions and Pi 4 fit remain unverified. It does not establish compatibility with the Waveshare C panel, speaker or physical buttons.
 Printables.com
 
 I did not verify an exact ready-to-print case combining all of these: Waveshare 7-inch DSI LCD (C), Raspberry Pi 4, USB speaker and accessible Stop/Snooze controls.
@@ -298,7 +298,7 @@ Real-hardware pass criteria
 
 Test
 
-	
+
 
 Required observable behavior
 
@@ -307,7 +307,7 @@ Required observable behavior
 
 Display visibility
 
-	
+
 
 Date, next task and alarm status readable at the intended desk/wall distance
 
@@ -316,7 +316,7 @@ Date, next task and alarm status readable at the intended desk/wall distance
 
 Alarm with browser closed
 
-	
+
 
 Audible alarm rings without the DuckPlan page open
 
@@ -325,7 +325,7 @@ Audible alarm rings without the DuckPlan page open
 
 Stop
 
-	
+
 
 Stops sound promptly and prevents that alarm from restarting inadvertently
 
@@ -334,7 +334,7 @@ Stops sound promptly and prevents that alarm from restarting inadvertently
 
 Snooze
 
-	
+
 
 Rings again at the configured delay, once per snooze operation
 
@@ -343,7 +343,7 @@ Rings again at the configured delay, once per snooze operation
 
 Offline
 
-	
+
 
 Previously synced future alarm rings without internet
 
@@ -352,7 +352,7 @@ Previously synced future alarm rings without internet
 
 Reboot
 
-	
+
 
 Pending alarms restored; no duplicated ringing
 
@@ -361,7 +361,7 @@ Pending alarms restored; no duplicated ringing
 
 Timezone/DST
 
-	
+
 
 Correct local alarm time across clock and timezone changes
 
@@ -370,7 +370,7 @@ Correct local alarm time across clock and timezone changes
 
 Edit, cancel, complete
 
-	
+
 
 Old alarm removed and updated schedule reflected
 
@@ -379,7 +379,7 @@ Old alarm removed and updated schedule reflected
 
 Account switch/sign-out
 
-	
+
 
 Prior user's cached alarms cannot ring or remain exposed
 
@@ -388,7 +388,7 @@ Prior user's cached alarms cannot ring or remain exposed
 
 Power interruption
 
-	
+
 
 Recovery policy works; Pi without UPS is not expected to ring during outage
 
@@ -397,7 +397,7 @@ Recovery policy works; Pi without UPS is not expected to ring during outage
 
 Thermal/continuous use
 
-	
+
 
 No unsafe heating, throttling or unexpected shutdown during an extended trial
 
@@ -406,7 +406,7 @@ No unsafe heating, throttling or unexpected shutdown during an extended trial
 
 Mobile responsiveness
 
-	
+
 
 Touch, calendar navigation and alarm dismissal remain responsive
 
@@ -415,7 +415,7 @@ Touch, calendar navigation and alarm dismissal remain responsive
 
 Physical assembly
 
-	
+
 
 Buttons, ventilation, speaker, cables and mounts fit measured hardware
 
@@ -424,7 +424,7 @@ Buttons, ventilation, speaker, cables and mounts fit measured hardware
 
 Child use
 
-	
+
 
 Stop is obvious; children cannot readily contact exposed electronics
 
