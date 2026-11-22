@@ -1,0 +1,35 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 390,
+      "fullBody": true,
+      "thumb": true,
+      "thumbTransform": "matrix(1, 0, 0, 1, 0, 0)",
+      "opacity": "1",
+      "echo": false,
+      "rect": {
+        "left": 123,
+        "right": 267,
+        "top": 497.328125,
+        "bottom": 641.328125
+      },
+      "duration": 1500
+    },
+    {
+      "width": 835,
+      "fullBody": true,
+      "thumb": true,
+      "thumbTransform": "matrix(1, 0, 0, 1, 0, 0)",
+      "opacity": "1",
+      "echo": false,
+      "rect": {
+        "left": 150.5,
+        "right": 294.5,
+        "top": 425.84375,
+        "bottom": 569.84375
+      },
+      "duration": 1500
+    }
+  ]
+}

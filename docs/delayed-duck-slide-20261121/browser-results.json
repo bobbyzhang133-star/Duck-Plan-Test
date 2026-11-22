@@ -1,0 +1,1425 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "before": {
+        "top": 606.328125,
+        "left": 20
+      },
+      "samples": [
+        {
+          "nextY": 606.328125,
+          "nextX": 20,
+          "before": {
+            "top": 606.328125,
+            "left": 20
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.01021,
+          "overflow": false
+        },
+        {
+          "nextY": 606.328125,
+          "nextX": 20,
+          "before": {
+            "top": 606.328125,
+            "left": 20
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00087,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 319.375,
+        "left": 20
+      },
+      "focused": "void-first",
+      "slideFrames": [
+        {
+          "time": 843.6000000089407,
+          "top": 606.328125,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 865.7999999970198,
+          "top": 598.9921875,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 914.7999999970198,
+          "top": 542.9983520507812,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 965,
+          "top": 463.78778076171875,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0855128
+        },
+        {
+          "time": 1015.2999999970198,
+          "top": 403.9430847167969,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.34141
+        },
+        {
+          "time": 1065.7000000029802,
+          "top": 365.0629577636719,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598333
+        },
+        {
+          "time": 1115.7999999970198,
+          "top": 340.94537353515625,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854744
+        },
+        {
+          "time": 1165.2999999970198,
+          "top": 327.0101013183594,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1215.7999999970198,
+          "top": 320.5018005371094,
+          "left": 20,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 835
+      },
+      "before": {
+        "top": 600.328125,
+        "left": 16
+      },
+      "samples": [
+        {
+          "nextY": 600.328125,
+          "nextX": 16,
+          "before": {
+            "top": 600.328125,
+            "left": 16
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.01108,
+          "overflow": false
+        },
+        {
+          "nextY": 600.328125,
+          "nextX": 16,
+          "before": {
+            "top": 600.328125,
+            "left": 16
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 0.998479,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 313.375,
+        "left": 16
+      },
+      "focused": "void-first",
+      "slideFrames": [
+        {
+          "time": 685.0999999940395,
+          "top": 600.328125,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 706.9000000059605,
+          "top": 592.967529296875,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 757.2999999970198,
+          "top": 537.090087890625,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 807.5999999940395,
+          "top": 457.728515625,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0857231
+        },
+        {
+          "time": 857.2999999970198,
+          "top": 397.9035339355469,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.341621
+        },
+        {
+          "time": 906.9000000059605,
+          "top": 359.0989685058594,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598031
+        },
+        {
+          "time": 956.5,
+          "top": 334.9671630859375,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854441
+        },
+        {
+          "time": 1007.5,
+          "top": 321.0217590332031,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1056.7999999970198,
+          "top": 314.4920654296875,
+          "left": 16,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "before": {
+        "top": 525.296875,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 525.296875,
+          "nextX": 17,
+          "before": {
+            "top": 525.296875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.01021,
+          "overflow": false
+        },
+        {
+          "nextY": 525.296875,
+          "nextX": 17,
+          "before": {
+            "top": 525.296875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00086,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 293.375,
+        "left": 17
+      },
+      "focused": "void-first",
+      "slideFrames": [
+        {
+          "time": 490.09999999403954,
+          "top": 525.2968444824219,
+          "left": 17,
+          "echo": false,
+          "animations": 4,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 539.8999999910593,
+          "top": 525.296875,
+          "left": 17,
+          "echo": false,
+          "animations": 4,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 590.2999999970198,
+          "top": 525.296875,
+          "left": 17,
+          "echo": false,
+          "animations": 4,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 640.0999999940395,
+          "top": 525.296875,
+          "left": 17,
+          "echo": true,
+          "animations": 4,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1090,
+          "top": 519.3756103515625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1139.8999999910593,
+          "top": 474.1324462890625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1190,
+          "top": 410.11126708984375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0854308
+        },
+        {
+          "time": 1239.5,
+          "top": 361.6593017578125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.341841
+        },
+        {
+          "time": 1290.199999988079,
+          "top": 330.30889892578125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598251
+        },
+        {
+          "time": 1340.0999999940395,
+          "top": 310.8134460449219,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854662
+        },
+        {
+          "time": 1389.699999988079,
+          "top": 299.5484313964844,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1439.5,
+          "top": 294.281005859375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 1156
+      },
+      "before": {
+        "top": 447.96875,
+        "left": 25
+      },
+      "samples": [
+        {
+          "nextY": 447.96875,
+          "nextX": 25,
+          "before": {
+            "top": 447.96875,
+            "left": 25
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00414,
+          "overflow": false
+        },
+        {
+          "nextY": 447.96875,
+          "nextX": 25,
+          "before": {
+            "top": 447.96875,
+            "left": 25
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00664,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 237.09375,
+        "left": 25
+      },
+      "focused": "void-next",
+      "slideFrames": [
+        {
+          "time": 1007.4000000059605,
+          "top": 447.96875,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1033.4000000059605,
+          "top": 433.05120849609375,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1083,
+          "top": 381.7157897949219,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1132.7000000029802,
+          "top": 326.55194091796875,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0853949
+        },
+        {
+          "time": 1183.5999999940395,
+          "top": 288.2115478515625,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.341805
+        },
+        {
+          "time": 1233.7000000029802,
+          "top": 263.7685546875,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598215
+        },
+        {
+          "time": 1283.4000000059605,
+          "top": 248.82574462890625,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854626
+        },
+        {
+          "time": 1363.5,
+          "top": 238.99703979492188,
+          "left": 25,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "before": {
+        "top": 526.46875,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 526.46875,
+          "nextX": 17,
+          "before": {
+            "top": 526.46875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00887,
+          "overflow": false
+        },
+        {
+          "nextY": 526.46875,
+          "nextX": 17,
+          "before": {
+            "top": 526.46875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00086,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "slideFrames": [
+        {
+          "time": 998.9000000059605,
+          "top": 526.46875,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1035.7000000029802,
+          "top": 509.4915771484375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1085,
+          "top": 450.799072265625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1134.5999999940395,
+          "top": 387.85272216796875,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0856
+        },
+        {
+          "time": 1185.0999999940395,
+          "top": 344.1098327636719,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.34201
+        },
+        {
+          "time": 1235.7000000029802,
+          "top": 316.22344970703125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598421
+        },
+        {
+          "time": 1286.0999999940395,
+          "top": 299.2019958496094,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854318
+        },
+        {
+          "time": 1335.7999999970198,
+          "top": 289.7715759277344,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1386.0999999940395,
+          "top": 286.02496337890625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 320
+      },
+      "before": {
+        "top": 614.453125,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 614.453125,
+          "nextX": 17,
+          "before": {
+            "top": 614.453125,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.01108,
+          "overflow": false
+        },
+        {
+          "nextY": 614.453125,
+          "nextX": 17,
+          "before": {
+            "top": 614.453125,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 0.998481,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 334.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "slideFrames": [
+        {
+          "time": 938.6000000089407,
+          "top": 614.453125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 976.5,
+          "top": 576.2579956054688,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1026.4000000059605,
+          "top": 500.16119384765625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1076.6000000089407,
+          "top": 434.058837890625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.170615
+        },
+        {
+          "time": 1126.7000000029802,
+          "top": 390.03375244140625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.427538
+        },
+        {
+          "time": 1176.5,
+          "top": 362.36627197265625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.683949
+        },
+        {
+          "time": 1226.7000000029802,
+          "top": 345.84698486328125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.940359
+        },
+        {
+          "time": 1276.6000000089407,
+          "top": 337.319091796875,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "home",
+        "width": 1156
+      },
+      "before": {
+        "top": 429.296875,
+        "left": 21
+      },
+      "samples": [
+        {
+          "nextY": 429.296875,
+          "nextX": 21,
+          "before": {
+            "top": 429.296875,
+            "left": 21
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00689,
+          "overflow": false
+        },
+        {
+          "nextY": 429.296875,
+          "nextX": 21,
+          "before": {
+            "top": 429.296875,
+            "left": 21
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00665,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 229.890625,
+        "left": 21
+      },
+      "focused": "void-next",
+      "slideFrames": [
+        {
+          "time": 946.1999999880791,
+          "top": 429.296875,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 969.5,
+          "top": 424.194091796875,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1019.0999999940395,
+          "top": 385.2755126953125,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1068.5,
+          "top": 330.2322692871094,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1119.199999988079,
+          "top": 288.5826721191406,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.256518
+        },
+        {
+          "time": 1169.2999999970198,
+          "top": 261.6769104003906,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.512415
+        },
+        {
+          "time": 1218.3999999910593,
+          "top": 244.90264892578125,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.768826
+        },
+        {
+          "time": 1268.5,
+          "top": 235.1947021484375,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1318.8999999910593,
+          "top": 230.66827392578125,
+          "left": 21,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "matrix",
+        "width": 835
+      },
+      "before": {
+        "top": 258.5,
+        "left": 337.5
+      },
+      "samples": [
+        {
+          "nextY": 258.5,
+          "nextX": 337.5,
+          "before": {
+            "top": 258.5,
+            "left": 337.5
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00888,
+          "overflow": false
+        },
+        {
+          "nextY": 258.5,
+          "nextX": 337.5,
+          "before": {
+            "top": 258.5,
+            "left": 337.5
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00087,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 258.5,
+        "left": 17
+      },
+      "focused": "matrix-main-heading",
+      "slideFrames": [
+        {
+          "time": 1193.4000000059605,
+          "top": 316.5,
+          "left": 337.5,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1224.2000000029802,
+          "top": 312.39605712890625,
+          "left": 314.82208251953125,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1274.6000000089407,
+          "top": 298.27581787109375,
+          "left": 236.7957763671875,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1324.4000000059605,
+          "top": 283.10369873046875,
+          "left": 152.95660400390625,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0854205
+        },
+        {
+          "time": 1374.6000000089407,
+          "top": 272.558837890625,
+          "left": 94.68716430664062,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.341831
+        },
+        {
+          "time": 1425.2999999970198,
+          "top": 265.83624267578125,
+          "left": 57.539031982421875,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598241
+        },
+        {
+          "time": 1474.5,
+          "top": 261.72650146484375,
+          "left": 34.82923889160156,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854651
+        },
+        {
+          "time": 1524.2999999970198,
+          "top": 259.45892333984375,
+          "left": 22.2989501953125,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1574.7999999970198,
+          "top": 258.55517578125,
+          "left": 17.3050537109375,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "refreshDuringSlide": true
+      },
+      "before": {
+        "top": 526.46875,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 526.46875,
+          "nextX": 17,
+          "before": {
+            "top": 526.46875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00888,
+          "overflow": false
+        },
+        {
+          "nextY": 526.46875,
+          "nextX": 17,
+          "before": {
+            "top": 526.46875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00087,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "slideFrames": [
+        {
+          "time": 950,
+          "top": 526.46875,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 984.4000000059605,
+          "top": 509.43365478515625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1034.7999999970198,
+          "top": 450.837646484375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1084.6000000089407,
+          "top": 387.88275146484375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0854564
+        },
+        {
+          "time": 1134.7999999970198,
+          "top": 344.12933349609375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.341867
+        },
+        {
+          "time": 1184.2000000029802,
+          "top": 316.23565673828125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598277
+        },
+        {
+          "time": 1234.2999999970198,
+          "top": 299.18353271484375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854687
+        },
+        {
+          "time": 1284,
+          "top": 289.7751159667969,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1334.7000000029802,
+          "top": 286.0257568359375,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "dark": true
+      },
+      "before": {
+        "top": 526.46875,
+        "left": 17
+      },
+      "samples": [
+        {
+          "nextY": 526.46875,
+          "nextX": 17,
+          "before": {
+            "top": 526.46875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.0069,
+          "overflow": false
+        },
+        {
+          "nextY": 526.46875,
+          "nextX": 17,
+          "before": {
+            "top": 526.46875,
+            "left": 17
+          },
+          "sourceHeld": true,
+          "echo": true,
+          "sourceCompletedInStore": true,
+          "icons": 0,
+          "duplicateIds": 0,
+          "checked": true,
+          "fullDuck": false,
+          "duckVisible": 0,
+          "scale": 1.00366,
+          "overflow": false
+        }
+      ],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "slideFrames": [
+        {
+          "time": 944.9000000059605,
+          "top": 526.46875,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 978.7000000029802,
+          "top": 509.3829345703125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1027.7999999970198,
+          "top": 450.8885498046875,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": false,
+          "duckOpacity": 0
+        },
+        {
+          "time": 1078,
+          "top": 387.92242431640625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.0852667
+        },
+        {
+          "time": 1128.9000000059605,
+          "top": 344.1551208496094,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.341677
+        },
+        {
+          "time": 1178.7000000029802,
+          "top": 316.25177001953125,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.598087
+        },
+        {
+          "time": 1227.7000000029802,
+          "top": 299.1930236816406,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 0.854497
+        },
+        {
+          "time": 1277.9000000059605,
+          "top": 289.77978515625,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        },
+        {
+          "time": 1328.7000000029802,
+          "top": 286.0240173339844,
+          "left": 17,
+          "echo": false,
+          "animations": 1,
+          "duck": true,
+          "duckOpacity": 1
+        }
+      ],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "reduced": true
+      },
+      "before": {
+        "top": 526.46875,
+        "left": 17
+      },
+      "samples": [],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "slideFrames": [],
+      "completedAfterReload": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "motionOff": true
+      },
+      "before": {
+        "top": 526.46875,
+        "left": 17
+      },
+      "samples": [],
+      "after": {
+        "top": 285.796875,
+        "left": 17
+      },
+      "focused": "void-next",
+      "slideFrames": [],
+      "completedAfterReload": true
+    }
+  ]
+}

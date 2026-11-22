@@ -24,12 +24,18 @@
   });
 
   function cancelCompletions(options) {
-    listMotion.cancel();
+    listMotion.cancel(options);
     renderHold.cancel(options);
     for (const operation of [...operations]) operation.cancel();
   }
   window.DuckTaskCompletion = Object.freeze({
-    deferRender: callback => renderHold.deferRender(callback),
+    deferRender: callback => renderHold.deferRender(callback) || listMotion.deferRender(() => {
+      const focused = document.activeElement, view = document.body.dataset.view;
+      const taskControl = focused?.matches("input[data-task-id],button[data-edit-task]");
+      const keyboard = taskControl && focused.matches(":focus-visible");
+      callback();
+      if (taskControl) restoreCompletionFocus(focused, keyboard, view);
+    }),
     forCheckbox: checkbox => checkboxOperations.get(checkbox),
     cancel: cancelCompletions
   });
@@ -156,14 +162,23 @@
     echo.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
     echo.querySelectorAll("input").forEach(input => { input.checked = true; });
     const dateIcons = [...echo.querySelectorAll(".task-date-icon")];
-    const duck = document.createElement("span");
-    duck.className = "completion-approval-duck";
-    duck.setAttribute("aria-hidden", "true"); duck.innerHTML = Mascot.markup("thumbsup");
-    if (dateIcons.length) {
-      dateIcons[0].replaceWith(duck); dateIcons.slice(1).forEach(icon => icon.remove());
-    } else echo.append(duck);
+    dateIcons.forEach(icon => icon.remove());
     Object.assign(echo.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
     return echo;
+  }
+
+  function completionDuck(rect) {
+    const duck = document.createElement("span"), size = Math.min(144, innerWidth - 24);
+    duck.className = "completion-duck-reaction";
+    duck.setAttribute("aria-hidden", "true"); duck.inert = true;
+    duck.innerHTML = Mascot.markup("thumbsup");
+    Object.assign(duck.style, {
+      width: `${size}px`, height: `${size}px`,
+      left: `${Math.max(12, Math.min(innerWidth - size - 12, rect.left + rect.width / 2 - size / 2))}px`,
+      top: `${Math.max(12, Math.min(innerHeight - size - 90, rect.top + rect.height / 2 - size / 2))}px`
+    });
+    document.body.append(duck);
+    return duck;
   }
 
   function restoreCompletionFocus(checkbox, keyboard, view) {
@@ -203,10 +218,22 @@
     // Click feedback starts now, independently of saving or the outgoing card's render hold.
     const particles = motionAllowed() ? burst(rect.left + rect.width / 2, rect.top + rect.height / 2, isToday && before.unfinished.length === 1) : null;
     let ticket = null, settled = !echo, confirmed = false, cancelled = false, reacted = false, focusAtRender = null, focusWasVisible = false;
+    let duck = null, duckTimer = null, duckCleanup = null;
     const current = () => !cancelled && context === completionContext();
     function react() {
       if (!current() || !settled || !confirmed || reacted || !store.listItems().some(item => item.id === task.id && item.completed)) return;
-      reacted = true; operations.delete(operation);
+      reacted = true;
+      if (echo && motionAllowed()) {
+        duckTimer = setTimeout(() => {
+          if (!current()) return;
+          duck = completionDuck(cardRect);
+          const finish = () => { duck?.remove(); operations.delete(operation); clearTimeout(duckCleanup); };
+          duck.addEventListener("animationend", event => {
+            if (event.target === duck) finish();
+          });
+          duckCleanup = setTimeout(finish, 1700);
+        }, 90);
+      } else operations.delete(operation);
       const summary = dailySummary();
       const finishedDay = isToday && before.unfinished.length === 1 && summary.total > 0 && summary.unfinished.length === 0;
       Mascot.setState(hero, finishedDay ? "celebrating" : "happy");
@@ -231,7 +258,10 @@
       controls.forEach(([element, tabindex]) => { if (tabindex === null) element.removeAttribute("tabindex"); else element.setAttribute("tabindex", tabindex); });
     }
     function clean({ restore = true } = {}) {
-      if (restore) { restoreSource(); particles?.remove(); }
+      if (restore) {
+        restoreSource(); particles?.remove();
+        clearTimeout(duckTimer); clearTimeout(duckCleanup); duck?.remove();
+      }
       echo?.remove();
     }
     const operation = {

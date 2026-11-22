@@ -1,0 +1,119 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "kind": "navigation-during-duck",
+      "ducks": 0,
+      "held": 0,
+      "frames": [
+        {
+          "t": 463.20000000298023,
+          "top": 677.453125,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 495.59999999403954,
+          "top": 664.5422973632812,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 544.7999999970198,
+          "top": 620.0809326171875,
+          "moving": true,
+          "duck": false
+        }
+      ],
+      "sourceCompleted": 1
+    },
+    {
+      "kind": "reduced-during-duck",
+      "ducks": 0,
+      "held": 0,
+      "frames": [
+        {
+          "t": 479.40000000596046,
+          "top": 677.453125,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 510.90000000596046,
+          "top": 664.5319213867188,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 560.5,
+          "top": 620.0631713867188,
+          "moving": true,
+          "duck": false
+        }
+      ],
+      "sourceCompleted": 1
+    },
+    {
+      "kind": "late-cloud-save",
+      "ducks": 0,
+      "held": 0,
+      "frames": [
+        {
+          "t": 472.1000000089407,
+          "top": 677.453125,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 509.40000000596046,
+          "top": 652.4757080078125,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 558.8000000119209,
+          "top": 602.864013671875,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 609.6000000089407,
+          "top": 559.5951538085938,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 659.6000000089407,
+          "top": 530.8466186523438,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 709.7000000029802,
+          "top": 512.80810546875,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 759.7000000029802,
+          "top": 502.0096740722656,
+          "moving": true,
+          "duck": false
+        },
+        {
+          "t": 809.3000000119209,
+          "top": 496.43328857421875,
+          "moving": true,
+          "duck": true
+        },
+        {
+          "t": 859.5,
+          "top": 494.78125,
+          "moving": true,
+          "duck": true
+        }
+      ],
+      "sourceCompleted": 1
+    }
+  ]
+}

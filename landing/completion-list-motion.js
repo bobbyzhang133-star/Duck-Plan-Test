@@ -5,13 +5,22 @@
 })(typeof window !== "undefined" ? window : globalThis, function buildCompletionListMotion() {
   "use strict";
   function create({ getRoot, getContext, enabled }) {
-    let previous = null;
+    let previous = null, pendingRender = null;
     const running = new Set();
     const cards = root => [...root.querySelectorAll(".daily-task-card,.all-task-row,.matrix-task-card")]
       .filter(card => !card.classList.contains("completion-exit-source") && card.checkVisibility?.() !== false && !card.closest("[hidden],details:not([open])"));
     const idFor = card => card.querySelector("input[data-task-id]")?.dataset.taskId;
     function stop() { for (const animation of running) animation.cancel(); running.clear(); }
-    function cancel() { previous = null; stop(); }
+    function cancel({ flush = true } = {}) {
+      const next = pendingRender;
+      previous = null; pendingRender = null; stop();
+      if (flush) next?.();
+    }
+    function deferRender(next) {
+      if (!running.size) return false;
+      pendingRender = next;
+      return true;
+    }
     function capture() {
       const root = getRoot();
       if (!enabled() || !root) { cancel(); return; }
@@ -27,7 +36,7 @@
         return style.display === "block" ? [{ selector, height: Number.parseFloat(style.height) }] : [];
       });
       // Sample an interrupted slide's rendered position before cancelling its old animation.
-      stop();
+      pendingRender = null; stop();
       previous = { context: getContext(), positions, frames };
     }
     function play() {
@@ -36,9 +45,15 @@
       if (!snapshot || !root || !enabled() || snapshot.context !== getContext()) return;
       const track = animation => {
         running.add(animation);
-        animation.finished.then(() => running.delete(animation), () => running.delete(animation));
+        const finished = () => {
+          running.delete(animation);
+          if (running.size || !pendingRender) return;
+          const next = pendingRender; pendingRender = null;
+          next();
+        };
+        animation.finished.then(finished, finished);
       };
-      const timing = { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)" };
+      const timing = { duration: 400, easing: "cubic-bezier(.25,.1,.25,1)" };
       for (const frame of snapshot.frames) {
         const element = root.querySelector(frame.selector);
         if (!element) continue;
@@ -54,7 +69,7 @@
         track(card.animate([{ transform: `translate(${x}px,${y}px)` }, { transform: "translate(0,0)" }], timing));
       }
     }
-    return Object.freeze({ capture, play, cancel });
+    return Object.freeze({ capture, play, cancel, deferRender });
   }
   return Object.freeze({ create });
 });
