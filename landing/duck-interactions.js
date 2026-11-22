@@ -326,7 +326,7 @@
     operations.add(operation); checkboxOperations.set(checkbox, operation);
     if (echo) {
       ticket = renderHold.hold({
-        duration: 500,
+        duration: 400,
         onRelease({ cancelled: interrupted }) {
           if (interrupted) { cancelled = true; operations.delete(operation); }
           clean({ restore: interrupted });
