@@ -153,17 +153,45 @@
     clearTimeout(celebrationTimer);
   });
 
+  // Preserve ancestor-dependent list layout when the snapshot moves onto the body.
+  const snapshotProperties = [
+    "box-sizing", "display", "position", "inset", "grid-template-columns", "grid-template-rows", "grid-auto-flow",
+    "grid-column", "grid-row", "flex-direction", "flex-wrap", "flex-grow", "flex-shrink", "flex-basis",
+    "align-items", "align-self", "justify-content", "gap", "padding", "margin", "width", "height",
+    "min-width", "max-width", "min-height", "max-height", "font-family", "font-size", "font-weight",
+    "line-height", "letter-spacing", "text-align", "white-space", "overflow-wrap", "word-break",
+    "color", "background-color", "border-width", "border-style", "border-color", "border-radius"
+  ];
   // Keep this preview's original clone and exact task-finish animation.
   function completionEcho(card, rect) {
     const echo = card.cloneNode(true);
+    const sourceNodes = [card, ...card.querySelectorAll("*")];
+    const copiedNodes = [echo, ...echo.querySelectorAll("*")];
+    sourceNodes.forEach((source, index) => {
+      if (source instanceof SVGElement && source.tagName.toLowerCase() !== "svg") return;
+      const style = getComputedStyle(source);
+      for (const property of snapshotProperties) {
+        const value = style.getPropertyValue(property);
+        // Computed px values can round down below the text's exact fractional width.
+        const frozen = ["width", "height"].includes(property) && /^\d+(\.\d+)?px$/.test(value)
+          ? `${Math.ceil(Number.parseFloat(value) * 100) / 100}px` : value;
+        copiedNodes[index].style.setProperty(property, frozen);
+      }
+    });
     echo.classList.add("task-completion-echo", "completed");
     echo.setAttribute("aria-hidden", "true"); echo.inert = true;
     echo.removeAttribute("id");
     echo.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
     echo.querySelectorAll("input").forEach(input => { input.checked = true; });
     const dateIcons = [...echo.querySelectorAll(".task-date-icon")];
-    dateIcons.forEach(icon => icon.remove());
-    Object.assign(echo.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
+    dateIcons.forEach(icon => {
+      const space = document.createElement("span");
+      space.style.cssText = icon.style.cssText;
+      space.style.visibility = "hidden";
+      space.setAttribute("aria-hidden", "true");
+      icon.replaceWith(space);
+    });
+    Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
     return echo;
   }
 

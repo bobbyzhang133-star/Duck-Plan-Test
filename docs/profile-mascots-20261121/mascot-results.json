@@ -1,0 +1,271 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 390,
+      "placements": [
+        {
+          "id": "brand-mark",
+          "brand": true,
+          "source": "./assets/duckplan-sigma-icon-v11-transparent-192.png"
+        },
+        {
+          "id": "welcome-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "pond-duck",
+          "brand": false,
+          "head": "v11-side"
+        },
+        {
+          "id": "empty-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "empty-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "modal-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "completion-note-duck",
+          "brand": false,
+          "head": "v11"
+        }
+      ],
+      "completion": {
+        "head": "v11",
+        "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+        "scaleX": 0.08984375,
+        "scaleY": 0.08984375,
+        "body": true,
+        "feet": true,
+        "thumb": "inline",
+        "echo": false,
+        "inViewport": true
+      },
+      "poses": [
+        {
+          "mood": "happy",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "sleepy",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "none",
+          "sleepy": "inline",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "focused",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "inline",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "encouraging",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "celebrating",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "none",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "swimming",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "thumbsup",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "swimming",
+          "profile": "side",
+          "head": "v11-side",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": null,
+          "glasses": null,
+          "idReferencesValid": true
+        }
+      ]
+    },
+    {
+      "width": 835,
+      "placements": [
+        {
+          "id": "brand-mark",
+          "brand": true,
+          "source": "./assets/duckplan-sigma-icon-v11-transparent-192.png"
+        },
+        {
+          "id": "welcome-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "pond-duck",
+          "brand": false,
+          "head": "v11-side"
+        },
+        {
+          "id": "empty-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "empty-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "modal-duck",
+          "brand": false,
+          "head": "v11"
+        },
+        {
+          "id": "completion-note-duck",
+          "brand": false,
+          "head": "v11"
+        }
+      ],
+      "completion": {
+        "head": "v11",
+        "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+        "scaleX": 0.08984375,
+        "scaleY": 0.08984375,
+        "body": true,
+        "feet": true,
+        "thumb": "inline",
+        "echo": false,
+        "inViewport": true
+      },
+      "poses": [
+        {
+          "mood": "happy",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "sleepy",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "none",
+          "sleepy": "inline",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "focused",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "inline",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "encouraging",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "celebrating",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "none",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "swimming",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "thumbsup",
+          "profile": "front",
+          "head": "v11",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": "none",
+          "glasses": "none",
+          "idReferencesValid": true
+        },
+        {
+          "mood": "swimming",
+          "profile": "side",
+          "head": "v11-side",
+          "source": "./assets/duckplan-sigma-head-v11-transparent.png",
+          "open": "inline",
+          "sleepy": null,
+          "glasses": null,
+          "idReferencesValid": true
+        }
+      ]
+    }
+  ]
+}

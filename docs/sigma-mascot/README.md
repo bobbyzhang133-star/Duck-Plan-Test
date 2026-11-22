@@ -1,5 +1,7 @@
 # Sigma mascot
 
+November21 follow-up in the local original-preview variant: animated front poses now reuse the approved v11 head pixels instead of their older separately drawn head; the side swimmer retains its right-facing pose with matching features. The profile masters and native app are unchanged. See [current implementation and verification](../profile-mascots-20261121/README.md). The history below records the earlier icon and full-body iterations.
+
 **Approved profile picture and app icon:** the user selected v11 on November 12, 2026. Keep this design as DuckPlan's default icon unless a change is requested. The website and existing Xcode project use the same approved artwork.
 
 November13 follow-up: the user requested removal of the exterior background for website branding/profile. Ordinary website icons now use the [transparent v11 derivative](../transparent-web-icon/README.md), with the white duck and original facial/contour artwork preserved. The opaque source/native icon and platform maskable/Apple-touch exports remain available. The reproduction/history below describes the approved opaque master, not a new drawing.

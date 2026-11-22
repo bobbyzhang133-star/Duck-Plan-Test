@@ -1,0 +1,150 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 374.5,
+        "height": 374.5,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 835
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 374.5,
+        "height": 374.5,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 243.421875,
+        "height": 243.421875,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 1156
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 184.875,
+        "height": 184.875,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 285.65625,
+        "height": 285.65625,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 320
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 347.640625,
+        "height": 347.640625,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "home",
+        "width": 1156
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 249,
+        "height": 249,
+        "textNodes": 14,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "matrix",
+        "width": 835
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 496.375,
+        "height": 496.375,
+        "textNodes": 15,
+        "duration": 430,
+        "icons": 0
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "dark": true
+      },
+      "format": {
+        "maxDifference": 0.015625,
+        "differences": [],
+        "overflow": false,
+        "sourceHeight": 285.65625,
+        "height": 285.65625,
+        "textNodes": 12,
+        "duration": 430,
+        "icons": 0
+      }
+    }
+  ]
+}

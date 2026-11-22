@@ -120,12 +120,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .duck-thumbsup .duck-thumbs-up-wing { display: inline; }
 /* A resting front view has a plain chest; a lifted wing appears only to wave. */
 .welcome-duck:is(.is-greeting,.is-reacting) .duck-wing,.duck-celebrating .duck-wing { display: inline; }
-.duck-sleepy .duck-open-eyes { display: none; }.duck-sleepy .duck-sleep-eyes,.duck-sleepy .duck-snooze { display: inline; }.duck-sleepy .duck-head { transform-origin: 89px 83px; transform: rotate(5deg); }
+.duck-sleepy .duck-open-eyes { display: none; }.duck-sleepy .duck-sleep-eyes,.duck-sleepy .duck-snooze { display: inline; }.duck-sleepy { transform-origin: 50% 90%; transform: rotate(3deg); }
 .duck-sleepy .duck-brows { display: none; }
 .duck-focused .duck-glasses { display: inline; }.duck-encouraging .duck-brows { transform: translateY(-3px); }
 .duck-celebrating .duck-open-eyes { display: none; }.duck-celebrating .duck-closed-eyes,.duck-celebrating .duck-check-flag,.duck-celebrating .duck-sparkles { display: inline; }
 .duck-swimming .duck-water { display: inline; }.duck-swimming .duck-feet,.duck-swimming .duck-ground { display: none; }
 .duck-pupils { transform: translate(var(--duck-look-x,0px),var(--duck-look-y,0px)); transition: transform 160ms ease; }
+.duck-profile-head .duck-pupils { transform: translate(calc(var(--duck-look-x,0px) * 8),calc(var(--duck-look-y,0px) * 8)); }
+.duck-encouraging .duck-profile-head .duck-brows { transform: translateY(-20px); }
 .welcome-duck .duck-open-eyes { transform-box: fill-box; transform-origin: center; animation: duck-blink 7s 2s infinite; }
 .welcome-duck.is-greeting .duck-wing { transform-origin: 70px 108px; animation: duck-wave 520ms ease-in-out 3; }
 .welcome-duck.is-reacting .duck-character { animation: duck-hop 440ms ease 2; }
