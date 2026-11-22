@@ -25,11 +25,12 @@ const defaultTasks = () => [
   { id: "physics-quiz", title: "Complete motion quiz", classId: "physics", dueDate: relativeDate(-1), dueTime: "12:30", scheduledStart: null, durationMinutes: 45, priority: "High", completed: false },
   { id: "backpack", title: "Pack materials for Monday", classId: "personal", dueDate: relativeDate(0), dueTime: "20:00", scheduledStart: null, durationMinutes: 30, priority: "Low", completed: true },
 ];
+const completionDemo = window.DuckCompletionDemo?.configure({ location, storage: localStorage, cloud: window.DUCKPLAN_CLOUD || {} });
 const store = window.DuckPlannerStore.createPlannerStore({
-  storage: localStorage,
+  storage: completionDemo?.storage || localStorage,
   model: Model,
   defaultClasses: () => DEFAULT_CLASSES,
-  defaultTasks,
+  defaultTasks: completionDemo?.enabled ? () => [] : defaultTasks,
   config: window.DUCKPLAN_CLOUD || {},
   redirectPath: location.pathname,
 });
@@ -2263,11 +2264,17 @@ store.subscribe(({ reason }) => {
   if (reason === "load" || reason === "auth") refreshAccountState();
   if (["load", "auth", "context"].includes(reason)) readNativeAccountSyncStatus();
 });
-store.init().then(() => {
+store.init().then(async () => {
+  const sampleCount = await window.DuckCompletionDemo?.seed({ demo: completionDemo, store, model: Model, alerts: window.DuckWorkAlerts });
+  if (completionDemo?.enabled) {
+    selectDate(nowKey());
+    if (document.body.dataset.view === "calendar") setTaskPanel(true, false);
+    if (sampleCount) showToast(`${sampleCount} sample tasks added.`);
+  }
   workAlertContextReady = true;
   workAlerts.reconcile({ refresh: true }).catch(reportError);
   const alarmTarget=new URL(location.href).searchParams.get('alarmTask');
   if(alarmTarget) { openNotificationTarget(alarmTarget,'home'); const url=new URL(location.href); url.searchParams.delete('alarmTask'); history.replaceState(null,'',url); }
   const problem = store.takeAuthError();
   if (problem) showToast(problem);
-}, reportError);
+}).catch(reportError);

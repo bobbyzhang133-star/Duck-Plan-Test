@@ -198,12 +198,16 @@
       icon.replaceWith(space);
     });
     Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
-    const scale = Math.max(1, Math.min(1.12, (innerWidth - 16) / rect.width));
+    const scale = Math.max(.1, Math.min(2, (innerWidth - 16) / rect.width, (innerHeight - 32) / rect.height));
     const peakLeft = rect.left - rect.width * (scale - 1) / 2;
     const peakRight = rect.right + rect.width * (scale - 1) / 2;
     const shift = Math.max(8 - peakLeft, Math.min(0, innerWidth - 8 - peakRight));
+    const peakTop = rect.top - rect.height * (scale - 1) / 2 - 20;
+    const peakBottom = rect.bottom + rect.height * (scale - 1) / 2 - 20;
+    const shiftY = -20 + Math.max(16 - peakTop, Math.min(0, innerHeight - 16 - peakBottom));
     echo.style.setProperty("--completion-pop-scale", String(scale));
     echo.style.setProperty("--completion-pop-x", `${shift}px`);
+    echo.style.setProperty("--completion-pop-y", `${shiftY}px`);
     return echo;
   }
 

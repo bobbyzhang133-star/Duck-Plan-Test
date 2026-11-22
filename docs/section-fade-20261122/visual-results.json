@@ -1,0 +1,41 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 835,
+      "peak": {
+        "scale": 2,
+        "rect": {
+          "left": 8,
+          "top": 678.984375,
+          "right": 462,
+          "bottom": 967.734375
+        },
+        "duration": 430
+      },
+      "fade": {
+        "opacity": 0.439189,
+        "height": 85.796875,
+        "inert": true
+      }
+    },
+    {
+      "width": 390,
+      "peak": {
+        "scale": 1.1,
+        "rect": {
+          "left": 7.999996185302734,
+          "top": 690.3070068359375,
+          "right": 381.99999618530273,
+          "bottom": 829.9898681640625
+        },
+        "duration": 430
+      },
+      "fade": {
+        "opacity": 0.439189,
+        "height": 78.15625,
+        "inert": true
+      }
+    }
+  ]
+}

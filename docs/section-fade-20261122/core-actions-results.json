@@ -1,0 +1,188 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.99999
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 835
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.95884
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.1
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.12556
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 320,
+        "today": true
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.15911
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "home",
+        "width": 1156
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.96876
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "matrix",
+        "width": 835
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 2
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390,
+        "cloud": true
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.1
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "cloud": true
+      },
+      "during": {
+        "echo": true,
+        "held": true,
+        "scale": 1.12557
+      },
+      "after": {
+        "completed": true,
+        "visible": 0,
+        "folded": true,
+        "dashboardFolded": true,
+        "artifacts": 0
+      },
+      "archiveAccessible": true,
+      "reopenedAndReloaded": true
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "runtime": "157.0.8103.79",
+  "state": {
+    "completed": false,
+    "visible": 1,
+    "artifacts": 0,
+    "inert": false,
+    "toast": "Synthetic fade rollback failure",
+    "fadingFrames": [
+      {
+        "time": 480.59999999403954,
+        "fade": true,
+        "opacity": 1,
+        "height": 157.734375
+      },
+      {
+        "time": 495.19999998807907,
+        "fade": true,
+        "opacity": 0.863567,
+        "height": 136.203125
+      },
+      {
+        "time": 523,
+        "fade": true,
+        "opacity": 0.685899,
+        "height": 108.1875
+      },
+      {
+        "time": 556.5,
+        "fade": true,
+        "opacity": 0.50362,
+        "height": 79.4375
+      },
+      {
+        "time": 590,
+        "fade": true,
+        "opacity": 0.354679,
+        "height": 55.9375
+      },
+      {
+        "time": 623.0999999940395,
+        "fade": true,
+        "opacity": 0.242449,
+        "height": 38.234375
+      },
+      {
+        "time": 657.0999999940395,
+        "fade": true,
+        "opacity": 0.159369,
+        "height": 25.125
+      }
+    ]
+  }
+}

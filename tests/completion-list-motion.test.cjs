@@ -16,7 +16,7 @@ function fixture() {
       animations.push(animation); return animation;
     }
   };
-  const root = { querySelectorAll: () => [card], querySelector: () => null, getBoundingClientRect: () => ({ top: 0, left: 0 }) };
+  const root = { querySelectorAll: selector => selector.includes(".daily-task-card") ? [card] : [], querySelector: () => null, getBoundingClientRect: () => ({ top: 0, left: 0 }) };
   const motion = create({ getRoot: () => root, getContext: () => "same owner and view", enabled: () => true });
   const slide = () => { motion.capture(); top = 100; motion.play(); };
   return { motion, animations, slide };
