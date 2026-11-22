@@ -22,3 +22,11 @@ Playwright MCP Chromium 157.0.8103.79, isolated synthetic fixtures; no user prev
 - **NOT RUN:** Safari/WebKit, Firefox, installed PWA, native WKWebView or physical devices. Phone/tablet browser viewports establish responsive web behavior, not native runtime parity. Native synchronization remains gated on the user's request to Publish to public.
 
 No remote push, public deployment, native synchronization, signing changes or production-account mutations.
+
+## Immediate particles follow-up
+
+The user's next request moves the confetti burst from the deferred, saved completion reaction into the checkbox change event itself. The original task echo, 430ms pop-out and following 260ms list slide are unchanged. The burst starts once alongside the echo, uses the existing larger burst for the last unfinished task, and retains the existing reduced-motion preference. Reopening, cancellation or save failure removes that operation's particle batch; a successful save does not trigger a second burst. Account/day completion messaging still waits for successful persistence. Cache advances to `duckplan-app-original-duck-preview-v116`.
+
+- **PASS:** 7 Playwright MCP cases, Chromium 157.0.8103.79: desktop/phone Calendar, phone Tasks, Dashboard, last task, reduced motion and a signed-in loopback save delayed 700ms. A listener on the same checkbox event observes the particles and original task echo together, before the exit finishes; exactly one batch remains after the pop-out, and it cleans up. [Script](check-immediate-particles.js), [results](immediate-particles-results.json).
+- **PASS:** the 9 lifecycle cases rerun, including reopen, rapid completion, navigation, reduced motion during exit, early/late failed saves and sign-out while saving. [Results](immediate-particles-edge-results.json). The actual loopback API is used; injected failures remain labeled above.
+- **PASS:** the 8 focused Node tests, JavaScript syntax and diff checks rerun. Native/PWA/physical devices remain NOT RUN and unchanged.

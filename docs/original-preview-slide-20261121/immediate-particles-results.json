@@ -1,0 +1,141 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "view": "calendar",
+        "width": 1156
+      },
+      "immediate": {
+        "particles": 10,
+        "batches": 1,
+        "echo": true
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 1
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    },
+    {
+      "config": {
+        "view": "calendar",
+        "width": 390
+      },
+      "immediate": {
+        "particles": 10,
+        "batches": 1,
+        "echo": true
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 1
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390
+      },
+      "immediate": {
+        "particles": 10,
+        "batches": 1,
+        "echo": true
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 1
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    },
+    {
+      "config": {
+        "view": "home",
+        "width": 1156
+      },
+      "immediate": {
+        "particles": 10,
+        "batches": 1,
+        "echo": true
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 1
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "last": true
+      },
+      "immediate": {
+        "particles": 22,
+        "batches": 1,
+        "echo": true
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 1
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "reduced": true
+      },
+      "immediate": {
+        "particles": 0,
+        "batches": 0,
+        "echo": false
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 0
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    },
+    {
+      "config": {
+        "view": "tasks",
+        "width": 390,
+        "slowSave": true
+      },
+      "immediate": {
+        "particles": 10,
+        "batches": 1,
+        "echo": true
+      },
+      "mid": {
+        "echoes": 0,
+        "batches": 1
+      },
+      "after": {
+        "particles": 0,
+        "completed": true
+      }
+    }
+  ]
+}

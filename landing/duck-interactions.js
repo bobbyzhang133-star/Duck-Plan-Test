@@ -130,6 +130,7 @@
     }
     effects.append(batch);
     scheduleCleanup(() => batch.remove(), 950);
+    return batch;
   }
   function showDayComplete(summary) {
     celebration.hidden = false;
@@ -199,6 +200,8 @@
     const echo = motionAllowed() && cardRect?.width ? completionEcho(card, cardRect) : null;
     const controls = echo ? [...card.querySelectorAll("input,button,a,[tabindex]")].map(element => [element, element.getAttribute("tabindex")]) : [];
     const previousBusy = card?.getAttribute("aria-busy");
+    // Click feedback starts now, independently of saving or the outgoing card's render hold.
+    const particles = motionAllowed() ? burst(rect.left + rect.width / 2, rect.top + rect.height / 2, isToday && before.unfinished.length === 1) : null;
     let ticket = null, settled = !echo, confirmed = false, cancelled = false, reacted = false, focusAtRender = null, focusWasVisible = false;
     const current = () => !cancelled && context === completionContext();
     function react() {
@@ -214,7 +217,6 @@
         pond.classList.add("is-swimming");
         clearTimeout(swimTimer);
         swimTimer = setTimeout(() => pond.classList.remove("is-swimming"), 1500);
-        burst(rect.left + rect.width / 2, rect.top + rect.height / 2, finishedDay);
       }
       if (finishedDay) showDayComplete(summary);
       clearTimeout(reactionTimer);
@@ -229,7 +231,7 @@
       controls.forEach(([element, tabindex]) => { if (tabindex === null) element.removeAttribute("tabindex"); else element.setAttribute("tabindex", tabindex); });
     }
     function clean({ restore = true } = {}) {
-      if (restore) restoreSource();
+      if (restore) { restoreSource(); particles?.remove(); }
       echo?.remove();
     }
     const operation = {
