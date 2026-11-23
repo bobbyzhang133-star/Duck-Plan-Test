@@ -1,0 +1,1399 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "width": 1156,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "source": {
+        "width": 224.875,
+        "height": 184.15625,
+        "grid": "24px 179.875px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 38,
+            "y": 13,
+            "width": 179.875,
+            "height": 158.15625,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 13
+          },
+          {
+            "cls": "task-title",
+            "x": 41,
+            "y": 17,
+            "width": 176.875,
+            "height": 40.5,
+            "font": "15px",
+            "lineHeight": "20.25px",
+            "textRects": 2
+          },
+          {
+            "cls": "task-meta",
+            "x": 41,
+            "y": 62.5,
+            "width": 176.875,
+            "height": 22.09375,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 41,
+            "y": 92.59375,
+            "width": 176.875,
+            "height": 74.5625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 8
+          },
+          {
+            "cls": "task-date-line task-date-due",
+            "x": 41,
+            "y": 92.59375,
+            "width": 176.875,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 92.59375,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 92.59375,
+            "width": 118.875,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 2
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 41,
+            "y": 132.375,
+            "width": 176.875,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 132.375,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 132.375,
+            "width": 118.875,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 2
+          }
+        ]
+      },
+      "echo": {
+        "width": 224.875,
+        "height": 184.15625,
+        "grid": "24px 179.875px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 38,
+            "y": 13,
+            "width": 179.875,
+            "height": 158.15625,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 13
+          },
+          {
+            "cls": "task-title",
+            "x": 41,
+            "y": 17,
+            "width": 176.875,
+            "height": 40.5,
+            "font": "15px",
+            "lineHeight": "20.25px",
+            "textRects": 2
+          },
+          {
+            "cls": "task-meta",
+            "x": 41,
+            "y": 62.5,
+            "width": 176.875,
+            "height": 22.09375,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 41,
+            "y": 92.59375,
+            "width": 176.875,
+            "height": 74.5625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 8
+          },
+          {
+            "cls": "task-date-line task-date-due",
+            "x": 41,
+            "y": 92.59375,
+            "width": 176.875,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 92.59375,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 92.59375,
+            "width": 118.87499237060547,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 2
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 41,
+            "y": 132.359375,
+            "width": 176.875,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 132.359375,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 132.359375,
+            "width": 118.87499237060547,
+            "height": 34.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 2
+          }
+        ],
+        "samples": [
+          {
+            "time": 0,
+            "scale": 2,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 2.01922,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 2.024,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 2.024,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 2.024,
+            "opacity": 0.000628181
+          }
+        ],
+        "icons": 0
+      },
+      "frames": [
+        {
+          "time": 6.0999999940395355,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 10.400000005960464,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 39.099999994039536,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 138,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 270.90000000596046,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 403.40000000596046,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 570.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 804,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 937.2000000178814,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1070.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1204.0999999940395,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1340.300000011921,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1470.0999999940395,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1607,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1736.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1870.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2003.800000011921,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2137.4000000059605,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks"
+      },
+      "status": "PASS",
+      "source": {
+        "width": 332,
+        "height": 137.875,
+        "grid": "32px 252px 36px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 38,
+            "y": 13,
+            "width": 252,
+            "height": 82.078125,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 8
+          },
+          {
+            "cls": "task-title",
+            "x": 41,
+            "y": 17,
+            "width": 246,
+            "height": 21.59375,
+            "font": "16px",
+            "lineHeight": "21.6px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-meta",
+            "x": 41,
+            "y": 43.59375,
+            "width": 246,
+            "height": 22.09375,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 41,
+            "y": 73.6875,
+            "width": 246,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 3
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 41,
+            "y": 73.6875,
+            "width": 246,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 73.6875,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 73.6875,
+            "width": 188,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          }
+        ]
+      },
+      "echo": {
+        "width": 331.99944800509815,
+        "height": 137.87480734570812,
+        "grid": "32px 252px 36px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 37.999939833915505,
+            "y": 12.999997543570048,
+            "width": 251.9996107435824,
+            "height": 82.07798796630058,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 8
+          },
+          {
+            "cls": "task-title",
+            "x": 40.99993373122234,
+            "y": 16.99997569888941,
+            "width": 245.99958867957764,
+            "height": 21.593719031436688,
+            "font": "16px",
+            "lineHeight": "21.6px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-meta",
+            "x": 40.99993373122234,
+            "y": 43.59368113223173,
+            "width": 245.99958867957764,
+            "height": 22.09372315472982,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 40.99993373122234,
+            "y": 73.68736059760028,
+            "width": 245.99958867957764,
+            "height": 17.3905919259253,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 3
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 40.99993373122234,
+            "y": 73.68736059760028,
+            "width": 245.99958867957764,
+            "height": 17.3905919259253,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 60.99989990047949,
+            "y": 73.68736059760028,
+            "width": 31.99994861236272,
+            "height": 17.3905919259253,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 98.9998431613341,
+            "y": 73.68736059760028,
+            "width": 187.9996861033441,
+            "height": 17.3905919259253,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          }
+        ],
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1.11315,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.12384,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.12651,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 1.12651,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 1.12651,
+            "opacity": 0.000628181
+          }
+        ],
+        "icons": 0
+      },
+      "frames": [
+        {
+          "time": 12.900000005960464,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 26,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 42.60000002384186,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 142.80000001192093,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 276,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 409.40000000596046,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 542.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 809.4000000059605,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 942.4000000059605,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1075.6000000238419,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1211.6000000238419,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1342.300000011921,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1475.1000000238419,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1608.9000000059605,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1742.300000011921,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1875.800000011921,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2012.7000000178814,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2143.800000011921,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "source": {
+        "width": 340,
+        "height": 129.125,
+        "grid": "24px 295px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 38,
+            "y": 13,
+            "width": 295,
+            "height": 103.125,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 10
+          },
+          {
+            "cls": "task-title",
+            "x": 41,
+            "y": 17,
+            "width": 292,
+            "height": 20.25,
+            "font": "15px",
+            "lineHeight": "20.25px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-meta",
+            "x": 41,
+            "y": 42.25,
+            "width": 292,
+            "height": 22.09375,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 41,
+            "y": 72.34375,
+            "width": 292,
+            "height": 39.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-line task-date-due",
+            "x": 41,
+            "y": 72.34375,
+            "width": 292,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 72.34375,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 72.34375,
+            "width": 234,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 41,
+            "y": 94.734375,
+            "width": 292,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 61,
+            "y": 94.734375,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 99,
+            "y": 94.734375,
+            "width": 234,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          }
+        ]
+      },
+      "echo": {
+        "width": 339.9988827067004,
+        "height": 129.12459656691598,
+        "grid": "24px 295px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 37.999878552976526,
+            "y": 12.999955958734683,
+            "width": 294.9990437960286,
+            "height": 103.12468464944664,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 10
+          },
+          {
+            "cls": "task-title",
+            "x": 40.99986757972062,
+            "y": 16.999955365767832,
+            "width": 291.9990582787948,
+            "height": 20.249930317410485,
+            "font": "15px",
+            "lineHeight": "20.25px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-meta",
+            "x": 40.99986757972062,
+            "y": 42.249842827846706,
+            "width": 291.9990582787948,
+            "height": 22.093686624421554,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 40.99986757972062,
+            "y": 72.34352826633456,
+            "width": 291.9990582787948,
+            "height": 39.78111293481361,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-line task-date-due",
+            "x": 40.99986757972062,
+            "y": 72.34352826633456,
+            "width": 291.9990582787948,
+            "height": 17.390549818990582,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 60.99980144370179,
+            "y": 72.34352826633456,
+            "width": 31.999896989978073,
+            "height": 17.390549818990582,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 98.99968350618857,
+            "y": 72.34352826633456,
+            "width": 233.99923533330633,
+            "height": 17.390549818990582,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 40.99986757972062,
+            "y": 94.71842492838398,
+            "width": 291.9990582787948,
+            "height": 17.390605971154642,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 60.99980144370179,
+            "y": 94.71842492838398,
+            "width": 31.999896989978073,
+            "height": 17.390605971154642,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 98.99968350618857,
+            "y": 94.71842492838398,
+            "width": 233.99923533330633,
+            "height": 17.390605971154642,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          }
+        ],
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1.08696,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.0974,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.1,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 1.1,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 1.1,
+            "opacity": 0.000628181
+          }
+        ],
+        "icons": 0
+      },
+      "frames": [
+        {
+          "time": 6.199999988079071,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 13,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 28.69999998807907,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 128.59999999403954,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 262.09999999403954,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 395.2999999821186,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 800.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 929.1999999880791,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1062.199999988079,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1200.0999999940395,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1329.4000000059605,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1464.199999988079,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1595.199999988079,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1728.699999988079,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1871.0999999940395,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1995.2999999821186,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2134.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2267.9000000059605,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "home"
+      },
+      "status": "PASS",
+      "source": {
+        "width": 260.78125,
+        "height": 176.203125,
+        "grid": "24px 212.781px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 39,
+            "y": 13,
+            "width": 212.78125,
+            "height": 150.203125,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 13
+          },
+          {
+            "cls": "task-title",
+            "x": 42,
+            "y": 41.140625,
+            "width": 209.78125,
+            "height": 43.1875,
+            "font": "16px",
+            "lineHeight": "21.6px",
+            "textRects": 2
+          },
+          {
+            "cls": "task-meta",
+            "x": 42,
+            "y": 89.328125,
+            "width": 209.78125,
+            "height": 22.09375,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 42,
+            "y": 119.421875,
+            "width": 209.78125,
+            "height": 39.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-line task-date-due",
+            "x": 42,
+            "y": 119.421875,
+            "width": 209.78125,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 62,
+            "y": 119.421875,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 100,
+            "y": 119.421875,
+            "width": 151.78125,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 42,
+            "y": 141.8125,
+            "width": 209.78125,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 62,
+            "y": 141.8125,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 100,
+            "y": 141.8125,
+            "width": 151.78125,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          }
+        ]
+      },
+      "echo": {
+        "width": 260.78125,
+        "height": 176.203125,
+        "grid": "24px 212.766px",
+        "nodes": [
+          {
+            "cls": "task-select",
+            "x": 39,
+            "y": 13,
+            "width": 212.765625,
+            "height": 150.203125,
+            "font": "16px",
+            "lineHeight": "24.8px",
+            "textRects": 13
+          },
+          {
+            "cls": "task-title",
+            "x": 42,
+            "y": 41.140625,
+            "width": 209.78125,
+            "height": 43.1875,
+            "font": "16px",
+            "lineHeight": "21.6px",
+            "textRects": 2
+          },
+          {
+            "cls": "task-meta",
+            "x": 42,
+            "y": 89.328125,
+            "width": 209.765625,
+            "height": 22.09375,
+            "font": "12px",
+            "lineHeight": "18px",
+            "textRects": 4
+          },
+          {
+            "cls": "task-date-stack",
+            "x": 42,
+            "y": 119.421875,
+            "width": 209.765625,
+            "height": 39.78125,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 6
+          },
+          {
+            "cls": "task-date-line task-date-due",
+            "x": 42,
+            "y": 119.421875,
+            "width": 209.765625,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 62,
+            "y": 119.421875,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 100,
+            "y": 119.421875,
+            "width": 151.765625,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-line task-date-work",
+            "x": 42,
+            "y": 141.796875,
+            "width": 209.765625,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 5
+          },
+          {
+            "cls": "task-date-label",
+            "x": 62,
+            "y": 141.796875,
+            "width": 32,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          },
+          {
+            "cls": "task-date-value",
+            "x": 100,
+            "y": 141.796875,
+            "width": 151.765625,
+            "height": 17.390625,
+            "font": "12px",
+            "lineHeight": "17.4px",
+            "textRects": 1
+          }
+        ],
+        "samples": [
+          {
+            "time": 0,
+            "scale": 2,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 2.01922,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 2.024,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 2.024,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 2.024,
+            "opacity": 0.000628181
+          }
+        ],
+        "icons": 0
+      },
+      "frames": [
+        {
+          "time": 5.199999988079071,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 15.099999994039536,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 29.099999994039536,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 129.5,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 262.5,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 395.69999998807907,
+          "echo": true,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 563.3999999761581,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 695.0999999940395,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 829.1999999880791,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 962.1999999880791,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1094.7999999821186,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1229,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1362.2999999821186,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1495.5,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1628.8999999761581,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1761.5999999940395,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1895.699999988079,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2028.8999999761581,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2162.199999988079,
+          "echo": false,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    }
+  ]
+}

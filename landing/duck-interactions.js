@@ -148,31 +148,52 @@
     clearTimeout(celebrationTimer);
   });
 
-  // The original pop takes on the standalone card layout immediately, then lifts slightly.
-  // Let that layout size its box instead of retaining the old bug's overflowing content.
+  // Freeze the source's ancestor-dependent formatting before moving its copy onto the body.
+  const snapshotProperties = [
+    "box-sizing", "display", "position", "inset", "grid-template-columns", "grid-template-rows", "grid-auto-flow",
+    "grid-column", "grid-row", "flex-direction", "flex-wrap", "flex-grow", "flex-shrink", "flex-basis",
+    "align-items", "align-self", "justify-content", "gap", "padding", "margin", "width", "height",
+    "min-width", "max-width", "min-height", "max-height", "font-family", "font-size", "font-weight",
+    "line-height", "letter-spacing", "text-align", "white-space", "overflow-wrap", "word-break",
+    "color", "background-color", "border-width", "border-style", "border-color", "border-radius"
+  ];
   function completionEcho(card, rect) {
     const echo = card.cloneNode(true);
+    const sourceNodes = [card, ...card.querySelectorAll("*")];
+    const copiedNodes = [echo, ...echo.querySelectorAll("*")];
+    sourceNodes.forEach((source, index) => {
+      if (source instanceof SVGElement && source.tagName.toLowerCase() !== "svg") return;
+      const style = getComputedStyle(source);
+      for (const property of snapshotProperties) {
+        const value = style.getPropertyValue(property);
+        // Avoid rounding a text box down below the width needed by its last character.
+        const frozen = ["width", "height"].includes(property) && /^\d+(\.\d+)?px$/.test(value)
+          ? `${Math.ceil(Number.parseFloat(value) * 100) / 100}px` : value;
+        copiedNodes[index].style.setProperty(property, frozen);
+      }
+    });
     echo.classList.add("task-completion-echo", "completed");
     echo.setAttribute("aria-hidden", "true"); echo.inert = true;
     echo.removeAttribute("id");
     echo.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
     echo.querySelectorAll('input[type="checkbox"]').forEach(input => {
       input.checked = true;
+      input.style.removeProperty("background-color");
+      input.style.removeProperty("border-color");
       input.style.transition = "none";
     });
     const dateIcons = [...echo.querySelectorAll(".task-date-icon")];
     dateIcons.forEach(icon => {
       const space = document.createElement("span");
-      space.style.cssText = "display:inline-block;width:14px;height:14px;visibility:hidden";
+      space.style.cssText = icon.style.cssText;
+      space.style.visibility = "hidden";
       space.setAttribute("aria-hidden", "true");
       icon.replaceWith(space);
     });
-    Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: "auto", visibility: "hidden", animation: "none", transform: "none" });
-    document.body.append(echo);
-    const height = echo.getBoundingClientRect().height;
-    echo.remove();
+    Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
+    const height = rect.height;
     // Reserve space for the original 1.2% lift even on a narrow or short viewport.
-    const scale = Math.max(.1, Math.min(1, (innerWidth - 16) / (rect.width * 1.012), (innerHeight - 36) / (height * 1.012)));
+    const scale = Math.max(.1, Math.min(2, (innerWidth - 16) / (rect.width * 1.012), (innerHeight - 36) / (height * 1.012)));
     const peakScale = scale * 1.012;
     const peakLeft = rect.left - rect.width * (peakScale - 1) / 2;
     const peakRight = rect.right + rect.width * (peakScale - 1) / 2;
@@ -184,9 +205,6 @@
     echo.style.setProperty("--completion-peak-scale", String(peakScale));
     echo.style.setProperty("--completion-pop-x", `${shift}px`);
     echo.style.setProperty("--completion-pop-y", `${shiftY}px`);
-    echo.style.removeProperty("visibility");
-    echo.style.removeProperty("animation");
-    echo.style.removeProperty("transform");
     return echo;
   }
 
