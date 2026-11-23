@@ -162,7 +162,7 @@ body:has(.completion-note:not([hidden])) .toast { bottom: 150px; }
 @keyframes duck-bob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-2deg); } }
 @keyframes duck-stars { 0%,100% { opacity: .6; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.1); } }
 @keyframes duck-confetti { from { opacity: 1; transform: translate(0,0) rotate(0); } to { opacity: 0; transform: translate(var(--particle-x),var(--particle-y)) rotate(var(--particle-rotation)); } }
-@keyframes task-finish { 0% { opacity: .9; transform: translate(var(--completion-pop-x,0px),var(--completion-pop-y,-20px)) scale(var(--completion-pop-scale,2)); } 100% { opacity: 0; transform: scale(.99) translateY(1px); } }
+@keyframes task-finish { 0% { opacity: .9; } 100% { opacity: 0; } }
 :root[data-mascot-motion="off"] .duck-character *,:root[data-mascot-motion="off"] .duck-character,:root[data-mascot-motion="off"] .pond-duck { animation: none !important; transition: none !important; }
 :root[data-mascot-motion="off"] .completion-particle,:root[data-mascot-motion="off"] .task-completion-echo,:root[data-mascot-motion="off"] .completion-duck-reaction { display: none; }
 @media (max-width:1200px) {
