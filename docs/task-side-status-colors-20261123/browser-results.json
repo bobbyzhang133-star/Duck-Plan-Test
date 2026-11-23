@@ -1,0 +1,337 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "width": 1280,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "initial": [
+        {
+          "id": "completion-20261123-2-0",
+          "tone": "overdue",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(195, 78, 66) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-1",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#538fc5",
+          "dot": "rgb(83, 143, 197)"
+        },
+        {
+          "id": "completion-20261123-2-2",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-3",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#3e946d",
+          "dot": "rgb(62, 148, 109)"
+        },
+        {
+          "id": "completion-20261123-2-4",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-6",
+          "tone": "neutral",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(124, 123, 116) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-7",
+          "tone": "neutral",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(124, 123, 116) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-5",
+          "tone": "due",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(224, 144, 110) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        }
+      ],
+      "completed": {
+        "id": "completion-20261123-2-4",
+        "tone": "completed",
+        "fill": "rgb(255, 255, 255)",
+        "side": "linear-gradient(90deg, rgb(76, 153, 100) 3px, rgba(0, 0, 0, 0) 3px)",
+        "line": "rgb(234, 229, 214)",
+        "text": "rgb(104, 103, 94)",
+        "course": "#d96f63",
+        "dot": "rgb(217, 111, 99)"
+      },
+      "neutral": {
+        "fill": "rgb(255, 255, 255)",
+        "line": "rgb(234, 229, 214)"
+      },
+      "headersClear": true,
+      "grouping": {},
+      "edit": "PASS",
+      "completionAndReload": "PASS",
+      "openingAndClosing": "PASS",
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks"
+      },
+      "status": "PASS",
+      "initial": [
+        {
+          "id": "completion-20261123-2-0",
+          "tone": "overdue",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(195, 78, 66) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-1",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#538fc5",
+          "dot": "rgb(83, 143, 197)"
+        },
+        {
+          "id": "completion-20261123-2-2",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-3",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#3e946d",
+          "dot": "rgb(62, 148, 109)"
+        },
+        {
+          "id": "completion-20261123-2-4",
+          "tone": "scheduled",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-5",
+          "tone": "due",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(224, 144, 110) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-6",
+          "tone": "neutral",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(124, 123, 116) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-7",
+          "tone": "neutral",
+          "fill": "rgb(255, 255, 255)",
+          "side": "linear-gradient(90deg, rgb(124, 123, 116) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(234, 229, 214)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        }
+      ],
+      "completed": {
+        "id": "completion-20261123-2-4",
+        "tone": "completed",
+        "fill": "rgb(255, 255, 255)",
+        "side": "linear-gradient(90deg, rgb(76, 153, 100) 3px, rgba(0, 0, 0, 0) 3px)",
+        "line": "rgb(234, 229, 214)",
+        "text": "rgb(104, 103, 94)",
+        "course": "#d96f63",
+        "dot": "rgb(217, 111, 99)"
+      },
+      "neutral": {
+        "fill": "rgb(255, 255, 255)",
+        "line": "rgb(234, 229, 214)"
+      },
+      "headersClear": true,
+      "grouping": {
+        "class": "PASS",
+        "priority": "PASS",
+        "plan": "PASS"
+      },
+      "edit": "PASS",
+      "completionAndReload": "PASS",
+      "openingAndClosing": "PASS",
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "calendar",
+        "dark": true
+      },
+      "status": "PASS",
+      "initial": [
+        {
+          "id": "completion-20261123-2-0",
+          "tone": "overdue",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(195, 78, 66) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-1",
+          "tone": "scheduled",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#538fc5",
+          "dot": "rgb(83, 143, 197)"
+        },
+        {
+          "id": "completion-20261123-2-2",
+          "tone": "scheduled",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-3",
+          "tone": "scheduled",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#3e946d",
+          "dot": "rgb(62, 148, 109)"
+        },
+        {
+          "id": "completion-20261123-2-4",
+          "tone": "scheduled",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(57, 127, 192) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-6",
+          "tone": "neutral",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(124, 123, 116) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-7",
+          "tone": "neutral",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(124, 123, 116) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-5",
+          "tone": "due",
+          "fill": "rgb(43, 43, 36)",
+          "side": "linear-gradient(90deg, rgb(224, 144, 110) 3px, rgba(0, 0, 0, 0) 3px)",
+          "line": "rgb(69, 67, 56)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        }
+      ],
+      "completed": {
+        "id": "completion-20261123-2-4",
+        "tone": "completed",
+        "fill": "rgb(43, 43, 36)",
+        "side": "linear-gradient(90deg, rgb(76, 153, 100) 3px, rgba(0, 0, 0, 0) 3px)",
+        "line": "rgb(69, 67, 56)",
+        "text": "rgb(189, 184, 168)",
+        "course": "#d96f63",
+        "dot": "rgb(217, 111, 99)"
+      },
+      "neutral": {
+        "fill": "rgb(43, 43, 36)",
+        "line": "rgb(69, 67, 56)"
+      },
+      "headersClear": true,
+      "grouping": {},
+      "edit": "PASS",
+      "completionAndReload": "PASS",
+      "openingAndClosing": "PASS",
+      "errors": []
+    }
+  ]
+}
