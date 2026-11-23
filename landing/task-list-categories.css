@@ -28,6 +28,7 @@
   content: ""; width: 5px; height: 5px; justify-self: center;
   border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
   transform: rotate(45deg) translateY(-1px);
+  transition: transform var(--motion-control,240ms) var(--motion-ease,ease);
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading[aria-expanded="false"]::before { transform: rotate(-45deg); }
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading > span {
@@ -84,4 +85,7 @@
 }
 @media (max-width: 360px) {
   .motion-preview #view-tasks .task-category-toolbar .filter-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading::before { transition: none; }
 }

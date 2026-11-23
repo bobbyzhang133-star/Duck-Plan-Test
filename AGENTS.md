@@ -16,6 +16,10 @@ Use the original white Sigma duck identity for mascot artwork, preserving the cu
 Animated poses use a complete duck body and visible orange webbed feet on land. Front views have a plain body outline with no visible tail or feather/wing lines on the chest; a lifted wing appears only to wave. Keep the head-only original for the brand icon.
 The Daily progress pond uses a right-facing side-profile swimming duck; other mascot placements retain their front-facing poses.
 
+## UI Opening and Closing Transitions
+
+All UI editing must include transitions for both expansion/opening and collapse/closing of affected sections, menus, drawers and dialogs. Keep content mounted until closing finishes; preserve explicit instant-action preferences, reduced motion, focus and rapid reversal. Follow `.cursor/rules/ui-transition-requirement.mdc`. This design rule does not authorize public deployment or native bundle synchronization.
+
 ## Reference-Site Comparison
 
 "Use as a reference" means implement the requested element, check it with Playwright MCP, correct mismatches and repeat the comparison until the requested appearance/behavior requirements pass, unless the user asks for review only. Define observable acceptance checks before tuning, preserve unrelated approved choices and do not stop at a report that it is merely close. Follow the reference rule's evidence and honest-blocker requirements.

@@ -18,6 +18,7 @@ Read [the reference findings](references/task-list-patterns.md) when selecting a
 - Separate filtering (“which tasks?”) from grouping (“how arranged?”). Keep Active/Today/Upcoming/Done discoverable. Grouping must not change task dates, class, priority or completion state.
 - Keep Calendar's existing date-scoped model groups. In the Tasks page, offer Plan, Class and Priority as view-only grouping choices. Each task appears once in that view; preserve sort order within a group.
 - Show a real disclosure chevron, readable group name and a count aligned at the right. All group headers should support keyboard activation, `aria-expanded` and `aria-controls`.
+- Include smooth expansion and closing transitions for every edited disclosure. Keep closing content mounted through its exit, support rapid reversal and reduced motion, and follow the project UI-transition rule.
 - Give empty categories no large blank card. Keep Completed quieter and initially folded in Calendar, while the Done filter remains available for reviewing finished tasks.
 - Use restrained category cues: red for overdue/deadline, blue for planned work, neutral for unscheduled, green for completed. Keep yellow for DuckPlan's primary/selected actions. Class colors retain their task meaning.
 

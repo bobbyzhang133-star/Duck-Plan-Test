@@ -1,0 +1,931 @@
+{
+  "runtime": "157.0.8103.79",
+  "disclosuresAndLibrary": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "config": {
+          "width": 1280
+        },
+        "status": "PASS",
+        "observations": [
+          {
+            "native": false,
+            "closed": 0,
+            "opening": {
+              "height": 325.75,
+              "state": "opening",
+              "open": true
+            },
+            "full": 456.3125,
+            "closing": {
+              "height": 130.5,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 47,
+            "opening": {
+              "height": 174.578125,
+              "state": "opening",
+              "open": true
+            },
+            "full": 225.875,
+            "closing": {
+              "height": 79.234375,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 121.3125,
+              "state": "opening",
+              "open": true
+            },
+            "full": 150,
+            "closing": {
+              "height": 78.609375,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 284.40625,
+              "state": "opening",
+              "open": true
+            },
+            "full": 336,
+            "closing": {
+              "height": 131.8125,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 182.90625,
+              "state": "opening",
+              "open": true
+            },
+            "full": 236.140625,
+            "closing": {
+              "height": 103.25,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 451.390625,
+              "state": "opening",
+              "open": true
+            },
+            "full": 612.28125,
+            "closing": {
+              "height": 151.1875,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": false,
+            "closed": 0,
+            "opening": {
+              "height": 635.234375,
+              "state": "opening",
+              "open": true
+            },
+            "full": 774.625,
+            "closing": {
+              "height": 139.375,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          }
+        ],
+        "menuOpening": 1,
+        "menuClosing": 1,
+        "libraryClosing": {
+          "open": true,
+          "inert": true
+        },
+        "swapping": {
+          "old": "closing",
+          "next": "opening"
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 390
+        },
+        "status": "PASS",
+        "observations": [
+          {
+            "native": false,
+            "closed": 0,
+            "opening": {
+              "height": 426.234375,
+              "state": "opening",
+              "open": true
+            },
+            "full": 597.09375,
+            "closing": {
+              "height": 107.453125,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 47,
+            "opening": {
+              "height": 222.4375,
+              "state": "opening",
+              "open": true
+            },
+            "full": 292.96875,
+            "closing": {
+              "height": 117.40625,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 178.421875,
+              "state": "opening",
+              "open": true
+            },
+            "full": 230,
+            "closing": {
+              "height": 101.484375,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 265.5625,
+              "state": "opening",
+              "open": true
+            },
+            "full": 352,
+            "closing": {
+              "height": 104.390625,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 185.65625,
+              "state": "opening",
+              "open": true
+            },
+            "full": 240.140625,
+            "closing": {
+              "height": 84.21875,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 491.4375,
+              "state": "opening",
+              "open": true
+            },
+            "full": 668.28125,
+            "closing": {
+              "height": 161.203125,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": false,
+            "closed": 0,
+            "opening": {
+              "height": 395.875,
+              "state": "opening",
+              "open": true
+            },
+            "full": 554.5,
+            "closing": {
+              "height": 158.609375,
+              "state": "closing",
+              "open": true
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          }
+        ],
+        "menuOpening": 1,
+        "menuClosing": 1,
+        "libraryClosing": {
+          "open": true,
+          "inert": true
+        },
+        "swapping": {
+          "old": "closing",
+          "next": "opening"
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 390,
+          "reduced": true
+        },
+        "status": "PASS",
+        "observations": [
+          {
+            "native": false,
+            "closed": 0,
+            "opening": {
+              "height": 597.09375,
+              "open": true
+            },
+            "full": 597.09375,
+            "closing": {
+              "height": 0,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 47,
+            "opening": {
+              "height": 292.96875,
+              "open": true
+            },
+            "full": 292.96875,
+            "closing": {
+              "height": 47,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 230,
+              "open": true
+            },
+            "full": 230,
+            "closing": {
+              "height": 50,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 352,
+              "open": true
+            },
+            "full": 352,
+            "closing": {
+              "height": 50,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 240.140625,
+              "open": true
+            },
+            "full": 240.140625,
+            "closing": {
+              "height": 50,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": true,
+            "closed": 50,
+            "opening": {
+              "height": 668.28125,
+              "open": true
+            },
+            "full": 668.28125,
+            "closing": {
+              "height": 50,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          },
+          {
+            "native": false,
+            "closed": 0,
+            "opening": {
+              "height": 554.5,
+              "open": true
+            },
+            "full": 554.5,
+            "closing": {
+              "height": 0,
+              "open": false
+            },
+            "end": {
+              "open": false,
+              "animations": 0
+            },
+            "rapidReversal": "PASS"
+          }
+        ],
+        "menuOpening": 0,
+        "menuClosing": 0,
+        "libraryClosing": null,
+        "swapping": {},
+        "errors": []
+      }
+    ]
+  },
+  "cloudCompletion": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "config": {
+          "width": 390,
+          "view": "tasks",
+          "cloud": true
+        },
+        "status": "PASS",
+        "before": 569.171875,
+        "frames": [
+          {
+            "time": 0.5,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 16.400000005960464,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 33.099999994039536,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 133.80000001192093,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 267.59999999403954,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 401,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 533.8000000119209,
+            "y": 523.2998046875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 1
+          },
+          {
+            "time": 667.4000000059605,
+            "y": 446.52520751953125,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 1
+          },
+          {
+            "time": 799.8000000119209,
+            "y": 424.6163330078125,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 1
+          },
+          {
+            "time": 933.8000000119209,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1067.4000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1200.800000011921,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1333.5,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1467.4000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1600.699999988079,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1734,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1866.800000011921,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 2000.4000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 2134,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 2266.5999999940395,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          }
+        ],
+        "completed": true,
+        "second": false,
+        "visible": false,
+        "artifacts": 0,
+        "focused": "8203a605-8d75-408e-bd07-42497384b813"
+      },
+      {
+        "config": {
+          "width": 390,
+          "view": "tasks",
+          "cloud": true,
+          "fail": true
+        },
+        "status": "PASS",
+        "before": 569.171875,
+        "frames": [
+          {
+            "time": 1.300000011920929,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 18.900000005960464,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 35.5,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 135.5,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 268.59999999403954,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 402.09999999403954,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 535.5999999940395,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 668.9000000059605,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 802.1999999880791,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 935.5,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1068.800000011921,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1202.0999999940395,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1335.800000011921,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1468.9000000059605,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1602.199999988079,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1735.300000011921,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1867.9000000059605,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 2001.9000000059605,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 2135.199999988079,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 2268.800000011921,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          }
+        ],
+        "completed": false,
+        "second": false,
+        "visible": true,
+        "artifacts": 0,
+        "focused": "c40edc3b-9dd6-432c-accb-bc984f37b698"
+      }
+    ]
+  },
+  "supplemental": {
+    "sidebar": {
+      "status": "PASS",
+      "width": 1280,
+      "closed": 76,
+      "opening": 144.359,
+      "open": 268,
+      "closing": 199.625,
+      "settled": 76
+    },
+    "phoneSheetAndMore": {
+      "status": "PASS",
+      "width": 390,
+      "sheetY": {
+        "open": 160,
+        "closing": 367.8178405761719,
+        "closed": 936,
+        "opening": 318.22796630859375
+      },
+      "moreClosing": {
+        "open": true,
+        "inert": true
+      },
+      "moreClosed": true
+    },
+    "templateSave": {
+      "status": "PASS",
+      "via": "real local UI",
+      "saved": true,
+      "dialogRemovedAfterExit": true
+    },
+    "goalHabitNotes": {
+      "status": "PASS",
+      "bothDirections": true
+    },
+    "goalAndNoteDialogs": {
+      "status": "PASS",
+      "retainedOpenAndInertDuringClosing": true
+    },
+    "rapidOpacityReversal": {
+      "status": "PASS",
+      "from": 0.644268,
+      "start": 0.644268
+    },
+    "resizeCleanup": {
+      "status": "PASS",
+      "closed": true,
+      "inlineStyleRestored": true
+    },
+    "panelReversal": {
+      "status": "PASS",
+      "selected": "templates",
+      "otherPanelHidden": true,
+      "temporaryStates": 0
+    },
+    "notesRerender": {
+      "status": "PASS",
+      "requestedClosePreservedDuringGoalProgressSave": true
+    }
+  },
+  "sourceAudit": [
+    {
+      "surface": "All native details: editor, dashboard Completed, template/resource shelves, goal/habit notes",
+      "implementation": "Shared reversible height and content-opacity controller; actual instances exercised across representative sections",
+      "status": "PASS"
+    },
+    {
+      "surface": "Calendar and Tasks category lists",
+      "implementation": "Shared controller, closing content retained and inert; normal/reduced/repeated toggles exercised",
+      "status": "PASS"
+    },
+    {
+      "surface": "Template menu and template/resource/detail/delete library dialogs",
+      "implementation": "Animated close with retained surface; shared popup opening; template save and Details tested",
+      "status": "PASS (resource/delete variants share audited lifecycle)"
+    },
+    {
+      "surface": "Task editor, Goal, Note, phone More, sidebar and task sheet",
+      "implementation": "Existing approved popup/layout motion retained and exercised",
+      "status": "PASS"
+    },
+    {
+      "surface": "Class editor and Calendar task/day/deadline previews",
+      "implementation": "Existing DuckPopupMotion open/close lifecycle, including escape/backdrop/afterClose; no change required",
+      "status": "SOURCE AUDITED; shared popup tests PASS, additional direct UI flows NOT RUN"
+    },
+    {
+      "surface": "Browser-owned select/date pickers and removed legacy date-only band",
+      "implementation": "Browser-managed or no active visible expansion control",
+      "status": "NOT APPLICABLE"
+    }
+  ],
+  "checks": {
+    "node": 56,
+    "syntax": "PASS",
+    "ruleFrontmatter": "PASS",
+    "diff": "PASS"
+  },
+  "notRun": [
+    "Native app/WKWebView",
+    "Physical phone/iPad",
+    "Installed PWA/offline install",
+    "WebKit/Firefox",
+    "Hosted account mutation"
+  ],
+  "publication": "Local original-preview only; native bundle unchanged",
+  "workspaceRule": "Parent Duck Plan/AGENTS.md updated in place in addition to this checkout's tracked rule"
+}

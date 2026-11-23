@@ -128,6 +128,8 @@
     let dialogBusy = false;
     let dialogSource = null;
     let dialogSourceKey = "";
+    let dialogAnchor = null;
+    const closingDialogs = new Set();
     let taskClassId = null;
     let templateMenu = null;
     let ownerKey = currentOwnerKey();
@@ -153,10 +155,18 @@
 
     function detachDialog() {
       const current = dialog;
+      for (const closing of closingDialogs) {
+        doc.defaultView?.DuckPopupMotion?.cancel(closing);
+        if (closing.open) closing.close();
+        closing.remove();
+      }
+      closingDialogs.clear();
+      if (current) doc.defaultView?.DuckPopupMotion?.cancel(current);
       dialog = null;
       dialogBusy = false;
       dialogSource = null;
       dialogSourceKey = "";
+      dialogAnchor = null;
       if (current?.open) current.close();
       current?.remove();
     }
@@ -171,7 +181,7 @@
       selectedTab = "assignments";
       taskClassId = null;
       pending.clear();
-      closeTemplateMenu();
+      closeTemplateMenu({ immediate: true });
     }
 
     function fail(error) {
@@ -213,13 +223,18 @@
       }).join("")}</div>`;
     }
 
-    function closeTemplateMenu({ restoreFocus = false } = {}) {
+    function closeTemplateMenu({ restoreFocus = false, immediate = false } = {}) {
       const current = templateMenu;
       if (!current) return;
       templateMenu = null;
-      current.animation?.cancel();
       current.trigger.setAttribute("aria-expanded", "false");
-      current.element.remove();
+      current.element.inert = true;
+      current.element.setAttribute("aria-hidden", "true");
+      current.element.removeAttribute("id");
+      const motion = doc.defaultView?.DuckExpansionMotion;
+      if (!immediate && motion) motion.overlay(current.element, false, () => current.element.remove());
+      else current.element.remove();
+      current.animation?.cancel();
       if (restoreFocus && current.trigger.isConnected) current.trigger.focus({ preventScroll: true });
     }
 
@@ -296,7 +311,8 @@
       for (const [id, context, calendar] of [["assignment-templates", "shelf", false], ["calendar-assignment-templates", "calendar-shelf", true]]) {
         const target = find(`#${id}`);
         if (!target) continue;
-        const open = Boolean(target.querySelector("details")?.open);
+        const details = target.querySelector("details");
+        const open = details ? doc.defaultView?.DuckExpansionMotion?.isExpanded(details) ?? details.open : false;
         const headingId = `${id}-heading`;
         const newButton = button("new-template", "", calendar ? "New" : "New template", { context, extra: 'aria-label="New assignment template"' });
         if (calendar) {
@@ -341,7 +357,8 @@
       const target = find("#task-class-resources");
       if (!target) return;
       const items = taskClassId ? resources(taskClassId) : [];
-      const open = Boolean(target.querySelector("details")?.open);
+      const details = target.querySelector("details");
+      const open = details ? doc.defaultView?.DuckExpansionMotion?.isExpanded(details) ?? details.open : false;
       target.hidden = !items.length;
       replace(target, items.length ? `<details class="library-task-resources" ${open ? "open" : ""}><summary data-library-focus="task:resources-summary">Resources for ${escapeHtml(className(taskClassId))} <span>${items.length}</span></summary>${resourceCards(items, false)}</details>` : "");
     }
@@ -387,15 +404,25 @@
       if (dialogBusy) return;
       const current = dialog;
       if (!current) return;
-      current.close();
-      current.remove();
+      const sourceKey = dialogSourceKey, sourceElement = dialogSource, anchor = dialogAnchor, owner = captureOwner();
       dialog = null;
-      const replacement = dialogSourceKey && [...doc.querySelectorAll("[data-library-focus]")].find(item => item.dataset.libraryFocus === dialogSourceKey);
-      const fallback = dialogSourceKey.startsWith("calendar") ? find('#calendar-assignment-templates [data-library-action="new-template"]') || find("#calendar-templates-tab") : /^(class|resources):/.test(dialogSourceKey) ? find("#library-class-select") : find('#assignment-templates [data-library-action="new-template"]');
-      const source = dialogSource?.isConnected ? dialogSource : replacement || fallback;
-      source?.focus({ preventScroll: true });
       dialogSource = null;
       dialogSourceKey = "";
+      dialogAnchor = null;
+      current.inert = true;
+      current.removeAttribute("id");
+      closingDialogs.add(current);
+      const finish = () => {
+        closingDialogs.delete(current);
+        if (current.open) current.close();
+        current.remove();
+        if (dialog || !isCurrentOwner(owner) || doc.querySelector("dialog[open]")) return;
+        const replacement = sourceKey && [...doc.querySelectorAll("[data-library-focus]")].find(item => item.dataset.libraryFocus === sourceKey);
+        const fallback = sourceKey.startsWith("calendar") ? find('#calendar-assignment-templates [data-library-action="new-template"]') || find("#calendar-templates-tab") : /^(class|resources):/.test(sourceKey) ? find("#library-class-select") : find('#assignment-templates [data-library-action="new-template"]');
+        (sourceElement?.isConnected ? sourceElement : replacement || fallback)?.focus({ preventScroll: true });
+      };
+      if (doc.defaultView?.DuckPopupMotion) doc.defaultView.DuckPopupMotion.close(current, anchor, finish);
+      else finish();
     }
 
     function classOptions(value, required = false) {
@@ -410,6 +437,7 @@
       const heading = viewing ? "Template details" : `${deleting ? "Delete" : item.id ? "Edit" : "New"} ${noun}`;
       dialogSource = source;
       dialogSourceKey = source?.dataset.libraryFocus || "";
+      dialogAnchor = doc.defaultView?.DuckPopupMotion?.capture(source);
       dialog = doc.createElement("dialog");
       dialog.className = "library-dialog";
       dialog.id = "planner-library-dialog";
@@ -495,6 +523,7 @@
       });
       refreshButtons(current);
       current.showModal();
+      doc.defaultView?.DuckPopupMotion?.open(current, dialogAnchor);
       (deleting || viewing ? current.querySelector("[data-library-close]") : current.querySelector("input,select"))?.focus();
     }
 
@@ -593,7 +622,7 @@
         destroyed = true;
         ownerGeneration += 1;
         pending.clear();
-        closeTemplateMenu();
+        closeTemplateMenu({ immediate: true });
         detachDialog();
         doc.removeEventListener("pointerdown", onOutsideMenuPointer, true);
         doc.removeEventListener("scroll", onMenuViewportChange, true);

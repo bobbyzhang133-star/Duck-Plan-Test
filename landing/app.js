@@ -605,6 +605,7 @@ async function completeAllOverdue(source) {
 }
 
 function renderDailyPlan() {
+  window.DuckExpansionMotion?.settleWithin(els.taskPanel);
   renderOverdueActions();
   const groups = Model.groupForDate(tasks, selectedDate, nowKey());
   const todayItems = tasks.filter(task => task.dueDate === selectedDate || Model.scheduledParts(task)?.date === selectedDate);
@@ -653,6 +654,7 @@ function allTaskMarkup(task) {
   </article>`;
 }
 function renderAllTasks() {
+  window.DuckExpansionMotion?.settleWithin(els.allList);
   const sorted = [...tasks].sort((a, b) => `${a.dueDate || "9999"}${a.dueTime || "99"}`.localeCompare(`${b.dueDate || "9999"}${b.dueTime || "99"}`));
   const searched = sorted.filter(task => !searchTerm || `${task.title} ${classInfo(task).name}`.toLowerCase().includes(searchTerm));
   const matches = (task, filter) => {
@@ -1074,7 +1076,9 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   const restoreCompletionFocus = window.DuckTaskCompletion?.preserveFocus();
   if (foldCompletedAfterFinish) {
     collapsed.completed = true;
-    document.querySelector(".dashboard-completed").open = false;
+    const dashboardCompleted = document.querySelector(".dashboard-completed");
+    if (window.DuckExpansionMotion) window.DuckExpansionMotion.setExpanded(dashboardCompleted, false);
+    else dashboardCompleted.open = false;
     foldCompletedAfterFinish = false;
   }
   renderAccountIdentity(); renderDailyPlan(); renderAllTasks(); renderClasses(); renderClassOptions();
@@ -1701,7 +1705,15 @@ document.addEventListener("click", (event) => {
     document.querySelector("#class-library")?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     document.querySelector("#library-class-select")?.focus({ preventScroll: true });
   }
-  const collapse = event.target.closest("[data-collapse]"); if (collapse) { window.DuckTaskCompletion?.cancel(); collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
+  const collapse = event.target.closest("[data-collapse]");
+  if (collapse) {
+    const name = collapse.dataset.collapse;
+    window.DuckTaskCompletion?.cancel();
+    collapsed[name] = !collapsed[name];
+    const button = document.querySelector(`[data-collapse="${name}"]`);
+    button.closest(".task-section").classList.toggle("collapsed", collapsed[name]);
+    window.DuckExpansionMotion.setExpanded(els.lists[name], !collapsed[name], { trigger: button });
+  }
   const groupToggle = event.target.closest("[data-task-group-toggle]");
   if (groupToggle) {
     const key = groupToggle.dataset.taskGroupToggle;
@@ -1710,8 +1722,7 @@ document.addEventListener("click", (event) => {
     if (!button) return;
     const open = button.getAttribute("aria-expanded") !== "true";
     if (open) collapsedTaskGroups.delete(key); else collapsedTaskGroups.add(key);
-    button.setAttribute("aria-expanded", String(open));
-    document.getElementById(button.getAttribute("aria-controls")).hidden = !open;
+    window.DuckExpansionMotion.setExpanded(document.getElementById(button.getAttribute("aria-controls")), open, { trigger: button });
   }
 });
 document.addEventListener("change", (event) => {
@@ -2273,6 +2284,7 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  if (reason === "context") window.DuckExpansionMotion?.settleWithin();
   if (["context", "error"].includes(reason)) window.DuckTaskCompletion?.cancel({ flush: false });
   if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); }
   const owner = store.user?.id || "local";

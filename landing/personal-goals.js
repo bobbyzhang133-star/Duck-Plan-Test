@@ -279,7 +279,10 @@
         observedToday = today();
       }
       const focused = mount.contains(doc.activeElement) ? doc.activeElement.dataset.pgFocus : "";
-      const openNotes = new Set([...mount.querySelectorAll("[data-pg-notes][open]")].map(item => item.dataset.pgNotes));
+      const openNotes = new Set([...mount.querySelectorAll("[data-pg-notes]")]
+        .filter(item => doc.defaultView?.DuckExpansionMotion?.isExpanded(item) ?? item.open)
+        .map(item => item.dataset.pgNotes));
+      doc.defaultView?.DuckExpansionMotion?.settleWithin(mount);
       const goals = store.listGoals(), habits = store.listHabits(), checkins = store.listHabitCheckins();
       const dates = weekDates(selectedWeek);
       mount.innerHTML = `${!available() ? '<p class="pg-unavailable" role="status">Saved goals and habits are not available on this server yet. Your local data stays safe on this device.</p>' : ""}<div class="pg-dashboard">

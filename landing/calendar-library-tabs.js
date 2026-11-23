@@ -34,10 +34,12 @@
       if (destroyed || !panels[name]) return;
       const changed = name !== selected;
       const leavingContent = changed && panels[selected].contains(doc.activeElement);
+      const previous = panels[selected];
       if (changed) positions[selected] = scroller.scrollTop;
       selected = name;
       if (reset) { positions.tasks = 0; positions.templates = 0; }
-      apply();
+      if (changed && !reset && doc.defaultView?.DuckExpansionMotion) doc.defaultView.DuckExpansionMotion.swapPanels(previous, panels[selected], apply);
+      else apply();
       if (changed || reset) {
         scroller.scrollTop = positions[selected];
         onChange(selected);

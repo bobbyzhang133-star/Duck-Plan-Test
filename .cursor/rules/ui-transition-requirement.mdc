@@ -1,0 +1,13 @@
+---
+description: Include opening and closing transitions when editing expandable DuckPlan UI.
+alwaysApply: true
+---
+
+# UI opening and closing transitions
+
+- When creating or editing an expandable section, menu, drawer or dialog, implement a visible transition in both directions. An opening-only animation is incomplete.
+- Start closing motion before applying `hidden`, closing/removing the element or retiring its layout space. Preserve final layout without a snap and move related headings/dividers with their content.
+- Reuse the approved motion language and existing transition helpers. Honor explicit requests for instant actions and reduced-motion settings.
+- Keep interactions reversible under rapid clicks, clean up interrupted animations on navigation/context changes and preserve focus, `aria-expanded`, inert state and keyboard access.
+- Animate presentation without delaying task persistence. Verify opening, closing, interruption, responsive bounds and reduced motion in a real browser.
+- Website edits do not authorize updating the frozen native bundle; follow the mobile release gate.
