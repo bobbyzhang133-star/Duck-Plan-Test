@@ -1,0 +1,1234 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "width": 1156,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "before": 758.703125,
+      "frames": [
+        {
+          "time": 0.29999998211860657,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 16.299999982118607,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 33.599999994039536,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 132.89999997615814,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 266.89999997615814,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 400.5,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 566.8999999761581,
+          "y": 697.6417846679688,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 1
+        },
+        {
+          "time": 699.8999999761581,
+          "y": 595.4607543945312,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 834,
+          "y": 566.2952880859375,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 967.1999999880791,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1100.5999999940395,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1234.699999988079,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1367.0999999940395,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1499.2999999821186,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1633.7999999821186,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1767.0999999940395,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1900.3999999761581,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2033.699999988079,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2167,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2299.5999999940395,
+          "y": 564.546875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        }
+      ],
+      "completed": true,
+      "second": false,
+      "visible": false,
+      "artifacts": 0,
+      "focused": "completion-20261122-7-0"
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks"
+      },
+      "status": "PASS",
+      "before": 674.34375,
+      "frames": [
+        {
+          "time": 1.199999988079071,
+          "y": 674.34375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 17.19999998807907,
+          "y": 674.34375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 34.599999994039536,
+          "y": 674.34375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 134.40000000596046,
+          "y": 674.34375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 268.40000000596046,
+          "y": 674.34375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 401.59999999403954,
+          "y": 674.34375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 535,
+          "y": 627.8469848632812,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 1
+        },
+        {
+          "time": 668,
+          "y": 550.01708984375,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 801.5,
+          "y": 527.8009643554688,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 934.5999999940395,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1067.800000011921,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1202,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1333.9000000059605,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1467.4000000059605,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1601.300000011921,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1734,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1867.300000011921,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2001.300000011921,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2134.199999988079,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2267.9000000059605,
+          "y": 526.46875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        }
+      ],
+      "completed": true,
+      "second": false,
+      "visible": false,
+      "artifacts": 0,
+      "focused": "completion-20261122-7-0"
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "before": 640.03125,
+      "frames": [
+        {
+          "time": 4.199999988079071,
+          "y": 640.03125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 20.799999982118607,
+          "y": 640.03125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 36.599999994039536,
+          "y": 640.03125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 137.2999999821186,
+          "y": 640.03125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 270.89999997615814,
+          "y": 640.03125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 404.19999998807907,
+          "y": 640.03125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 537.1999999880791,
+          "y": 596.373291015625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 1
+        },
+        {
+          "time": 670.7999999821186,
+          "y": 523.0346069335938,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 804.0999999940395,
+          "y": 502.16015625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 936.6999999880791,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1070.8999999761581,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1203.5,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1336.8999999761581,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1471,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1604,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1737.5999999940395,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1871,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2004.0999999940395,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2137.5999999940395,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2271,
+          "y": 500.90625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        }
+      ],
+      "completed": true,
+      "second": false,
+      "visible": false,
+      "artifacts": 0,
+      "focused": "completion-20261122-7-0"
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "home"
+      },
+      "status": "PASS",
+      "before": 416.09375,
+      "frames": [
+        {
+          "time": 0.10000002384185791,
+          "y": 416.09375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 13.100000023841858,
+          "y": 416.09375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 29.5,
+          "y": 416.09375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 129.80000001192093,
+          "y": 416.09375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 263.2000000178814,
+          "y": 416.09375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 396.30000001192093,
+          "y": 416.09375,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 546,
+          "y": 374.9517822265625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 1
+        },
+        {
+          "time": 679.4000000059605,
+          "y": 266.6754150390625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 813.6000000238419,
+          "y": 232.96929931640625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 947.3000000119209,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1081,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1213.7000000178814,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1347.1000000238419,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1480,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1613.5,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1746.4000000059605,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1879.6000000238419,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2013,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2146.100000023842,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2279.5,
+          "y": 229.890625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        }
+      ],
+      "completed": true,
+      "second": false,
+      "visible": false,
+      "artifacts": 0,
+      "focused": "completion-20261122-7-2"
+    },
+    {
+      "config": {
+        "width": 1156,
+        "view": "calendar",
+        "rapid": true
+      },
+      "status": "PASS",
+      "before": 758.703125,
+      "frames": [
+        {
+          "time": 2.300000011920929,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 18.19999998807907,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 35.5,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 135.59999999403954,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 2,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 269.5,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 2,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 402.80000001192093,
+          "y": 758.703125,
+          "sourcePresent": true,
+          "echoes": 2,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 564.5,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 685.6999999880791,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 819.0999999940395,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 952.1999999880791,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1084.5,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1218.5,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1352.300000011921,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1485.199999988079,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1618.9000000059605,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1751.5,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1885.9000000059605,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2019.199999988079,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2152.4000000059605,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2285.0999999940395,
+          "y": -17,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        }
+      ],
+      "completed": true,
+      "second": true,
+      "visible": false,
+      "artifacts": 0,
+      "focused": "completion-20261122-7-0"
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks",
+        "cloud": true
+      },
+      "status": "PASS",
+      "before": 433.671875,
+      "frames": [
+        {
+          "time": 1.5999999940395355,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 18.200000017881393,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 34.099999994039536,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 135.30000001192093,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 268.80000001192093,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 402,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 535.2000000178814,
+          "y": 387.18951416015625,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 1
+        },
+        {
+          "time": 668.0999999940395,
+          "y": 309.3505859375,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 1
+        },
+        {
+          "time": 801.7000000178814,
+          "y": 287.1356201171875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 1
+        },
+        {
+          "time": 934.9000000059605,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1068.5,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1201.800000011921,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1335.300000011921,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1468.5,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1601.7000000178814,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1734.7000000178814,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 1868.5,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2001.800000011921,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2135.2000000178814,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        },
+        {
+          "time": 2268.5,
+          "y": 285.796875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": true,
+          "animations": 0
+        }
+      ],
+      "completed": true,
+      "second": false,
+      "visible": false,
+      "artifacts": 0,
+      "focused": "1dc03235-3c29-4063-9cd5-f426b4f521b7"
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks",
+        "cloud": true,
+        "fail": true
+      },
+      "status": "PASS",
+      "before": 433.671875,
+      "frames": [
+        {
+          "time": 0.5,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 16.900000005960464,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 33.69999998807907,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 133.69999998807907,
+          "y": 433.671875,
+          "sourcePresent": true,
+          "echoes": 1,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 266.2999999821186,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 400.5,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 533.9000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 667.0999999940395,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 800.5999999940395,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 933.6999999880791,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1066.9000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1200.4000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1333.9000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1467.199999988079,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1600.5999999940395,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1733.9000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 1867,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2000.2999999821186,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2132.9000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        },
+        {
+          "time": 2266.9000000059605,
+          "y": 433.671875,
+          "sourcePresent": false,
+          "echoes": 0,
+          "duck": false,
+          "animations": 0
+        }
+      ],
+      "completed": false,
+      "second": false,
+      "visible": true,
+      "artifacts": 0,
+      "focused": "bda8b7fb-8456-4770-ab88-c7bb2a3d598b"
+    }
+  ]
+}

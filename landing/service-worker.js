@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-original-duck-preview-v129";
+const CACHE_VERSION = "duckplan-app-original-duck-preview-v130";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -14,6 +14,7 @@ const APP_SHELL = [
   "./duck-mascot.js",
   "./duck-interactions.js",
   "./completion-render-hold.js",
+  "./completion-list-motion.js",
   "./completion-demo.js",
   "./planner-clarity.js",
   "./planner-presentation.js",

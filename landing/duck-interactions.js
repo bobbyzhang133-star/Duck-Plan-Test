@@ -18,11 +18,23 @@
   const operations = new Set(), checkboxOperations = new WeakMap();
   const completionContext = () => `${store.mode}:${store.user?.id || "local"}:${plannerOwnerVersion}:${document.body.dataset.view}`;
   const renderHold = window.DuckCompletionRenderHold.create({ getContext: completionContext });
+  const listMotion = window.DuckCompletionListMotion.create({
+    getContext: completionContext, enabled: () => motionAllowed(),
+    getRoot: () => document.querySelector(document.body.dataset.view === "calendar" ? "#daily-task-panel" : document.body.dataset.view === "home" ? "#view-home" : "#view-tasks")
+  });
   function cancelCompletions(options) {
+    listMotion.cancel(options);
     renderHold.cancel(options);
     for (const operation of [...operations]) operation.cancel();
   }
   window.DuckTaskCompletion = Object.freeze({
+    deferRender: callback => renderHold.deferRender(callback) || listMotion.deferRender(() => {
+      const focused = document.activeElement, view = document.body.dataset.view;
+      const taskControl = focused?.matches("input[data-task-id],button[data-edit-task]");
+      const keyboard = taskControl && focused.matches(":focus-visible");
+      callback();
+      if (taskControl) restoreCompletionFocus(focused, keyboard, view);
+    }),
     preserveFocus: () => {
       if (!operations.size) return null;
       const focused = document.activeElement, view = document.body.dataset.view;
@@ -258,7 +270,7 @@
     (replacement || fallback)?.focus({ preventScroll: true });
   }
 
-  // Capture before saving. The list re-renders immediately while the detached echo finishes.
+  // Save immediately; hold the list until the echo fades, then slide surviving cards upward.
   document.addEventListener("change", (event) => {
     const checkbox = event.target.closest("input[data-task-id]");
     if (!checkbox) return;
@@ -350,11 +362,13 @@
           clean({ restore: interrupted });
         },
         beforeRender() {
+          listMotion.capture();
           const active = document.activeElement;
           focusAtRender = active?.matches("input[data-task-id],button[data-edit-task]") ? active : null;
           focusWasVisible = focusAtRender?.matches(":focus-visible");
         },
         afterRelease() {
+          listMotion.play();
           restoreSource();
           settled = true;
           if (current()) { restoreCompletionFocus(focusAtRender || checkbox, Boolean(focusAtRender) && focusWasVisible, view); react(); }

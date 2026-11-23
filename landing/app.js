@@ -1050,6 +1050,7 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   const unfinishedBefore = new Set(tasks.filter(task => !task.completed).map(task => task.id));
   tasks = store.listItems();
   if (tasks.some(task => task.completed && unfinishedBefore.has(task.id))) foldCompletedAfterFinish = true;
+  if (window.DuckTaskCompletion?.deferRender(() => renderAll({ autoScrollCalendar }))) return;
   const restoreCompletionFocus = window.DuckTaskCompletion?.preserveFocus();
   if (foldCompletedAfterFinish) {
     collapsed.completed = true;
