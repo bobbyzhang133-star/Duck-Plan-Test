@@ -187,9 +187,10 @@
     function renderDeadlineGroup(context, group) {
       const fields = context.fields, count = group.tasks.length, formatTime = host.formatTime || (value => value);
       const work = context.type === "day-list" && context.kind === "work", noun = work ? "work session" : "deadline";
+      const action = context.type === "deadline-group" ? "Edit task" : "View task details";
       text(fields.title, `${count} ${noun}${count === 1 ? "" : "s"}`);
       text(fields.meta, (host.formatLongDate || (value => value))(context.date));
-      text(fields.status, count ? `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to view its details.` : `No remaining ${work ? "work sessions" : "deadlines"} for this day.`);
+      text(fields.status, count ? `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to ${context.type === "deadline-group" ? "edit it" : "view its details"}.` : `No remaining ${work ? "work sessions" : "deadlines"} for this day.`);
       const signature = JSON.stringify(group.tasks.map(task => String(task.id)));
       const focusedID = doc.activeElement?.dataset?.deadlinePreviewTask;
       for (const task of group.tasks) {
@@ -203,7 +204,7 @@
         const time = context.type === "day-list" ? listTime(context, task) : formatTime(task.dueTime);
         text(row.title, task.title || "Untitled task"); text(row.time, time);
         row.time.setAttribute("datetime", work ? `${context.date}T${model.scheduledParts(task).time}` : task.dueTime ? `${context.date}T${task.dueTime}` : context.date);
-        row.button.setAttribute("aria-label", `${task.title || "Untitled task"}. ${work ? "Work" : "Deadline"}: ${time}. View task details.`);
+        row.button.setAttribute("aria-label", `${task.title || "Untitled task"}. ${work ? "Work" : "Deadline"}: ${time}. ${action}.`);
       }
       if (signature !== context.rowSignature) {
         fields.list.textContent = "";
@@ -225,7 +226,10 @@
       close({ restoreFocus: false, afterClose: () => {
         if (!sameOwner(context) || !latest()?.tasks.some(task => String(task.id) === id)) return;
         host.onSelectTask?.(id);
-        if (sameOwner(context)) open(id, sourceFor(context) || doc.querySelector("#calendar-today"));
+        if (!sameOwner(context)) return;
+        const source = sourceFor(context) || doc.querySelector("#calendar-today");
+        if (context.type === "deadline-group") host.openTask?.({ id, source, fade: true });
+        else open(id, source);
       } });
     }
     function positionDayList(context) {

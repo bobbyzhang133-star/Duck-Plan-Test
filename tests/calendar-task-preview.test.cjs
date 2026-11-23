@@ -275,20 +275,19 @@ test("a grouped deadline list uses plaintext exact times, current unfinished tas
   assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
 });
 
-test("choosing a grouped deadline waits for closing and opens its compact preview without a write", () => {
+test("choosing a grouped deadline waits for closing and opens its editor without a write", () => {
   const f = fixture({ deferredClose: true }); f.replaceTask("beta", { dueDate: "2030-05-02", dueTime: "00:15" });
   const group = f.group(); f.api.openDeadlineGroup(group, group.source);
   const list = f.dialog(), entry = list.querySelectorAll(".calendar-deadline-group-item")[1];
   list.fire("click", { target: entry });
   assert.equal(f.dialog(), list); assert.equal(list.inert, true); assert.equal(f.calls.length, 0);
-  assert.equal(f.selections.length, 0); f.closing.shift()();
-  assert.equal(f.dialog().classList.contains("calendar-deadline-group-preview"), false);
-  assert.equal(f.dialog().querySelector("#calendar-preview-title").textContent, "Beta");
-  assert.deepEqual(f.selections, ["beta"]); assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
-  assert.equal(group.source.getAttribute("aria-expanded"), "false");
+  assert.equal(f.selections.length, 0); assert.equal(f.editors.length, 0);
   group.source.remove(); const replacement = f.doc.createElement("button"); replacement.dataset = { ...group.source.dataset }; f.calendar.append(replacement);
-  f.api.close(); f.closing.shift()();
-  assert.equal(f.doc.activeElement, replacement, "task preview should return to a re-rendered group trigger");
+  f.closing.shift()();
+  assert.equal(f.dialog(), null);
+  assert.deepEqual(f.selections, ["beta"]); assert.equal(f.calls.length, 0);
+  assert.deepEqual(f.editors, [{ id: "beta", source: replacement, fade: true }]);
+  assert.equal(replacement.getAttribute("aria-expanded"), "false");
 });
 
 test("group sync re-reads canonical tasks, preserves live row focus, filters completed/deleted entries and closes a missing group", () => {
@@ -319,7 +318,7 @@ test("a delayed grouped-deadline handoff cannot cross an owner change or replace
     f.api.open("beta", f.source); const next = f.dialog();
     f.closing.shift()();
     assert.equal(f.dialog(), next); assert.equal(next.querySelector("#calendar-preview-title").textContent, "Beta");
-    assert.equal(f.selections.length, 0); assert.equal(f.calls.length, 0);
+    assert.equal(f.selections.length, 0); assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
   }
 });
 

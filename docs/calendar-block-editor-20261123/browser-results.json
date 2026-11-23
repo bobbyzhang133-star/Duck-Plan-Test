@@ -1,0 +1,56 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local demo",
+  "results": [
+    {
+      "config": {
+        "width": 1440
+      },
+      "status": "PASS",
+      "actions": [
+        "day work",
+        "day deadline",
+        "week work",
+        "week deadline",
+        "Grouped deadline choice to editor",
+        "Day Work count opens its list",
+        "Month work",
+        "Month deadline",
+        "Month editor save persists after reload"
+      ],
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "phone": true
+      },
+      "status": "PASS",
+      "actions": [
+        "day work",
+        "day deadline",
+        "week work",
+        "week deadline",
+        "Month work agenda",
+        "Month deadline agenda"
+      ],
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "reduced": true
+      },
+      "status": "PASS",
+      "actions": [
+        "day work",
+        "day deadline",
+        "week work",
+        "week deadline",
+        "Month work",
+        "Month deadline"
+      ],
+      "errors": []
+    }
+  ]
+}

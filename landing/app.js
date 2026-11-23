@@ -1689,11 +1689,7 @@ document.addEventListener("click", (event) => {
   if (calendarItem) {
     const taskId = calendarItem.dataset.selectTask;
     if (selectedTaskId !== taskId) selectTask(taskId);
-    if (calendarView === "day" && calendarItem.matches(".calendar-event-block")) {
-      openModal({ id: taskId, source: calendarItem, fade: true });
-    } else {
-      calendarTaskPreview.open(taskId, calendarItem);
-    }
+    openModal({ id: taskId, source: calendarItem, fade: true });
     return;
   }
   const overflow = event.target.closest("[data-deadline-overflow]");
