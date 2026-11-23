@@ -335,6 +335,10 @@
       const error = node("p", "calendar-preview-error"); error.setAttribute("role", "alert"); error.hidden = true;
       const actions = node("footer", "calendar-preview-actions"), edit = node("button", "secondary-button", "Edit"), reschedule = node("button", "secondary-button", "Reschedule"), completeButton = node("button", "primary-button", "Mark complete");
       for (const [button, name] of [[edit, "edit"], [reschedule, "reschedule"], [completeButton, "complete"]]) { button.type = "button"; button.id = `calendar-preview-${name}`; }
+      edit.dataset.buttonIcon = "pen";
+      edit.dataset.buttonTone = "quiet";
+      reschedule.dataset.buttonIcon = "calendar-plus";
+      completeButton.dataset.buttonIcon = "check";
       actions.append(edit, reschedule, completeButton); card.append(heading, status, dates, warning, notesSection, error, actions); element.append(card);
       const context = { id, source, kind: sourceKind(source), owner: ownerKey(), view: viewKey(), generation: ++generation, element,
         returnGroup: source?.dataset?.timedDeadlineGroup ? { key: source.dataset.timedDeadlineGroup, date: source.dataset.deadlineDate } : null,

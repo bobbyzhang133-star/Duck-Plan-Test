@@ -1,0 +1,117 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "isolated local demo",
+  "results": [
+    {
+      "config": {
+        "width": 1440
+      },
+      "status": "PASS",
+      "verifiedControls": {
+        "Calendar controls": 5,
+        "Edit dialog actions": 4,
+        "Add task dialog actions": 3,
+        "Priority matrix": 22,
+        "Tasks list": 4,
+        "Settings actions": 6
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "dark": true
+      },
+      "status": "PASS",
+      "verifiedControls": {
+        "Calendar controls": 5,
+        "Edit dialog actions": 4,
+        "Add task dialog actions": 3,
+        "Priority matrix": 20,
+        "Tasks list": 4,
+        "Settings actions": 6
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "touch": true
+      },
+      "status": "PASS",
+      "verifiedControls": {
+        "Calendar controls": 1,
+        "Edit dialog actions": 4,
+        "Add task dialog actions": 3,
+        "Priority matrix": 20,
+        "Tasks list": 4,
+        "Settings actions": 6
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 320,
+        "touch": true,
+        "reduced": true
+      },
+      "status": "PASS",
+      "verifiedControls": {
+        "Calendar controls": 1,
+        "Edit dialog actions": 4,
+        "Add task dialog actions": 3,
+        "Priority matrix": 20,
+        "Tasks list": 4,
+        "Settings actions": 6
+      },
+      "errors": []
+    }
+  ],
+  "additional": [
+    "320px and 390px touch: Template menu, Schedule, New and Edit, Goal/Habit add/edit/delete forms and Note add/open/delete forms and cancel flows. No clipping or browser errors."
+  ],
+  "referenceBefore": [
+    {
+      "name": "Fluent",
+      "url": "https://fluent2.microsoft.design/components/web/react/core/button/usage",
+      "renderedControls": 0
+    },
+    {
+      "name": "Primer",
+      "url": "https://primer.style/product/components/button/",
+      "renderedControls": 14
+    },
+    {
+      "name": "Atlassian",
+      "url": "https://atlassian.design/components/button/examples",
+      "renderedControls": 8
+    },
+    {
+      "name": "GOV.UK",
+      "url": "https://design-system.service.gov.uk/components/button/",
+      "renderedControls": 10
+    }
+  ],
+  "referenceAfter": [
+    {
+      "name": "Fluent",
+      "url": "https://fluent2.microsoft.design/components/web/react/core/button/usage",
+      "renderedControls": 2
+    },
+    {
+      "name": "Primer",
+      "url": "https://primer.style/product/components/button/",
+      "renderedControls": 14
+    },
+    {
+      "name": "Atlassian",
+      "url": "https://atlassian.design/components/button/examples",
+      "renderedControls": 8
+    },
+    {
+      "name": "GOV.UK",
+      "url": "https://design-system.service.gov.uk/components/button/",
+      "renderedControls": 10
+    }
+  ]
+}

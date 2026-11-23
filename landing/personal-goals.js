@@ -98,7 +98,15 @@
     const activeOwner = owner => !destroyed && owner.key === currentOwner && owner.key === ownerKey() && owner.generation === generation;
     const activeDialog = state => state === dialog && activeOwner(state.owner);
     const motion = () => win.DuckPopupMotion;
-    const button = (action, id, label, primary = false) => `<button type="button" class="${primary ? "primary-button" : "secondary-button"} pg-button" data-pg-action="${action}" data-pg-id="${escapeHtml(id)}" data-pg-focus="${action}:${escapeHtml(id)}" ${!available() ? "disabled" : ""}>${label}</button>`;
+    const buttonDesign = {
+      "add-goal": 'data-button-icon="plus"',
+      "add-habit": 'data-button-icon="plus"',
+      "edit-goal": 'data-button-icon="pen" data-button-tone="quiet"',
+      "edit-habit": 'data-button-icon="pen" data-button-tone="quiet"',
+      "delete-goal": 'data-button-icon="trash" data-button-tone="danger"',
+      "delete-habit": 'data-button-icon="trash" data-button-tone="danger"',
+    };
+    const button = (action, id, label, primary = false) => `<button type="button" class="${primary ? "primary-button" : "secondary-button"} pg-button" data-pg-action="${action}" data-pg-id="${escapeHtml(id)}" data-pg-focus="${action}:${escapeHtml(id)}" ${!available() ? "disabled" : ""} ${buttonDesign[action] || ""}>${label}</button>`;
     const formatDate = (value, options = {}) => new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", timeZone: "UTC", ...options }).format(dateObject(value));
 
     function report(error) { if (host.reportError) host.reportError(error); else host.showToast?.(error.message || "Could not save. Please try again."); }
@@ -210,7 +218,7 @@
         }
       });
     }
-    const actions = label => `<p class="pg-form-error" role="alert" hidden></p><div class="pg-dialog-actions"><button type="button" class="secondary-button" data-pg-close>Cancel</button><button type="submit" class="primary-button">${label}</button></div>`;
+    const actions = (label, deleting = false) => `<p class="pg-form-error" role="alert" hidden></p><div class="pg-dialog-actions"><button type="button" class="secondary-button" data-button-tone="quiet" data-pg-close>Cancel</button><button type="submit" class="${deleting ? "danger-button" : "primary-button"}" data-button-icon="${deleting ? "trash" : "check"}">${label}</button></div>`;
 
     function openGoal({ id, source } = {}) {
       syncOwner();
@@ -240,9 +248,8 @@
     function confirmDelete(kind, id, source) {
       const item = (kind === "goal" ? store.listGoals() : store.listHabits()).find(row => row.id === id);
       if (!item) return;
-      const state = makeDialog(`Delete ${kind}`, `<form novalidate><p class="pg-delete-copy">Delete <strong>${escapeHtml(item.title)}</strong> and its ${kind === "goal" ? "progress" : "saved check-ins"}?</p>${actions(`Delete ${kind}`)}</form>`, source);
+      const state = makeDialog(`Delete ${kind}`, `<form novalidate><p class="pg-delete-copy">Delete <strong>${escapeHtml(item.title)}</strong> and its ${kind === "goal" ? "progress" : "saved check-ins"}?</p>${actions(`Delete ${kind}`, true)}</form>`, source);
       if (state) {
-        state.element.querySelector('button[type="submit"]').className = "danger-button";
         handleSubmit(state, () => id, value => kind === "goal" ? store.deleteGoal(value) : store.deleteHabit(value), `${kind === "goal" ? "Goal" : "Habit"} deleted.`);
       }
     }

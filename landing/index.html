@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="./calendar-task-preview.css?v=due-header-tints-20261120" />
     <link rel="stylesheet" href="./task-editor.css?v=section-tinted-fields-20261120" />
     <link rel="stylesheet" href="./task-list-categories.css?v=purple-task-tints-20261123" />
+    <link rel="stylesheet" href="./planner-actions.css?v=button-design-20261123" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -64,7 +65,7 @@
             <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">Search tasks</span><input id="global-search" type="search" placeholder="Search tasks" autocomplete="off" /></label>
 
             <button class="icon-button" type="button" id="notification-button" aria-label="Open deadline reminder settings" title="Deadline reminders"><span aria-hidden="true">◷</span></button>
-            <button class="primary-button" type="button" id="open-task-modal">＋ Add task</button>
+            <button class="primary-button" type="button" id="open-task-modal" data-button-icon="plus">Add task</button>
           </div>
           <span class="topbar-divider" aria-hidden="true"></span>
         </header>
@@ -77,19 +78,19 @@
               <p class="section-helper" id="dashboard-priority-copy"></p>
               <div id="dashboard-task-list" class="dashboard-task-list"></div>
               <details class="dashboard-completed"><summary id="dashboard-completed-label">Completed</summary><div id="dashboard-completed-list"></div></details>
-              <div class="dashboard-panel-footer"><button class="text-link" type="button" data-go="tasks">View all tasks <span aria-hidden="true">→</span></button><button class="text-link" type="button" id="dashboard-add-task">＋ Add task</button></div>
+              <div class="dashboard-panel-footer"><button class="text-link" type="button" data-go="tasks">View all tasks <span aria-hidden="true">→</span></button><button class="text-link" type="button" id="dashboard-add-task" data-button-icon="plus">Add task</button></div>
             </section>
             <div class="dashboard-side">
               <section class="panel dashboard-progress" aria-labelledby="dashboard-progress-heading"><div class="panel-heading"><div><h2 id="dashboard-progress-heading">Daily progress</h2></div><div class="pond-progress-ring"><span class="progress-number" id="dashboard-percent">0%</span></div></div><div class="progress-pond" id="progress-pond" aria-hidden="true"><span class="pond-cloud pond-cloud-one"></span><span class="pond-cloud pond-cloud-two"></span><span class="pond-reeds reeds-left"></span><span class="pond-reeds reeds-right"></span><div class="pond-water"><span class="pond-waterline"></span><span class="pond-ripple ripple-one"></span><span class="pond-ripple ripple-two"></span></div><div class="pond-duck-track"><div id="pond-duck" class="pond-duck" data-duck-state="swimming"></div></div><span class="pond-marker marker-start">Start</span><span class="pond-marker marker-finish">A little further</span></div><div id="dashboard-progress-bar" class="daily-progress-track" role="progressbar" aria-label="Tasks completed today" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><p class="section-helper" id="dashboard-progress-copy"></p>
                 <div class="daily-target-summary"><span id="daily-target-copy"></span><span class="quiet-badge" id="daily-target-status"></span></div>
-                <details class="plain-disclosure" id="daily-target-options"><summary>Change daily target</summary><form id="daily-target-form"><label for="daily-target-input">Tasks to complete each day</label><div class="inline-form"><input id="daily-target-input" type="number" min="1" max="20" required value="3" /><button class="secondary-button" type="submit">Set target</button></div><p class="section-helper">Saved only in this browser. Counts use your actual completed tasks.</p><p id="daily-target-feedback" class="field-feedback" role="status"></p></form></details>
+                <details class="plain-disclosure" id="daily-target-options"><summary>Change daily target</summary><form id="daily-target-form"><label for="daily-target-input">Tasks to complete each day</label><div class="inline-form"><input id="daily-target-input" type="number" min="1" max="20" required value="3" /><button class="secondary-button" type="submit" data-button-icon="target">Set target</button></div><p class="section-helper">Saved only in this browser. Counts use your actual completed tasks.</p><p id="daily-target-feedback" class="field-feedback" role="status"></p></form></details>
               </section>
               <section class="panel dashboard-upcoming" aria-labelledby="dashboard-upcoming-heading"><div class="panel-heading"><div><h2 id="dashboard-upcoming-heading">Upcoming deadlines</h2></div></div><div id="dashboard-upcoming-list"></div><button class="text-link" type="button" data-open-upcoming>See upcoming tasks <span aria-hidden="true">→</span></button></section>
             </div>
             <section class="panel dashboard-schedule" aria-labelledby="dashboard-schedule-heading">
               <div class="panel-heading"><h2 id="dashboard-schedule-heading">Today’s schedule</h2><button class="text-link" type="button" data-open-planner="day">Open calendar <span aria-hidden="true">→</span></button></div>
               <p class="section-helper">Time set aside to work, separate from due dates.</p><div id="dashboard-schedule-list"></div>
-              <details class="plain-disclosure" id="daily-check-in"><summary>Plan your day</summary><div class="check-in-content"><p>Review today’s work and choose one task to put first.</p><label for="daily-focus-choice">Today’s focus</label><select id="daily-focus-choice"><option value="">Use task priority</option></select><p class="section-helper">Your focus choice is saved in this browser for today. Task priorities stay unchanged.</p><button class="secondary-button" type="button" data-open-upcoming>Review upcoming deadlines</button></div></details>
+              <details class="plain-disclosure" id="daily-check-in"><summary>Plan your day</summary><div class="check-in-content"><p>Review today’s work and choose one task to put first.</p><label for="daily-focus-choice">Today’s focus</label><select id="daily-focus-choice"><option value="">Use task priority</option></select><p class="section-helper">Your focus choice is saved in this browser for today. Task priorities stay unchanged.</p><button class="secondary-button" type="button" data-open-upcoming data-button-icon="calendar">Review upcoming deadlines</button></div></details>
             </section>
             <section class="panel dashboard-week" aria-labelledby="dashboard-week-heading"><div class="panel-heading"><div><h2 id="dashboard-week-heading">This week</h2></div><button class="text-link" type="button" data-open-planner="week">Open weekly planner <span aria-hidden="true">→</span></button></div><div id="dashboard-week-strip" class="dashboard-week-strip"></div><p class="section-helper">Select a day to see its schedule. Counts include deadlines and scheduled work.</p><p class="week-summary" id="weekly-completion-copy"></p><div class="weekly-recap" id="weekly-recap"></div></section>
           </div>
@@ -102,11 +103,11 @@
           </header>
           <div class="planner-workspace">
             <section class="panel daily-panel task-sidebar-panel" id="daily-task-panel" aria-label="Tasks and templates">
-              <div class="calendar-library-toolbar" id="calendar-library-toolbar"><div class="calendar-library-tablist" role="tablist" aria-label="Calendar library"><button type="button" id="calendar-tasks-tab" role="tab" data-calendar-library-tab="tasks" aria-selected="true" aria-controls="calendar-tasks-panel">Tasks</button><button type="button" id="calendar-templates-tab" role="tab" data-calendar-library-tab="templates" aria-selected="false" aria-controls="calendar-assignment-templates" tabindex="-1">Templates</button></div><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks and templates">×</button></div>
+              <div class="calendar-library-toolbar" id="calendar-library-toolbar"><div class="calendar-library-tablist" role="tablist" aria-label="Calendar library"><button type="button" id="calendar-tasks-tab" data-button-icon="list" role="tab" data-calendar-library-tab="tasks" aria-selected="true" aria-controls="calendar-tasks-panel">Tasks</button><button type="button" id="calendar-templates-tab" data-button-icon="copy" role="tab" data-calendar-library-tab="templates" aria-selected="false" aria-controls="calendar-assignment-templates" tabindex="-1">Templates</button></div><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks and templates">×</button></div>
               <div class="calendar-task-content" id="calendar-tasks-panel" role="tabpanel" aria-labelledby="calendar-tasks-tab" tabindex="0">
-              <div class="panel-heading"><div class="task-sidebar-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Today</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div></div><button type="button" class="secondary-button compact-button" id="plan-selected-date">＋ Add task</button></div>
+              <div class="panel-heading"><div class="task-sidebar-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Today</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div></div><button type="button" class="secondary-button compact-button" id="plan-selected-date" data-button-icon="plus">Add task</button></div>
               <div class="task-category-progress" id="task-category-progress" role="progressbar" aria-label="Selected day's task completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-              <div class="task-section overdue-section" id="overdue-section" data-category-tone="overdue"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="overdue-task-list" data-collapse="overdue"><span><span class="status-dot overdue-dot"></span>Overdue</span><strong id="overdue-count">0</strong></button><button class="secondary-button overdue-complete-button" type="button" data-complete-overdue hidden>Complete all overdue</button><div class="daily-task-list" id="overdue-task-list"></div></div>
+              <div class="task-section overdue-section" id="overdue-section" data-category-tone="overdue"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="overdue-task-list" data-collapse="overdue"><span><span class="status-dot overdue-dot"></span>Overdue</span><strong id="overdue-count">0</strong></button><button class="secondary-button overdue-complete-button" type="button" data-button-icon="check-all" data-complete-overdue hidden>Complete all overdue</button><div class="daily-task-list" id="overdue-task-list"></div></div>
               <div class="task-section" data-category-tone="scheduled"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="scheduled-task-list" data-collapse="scheduled"><span><span class="status-dot scheduled-dot"></span>Scheduled</span><strong id="scheduled-count">0</strong></button><div class="daily-task-list" id="scheduled-task-list"></div></div>
               <div class="task-section backlog-section" data-category-tone="neutral"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="backlog-task-list" data-collapse="backlog"><span><span class="status-dot due-dot"></span>Unscheduled</span><strong id="backlog-count">0</strong></button><div class="daily-task-list" id="backlog-task-list"></div></div>
               <div class="task-section" data-category-tone="due"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="unscheduled-task-list" data-collapse="unscheduled"><span><span class="status-dot due-dot"></span>Due this day</span><strong id="unscheduled-count">0</strong></button><div class="daily-task-list" id="unscheduled-task-list"></div></div>
@@ -118,7 +119,7 @@
             <section class="panel unified-calendar-panel calendar-main-panel" aria-labelledby="calendar-heading">
               <div class="calendar-toolbar">
                 <div class="calendar-toolbar-primary">
-                  <button type="button" class="secondary-button compact-button calendar-today-button" id="calendar-today">Today</button>
+                  <button type="button" class="secondary-button compact-button calendar-today-button" id="calendar-today" data-button-icon="calendar">Today</button>
                   <div class="calendar-stepper" aria-label="Move calendar"><button type="button" id="calendar-previous" aria-label="Previous period">‹</button><button type="button" id="calendar-next" aria-label="Next period">›</button></div>
                   <div class="calendar-title-copy"><h2 id="calendar-heading">Calendar</h2><p class="calendar-range" id="calendar-range"></p></div>
                 </div>
@@ -139,10 +140,10 @@
 
         <section class="view" id="view-tasks" data-page-title="Tasks" data-eyebrow="A clear view of everything"><section class="panel tasks-panel">
           <div id="assignment-templates"></div>
-          <div class="task-layout-switch" role="group" aria-label="Task display"><button type="button" data-task-layout="list" aria-pressed="true">List</button><button type="button" data-task-layout="matrix" aria-pressed="false">Priority matrix</button></div>
+          <div class="task-layout-switch" role="group" aria-label="Task display"><button type="button" data-task-layout="list" data-button-icon="list" aria-pressed="true">List</button><button type="button" data-task-layout="matrix" data-button-icon="matrix" aria-pressed="false">Priority matrix</button></div>
           <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>Tasks</h2><p class="task-category-summary" id="task-category-summary" aria-live="polite"></p></div></div>
           <div class="task-category-toolbar"><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Active <span data-task-filter-count="all">0</span></button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today <span data-task-filter-count="today">0</span></button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming <span data-task-filter-count="upcoming">0</span></button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done <span data-task-filter-count="done">0</span></button></div><label class="task-group-control" id="task-group-control"><span>Group by</span><select id="task-grouping" aria-label="Group tasks by"><option value="plan">Plan</option><option value="class">Class</option><option value="priority">Priority</option></select></label></div>
-          <button class="secondary-button overdue-complete-button" type="button" data-complete-overdue hidden>Complete all overdue</button>
+          <button class="secondary-button overdue-complete-button" type="button" data-button-icon="check-all" data-complete-overdue hidden>Complete all overdue</button>
           <div class="task-list expanded" id="all-task-list"></div><div class="empty-state" id="task-empty" hidden><span class="empty-duck" data-duck-state="encouraging" aria-hidden="true"></span><h3>A little room to plan.</h3><p>Try another filter or add a new task.</p></div>
           <div id="task-matrix-root" hidden></div>
         </section></section>
@@ -159,13 +160,13 @@
           <section class="sync-card" aria-label="Axis connection status"><div class="sync-icon" aria-hidden="true">↻</div><div><p class="sync-title">Axis sync</p><p class="sync-copy">Prototype mode</p></div><button type="button" id="sync-info" aria-label="Learn about Axis sync">i</button></section>
           <section class="settings-row" id="install-app-settings" aria-labelledby="install-app-heading">
             <div><h2 id="install-app-heading">DuckPlan app</h2><p id="install-app-copy">Checking whether DuckPlan can be installed…</p></div>
-            <button type="button" class="secondary-button" id="install-app-button" hidden>Install app</button>
+            <button type="button" class="secondary-button" id="install-app-button" data-button-icon="download" hidden>Install app</button>
           </section>
           <div id="account-settings" class="settings-group"></div>
-          <section class="settings-row" id="account-sync-settings" hidden aria-labelledby="account-sync-heading"><div><h2 id="account-sync-heading">Across your devices</h2><p id="account-sync-copy" role="status"></p><p id="native-background-sync-status" hidden></p></div><button type="button" class="secondary-button" id="refresh-account-sync">Refresh account</button></section>
+          <section class="settings-row" id="account-sync-settings" hidden aria-labelledby="account-sync-heading"><div><h2 id="account-sync-heading">Across your devices</h2><p id="account-sync-copy" role="status"></p><p id="native-background-sync-status" hidden></p></div><button type="button" class="secondary-button" id="refresh-account-sync" data-button-icon="refresh">Refresh account</button></section>
           <div id="axis-settings" class="settings-group"></div>
-          <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Ringing task alarms</h2><p id="task-alarm-status" role="status">Ringing alarms are available in the iPhone app.</p><p id="task-alarms-description">Alarm time follows scheduled work until you choose a custom time. Each task has its own on/off switch.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms" disabled>Allow iPhone alarms</button><button type="button" class="secondary-button" id="disable-task-alarms" hidden>Cancel device alarms</button></div></section>
-          <section class="settings-row" aria-labelledby="task-notifications-heading"><div><h2 id="task-notifications-heading">Normal notifications</h2><p id="task-notification-status" role="status">Checking notification availability…</p><p>A normal banner is separate from a ringing alarm. Its time follows the alarm until you choose a custom time.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-notifications">Enable notifications</button><button type="button" class="secondary-button" id="disable-task-notifications" hidden>Disable on this device</button></div></section>
+          <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Ringing task alarms</h2><p id="task-alarm-status" role="status">Ringing alarms are available in the iPhone app.</p><p id="task-alarms-description">Alarm time follows scheduled work until you choose a custom time. Each task has its own on/off switch.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms" data-button-icon="clock" disabled>Allow iPhone alarms</button><button type="button" class="secondary-button" id="disable-task-alarms" data-button-icon="bell-off" data-button-tone="quiet" hidden>Cancel device alarms</button></div></section>
+          <section class="settings-row" aria-labelledby="task-notifications-heading"><div><h2 id="task-notifications-heading">Normal notifications</h2><p id="task-notification-status" role="status">Checking notification availability…</p><p>A normal banner is separate from a ringing alarm. Its time follows the alarm until you choose a custom time.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-notifications" data-button-icon="bell">Enable notifications</button><button type="button" class="secondary-button" id="disable-task-notifications" data-button-icon="bell-off" data-button-tone="quiet" hidden>Disable on this device</button></div></section>
           <section class="settings-row" id="deadline-reminders" aria-labelledby="reminders-heading">
             <div>
               <h2 id="reminders-heading" tabindex="-1">Deadline reminders</h2>
@@ -186,14 +187,14 @@
                 <span>Device notifications</span>
                 <strong id="notification-permission-status" data-state="default" role="status" aria-live="polite" aria-atomic="true">Checking…</strong>
               </div>
-              <button type="button" class="secondary-button notification-permission-button" id="enable-device-notifications" aria-describedby="notification-permission-help">Allow device notifications</button>
+              <button type="button" class="secondary-button notification-permission-button" id="enable-device-notifications" data-button-icon="bell" aria-describedby="notification-permission-help">Allow device notifications</button>
               <small id="notification-permission-help" role="note">Your browser will ask before DuckPlan can notify you.</small>
             </div>
           </section>
           <div class="settings-row"><div><h2>Appearance</h2><p>Choose a workspace that feels right for you.</p></div><label class="theme-field"><span class="sr-only">Color theme</span><select id="theme-preference"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div>
           <div class="settings-row"><div><h2>Mascot motion</h2><p>Gentle character animations and completion confetti. Reduced-motion preferences always take priority.</p></div><label class="switch"><input type="checkbox" id="mascot-motion" checked /><span></span><span class="sr-only">Enable mascot animations</span></label></div>
-          <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" data-page-navigation="button" href="./fur-lab.html">Open material lab</a></div>
-          <div class="settings-row"><div><h2>Local demo data</h2><p>Reset tasks saved in this browser without affecting a signed-in account.</p></div><button type="button" class="secondary-button" id="reset-demo">Reset demo</button></div>
+          <div class="settings-row"><div><h2>Interactive fur lab</h2><p>Saved fur checkpoint — available for future experiments.</p></div><a class="secondary-button" data-page-navigation="button" data-button-icon="external" href="./fur-lab.html">Open material lab</a></div>
+          <div class="settings-row"><div><h2>Local demo data</h2><p>Reset tasks saved in this browser without affecting a signed-in account.</p></div><button type="button" class="secondary-button" id="reset-demo" data-button-icon="trash" data-button-tone="danger">Reset demo</button></div>
         </section></section>
       </main>
     </div>
@@ -234,13 +235,13 @@
         <p id="class-time-estimate">Class average becomes available when shared Axis assignment data is connected.</p>
       </fieldset></details>
       <details class="plain-disclosure" id="task-alarm-options"><summary><svg class="editor-row-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 8H3c0-1 3-1 3-8Zm4 11h4"/></svg><span class="editor-summary-label">Alarm &amp; notification<span class="editor-summary-copy" id="task-alert-summary"></span></span></summary>
-        <fieldset class="form-section"><legend id="task-alarm-legend">Ringing alarm</legend><label class="work-alert-toggle"><input name="alarmEnabled" type="checkbox" checked /><span>Ringing alarm</span></label><p id="task-alarm-help">Ringing alarms are available in the iPhone app.</p><label><span id="alarm-date-label">Alarm date and time</span><input name="alarmAt" type="datetime-local" aria-describedby="task-alarm-help alarm-link-status" /></label><div class="work-alert-link"><small id="alarm-link-status">Follows work start</small><button type="button" class="secondary-button" data-follow-alert="alarm">Use work start</button></div><div id="native-alarm-options" class="form-grid" hidden><label>Alarm sound<select name="alarmSound"><option value="system">iPhone default</option><option value="gentle">Gentle chime</option><option value="bright">Bright bells</option></select></label><label>Snooze<select name="alarmSnooze"><option value="0">Off</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label></div></fieldset>
-        <fieldset class="form-section"><legend>Normal notification</legend><label class="work-alert-toggle"><input name="notificationEnabled" type="checkbox" checked /><span>Normal notification</span></label><p id="task-notification-help">Shows a normal banner or an in-app reminder when it is time to start.</p><label>Notification date and time<input name="notificationAt" type="datetime-local" aria-describedby="task-notification-help notification-link-status" /></label><div class="work-alert-link"><small id="notification-link-status">Follows alarm time</small><button type="button" class="secondary-button" data-follow-alert="notification">Use alarm time</button></div><p id="task-alarm-account" hidden><a class="secondary-button" id="task-alarm-signup" href="https://duckplan.duckplan-cloudflare.workers.dev/#settings" target="_blank" rel="noopener noreferrer">Sign up <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></p></fieldset>
+        <fieldset class="form-section"><legend id="task-alarm-legend">Ringing alarm</legend><label class="work-alert-toggle"><input name="alarmEnabled" type="checkbox" checked /><span>Ringing alarm</span></label><p id="task-alarm-help">Ringing alarms are available in the iPhone app.</p><label><span id="alarm-date-label">Alarm date and time</span><input name="alarmAt" type="datetime-local" aria-describedby="task-alarm-help alarm-link-status" /></label><div class="work-alert-link"><small id="alarm-link-status">Follows work start</small><button type="button" class="secondary-button" data-follow-alert="alarm" data-button-icon="clock" data-button-tone="quiet">Use work start</button></div><div id="native-alarm-options" class="form-grid" hidden><label>Alarm sound<select name="alarmSound"><option value="system">iPhone default</option><option value="gentle">Gentle chime</option><option value="bright">Bright bells</option></select></label><label>Snooze<select name="alarmSnooze"><option value="0">Off</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label></div></fieldset>
+        <fieldset class="form-section"><legend>Normal notification</legend><label class="work-alert-toggle"><input name="notificationEnabled" type="checkbox" checked /><span>Normal notification</span></label><p id="task-notification-help">Shows a normal banner or an in-app reminder when it is time to start.</p><label>Notification date and time<input name="notificationAt" type="datetime-local" aria-describedby="task-notification-help notification-link-status" /></label><div class="work-alert-link"><small id="notification-link-status">Follows alarm time</small><button type="button" class="secondary-button" data-follow-alert="notification" data-button-icon="bell" data-button-tone="quiet">Use alarm time</button></div><p id="task-alarm-account" hidden><a class="secondary-button" id="task-alarm-signup" href="https://duckplan.duckplan-cloudflare.workers.dev/#settings" target="_blank" rel="noopener noreferrer">Sign up <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></p></fieldset>
         <p id="task-alert-time-help" class="work-alert-note"></p><p id="task-alert-storage-help" class="work-alert-note" hidden>Alert settings are saved on this device until this server is updated.</p>
       </details>
       </div>
       <div class="task-editor-error-stack"><p id="task-form-error" class="form-error" role="alert" hidden></p><p id="task-alarm-save-error" class="form-error" role="alert"></p></div>
-      <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" type="submit" id="save-task">Add to DuckPlan</button></div>
+      <div class="modal-actions"><button class="danger-button" type="button" id="delete-task" data-button-icon="trash" hidden>Delete</button><span class="modal-spacer"></span><button class="secondary-button" type="button" id="cancel-task" data-button-tone="quiet">Cancel</button><button class="primary-button" type="submit" id="save-task" data-button-icon="check">Add to DuckPlan</button></div>
     </form></dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-message"></span><button type="button" id="toast-action" hidden></button></div>
     <aside class="completion-note" id="completion-note" role="status" aria-live="polite" hidden><div class="completion-note-duck" data-duck-state="celebrating" aria-hidden="true"></div><div><strong>Today’s plan is complete!</strong><p id="completion-note-copy"></p></div><button type="button" id="dismiss-celebration" aria-label="Dismiss celebration">×</button></aside>
@@ -254,11 +255,11 @@
     <script src="./cloud-config.js"></script>
     <script src="./planner-store.js?v=live-sync-backoff-20261117"></script>
     <script src="./ui-expansion-motion.js?v=expand-close-final-20261123"></script>
-    <script src="./planner-library.js?v=expand-close-final-20261123"></script>
+    <script src="./planner-library.js?v=button-design-20261123"></script>
     <script src="./calendar-library-tabs.js?v=expand-close-final-20261123"></script>
-    <script src="./task-matrix.js?v=product-feedback-20261112"></script>
-    <script src="./personal-notes.js?v=contextual-add-20261112"></script>
-    <script src="./personal-goals.js?v=expand-close-final-20261123"></script>
+    <script src="./task-matrix.js?v=button-design-20261123"></script>
+    <script src="./personal-notes.js?v=button-design-20261123"></script>
+    <script src="./personal-goals.js?v=button-design-20261123"></script>
     <script src="./reminder-domain.js?v=2"></script>
     <script src="./work-alerts.js?v=work-alerts-20261114"></script>
     <script src="./work-alert-controller.js?v=account-sync-20261115"></script>
@@ -267,7 +268,7 @@
     <script src="./motion-tokens.js?v=content-morph-20261115"></script>
     <script src="./view-transitions.js?v=fluid-slide-20261113"></script>
     <script src="./popup-motion.js?v=day-bar-editor-20261123"></script>
-    <script src="./calendar-task-preview.js?v=calendar-block-editor-20261123"></script>
+    <script src="./calendar-task-preview.js?v=button-design-20261123"></script>
     <script src="./page-navigation-feedback.js?v=two-button-rules-1"></script>
     <script src="./button-interactions.js?v=local-buttons-1"></script>
     <script src="./phone-navigation.js?v=phone-navigation-20261112"></script>
@@ -280,7 +281,7 @@
     <script src="./completion-list-motion.js?v=task-categories-20261122"></script>
     <script src="./completion-demo.js?v=section-fade-20261122"></script>
     <script src="./task-list-groups.js?v=task-categories-20261122"></script>
-    <script src="./app.js?v=calendar-block-editor-20261123"></script>
+    <script src="./app.js?v=button-design-20261123"></script>
     <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
     <script src="./duck-mascot.js?v=original-bill-happy-eyes-20261122"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>
