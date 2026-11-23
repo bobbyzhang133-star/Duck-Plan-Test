@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="./calendar-date-clarity.css?v=calendar-swipe-20261120-final" />
     <link rel="stylesheet" href="./calendar-task-preview.css?v=due-header-tints-20261120" />
     <link rel="stylesheet" href="./task-editor.css?v=section-tinted-fields-20261120" />
+    <link rel="stylesheet" href="./task-list-categories.css?v=task-categories-20261122" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -104,11 +105,12 @@
               <div class="calendar-library-toolbar" id="calendar-library-toolbar"><div class="calendar-library-tablist" role="tablist" aria-label="Calendar library"><button type="button" id="calendar-tasks-tab" role="tab" data-calendar-library-tab="tasks" aria-selected="true" aria-controls="calendar-tasks-panel">Tasks</button><button type="button" id="calendar-templates-tab" role="tab" data-calendar-library-tab="templates" aria-selected="false" aria-controls="calendar-assignment-templates" tabindex="-1">Templates</button></div><button class="task-panel-close-button" type="button" data-close-task-panel aria-label="Close tasks and templates">×</button></div>
               <div class="calendar-task-content" id="calendar-tasks-panel" role="tabpanel" aria-labelledby="calendar-tasks-tab" tabindex="0">
               <div class="panel-heading"><div class="task-sidebar-heading"><div><p class="section-kicker">Tasks</p><h2 id="daily-plan-heading">Today</h2><p class="panel-date" id="daily-panel-date"></p><p class="panel-progress" id="daily-panel-progress"></p></div></div><button type="button" class="secondary-button compact-button" id="plan-selected-date">＋ Add task</button></div>
-              <div class="task-section overdue-section" id="overdue-section"><button class="task-section-heading" type="button" aria-expanded="true" data-collapse="overdue"><span><span class="status-dot overdue-dot"></span>Overdue</span><strong id="overdue-count">0</strong></button><button class="secondary-button overdue-complete-button" type="button" data-complete-overdue hidden>Complete all overdue</button><div class="daily-task-list" id="overdue-task-list"></div></div>
-              <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot scheduled-dot"></span>Scheduled</span><strong id="scheduled-count">0</strong></div><div class="daily-task-list" id="scheduled-task-list"></div></div>
-              <div class="task-section backlog-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Unscheduled</span><strong id="backlog-count">0</strong></div><div class="daily-task-list" id="backlog-task-list"></div></div>
-              <div class="task-section"><div class="task-section-heading static"><span><span class="status-dot due-dot"></span>Due this day</span><strong id="unscheduled-count">0</strong></div><div class="daily-task-list" id="unscheduled-task-list"></div></div>
-              <div class="task-section completed-section"><button class="task-section-heading" type="button" aria-expanded="false" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list" hidden></div></div>
+              <div class="task-category-progress" id="task-category-progress" role="progressbar" aria-label="Selected day's task completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+              <div class="task-section overdue-section" id="overdue-section" data-category-tone="overdue"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="overdue-task-list" data-collapse="overdue"><span><span class="status-dot overdue-dot"></span>Overdue</span><strong id="overdue-count">0</strong></button><button class="secondary-button overdue-complete-button" type="button" data-complete-overdue hidden>Complete all overdue</button><div class="daily-task-list" id="overdue-task-list"></div></div>
+              <div class="task-section" data-category-tone="scheduled"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="scheduled-task-list" data-collapse="scheduled"><span><span class="status-dot scheduled-dot"></span>Scheduled</span><strong id="scheduled-count">0</strong></button><div class="daily-task-list" id="scheduled-task-list"></div></div>
+              <div class="task-section backlog-section" data-category-tone="neutral"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="backlog-task-list" data-collapse="backlog"><span><span class="status-dot due-dot"></span>Unscheduled</span><strong id="backlog-count">0</strong></button><div class="daily-task-list" id="backlog-task-list"></div></div>
+              <div class="task-section" data-category-tone="due"><button class="task-section-heading" type="button" aria-expanded="true" aria-controls="unscheduled-task-list" data-collapse="unscheduled"><span><span class="status-dot due-dot"></span>Due this day</span><strong id="unscheduled-count">0</strong></button><div class="daily-task-list" id="unscheduled-task-list"></div></div>
+              <div class="task-section completed-section" data-category-tone="completed"><button class="task-section-heading" type="button" aria-expanded="false" aria-controls="completed-task-list" data-collapse="completed"><span><span class="status-dot completed-dot"></span>Completed</span><strong id="completed-count">0</strong></button><div class="daily-task-list" id="completed-task-list" hidden></div></div>
               <div class="daily-empty" id="daily-empty" hidden><span class="empty-duck" data-duck-state="swimming" aria-hidden="true"></span><h3>Clear day ahead.</h3><p>Click a calendar slot or plan a task when you are ready.</p></div>
               </div>
               <div id="calendar-assignment-templates" role="tabpanel" aria-labelledby="calendar-templates-tab" tabindex="0" hidden inert></div>
@@ -138,7 +140,8 @@
         <section class="view" id="view-tasks" data-page-title="Tasks" data-eyebrow="A clear view of everything"><section class="panel tasks-panel">
           <div id="assignment-templates"></div>
           <div class="task-layout-switch" role="group" aria-label="Task display"><button type="button" data-task-layout="list" aria-pressed="true">List</button><button type="button" data-task-layout="matrix" aria-pressed="false">Priority matrix</button></div>
-          <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>Tasks</h2></div><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Active</button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today</button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done</button></div></div>
+          <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>Tasks</h2><p class="task-category-summary" id="task-category-summary" aria-live="polite"></p></div></div>
+          <div class="task-category-toolbar"><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Active <span data-task-filter-count="all">0</span></button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today <span data-task-filter-count="today">0</span></button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming <span data-task-filter-count="upcoming">0</span></button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done <span data-task-filter-count="done">0</span></button></div><label class="task-group-control" id="task-group-control"><span>Group by</span><select id="task-grouping" aria-label="Group tasks by"><option value="plan">Plan</option><option value="class">Class</option><option value="priority">Priority</option></select></label></div>
           <button class="secondary-button overdue-complete-button" type="button" data-complete-overdue hidden>Complete all overdue</button>
           <div class="task-list expanded" id="all-task-list"></div><div class="empty-state" id="task-empty" hidden><span class="empty-duck" data-duck-state="encouraging" aria-hidden="true"></span><h3>A little room to plan.</h3><p>Try another filter or add a new task.</p></div>
           <div id="task-matrix-root" hidden></div>
@@ -273,13 +276,14 @@
     <script src="./native-task-notifications.js?v=account-sync-20261115"></script>
     <script src="./task-list-drag.js?v=calendar-drag-preview-20261114"></script>
     <script src="./completion-render-hold.js?v=original-preview-slide-20261121"></script>
-    <script src="./completion-list-motion.js?v=after-fade-slide-20261122"></script>
+    <script src="./completion-list-motion.js?v=task-categories-20261122"></script>
     <script src="./completion-demo.js?v=section-fade-20261122"></script>
-    <script src="./app.js?v=after-fade-slide-20261122"></script>
+    <script src="./task-list-groups.js?v=task-categories-20261122"></script>
+    <script src="./app.js?v=task-categories-20261122"></script>
     <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
     <script src="./duck-mascot.js?v=original-bill-happy-eyes-20261122"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>
-    <script src="./duck-interactions.js?v=smaller-pop-larger-particles-20261122"></script>
+    <script src="./duck-interactions.js?v=task-categories-20261122"></script>
     <script src="./planner-clarity.js"></script>
   </body>
 </html>

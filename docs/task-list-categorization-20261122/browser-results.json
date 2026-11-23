@@ -1,0 +1,632 @@
+{
+  "browser": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "config": {
+          "width": 1280,
+          "view": "tasks"
+        },
+        "status": "PASS",
+        "bounds": {
+          "overflow": 0,
+          "controls": [
+            {
+              "name": "Active 9",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Today 6",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Upcoming 1",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Done 0",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Group tasks by",
+              "height": 44,
+              "clipped": false
+            }
+          ]
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 390,
+          "view": "tasks"
+        },
+        "status": "PASS",
+        "bounds": {
+          "overflow": 0,
+          "controls": [
+            {
+              "name": "Active 9",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Today 6",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Upcoming 1",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Done 0",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Group tasks by",
+              "height": 44,
+              "clipped": false
+            }
+          ]
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 320,
+          "view": "tasks"
+        },
+        "status": "PASS",
+        "bounds": {
+          "overflow": 0,
+          "controls": [
+            {
+              "name": "Active 9",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Today 6",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Upcoming 1",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Done 0",
+              "height": 44,
+              "clipped": false
+            },
+            {
+              "name": "Group tasks by",
+              "height": 44,
+              "clipped": false
+            }
+          ]
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 1280,
+          "view": "calendar"
+        },
+        "status": "PASS",
+        "bounds": {
+          "overflow": 0,
+          "controls": [
+            {
+              "name": "Overdue1",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Scheduled4",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Unscheduled2",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Due this day1",
+              "height": 46,
+              "clipped": false
+            }
+          ]
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 835,
+          "view": "calendar"
+        },
+        "status": "PASS",
+        "bounds": {
+          "overflow": 0,
+          "controls": [
+            {
+              "name": "Overdue1",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Scheduled4",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Unscheduled2",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Due this day1",
+              "height": 46,
+              "clipped": false
+            }
+          ]
+        },
+        "errors": []
+      },
+      {
+        "config": {
+          "width": 390,
+          "view": "calendar"
+        },
+        "status": "PASS",
+        "bounds": {
+          "overflow": 0,
+          "controls": [
+            {
+              "name": "Overdue1",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Scheduled4",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Unscheduled2",
+              "height": 46,
+              "clipped": false
+            },
+            {
+              "name": "Due this day1",
+              "height": 46,
+              "clipped": false
+            }
+          ]
+        },
+        "errors": []
+      }
+    ]
+  },
+  "cloudCompletion": {
+    "runtime": "157.0.8103.79",
+    "results": [
+      {
+        "config": {
+          "width": 390,
+          "view": "tasks",
+          "cloud": true
+        },
+        "status": "PASS",
+        "before": 569.171875,
+        "frames": [
+          {
+            "time": 4.4000000059604645,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 20.099999994039536,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 37.400000005960464,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 138.59999999403954,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 271.59999999403954,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 404.09999999403954,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 538.6999999880791,
+            "y": 523.36572265625,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 1
+          },
+          {
+            "time": 670.4000000059605,
+            "y": 446.5186767578125,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 1
+          },
+          {
+            "time": 805.1999999880791,
+            "y": 424.61517333984375,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 1
+          },
+          {
+            "time": 938.4000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1071.7999999821186,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1204.0999999940395,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1338.2999999821186,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1471.5,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1604.9000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1738.0999999940395,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 1871.9000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 2004.7999999821186,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 2138.4000000059605,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          },
+          {
+            "time": 2270.2999999821186,
+            "y": 423.296875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": true,
+            "animations": 0
+          }
+        ],
+        "completed": true,
+        "second": false,
+        "visible": false,
+        "artifacts": 0,
+        "focused": "a875c4bd-f5b6-466e-ac66-df1f7cf81693"
+      },
+      {
+        "config": {
+          "width": 390,
+          "view": "tasks",
+          "cloud": true,
+          "fail": true
+        },
+        "status": "PASS",
+        "before": 569.171875,
+        "frames": [
+          {
+            "time": 3.7999999821186066,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 18.399999976158142,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 37.099999994039536,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 137.59999999403954,
+            "y": 569.171875,
+            "sourcePresent": true,
+            "echoes": 1,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 268.69999998807907,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 403.89999997615814,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 535.6999999880791,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 669.5999999940395,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 802.6999999880791,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 935.7999999821186,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1068.7999999821186,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1203.5999999940395,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1337.199999988079,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1469.5999999940395,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1603,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1736.2999999821186,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 1869.3999999761581,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 2002.7999999821186,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 2136.899999976158,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          },
+          {
+            "time": 2269.399999976158,
+            "y": 569.171875,
+            "sourcePresent": false,
+            "echoes": 0,
+            "duck": false,
+            "animations": 0
+          }
+        ],
+        "completed": false,
+        "second": false,
+        "visible": true,
+        "artifacts": 0,
+        "focused": "a4cc3a42-cdf1-4efc-967c-27b6c82b091e"
+      }
+    ]
+  },
+  "additionalActions": {
+    "calendarDrag": {
+      "status": "PASS",
+      "scheduledStart": "2026-11-22T13:15",
+      "deadlinePreserved": true,
+      "taskCount": 8
+    },
+    "tasksNavigationDrag": {
+      "status": "PASS",
+      "view": "calendar",
+      "scheduled": "2026-11-22T17:15",
+      "due": "",
+      "count": 8
+    },
+    "touchCreateAndSchedule": {
+      "status": "PASS",
+      "viewport": "390x1000",
+      "createdWithoutDeadlineOrWork": true,
+      "scheduledStart": "2026-11-22T18:30",
+      "deadlinePreserved": true,
+      "count": 9
+    },
+    "search": {
+      "status": "PASS",
+      "query": "Calculus",
+      "resultCount": 1,
+      "filterCount": 1
+    },
+    "disappearingGroup": {
+      "status": "PASS",
+      "afterFadeHeaderAndRowsSlideTogether": true
+    },
+    "retainedAccess": {
+      "status": "PASS",
+      "matrix": true,
+      "list": true,
+      "phoneSheet": true,
+      "templatesTab": true
+    }
+  },
+  "referenceRecheck": {
+    "viewport": "1280x960",
+    "pages": [
+      "https://help.ticktick.com/articles/7056594711640801280",
+      "https://www.todoist.com/help/todoist/get-started/plan-your-day-with-the-today-view-UVUXaiSs",
+      "https://culturedcode.com/things/support/articles/4001304/"
+    ],
+    "scope": "Public documentation and official screenshots; pattern adaptation, no signed-in competitor interaction parity"
+  },
+  "skillValidation": {
+    "status": "PASS",
+    "method": "Ruby standard-library YAML parser, metadata/name/description bounds and under-500-line check",
+    "bundledValidator": "Unavailable because its optional Python PyYAML dependency is absent"
+  }
+}

@@ -62,7 +62,9 @@ let taskLayout = "list";
 let axisStatus = { connected: false, lastSyncedAt: null, lastError: null };
 let localImportCount = 0;
 let accountStateVersion = 0;
-let collapsed = { overdue: false, completed: true };
+let collapsed = { overdue: false, scheduled: false, backlog: false, unscheduled: false, completed: true };
+let taskGrouping = "plan";
+const collapsedTaskGroups = new Set();
 let foldCompletedAfterFinish = false;
 let toastTimer;
 let notificationConstructorFailed = false;
@@ -614,6 +616,10 @@ function renderDailyPlan() {
   els.dailyProgressCopy.textContent = todayItems.length ? `${completed} of ${todayItems.length} tasks completed` : "No tasks planned yet";
   els.dailyPanelDate.textContent = formatLongDate(selectedDate);
   els.dailyPanelProgress.textContent = todayItems.length ? `${completed} of ${todayItems.length} completed` : "No tasks planned yet";
+  const categoryProgress = document.querySelector("#task-category-progress");
+  categoryProgress.setAttribute("aria-valuenow", String(percent));
+  categoryProgress.setAttribute("aria-valuetext", `${completed} of ${todayItems.length} tasks completed`);
+  categoryProgress.querySelector("span").style.width = `${percent}%`;
   const remaining = new Set([...groups.overdue, ...groups.scheduled, ...groups.unscheduled, ...groups.backlog].map((task) => task.id)).size;
   const overdueCount = [...groups.overdue, ...groups.scheduled, ...groups.unscheduled].filter(task => Model.taskTiming(task).overdue).length;
   if (els.phoneTaskSummaryCopy) els.phoneTaskSummaryCopy.textContent = `${remaining} remaining${overdueCount ? ` · ${overdueCount} overdue` : ""}${groups.backlog.length ? ` · ${groups.backlog.length} unscheduled` : ""}`;
@@ -648,14 +654,28 @@ function allTaskMarkup(task) {
 }
 function renderAllTasks() {
   const sorted = [...tasks].sort((a, b) => `${a.dueDate || "9999"}${a.dueTime || "99"}`.localeCompare(`${b.dueDate || "9999"}${b.dueTime || "99"}`));
-  const filtered = sorted.filter((task) => {
-    if (searchTerm && !`${task.title} ${classInfo(task).name}`.toLowerCase().includes(searchTerm)) return false;
-    if (currentFilter === "today") return task.dueDate === nowKey() && !task.completed;
-    if (currentFilter === "upcoming") return task.dueDate > nowKey() && !task.completed;
-    if (currentFilter === "done") return task.completed;
+  const searched = sorted.filter(task => !searchTerm || `${task.title} ${classInfo(task).name}`.toLowerCase().includes(searchTerm));
+  const matches = (task, filter) => {
+    const workDate = Model.scheduledParts(task)?.date;
+    if (filter === "today") return (task.dueDate === nowKey() || workDate === nowKey()) && !task.completed;
+    if (filter === "upcoming") return (task.dueDate > nowKey() || workDate > nowKey()) && !task.completed;
+    if (filter === "done") return task.completed;
     return !task.completed;
+  };
+  const filtered = searched.filter(task => matches(task, currentFilter));
+  document.querySelectorAll("[data-task-filter-count]").forEach(element => {
+    element.textContent = searched.filter(task => matches(task, element.dataset.taskFilterCount)).length;
   });
-  els.allList.innerHTML = filtered.map(allTaskMarkup).join("");
+  const groups = window.DuckTaskListGroups.groupTasks(filtered, {
+    mode: taskGrouping, today: nowKey(), isOverdue: task => Model.taskTiming(task).overdue, classInfo
+  });
+  els.allList.innerHTML = groups.map((group, index) => {
+    const key = `${taskGrouping}:${group.key}`, open = !collapsedTaskGroups.has(key), id = `task-browser-group-${index}`;
+    return `<section class="task-section task-browser-group" data-category-tone="${group.tone}"><button class="task-section-heading" type="button" data-task-group-toggle="${safeAttribute(key)}" aria-expanded="${open}" aria-controls="${id}"><span><span class="status-dot"></span>${safeText(group.label)}</span><strong>${group.tasks.length}</strong></button><div class="daily-task-list" id="${id}" ${open ? "" : "hidden"}>${group.tasks.map(allTaskMarkup).join("")}</div></section>`;
+  }).join("");
+  const groupingLabels = { plan: "plan", class: "class", priority: "priority" };
+  document.querySelector("#task-category-summary").textContent = `${filtered.length} ${currentFilter === "done" ? "completed" : "active"} ${filtered.length === 1 ? "task" : "tasks"}${taskLayout === "list" ? ` · Grouped by ${groupingLabels[taskGrouping]}` : ""}`;
+  document.querySelector("#task-group-control").hidden = taskLayout !== "list";
   els.allList.hidden = taskLayout !== "list";
   els.taskEmpty.hidden = taskLayout !== "list" || filtered.length > 0;
   const matrixRoot = document.querySelector("#task-matrix-root");
@@ -1682,6 +1702,17 @@ document.addEventListener("click", (event) => {
     document.querySelector("#library-class-select")?.focus({ preventScroll: true });
   }
   const collapse = event.target.closest("[data-collapse]"); if (collapse) { window.DuckTaskCompletion?.cancel(); collapsed[collapse.dataset.collapse] = !collapsed[collapse.dataset.collapse]; renderDailyPlan(); setupButtonMaterial(); }
+  const groupToggle = event.target.closest("[data-task-group-toggle]");
+  if (groupToggle) {
+    const key = groupToggle.dataset.taskGroupToggle;
+    window.DuckTaskCompletion?.cancel();
+    const button = [...els.allList.querySelectorAll("[data-task-group-toggle]")].find(element => element.dataset.taskGroupToggle === key);
+    if (!button) return;
+    const open = button.getAttribute("aria-expanded") !== "true";
+    if (open) collapsedTaskGroups.delete(key); else collapsedTaskGroups.add(key);
+    button.setAttribute("aria-expanded", String(open));
+    document.getElementById(button.getAttribute("aria-controls")).hidden = !open;
+  }
 });
 document.addEventListener("change", (event) => {
   const checkbox = event.target.closest("[data-task-id]");
@@ -1702,6 +1733,11 @@ document.querySelectorAll(".filter-chip").forEach((chip) => chip.addEventListene
   document.querySelectorAll(".filter-chip").forEach((item) => { item.classList.toggle("active", item === chip); item.setAttribute("aria-pressed", String(item === chip)); });
   currentFilter = chip.dataset.filter; renderAllTasks(); setupButtonMaterial();
 }));
+document.querySelector("#task-grouping").addEventListener("change", event => {
+  window.DuckTaskCompletion?.cancel();
+  taskGrouping = ["plan", "class", "priority"].includes(event.target.value) ? event.target.value : "plan";
+  renderAllTasks(); setupButtonMaterial();
+});
 document.querySelectorAll("[data-task-layout]").forEach((button) => button.addEventListener("click", () => {
   window.DuckTaskCompletion?.cancel();
   taskLayout = button.dataset.taskLayout;

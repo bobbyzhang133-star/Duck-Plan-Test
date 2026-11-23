@@ -236,7 +236,7 @@
 
   function fadeCompletionLabels(card, task) {
     const targets = new Set();
-    const section = card?.closest("#daily-task-panel .task-section");
+    const section = card?.closest("#daily-task-panel .task-section,#view-tasks .task-section");
     if (section && !section.matches(".overdue-section,.completed-section")
       && ![...section.querySelectorAll("input[data-task-id]")].some(input => !input.checked)) {
       targets.add(section.querySelector(".task-section-heading"));

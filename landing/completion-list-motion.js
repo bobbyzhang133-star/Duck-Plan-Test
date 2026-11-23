@@ -8,9 +8,9 @@
     let previous = null, pendingRender = null;
     const running = new Set();
     const cleanups = new Set();
-    const cards = root => [...root.querySelectorAll(".daily-task-card,.all-task-row,.matrix-task-card")]
+    const cards = root => [...root.querySelectorAll(".daily-task-card,.all-task-row,.matrix-task-card,.task-browser-group > .task-section-heading")]
       .filter(card => !card.classList.contains("completion-exit-source") && card.checkVisibility?.() !== false && !card.closest("[hidden],details:not([open])"));
-    const idFor = card => card.querySelector("input[data-task-id]")?.dataset.taskId;
+    const idFor = card => card.dataset?.taskGroupToggle ? `group:${card.dataset.taskGroupToggle}` : card.querySelector("input[data-task-id]")?.dataset.taskId;
     function stop() {
       for (const animation of running) animation.cancel();
       running.clear();
@@ -81,6 +81,7 @@
       });
       for (const part of snapshot.parts) {
         const element = part.element;
+        if (element.isConnected === false) continue;
         const visible = element.checkVisibility?.() !== false && !element.closest("[hidden]");
         if (!part.visible && visible) {
           track(element.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: "ease-out" }));
