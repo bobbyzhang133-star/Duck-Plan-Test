@@ -23,7 +23,6 @@
     for (const operation of [...operations]) operation.cancel();
   }
   window.DuckTaskCompletion = Object.freeze({
-    deferRender: callback => renderHold.deferRender(callback),
     preserveFocus: () => {
       if (!operations.size) return null;
       const focused = document.activeElement, view = document.body.dataset.view;
@@ -259,7 +258,7 @@
     (replacement || fallback)?.focus({ preventScroll: true });
   }
 
-  // Capture before the persisted completion path runs. Hold only rendering, never the save.
+  // Capture before saving. The list re-renders immediately while the detached echo finishes.
   document.addEventListener("change", (event) => {
     const checkbox = event.target.closest("input[data-task-id]");
     if (!checkbox) return;
