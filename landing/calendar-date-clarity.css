@@ -62,14 +62,21 @@
 .motion-preview #view-calendar .calendar-date-button span { font-size: 11px; }
 .motion-preview #view-calendar .calendar-event-block strong { font-size: 13px; line-height: 1.25; }
 .motion-preview #view-calendar .calendar-event-block small { font-size: 11px; line-height: 1.2; }
-.motion-preview #view-calendar .calendar-event-block.is-short small { display: none; }
-.motion-preview #view-calendar .calendar-event-block.is-short { padding-block: 5px; }
+.motion-preview :is(#view-calendar .calendar-event-block,.calendar-event-block.calendar-drag-ghost).is-short { padding: 1px 4px; }
+.motion-preview :is(#view-calendar .calendar-event-block,.calendar-event-block.calendar-drag-ghost).is-short strong {
+  flex: none; font-size: 12px; line-height: 14px;
+}
+.motion-preview :is(#view-calendar .calendar-event-block,.calendar-event-block.calendar-drag-ghost).is-short small {
+  flex: none; margin-top: 0; font-size: 11px; line-height: 12px;
+}
 .motion-preview #view-calendar .calendar-work-warning { position: absolute; top: 3px; right: 4px; width: 14px; height: 14px; border-radius: 50%; color: #873d29; background: #fff2dc; font-size: 11px; font-weight: 800; line-height: 14px; text-align: center; }
 .motion-preview #view-calendar .calendar-event-block:has(.calendar-work-warning) strong { padding-right: 14px; }
 /* Work overlaps within one stacking context, always below Due markers. */
 .motion-preview #view-calendar .calendar-work-layer { position: absolute; inset: 0 3px; z-index: 2; pointer-events: none; }
 .motion-preview #view-calendar .calendar-work-layer .calendar-event-block { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; z-index: var(--work-stack,1); pointer-events: auto; }
 .motion-preview #view-calendar .calendar-work-layer .calendar-event-block[data-overlapping-work="true"] { border: 1px solid var(--card); }
+.motion-preview #view-calendar .calendar-event-block.is-short[data-overlapping-work="true"] { padding-inline: 2px; }
+.motion-preview #view-calendar .calendar-event-block.is-short[data-overlapping-work="true"] small { font-size: 10px; }
 .motion-preview #view-calendar .calendar-work-layer .calendar-drag-ghost { position: absolute !important; z-index: 1000; pointer-events: none; }
 .motion-preview .calendar-event-block.calendar-drag-ghost { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; }
 /* Keep the same class fill on saved work, reusable templates and the live drag block. */

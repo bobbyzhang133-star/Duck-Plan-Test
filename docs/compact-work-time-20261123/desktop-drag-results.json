@@ -1,0 +1,183 @@
+[
+  {
+    "width": 1280,
+    "existing": [
+      {
+        "time": "9:00 AM",
+        "display": "block",
+        "height": 46.5,
+        "width": 766,
+        "clientWidth": 758,
+        "scrollWidth": 758,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      },
+      {
+        "time": "10:00 AM",
+        "display": "block",
+        "height": 31,
+        "width": 766,
+        "clientWidth": 758,
+        "scrollWidth": 758,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      },
+      {
+        "time": "11:00 AM",
+        "display": "block",
+        "height": 46.5,
+        "width": 766,
+        "clientWidth": 758,
+        "scrollWidth": 758,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      },
+      {
+        "time": "2:00 PM",
+        "display": "block",
+        "height": 31,
+        "width": 766,
+        "clientWidth": 758,
+        "scrollWidth": 758,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      }
+    ],
+    "preview": {
+      "text": "12:00 PM · 30 min",
+      "display": "block"
+    },
+    "dropped": {
+      "time": "12:00 PM",
+      "display": "block",
+      "height": 31,
+      "width": 766,
+      "clientWidth": 758,
+      "scrollWidth": 758,
+      "inside": true,
+      "elided": false,
+      "className": "calendar-event-block is-short selected"
+    },
+    "reloaded": {
+      "time": "12:00 PM",
+      "display": "block",
+      "height": 31,
+      "width": 104.28125,
+      "clientWidth": 96,
+      "scrollWidth": 96,
+      "inside": true,
+      "elided": false,
+      "className": "calendar-event-block is-short "
+    },
+    "actions": [
+      {
+        "type": "dragstart",
+        "trusted": true
+      },
+      {
+        "type": "drop",
+        "trusted": true
+      }
+    ],
+    "templatePreview": {
+      "text": "12:15 PM · 45 min",
+      "display": "block"
+    },
+    "droppedTemplate": {
+      "time": "12:15 PM",
+      "display": "block",
+      "height": 46.5,
+      "width": 52.140625,
+      "clientWidth": 46,
+      "scrollWidth": 46,
+      "inside": true,
+      "elided": false,
+      "className": "calendar-event-block is-short "
+    },
+    "overlappedTask": {
+      "time": "12:00 PM",
+      "display": "block",
+      "height": 31,
+      "width": 88.625,
+      "clientWidth": 83,
+      "scrollWidth": 83,
+      "inside": true,
+      "elided": false,
+      "className": "calendar-event-block is-short "
+    },
+    "reloadedTemplate": {
+      "time": "12:15 PM",
+      "display": "block",
+      "height": 46.5,
+      "width": 52.140625,
+      "clientWidth": 46,
+      "scrollWidth": 46,
+      "inside": true,
+      "elided": false,
+      "className": "calendar-event-block is-short "
+    },
+    "actions2": [
+      {
+        "type": "dragstart",
+        "trusted": true
+      },
+      {
+        "type": "drop",
+        "trusted": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "existing": [
+      {
+        "time": "9:00 AM",
+        "display": "block",
+        "height": 46.5,
+        "width": 276,
+        "clientWidth": 268,
+        "scrollWidth": 268,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      },
+      {
+        "time": "10:00 AM",
+        "display": "block",
+        "height": 31,
+        "width": 276,
+        "clientWidth": 268,
+        "scrollWidth": 268,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      },
+      {
+        "time": "11:00 AM",
+        "display": "block",
+        "height": 46.5,
+        "width": 276,
+        "clientWidth": 268,
+        "scrollWidth": 268,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      },
+      {
+        "time": "2:00 PM",
+        "display": "block",
+        "height": 31,
+        "width": 276,
+        "clientWidth": 268,
+        "scrollWidth": 268,
+        "inside": true,
+        "elided": false,
+        "className": "calendar-event-block is-short "
+      }
+    ]
+  }
+]

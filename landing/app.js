@@ -3,6 +3,7 @@ const PlannerUI = window.DuckPlannerUI;
 const CALENDAR_START_HOUR = PlannerUI.TIMELINE_START_HOUR;
 const CALENDAR_END_HOUR = PlannerUI.TIMELINE_END_HOUR;
 const CALENDAR_HOURS = CALENDAR_END_HOUR - CALENDAR_START_HOUR;
+const CALENDAR_COMPACT_BLOCK_HEIGHT = 48;
 const ReminderDomain = window.DuckReminderDomain;
 const ReminderLedger = window.DuckReminderLedger;
 const BrowserNotifications = window.DuckBrowserNotifications;
@@ -910,8 +911,8 @@ function layoutEvents(dayTasks, { hourHeight = 62 } = {}) {
     let lanes = 1, crowdedHeadings = false;
     for (const event of cluster.events) {
       for (let index = active.length - 1; index >= 0; index -= 1) if (active[index].top + active[index].height <= event.top) active.splice(index, 1);
-      // Keep both title/time lines exposed; short cards only have a title.
-      crowdedHeadings ||= active.some(other => event.top - other.top < (other.height < 48 ? 28 : 42));
+      // Keep the title and start time exposed before layering the next block.
+      crowdedHeadings ||= active.some(other => event.top - other.top < (other.height < CALENDAR_COMPACT_BLOCK_HEIGHT ? 30 : 42));
       const used = new Set(active.map(item => item.lane));
       while (used.has(event.lane)) event.lane += 1;
       active.push(event);
@@ -950,7 +951,7 @@ function renderTimeline(dates) {
     const events = workEvents.map(({ task, top, height, left, width, stack, overlapping }) => {
       const info = classInfo(task);
       const timing = Model.taskTiming(task);
-      return `<button type="button" class="calendar-event-block ${height < 48 ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" data-overlapping-work="${overlapping}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};--course-default-fill:${info.defaultWorkFill || 'initial'};--work-stack:${stack};top:${top}px;height:${height}px;left:${left}%;width:${width}%"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
+      return `<button type="button" class="calendar-event-block ${height < CALENDAR_COMPACT_BLOCK_HEIGHT ? "is-short " : ""}${task.id === selectedTaskId ? "selected" : ""}" data-select-task="${task.id}" data-edit-task="${task.id}" data-calendar-kind="work" data-calendar-drag-task="${task.id}" data-overlapping-work="${overlapping}" aria-label="${safeText(`Work session: ${task.title}. ${taskScheduleText(task)}${timing.plannedAfterDeadline ? ". Work ends after deadline" : ""}`).replaceAll('"', "&quot;")}" aria-describedby="calendar-drag-instructions" style="--course-color:${info.color};--course-soft:${info.soft};--course-default-fill:${info.defaultWorkFill || 'initial'};--work-stack:${stack};top:${top}px;height:${height}px;left:${left}%;width:${width}%"><strong>${safeText(task.title)}</strong><small>${formatTime(Model.scheduledParts(task).time)}</small>${timing.plannedAfterDeadline ? '<span class="calendar-work-warning" aria-hidden="true">!</span>' : ""}</button>`;
     }).join("");
     const timedDeadlines = deadlineGroups.map(group => {
       const overlapsWork = workEvents.some(event => overlapsDeadline(event, group));
@@ -1825,6 +1826,7 @@ function showFreeCalendarPreview(clientX, clientY, time = null) {
   const left = Math.max(4, Math.min(window.innerWidth - width - 4, clientX + 12));
   const top = Math.max(4, Math.min(window.innerHeight - height - 4, clientY + 12));
   Object.assign(preview.style, { left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, clipPath: "none" });
+  preview.classList.toggle("is-short", height < CALENDAR_COMPACT_BLOCK_HEIGHT);
   preview.dataset.dragPlacement = "free";
   preview.querySelector("small").textContent = `${time ? `${formatTime(time)} · ` : ""}${templateDrag.template.durationMinutes} min`;
   preview.hidden = false;
@@ -1841,6 +1843,7 @@ function fitCalendarDropPreview({ left, top, width, height }, mode) {
     clipPath: layer ? "none" : `inset(${Math.max(0, viewport.top - top)}px ${Math.max(0, left + width - viewport.right)}px ${Math.max(0, top + height - viewport.bottom)}px ${Math.max(0, viewport.left - left)}px)`,
   });
   preview.dataset.dragPlacement = mode;
+  preview.classList.toggle("is-short", height < CALENDAR_COMPACT_BLOCK_HEIGHT);
   preview.hidden = false;
 }
 

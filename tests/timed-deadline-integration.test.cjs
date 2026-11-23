@@ -9,6 +9,8 @@ const source = fs.readFileSync("landing/app.js", "utf8");
 const functions = ["layoutEvents", "renderTimeline", "relevantCalendarMinutes"]
   .map(name => source.match(new RegExp(`^function ${name}\\(.*\\) \\{[\\s\\S]*?^\\}`, "m"))?.[0]);
 assert.ok(functions.every(Boolean), "Use the real timeline rendering and initial-scroll functions");
+const compactBlockHeight = source.match(/^const CALENDAR_COMPACT_BLOCK_HEIGHT = \d+;/m)?.[0];
+assert.ok(compactBlockHeight, "Use the real compact block threshold");
 const date = "2030-05-02";
 const escape = value => String(value).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;");
 const task = (id, values = {}) => ({ id, title: `Task ${id}`, dueDate: date, dueTime: null,
@@ -24,7 +26,7 @@ function fixture(tasks) {
     formatLongDate: value => value, formatTime: value => value, safeText: escape,
     taskScheduleText: () => "Scheduled work", Date, Intl,
   });
-  vm.runInContext(functions.join("\n"), context);
+  vm.runInContext([compactBlockHeight, ...functions].join("\n"), context);
   return { render: () => context.renderTimeline([date]), relevant: () => context.relevantCalendarMinutes([date]), layout: () => context.layoutEvents(tasks) };
 }
 

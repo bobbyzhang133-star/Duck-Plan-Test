@@ -92,7 +92,7 @@
 
 /* Status belongs to the task itself, independently of the selected grouping. */
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-task-tone] {
-  --task-status-color: #7c7b74;
+  --task-status-color: #8057be;
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-task-tone="scheduled"] { --task-status-color: #397fc0; }
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-task-tone="overdue"] { --task-status-color: #c34e42; }
@@ -100,6 +100,6 @@
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-task-tone="completed"] { --task-status-color: #4c9964; }
 .motion-preview :is(#daily-task-panel,#view-tasks) :is(.daily-task-card,.all-task-row)[data-task-tone],
 .motion-preview :is(#daily-task-panel,#view-tasks) :is(.daily-task-card,.all-task-row)[data-task-tone]:is(.selected,.is-overdue) {
-  background: linear-gradient(90deg,var(--task-status-color) 3px,transparent 3px) var(--card);
-  border-color: var(--line);
+  background: color-mix(in srgb,var(--task-status-color) 11%,var(--card));
+  border-color: color-mix(in srgb,var(--task-status-color) 32%,var(--line));
 }

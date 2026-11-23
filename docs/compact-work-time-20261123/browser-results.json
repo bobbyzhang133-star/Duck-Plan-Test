@@ -1,0 +1,101 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "local demo",
+  "results": [
+    {
+      "config": {
+        "width": 1280,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "palette": {
+        "overdue": "color(srgb 0.974118 0.923647 0.918471)",
+        "scheduled": "color(srgb 0.914588 0.944784 0.972824)",
+        "neutral": "color(srgb 0.945216 0.927529 0.971961)",
+        "due": "color(srgb 0.986627 0.952118 0.937451)"
+      },
+      "times": [
+        {
+          "text": "9:00 AM",
+          "height": 47,
+          "fits": true
+        },
+        {
+          "text": "10:00 AM",
+          "height": 31,
+          "fits": true
+        },
+        {
+          "text": "11:00 AM",
+          "height": 47,
+          "fits": true
+        },
+        {
+          "text": "2:00 PM",
+          "height": 31,
+          "fits": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "calendar",
+        "dark": true
+      },
+      "status": "PASS",
+      "palette": {
+        "overdue": "color(srgb 0.234196 0.183725 0.154118)",
+        "scheduled": "color(srgb 0.174667 0.204863 0.208471)",
+        "neutral": "color(srgb 0.205294 0.187608 0.207608)",
+        "due": "color(srgb 0.246706 0.212196 0.173098)"
+      },
+      "times": [
+        {
+          "text": "9:00 AM",
+          "height": 47,
+          "fits": true
+        },
+        {
+          "text": "10:00 AM",
+          "height": 31,
+          "fits": true
+        },
+        {
+          "text": "11:00 AM",
+          "height": 47,
+          "fits": true
+        },
+        {
+          "text": "2:00 PM",
+          "height": 31,
+          "fits": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks",
+        "phone": true
+      },
+      "status": "PASS",
+      "palette": {
+        "overdue": "color(srgb 0.974118 0.923647 0.918471)",
+        "scheduled": "color(srgb 0.914588 0.944784 0.972824)",
+        "due": "color(srgb 0.986627 0.952118 0.937451)",
+        "neutral": "color(srgb 0.945216 0.927529 0.971961)"
+      },
+      "times": [
+        {
+          "text": "2:15 PM",
+          "height": 31,
+          "fits": true
+        }
+      ],
+      "errors": []
+    }
+  ]
+}
