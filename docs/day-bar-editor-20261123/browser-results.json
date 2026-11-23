@@ -1,0 +1,100 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "local demo",
+  "results": [
+    {
+      "config": {
+        "width": 1440
+      },
+      "status": "PASS",
+      "barWidth": 926,
+      "openState": {
+        "open": true,
+        "width": 448,
+        "height": 502,
+        "paint": "rgb(255, 255, 255)",
+        "fieldsAvailable": true,
+        "title": "Sample: Review physics notes",
+        "workStart": "10:00",
+        "prefillDueDate": "2026-11-23",
+        "preview": false,
+        "morph": false,
+        "motion": "opening",
+        "keyframes": [
+          [
+            "0.6",
+            "translateY(6px)"
+          ],
+          [
+            "1",
+            "translate(0px, 0px) scale(1, 1)"
+          ]
+        ]
+      },
+      "escapeFocusRestored": true,
+      "savedAndReloaded": true,
+      "weekPreview": true,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "phone": true
+      },
+      "status": "PASS",
+      "barWidth": 276,
+      "openState": {
+        "open": true,
+        "width": 362,
+        "height": 536,
+        "paint": "rgb(255, 255, 255)",
+        "fieldsAvailable": true,
+        "title": "Sample: Review physics notes",
+        "workStart": "10:00",
+        "prefillDueDate": "2026-11-23",
+        "preview": false,
+        "morph": false,
+        "motion": "opening",
+        "keyframes": [
+          [
+            "0.6",
+            "translateY(6px)"
+          ],
+          [
+            "1",
+            "translate(0px, 0px) scale(1, 1)"
+          ]
+        ]
+      },
+      "escapeFocusRestored": true,
+      "savedAndReloaded": false,
+      "weekPreview": false,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 1280,
+        "reduced": true
+      },
+      "status": "PASS",
+      "barWidth": 766,
+      "openState": {
+        "open": true,
+        "width": 448,
+        "height": 888,
+        "paint": "rgb(255, 255, 255)",
+        "fieldsAvailable": true,
+        "title": "Sample: Review physics notes",
+        "workStart": "10:00",
+        "prefillDueDate": "2026-11-23",
+        "preview": false,
+        "morph": false,
+        "motion": null
+      },
+      "escapeFocusRestored": true,
+      "savedAndReloaded": true,
+      "weekPreview": true,
+      "errors": []
+    }
+  ]
+}

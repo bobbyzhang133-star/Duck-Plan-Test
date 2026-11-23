@@ -1571,7 +1571,7 @@ function openModal(prefill = {}) {
   viewTransitions.settle();
   const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
     ? document.activeElement : document.querySelector("#open-task-modal"));
-  modalAnchor = DuckPopupMotion.capture(source);
+  modalAnchor = DuckPopupMotion.capture(source, { fade: prefill.fade === true });
   modalClosing = false;
   els.modal.inert = false;
   editingTaskId = prefill.id || null;
@@ -1687,8 +1687,13 @@ document.addEventListener("click", (event) => {
     ? deadlinePointerControl.matches("[data-select-task]") ? deadlinePointerControl : null
     : event.target.closest("#planner-calendar [data-select-task]");
   if (calendarItem) {
-    if (selectedTaskId !== calendarItem.dataset.selectTask) selectTask(calendarItem.dataset.selectTask);
-    calendarTaskPreview.open(calendarItem.dataset.selectTask, calendarItem);
+    const taskId = calendarItem.dataset.selectTask;
+    if (selectedTaskId !== taskId) selectTask(taskId);
+    if (calendarView === "day" && calendarItem.matches(".calendar-event-block")) {
+      openModal({ id: taskId, source: calendarItem, fade: true });
+    } else {
+      calendarTaskPreview.open(taskId, calendarItem);
+    }
     return;
   }
   const overflow = event.target.closest("[data-deadline-overflow]");
