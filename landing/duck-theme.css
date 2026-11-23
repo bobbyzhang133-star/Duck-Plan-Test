@@ -135,8 +135,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .duck-celebrating .duck-sparkles { animation: duck-stars 800ms ease 2; transform-origin: 90px 60px; }
 .pond-duck.is-swimming .duck-character { animation: duck-bob 700ms ease 2; }
 .completion-effects { position: fixed; inset: 0; z-index: 90; overflow: hidden; pointer-events: none; }
-.completion-particle { position: absolute; width: 6px; height: 9px; border-radius: 2px; background: var(--duck-gold); animation: duck-confetti 850ms cubic-bezier(.12,.6,.4,1) both; }
-.completion-particle:nth-child(3n) { border-radius: 50%; background: #7eac94; width: 5px; height: 5px; }.completion-particle:nth-child(3n+1) { background: #ffdb55; }
+.completion-particle { position: absolute; width: 9px; height: 13px; border-radius: 3px; background: var(--duck-gold); animation: duck-confetti 850ms cubic-bezier(.12,.6,.4,1) both; }
+.completion-particle:nth-child(3n) { border-radius: 50%; background: #7eac94; width: 8px; height: 8px; }.completion-particle:nth-child(3n+1) { background: #ffdb55; }
 .task-completion-echo { position: fixed; z-index: 89; pointer-events: none; margin: 0; border: 1px solid #c0cf9c; box-shadow: 0 0 0 3px #ffd93d20; transition: none !important; animation: task-finish 430ms ease both; }
 .task-completion-echo .task-timing-badges svg { width: 12px; height: 12px; }
 .completion-exit-source { opacity: 0 !important; pointer-events: none !important; }

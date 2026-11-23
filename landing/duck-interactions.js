@@ -127,16 +127,16 @@
   });
 
   function burst(x, y, large) {
-    const count = large ? 22 : 10;
+    const count = large ? 30 : 16;
     const batch = document.createElement("span");
     for (let index = 0; index < count; index += 1) {
       const particle = document.createElement("i");
       particle.className = "completion-particle";
       const angle = (index / count) * Math.PI * 2;
-      const distance = (large ? 82 : 36) + (index % 3) * 12;
+      const distance = (large ? 118 : 70) + (index % 3) * 18;
       particle.style.left = `${x}px`; particle.style.top = `${y}px`;
       particle.style.setProperty("--particle-x", `${Math.cos(angle) * distance}px`);
-      particle.style.setProperty("--particle-y", `${Math.sin(angle) * distance - 28}px`);
+      particle.style.setProperty("--particle-y", `${Math.sin(angle) * distance - 40}px`);
       particle.style.setProperty("--particle-rotation", `${index * 57}deg`);
       batch.append(particle);
     }
@@ -204,7 +204,8 @@
     Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
     const height = rect.height;
     // Reserve space for the original 1.2% lift even on a narrow or short viewport.
-    const scale = Math.max(.1, Math.min(2, (innerWidth - 16) / (rect.width * 1.012), (innerHeight - 36) / (height * 1.012)));
+    const fittedScale = Math.max(.1, Math.min(2, (innerWidth - 16) / (rect.width * 1.012), (innerHeight - 36) / (height * 1.012)));
+    const scale = fittedScale > 1 ? 1 + (fittedScale - 1) * .45 : fittedScale;
     const peakScale = scale * 1.012;
     const peakLeft = rect.left - rect.width * (peakScale - 1) / 2;
     const peakRight = rect.right + rect.width * (peakScale - 1) / 2;
