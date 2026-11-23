@@ -1,0 +1,5 @@
+# Preserve the duck's bill drawing
+
+November 22 correction: emotion variants retain the approved main drawing style. The smiling thumbs-up duck has no line inside its bill; use the happy curved eyes and relaxed brows to communicate its expression. Remove the added smile path entirely and its CSS selectors. Keep the approved v11 head/bill image, complete body and approval animation unchanged. Local original preview only; cache v133 and CSS/mascot query versions refreshed.
+
+PASS: Playwright MCP Chromium 157.0.8103.79, isolated local Calendar at 1156×1000 and 390×1000. Complete a sample task and inspect its delayed thumbs-up reaction: no extra smile path, happy curved eyes visible, stern brows hidden, v11 image and thumb unchanged. Reaction cleans up without page errors. Rendered screenshot visually inspected; mascot JavaScript syntax, both cache tests and git diff --check pass. Runtime results and screenshot alongside this file. Native/PWA/physical devices and hosted behavior are NOT RUN; no public/app publication.

@@ -1,0 +1,29 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1156,
+      "status": "PASS",
+      "actual": {
+        "extraSmilePath": 0,
+        "eyes": "inline",
+        "brows": "none",
+        "head": "v11",
+        "image": "./assets/duckplan-sigma-head-v11-transparent.png",
+        "thumb": "inline"
+      }
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "actual": {
+        "extraSmilePath": 0,
+        "eyes": "inline",
+        "brows": "none",
+        "head": "v11",
+        "image": "./assets/duckplan-sigma-head-v11-transparent.png",
+        "thumb": "inline"
+      }
+    }
+  ]
+}

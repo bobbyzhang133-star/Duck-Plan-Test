@@ -116,10 +116,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* All poses keep the original Sigma duck's white silhouette and ink outline. */
 .duck-character { display: block; width: 100%; height: 100%; overflow: visible; }
-.duck-closed-eyes,.duck-sleep-eyes,.duck-glasses,.duck-check-flag,.duck-sparkles,.duck-snooze,.duck-water,.duck-wing,.duck-thumbs-up-wing,.duck-smile { display: none; }
+.duck-closed-eyes,.duck-sleep-eyes,.duck-glasses,.duck-check-flag,.duck-sparkles,.duck-snooze,.duck-water,.duck-wing,.duck-thumbs-up-wing { display: none; }
 .duck-thumbsup .duck-thumbs-up-wing { display: inline; }
 .duck-thumbsup .duck-brows,.duck-thumbsup .duck-open-eyes { display: none; }
-.duck-thumbsup .duck-closed-eyes,.duck-thumbsup .duck-smile { display: inline; }
+.duck-thumbsup .duck-closed-eyes { display: inline; }
 /* A resting front view has a plain chest; a lifted wing appears only to wave. */
 .welcome-duck:is(.is-greeting,.is-reacting) .duck-wing,.duck-celebrating .duck-wing { display: inline; }
 .duck-sleepy .duck-open-eyes { display: none; }.duck-sleepy .duck-sleep-eyes,.duck-sleepy .duck-snooze { display: inline; }.duck-sleepy { transform-origin: 50% 90%; transform: rotate(3deg); }
