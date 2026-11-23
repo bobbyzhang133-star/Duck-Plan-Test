@@ -1,0 +1,1463 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "port": 8043,
+        "view": "calendar",
+        "width": 1156,
+        "original": true
+      },
+      "status": "PASS",
+      "source": {
+        "width": 224.875,
+        "height": 184.15625,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "24px 179.875px"
+      },
+      "echo": {
+        "width": 224.875,
+        "height": 184.15625,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "36px 118.875px 40px",
+        "title": {
+          "width": 112.875,
+          "height": 48,
+          "font": "16px",
+          "lineHeight": "24px",
+          "grid": "none"
+        },
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1,
+            "y": 0,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.00961,
+            "y": -1.61688,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 0.998474,
+            "y": -0.155303,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 0.990015,
+            "y": 0.987942,
+            "opacity": 0.000628181
+          }
+        ],
+        "dateIcons": 2,
+        "fits": true,
+        "contentFits": false,
+        "keyframes": [
+          {
+            "offset": 0,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "scale(1)",
+            "opacity": "0.96",
+            "computedOffset": 0
+          },
+          {
+            "offset": 0.35,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "scale(1.012) translateY(-2px)",
+            "opacity": "0.9",
+            "computedOffset": 0.35
+          },
+          {
+            "offset": 1,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "scale(0.99) translateY(1px)",
+            "opacity": "0",
+            "computedOffset": 1
+          }
+        ]
+      },
+      "frames": [
+        {
+          "time": 3.7999999821186066,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 11.599999994039536,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 26.799999982118607,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 126.69999998807907,
+          "echo": true,
+          "opacity": 0.904564,
+          "scale": 1.01109,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 259.90000000596046,
+          "echo": true,
+          "opacity": 0.444889,
+          "scale": 1.00088,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 393.40000000596046,
+          "echo": true,
+          "opacity": 0.0287146,
+          "scale": 0.990702,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 526.7999999821186,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 659.6999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 793.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 927,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1059.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1193.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1326.9000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1459.2999999821186,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1593.5,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1726.9000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1860,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1993.199999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2126.699999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2260,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": true,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "port": 8042,
+        "view": "calendar",
+        "width": 1156
+      },
+      "status": "PASS",
+      "source": {
+        "width": 224.875,
+        "height": 184.15625,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "24px 179.875px"
+      },
+      "echo": {
+        "width": 224.875,
+        "height": 262.875,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "36px 118.875px 40px",
+        "title": {
+          "width": 112.875,
+          "height": 48,
+          "font": "16px",
+          "lineHeight": "24px",
+          "grid": "none"
+        },
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1,
+            "y": -56.1554,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.00961,
+            "y": -57.7723,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.012,
+            "y": -58.1794,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 1.012,
+            "y": -58.1794,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 1.012,
+            "y": -58.1794,
+            "opacity": 0.000628181
+          }
+        ],
+        "dateIcons": 0,
+        "fits": true,
+        "contentFits": true,
+        "keyframes": [
+          {
+            "offset": 0,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px, -56.1554px) scale(1)",
+            "opacity": "0.96",
+            "computedOffset": 0
+          },
+          {
+            "offset": 0.35,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px, -56.1554px) scale(1.012) translateY(-2px)",
+            "opacity": "0.9",
+            "computedOffset": 0.35
+          },
+          {
+            "offset": 1,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px, -56.1554px) scale(1.012) translateY(-2px)",
+            "opacity": "0",
+            "computedOffset": 1
+          }
+        ]
+      },
+      "frames": [
+        {
+          "time": 3.2999999821186066,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 16.299999982118607,
+          "echo": true,
+          "opacity": 0.953289,
+          "scale": 1.00134,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 33,
+          "echo": true,
+          "opacity": 0.939322,
+          "scale": 1.00414,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 133.19999998807907,
+          "echo": true,
+          "opacity": 0.900447,
+          "scale": 1.01191,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 266.2999999821186,
+          "echo": true,
+          "opacity": 0.266278,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 399.69999998807907,
+          "echo": true,
+          "opacity": 0.00590068,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 549.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 683.1999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 816.3999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 949.8999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1083.0999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1216.3999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1349.5,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1483,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1616.5,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1749.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1883,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2016.0999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2149.399999976158,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2282.899999976158,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "port": 8042,
+        "view": "tasks",
+        "width": 390
+      },
+      "status": "PASS",
+      "source": {
+        "width": 332,
+        "height": 137.875,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "32px 252px 36px"
+      },
+      "echo": {
+        "width": 332,
+        "height": 146.390625,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "32px 252px 36px",
+        "title": {
+          "width": 246,
+          "height": 24,
+          "font": "16px",
+          "lineHeight": "24px",
+          "grid": "none"
+        },
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1,
+            "y": 0,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.00961,
+            "y": -1.61688,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.000628181
+          }
+        ],
+        "dateIcons": 0,
+        "fits": true,
+        "contentFits": true,
+        "keyframes": [
+          {
+            "offset": 0,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1)",
+            "opacity": "0.96",
+            "computedOffset": 0
+          },
+          {
+            "offset": 0.35,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1.012) translateY(-2px)",
+            "opacity": "0.9",
+            "computedOffset": 0.35
+          },
+          {
+            "offset": 1,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1.012) translateY(-2px)",
+            "opacity": "0",
+            "computedOffset": 1
+          }
+        ]
+      },
+      "frames": [
+        {
+          "time": 5.5,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 16.600000023841858,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 34.20000001788139,
+          "echo": true,
+          "opacity": 0.953254,
+          "scale": 1.00135,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 133.5,
+          "echo": true,
+          "opacity": 0.90189,
+          "scale": 1.01162,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 266.90000000596046,
+          "echo": true,
+          "opacity": 0.346641,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 400.60000002384186,
+          "echo": true,
+          "opacity": 0.0148818,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 550.6000000238419,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 683.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 816.8000000119209,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 950.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1083.800000011921,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1217.2000000178814,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1350.6000000238419,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1483.7000000178814,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1617.6000000238419,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1750.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1883.7000000178814,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2017,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2150.300000011921,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2284.600000023842,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "port": 8042,
+        "view": "calendar",
+        "width": 390
+      },
+      "status": "PASS",
+      "source": {
+        "width": 340,
+        "height": 129.125,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "24px 295px"
+      },
+      "echo": {
+        "width": 340,
+        "height": 137.390625,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "32px 252px 36px",
+        "title": {
+          "width": 246,
+          "height": 24,
+          "font": "16px",
+          "lineHeight": "24px",
+          "grid": "none"
+        },
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1,
+            "y": 0,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.00961,
+            "y": -1.61688,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.000628181
+          }
+        ],
+        "dateIcons": 0,
+        "fits": true,
+        "contentFits": true,
+        "keyframes": [
+          {
+            "offset": 0,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1)",
+            "opacity": "0.96",
+            "computedOffset": 0
+          },
+          {
+            "offset": 0.35,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1.012) translateY(-2px)",
+            "opacity": "0.9",
+            "computedOffset": 0.35
+          },
+          {
+            "offset": 1,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1.012) translateY(-2px)",
+            "opacity": "0",
+            "computedOffset": 1
+          }
+        ]
+      },
+      "frames": [
+        {
+          "time": 8.099999994039536,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 13.900000005960464,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 36.80000001192093,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 126,
+          "echo": true,
+          "opacity": 0.904581,
+          "scale": 1.01108,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 274.19999998807907,
+          "echo": true,
+          "opacity": 0.444767,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 393.5,
+          "echo": true,
+          "opacity": 0.0286959,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 545.0999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 676.5,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 810.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 945.6999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1077,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1209.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1343.199999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1476.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1609.9000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1743.199999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1876.300000011921,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2009.9000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2142.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2276.5999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "port": 8042,
+        "view": "home",
+        "width": 835
+      },
+      "status": "PASS",
+      "source": {
+        "width": 260.78125,
+        "height": 152.0625,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "24px 212.781px"
+      },
+      "echo": {
+        "width": 260.78125,
+        "height": 210.984375,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "36px 154.781px 40px",
+        "title": {
+          "width": 148.78125,
+          "height": 48,
+          "font": "16px",
+          "lineHeight": "24px",
+          "grid": "none"
+        },
+        "samples": [
+          {
+            "time": 0,
+            "scale": 1,
+            "y": 0,
+            "opacity": 0.96
+          },
+          {
+            "time": 75,
+            "scale": 1.00961,
+            "y": -1.61688,
+            "opacity": 0.911955
+          },
+          {
+            "time": 150.5,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.9
+          },
+          {
+            "time": 250,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.346662
+          },
+          {
+            "time": 420,
+            "scale": 1.012,
+            "y": -2.024,
+            "opacity": 0.000628181
+          }
+        ],
+        "dateIcons": 0,
+        "fits": true,
+        "contentFits": true,
+        "keyframes": [
+          {
+            "offset": 0,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1)",
+            "opacity": "0.96",
+            "computedOffset": 0
+          },
+          {
+            "offset": 0.35,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1.012) translateY(-2px)",
+            "opacity": "0.9",
+            "computedOffset": 0.35
+          },
+          {
+            "offset": 1,
+            "easing": "ease",
+            "composite": "auto",
+            "transform": "translate(0px) scale(1.012) translateY(-2px)",
+            "opacity": "0",
+            "computedOffset": 1
+          }
+        ]
+      },
+      "frames": [
+        {
+          "time": 9.299999982118607,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 21.799999982118607,
+          "echo": true,
+          "opacity": 0.96,
+          "scale": 1,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 38.599999994039536,
+          "echo": true,
+          "opacity": 0.953274,
+          "scale": 1.00135,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 138.59999999403954,
+          "echo": true,
+          "opacity": 0.901881,
+          "scale": 1.01162,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 271.59999999403954,
+          "echo": true,
+          "opacity": 0.346801,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 405.09999999403954,
+          "echo": true,
+          "opacity": 0.0149021,
+          "scale": 1.012,
+          "sourceHeld": true,
+          "duck": false
+        },
+        {
+          "time": 555.1999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 688.1999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 821.1999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 954.6999999880791,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1088.2999999821186,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1221.8999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1355.199999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1487.7999999821186,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1621.8999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1754.8999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 1888.3999999761581,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2021.699999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": true
+        },
+        {
+          "time": 2155,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2288.399999976158,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    },
+    {
+      "config": {
+        "port": 8042,
+        "view": "calendar",
+        "width": 390,
+        "reduced": true
+      },
+      "status": "PASS",
+      "source": {
+        "width": 340,
+        "height": 129.125,
+        "font": "16px",
+        "lineHeight": "24.8px",
+        "grid": "24px 295px"
+      },
+      "echo": null,
+      "frames": [
+        {
+          "time": 2.5999999940395355,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 7.0999999940395355,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 7.5999999940395355,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 106,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 239.09999999403954,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 372.5,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 505.69999998807907,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 639.3000000119209,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 772.5,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 905.8000000119209,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1039.0999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1172.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1306,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1439.199999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1572.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1705.800000011921,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1839.0999999940395,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 1972.4000000059605,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2105.699999988079,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        },
+        {
+          "time": 2239.800000011921,
+          "echo": false,
+          "opacity": null,
+          "scale": null,
+          "sourceHeld": false,
+          "duck": false
+        }
+      ],
+      "completed": true,
+      "visible": false,
+      "artifacts": 0
+    }
+  ]
+}

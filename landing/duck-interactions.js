@@ -148,61 +148,45 @@
     clearTimeout(celebrationTimer);
   });
 
-  // Preserve ancestor-dependent list layout when the snapshot moves onto the body.
-  const snapshotProperties = [
-    "box-sizing", "display", "position", "inset", "grid-template-columns", "grid-template-rows", "grid-auto-flow",
-    "grid-column", "grid-row", "flex-direction", "flex-wrap", "flex-grow", "flex-shrink", "flex-basis",
-    "align-items", "align-self", "justify-content", "gap", "padding", "margin", "width", "height",
-    "min-width", "max-width", "min-height", "max-height", "font-family", "font-size", "font-weight",
-    "line-height", "letter-spacing", "text-align", "white-space", "overflow-wrap", "word-break",
-    "color", "background-color", "border-width", "border-style", "border-color", "border-radius"
-  ];
-  // Preserve the card's formatting while the stronger pop scales its snapshot.
+  // The original pop takes on the standalone card layout immediately, then lifts slightly.
+  // Let that layout size its box instead of retaining the old bug's overflowing content.
   function completionEcho(card, rect) {
     const echo = card.cloneNode(true);
-    const sourceNodes = [card, ...card.querySelectorAll("*")];
-    const copiedNodes = [echo, ...echo.querySelectorAll("*")];
-    sourceNodes.forEach((source, index) => {
-      if (source instanceof SVGElement && source.tagName.toLowerCase() !== "svg") return;
-      const style = getComputedStyle(source);
-      for (const property of snapshotProperties) {
-        const value = style.getPropertyValue(property);
-        // Computed px values can round down below the text's exact fractional width.
-        const frozen = ["width", "height"].includes(property) && /^\d+(\.\d+)?px$/.test(value)
-          ? `${Math.ceil(Number.parseFloat(value) * 100) / 100}px` : value;
-        copiedNodes[index].style.setProperty(property, frozen);
-      }
-    });
     echo.classList.add("task-completion-echo", "completed");
     echo.setAttribute("aria-hidden", "true"); echo.inert = true;
     echo.removeAttribute("id");
     echo.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
     echo.querySelectorAll('input[type="checkbox"]').forEach(input => {
       input.checked = true;
-      // Do not freeze the source checkbox's first, still-white transition frame.
-      input.style.removeProperty("background-color");
-      input.style.removeProperty("border-color");
       input.style.transition = "none";
     });
     const dateIcons = [...echo.querySelectorAll(".task-date-icon")];
     dateIcons.forEach(icon => {
       const space = document.createElement("span");
-      space.style.cssText = icon.style.cssText;
-      space.style.visibility = "hidden";
+      space.style.cssText = "display:inline-block;width:14px;height:14px;visibility:hidden";
       space.setAttribute("aria-hidden", "true");
       icon.replaceWith(space);
     });
-    Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
-    const scale = Math.max(.1, Math.min(2, (innerWidth - 16) / rect.width, (innerHeight - 32) / rect.height));
-    const peakLeft = rect.left - rect.width * (scale - 1) / 2;
-    const peakRight = rect.right + rect.width * (scale - 1) / 2;
+    Object.assign(echo.style, { position: "fixed", margin: "0", overflow: "clip", right: "auto", bottom: "auto", left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: "auto", visibility: "hidden", animation: "none", transform: "none" });
+    document.body.append(echo);
+    const height = echo.getBoundingClientRect().height;
+    echo.remove();
+    // Reserve space for the original 1.2% lift even on a narrow or short viewport.
+    const scale = Math.max(.1, Math.min(1, (innerWidth - 16) / (rect.width * 1.012), (innerHeight - 36) / (height * 1.012)));
+    const peakScale = scale * 1.012;
+    const peakLeft = rect.left - rect.width * (peakScale - 1) / 2;
+    const peakRight = rect.right + rect.width * (peakScale - 1) / 2;
     const shift = Math.max(8 - peakLeft, Math.min(0, innerWidth - 8 - peakRight));
-    const peakTop = rect.top - rect.height * (scale - 1) / 2 - 20;
-    const peakBottom = rect.bottom + rect.height * (scale - 1) / 2 - 20;
-    const shiftY = -20 + Math.max(16 - peakTop, Math.min(0, innerHeight - 16 - peakBottom));
-    echo.style.setProperty("--completion-pop-scale", String(scale));
+    const peakTop = rect.top - height * (peakScale - 1) / 2 - 2 * peakScale;
+    const peakBottom = rect.top + height + height * (peakScale - 1) / 2;
+    const shiftY = Math.max(16 - peakTop, Math.min(0, innerHeight - 16 - peakBottom));
+    echo.style.setProperty("--completion-base-scale", String(scale));
+    echo.style.setProperty("--completion-peak-scale", String(peakScale));
     echo.style.setProperty("--completion-pop-x", `${shift}px`);
     echo.style.setProperty("--completion-pop-y", `${shiftY}px`);
+    echo.style.removeProperty("visibility");
+    echo.style.removeProperty("animation");
+    echo.style.removeProperty("transform");
     return echo;
   }
 
@@ -343,7 +327,7 @@
     operations.add(operation); checkboxOperations.set(checkbox, operation);
     if (echo) {
       ticket = renderHold.hold({
-        duration: 400,
+        duration: 550,
         onRelease({ cancelled: interrupted }) {
           if (interrupted) { cancelled = true; operations.delete(operation); }
           clean({ restore: interrupted });
