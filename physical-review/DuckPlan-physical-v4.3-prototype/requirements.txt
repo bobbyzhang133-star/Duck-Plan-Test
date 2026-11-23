@@ -1,0 +1,4 @@
+build123d==0.13.0
+opencv-python-headless==5.1.0.95
+Pillow>=12,<14
+numpy>=2,<3
