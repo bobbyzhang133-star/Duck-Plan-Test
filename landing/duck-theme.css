@@ -137,7 +137,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .completion-effects { position: fixed; inset: 0; z-index: 90; overflow: hidden; pointer-events: none; }
 .completion-particle { position: absolute; width: 6px; height: 9px; border-radius: 2px; background: var(--duck-gold); animation: duck-confetti 850ms cubic-bezier(.12,.6,.4,1) both; }
 .completion-particle:nth-child(3n) { border-radius: 50%; background: #7eac94; width: 5px; height: 5px; }.completion-particle:nth-child(3n+1) { background: #ffdb55; }
-.task-completion-echo { position: fixed; z-index: 89; pointer-events: none; margin: 0; border: 1px solid #c0cf9c; box-shadow: 0 0 0 3px #ffd93d20; animation: task-finish 279.5ms ease both; }
+.task-completion-echo { position: fixed; z-index: 89; pointer-events: none; margin: 0; border: 1px solid #c0cf9c; box-shadow: 0 0 0 3px #ffd93d20; transition: none !important; transform: translate(var(--completion-pop-x,0px),var(--completion-pop-y,-20px)) scale(var(--completion-pop-scale,2)); animation: task-finish 279.5ms ease both; }
 .task-completion-echo .task-timing-badges svg { width: 12px; height: 12px; }
 .completion-exit-source { opacity: 0 !important; pointer-events: none !important; }
 .completion-duck-reaction { position: fixed; z-index: 91; pointer-events: none; transform-origin: 50% 85%; animation: completion-duck-approval 1500ms linear both; }

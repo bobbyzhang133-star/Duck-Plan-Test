@@ -1051,6 +1051,7 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   tasks = store.listItems();
   if (tasks.some(task => task.completed && unfinishedBefore.has(task.id))) foldCompletedAfterFinish = true;
   if (window.DuckTaskCompletion?.deferRender(() => renderAll({ autoScrollCalendar }))) return;
+  const restoreCompletionFocus = window.DuckTaskCompletion?.preserveFocus();
   if (foldCompletedAfterFinish) {
     collapsed.completed = true;
     document.querySelector(".dashboard-completed").open = false;
@@ -1067,6 +1068,7 @@ function renderAll({ autoScrollCalendar = false } = {}) {
   if (els.modal.open) taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   refreshReminders();
   requestAnimationFrame(() => setupButtonMaterial());
+  restoreCompletionFocus?.();
 }
 
 function updatePrimaryAction(view) {

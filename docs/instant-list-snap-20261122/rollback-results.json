@@ -1,0 +1,11 @@
+{
+  "runtime": "157.0.8103.79",
+  "state": {
+    "completed": false,
+    "visible": 1,
+    "opacity": "1",
+    "artifacts": 0,
+    "toast": "Synthetic snap rollback failure"
+  },
+  "errors": []
+}

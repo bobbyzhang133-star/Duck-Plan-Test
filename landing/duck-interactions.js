@@ -18,24 +18,19 @@
   const operations = new Set(), checkboxOperations = new WeakMap();
   const completionContext = () => `${store.mode}:${store.user?.id || "local"}:${plannerOwnerVersion}:${document.body.dataset.view}`;
   const renderHold = window.DuckCompletionRenderHold.create({ getContext: completionContext });
-  const listMotion = window.DuckCompletionListMotion.create({
-    getContext: completionContext, enabled: () => motionAllowed(),
-    getRoot: () => document.querySelector(document.body.dataset.view === "calendar" ? "#daily-task-panel" : document.body.dataset.view === "home" ? "#view-home" : "#view-tasks")
-  });
-
   function cancelCompletions(options) {
-    listMotion.cancel(options);
     renderHold.cancel(options);
     for (const operation of [...operations]) operation.cancel();
   }
   window.DuckTaskCompletion = Object.freeze({
-    deferRender: callback => renderHold.deferRender(callback) || listMotion.deferRender(() => {
+    deferRender: callback => renderHold.deferRender(callback),
+    preserveFocus: () => {
+      if (!operations.size) return null;
       const focused = document.activeElement, view = document.body.dataset.view;
       const taskControl = focused?.matches("input[data-task-id],button[data-edit-task]");
       const keyboard = taskControl && focused.matches(":focus-visible");
-      callback();
-      if (taskControl) restoreCompletionFocus(focused, keyboard, view);
-    }),
+      return taskControl ? () => restoreCompletionFocus(focused, keyboard, view) : null;
+    },
     forCheckbox: checkbox => checkboxOperations.get(checkbox),
     cancel: cancelCompletions
   });
@@ -225,6 +220,26 @@
     return duck;
   }
 
+  function fadeCompletionLabels(card, task) {
+    const targets = new Set();
+    const section = card?.closest("#daily-task-panel .task-section");
+    if (section && !section.matches(".overdue-section,.completed-section")
+      && ![...section.querySelectorAll("input[data-task-id]")].some(input => !input.checked)) {
+      targets.add(section.querySelector(".task-section-heading"));
+    }
+    if (Model.taskTiming(task).overdue && unfinishedOverdueTasks().length === 1) {
+      document.querySelectorAll("[data-complete-overdue]").forEach(button => {
+        if (button.checkVisibility?.() !== false && !button.closest("[hidden]")) targets.add(button);
+      });
+    }
+    return [...targets].filter(Boolean).map(element => {
+      const animation = element.animate([{ opacity: getComputedStyle(element).opacity }, { opacity: 0 }],
+        { duration: 200, easing: "ease-out", fill: "forwards" });
+      animation.finished.catch(() => {});
+      return animation;
+    });
+  }
+
   function restoreCompletionFocus(checkbox, keyboard, view) {
     if (!keyboard || document.body.dataset.view !== view || ![document.body, checkbox].includes(document.activeElement)) return;
     const scope = document.querySelector(view === "calendar" ? "#daily-task-panel" : view === "home" ? "#view-home" : "#view-tasks");
@@ -257,6 +272,7 @@
     const card = checkbox.closest(".daily-task-card,.all-task-row,.matrix-task-card");
     const cardRect = card?.getBoundingClientRect();
     const echo = motionAllowed() && cardRect?.width ? completionEcho(card, cardRect) : null;
+    const labelFades = echo ? fadeCompletionLabels(card, task) : [];
     const controls = echo ? [...card.querySelectorAll("input,button,a,[tabindex]")].map(element => [element, element.getAttribute("tabindex")]) : [];
     const previousBusy = card?.getAttribute("aria-busy");
     // Click feedback starts now, independently of saving or the outgoing card's render hold.
@@ -306,6 +322,7 @@
         restoreSource(); particles?.remove();
         clearTimeout(duckTimer); clearTimeout(duckCleanup); duck?.remove();
       }
+      labelFades.forEach(animation => animation.cancel());
       echo?.remove();
     }
     const operation = {
@@ -332,13 +349,11 @@
           clean({ restore: interrupted });
         },
         beforeRender() {
-          listMotion.capture();
           const active = document.activeElement;
           focusAtRender = active?.matches("input[data-task-id],button[data-edit-task]") ? active : null;
           focusWasVisible = focusAtRender?.matches(":focus-visible");
         },
         afterRelease() {
-          listMotion.play();
           restoreSource();
           settled = true;
           if (current()) { restoreCompletionFocus(focusAtRender || checkbox, Boolean(focusAtRender) && focusWasVisible, view); react(); }
