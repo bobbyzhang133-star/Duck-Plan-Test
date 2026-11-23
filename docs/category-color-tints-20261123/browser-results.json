@@ -1,0 +1,199 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "width": 1280,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "groups": [
+        {
+          "label": "Overdue\n1",
+          "tone": "overdue",
+          "fill": "rgb(250, 231, 228)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(242, 207, 201)",
+          "countText": "rgb(152, 57, 46)",
+          "height": 46,
+          "labelContrast": 11.386007864870814,
+          "badgeContrast": 4.913870696843059
+        },
+        {
+          "label": "Scheduled\n3",
+          "tone": "scheduled",
+          "fill": "rgb(237, 244, 252)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(216, 232, 248)",
+          "countText": "rgb(44, 98, 143)",
+          "height": 46,
+          "labelContrast": 12.246566246281075,
+          "badgeContrast": 5.173460423345103
+        },
+        {
+          "label": "Unscheduled\n2",
+          "tone": "neutral",
+          "fill": "rgb(242, 241, 238)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(229, 228, 222)",
+          "countText": "rgb(99, 98, 91)",
+          "height": 46,
+          "labelContrast": 12.01732894226784,
+          "badgeContrast": 4.807623353789949
+        },
+        {
+          "label": "Due this day\n1",
+          "tone": "due",
+          "fill": "rgb(255, 241, 235)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(249, 221, 209)",
+          "countText": "rgb(144, 73, 47)",
+          "height": 46,
+          "labelContrast": 12.302746367480173,
+          "badgeContrast": 5.123148472902593
+        },
+        {
+          "label": "Completed\n1",
+          "tone": "completed",
+          "fill": "rgb(238, 245, 238)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(220, 235, 220)",
+          "countText": "rgb(62, 110, 76)",
+          "height": 46,
+          "labelContrast": 12.236332735602364,
+          "badgeContrast": 4.791535082898919
+        }
+      ],
+      "closing": "closing",
+      "opening": "opening",
+      "classMaterialUnchanged": true,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks"
+      },
+      "status": "PASS",
+      "groups": [
+        {
+          "label": "Overdue\n1",
+          "tone": "overdue",
+          "fill": "rgb(250, 231, 228)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(242, 207, 201)",
+          "countText": "rgb(152, 57, 46)",
+          "height": 44,
+          "labelContrast": 11.386007864870814,
+          "badgeContrast": 4.913870696843059
+        },
+        {
+          "label": "Scheduled\n3",
+          "tone": "scheduled",
+          "fill": "rgb(237, 244, 252)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(216, 232, 248)",
+          "countText": "rgb(44, 98, 143)",
+          "height": 44,
+          "labelContrast": 12.246566246281075,
+          "badgeContrast": 5.173460423345103
+        },
+        {
+          "label": "Due today\n1",
+          "tone": "due",
+          "fill": "rgb(255, 241, 235)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(249, 221, 209)",
+          "countText": "rgb(144, 73, 47)",
+          "height": 44,
+          "labelContrast": 12.302746367480173,
+          "badgeContrast": 5.123148472902593
+        },
+        {
+          "label": "Unscheduled\n2",
+          "tone": "neutral",
+          "fill": "rgb(242, 241, 238)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(229, 228, 222)",
+          "countText": "rgb(99, 98, 91)",
+          "height": 44,
+          "labelContrast": 12.01732894226784,
+          "badgeContrast": 4.807623353789949
+        }
+      ],
+      "closing": "closing",
+      "opening": "opening",
+      "classMaterialUnchanged": true,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "calendar",
+        "dark": true
+      },
+      "status": "PASS",
+      "groups": [
+        {
+          "label": "Overdue\n1",
+          "tone": "overdue",
+          "fill": "rgb(250, 231, 228)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(242, 207, 201)",
+          "countText": "rgb(152, 57, 46)",
+          "height": 46,
+          "labelContrast": 11.386007864870814,
+          "badgeContrast": 4.913870696843059
+        },
+        {
+          "label": "Scheduled\n3",
+          "tone": "scheduled",
+          "fill": "rgb(237, 244, 252)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(216, 232, 248)",
+          "countText": "rgb(44, 98, 143)",
+          "height": 46,
+          "labelContrast": 12.246566246281075,
+          "badgeContrast": 5.173460423345103
+        },
+        {
+          "label": "Unscheduled\n2",
+          "tone": "neutral",
+          "fill": "rgb(242, 241, 238)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(229, 228, 222)",
+          "countText": "rgb(99, 98, 91)",
+          "height": 46,
+          "labelContrast": 12.01732894226784,
+          "badgeContrast": 4.807623353789949
+        },
+        {
+          "label": "Due this day\n1",
+          "tone": "due",
+          "fill": "rgb(255, 241, 235)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(249, 221, 209)",
+          "countText": "rgb(144, 73, 47)",
+          "height": 46,
+          "labelContrast": 12.302746367480173,
+          "badgeContrast": 5.123148472902593
+        },
+        {
+          "label": "Completed\n1",
+          "tone": "completed",
+          "fill": "rgb(238, 245, 238)",
+          "text": "rgb(48, 46, 40)",
+          "countFill": "rgb(220, 235, 220)",
+          "countText": "rgb(62, 110, 76)",
+          "height": 46,
+          "labelContrast": 12.236332735602364,
+          "badgeContrast": 4.791535082898919
+        }
+      ],
+      "closing": "closing",
+      "opening": "opening",
+      "classMaterialUnchanged": true,
+      "errors": []
+    }
+  ]
+}

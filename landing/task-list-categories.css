@@ -1,32 +1,36 @@
 /* Shared category hierarchy; task contents keep their existing Due/Work layout. */
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section {
-  --category-ink: var(--muted);
-  --category-fill: var(--surface);
+  --category-ink: #63625b;
+  --category-fill: #e5e4de;
+  --category-tint: #f2f1ee;
   border-top: 1px solid color-mix(in srgb,var(--line) 65%,transparent);
 }
-.motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="overdue"],
+.motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="overdue"] {
+  --category-ink: #98392e; --category-fill: #f2cfc9; --category-tint: #fae7e4;
+}
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="due"] {
-  --category-ink: #a5493a; --category-fill: #f9e9e5;
+  --category-ink: #90492f; --category-fill: #f9ddd1; --category-tint: #fff1eb;
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="scheduled"],
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="upcoming"] {
-  --category-ink: #3e73a1; --category-fill: #e9f1f9;
+  --category-ink: #2c628f; --category-fill: #d8e8f8; --category-tint: #edf4fc;
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="completed"] {
-  --category-ink: #42735e; --category-fill: #e9f1eb;
+  --category-ink: #3e6e4c; --category-fill: #dcebdc; --category-tint: #eef5ee;
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) [data-category-tone="priority"] {
-  --category-ink: #967217; --category-fill: #fff3cb;
+  --category-ink: #806319; --category-fill: #f5e7bd; --category-tint: #faf5e7;
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading {
   display: grid; grid-template-columns: 10px minmax(0,1fr) auto; gap: 10px;
-  min-height: 46px; padding: 8px 3px; border: 0; border-radius: 6px;
-  color: var(--ink-deep); background: transparent; font-size: 13px; font-weight: 650;
+  min-height: 46px; padding: 8px 10px; margin: 6px 0 8px; border: 0; border-radius: 9px;
+  color: #302e28; background: var(--category-tint); font-size: 13px; font-weight: 650;
   letter-spacing: 0; line-height: 1.4; box-shadow: none;
+  transition: background-color var(--motion-control,240ms) var(--motion-ease,ease);
 }
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading::before {
   content: ""; width: 5px; height: 5px; justify-self: center;
-  border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+  border-right: 1.5px solid var(--category-ink); border-bottom: 1.5px solid var(--category-ink);
   transform: rotate(45deg) translateY(-1px);
   transition: transform var(--motion-control,240ms) var(--motion-ease,ease);
 }
@@ -42,11 +46,14 @@
   min-width: 22px; width: auto; height: 22px; padding: 0 6px; border-radius: 7px;
   color: var(--category-ink); background: var(--category-fill); font-size: 11px; font-weight: 650;
 }
-.motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading:hover { background: color-mix(in srgb,var(--surface) 65%,transparent); }
+:root[data-theme="dark"] .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading strong {
+  color: var(--category-ink); background: var(--category-fill);
+}
+.motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading:hover { background: color-mix(in srgb,var(--category-tint) 92%,var(--category-ink)); }
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .motion-preview #daily-task-panel .task-section.is-empty { display: none; }
 .motion-preview #daily-task-panel .completed-section { margin-top: 6px; }
-.motion-preview #daily-task-panel .completed-section .task-section-heading { color: var(--muted); }
+.motion-preview #daily-task-panel .completed-section .task-section-heading { color: #302e28; }
 .motion-preview #daily-task-panel .panel-progress { display: block; margin-top: 8px; font-size: 12px; }
 .motion-preview #daily-task-panel .panel-date { font-size: 13px; line-height: 1.5; }
 .task-category-progress { height: 4px; margin: -4px 0 16px; overflow: hidden; border-radius: 99px; background: var(--surface); }
@@ -87,5 +94,6 @@
   .motion-preview #view-tasks .task-category-toolbar .filter-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (prefers-reduced-motion: reduce) {
+  .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading { transition: none; }
   .motion-preview :is(#daily-task-panel,#view-tasks) .task-section-heading::before { transition: none; }
 }
