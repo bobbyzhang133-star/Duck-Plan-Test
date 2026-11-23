@@ -234,6 +234,7 @@
 .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row) {
   --task-card-line: color-mix(in srgb,#cdb38b 24%,var(--line));
   --task-deadline-ink: #985046;
+  --task-deadline-surface: #fbe2dd;
   --task-past-surface: color-mix(in srgb,#f7ded8 30%,var(--card));
   --task-warning-surface: #fbe9e3;
   --task-warning-line: #efd4c9;
@@ -311,6 +312,12 @@
 .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-due { white-space: normal; overflow-wrap: anywhere; }
 .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-due strong { color: var(--task-deadline-ink); font-size: 12px; font-weight: 600; line-height: 1.5; }
 .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-due small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.motion-preview :is(#daily-task-panel,#view-tasks) :is(.task-date-due,.task-due)[data-has-deadline] {
+  padding: 3px 6px; border-radius: 6px;
+  color: var(--task-deadline-ink); background-color: var(--task-deadline-surface);
+}
+.motion-preview #view-tasks .task-due[data-has-deadline] small { color: inherit; margin-top: 0; }
+.motion-preview :is(#daily-task-panel,#view-tasks) :is(.task-date-due,.task-due):not([data-has-deadline]) { --task-deadline-ink: var(--muted); }
 .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .completed :is(.task-title,.task-date-due,.task-due strong) { color: var(--muted); }
 .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) .task-select:not(:focus-visible):is(:hover,:active,.interaction-pressed,.interaction-released) {
   outline: none; background: transparent; box-shadow: none; filter: none; transform: none;
@@ -318,6 +325,7 @@
 :root[data-theme="dark"] .motion-preview :is(#daily-task-panel,#view-home,#view-tasks) :is(.daily-task-card,.all-task-row) {
   --task-card-line: color-mix(in srgb,#978168 18%,var(--line));
   --task-deadline-ink: #edac9c;
+  --task-deadline-surface: #4e3029;
   --task-past-surface: color-mix(in srgb,#b85e50 11%,var(--card));
   --task-warning-surface: color-mix(in srgb,#b85e50 20%,var(--card));
   --task-warning-line: #785248;

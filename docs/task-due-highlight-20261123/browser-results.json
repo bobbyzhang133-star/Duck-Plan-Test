@@ -1,0 +1,49 @@
+{
+  "runtime": "157.0.8103.79",
+  "mode": "local demo",
+  "results": [
+    {
+      "config": {
+        "width": 1280,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "count": 6,
+      "contrast": 4.767448370595421,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "tasks",
+        "dark": true
+      },
+      "status": "PASS",
+      "count": 6,
+      "contrast": 6.174017980379384,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks",
+        "phone": true
+      },
+      "status": "PASS",
+      "count": 6,
+      "contrast": 4.767448370595421,
+      "errors": []
+    },
+    {
+      "config": {
+        "width": 320,
+        "view": "calendar",
+        "phone": true
+      },
+      "status": "PASS",
+      "count": 6,
+      "contrast": 4.767448370595421,
+      "errors": []
+    }
+  ]
+}

@@ -5,7 +5,7 @@ const vm = require("node:vm");
 const Model = require("../landing/planner-model.js");
 
 const source = fs.readFileSync("landing/app.js", "utf8");
-const functions = ["formatShortDate", "formatTime", "taskScheduleText", "taskCardDateText", "taskDateIcon", "taskDateMarkup", "taskRescheduleMarkup", "priorityBadge", "taskCardMarkup", "allTaskMarkup"]
+const functions = ["formatShortDate", "formatTime", "taskScheduleText", "taskCardDateText", "taskDateIcon", "taskDateMarkup", "taskRescheduleMarkup", "priorityBadge", "taskStatusTone", "taskCardMarkup", "allTaskMarkup"]
   .map(name => source.match(new RegExp(`^function ${name}\\(.*\\) \\{[\\s\\S]*?^\\}`, "m"))?.[0]);
 assert.ok(functions.every(Boolean), "Exercise the actual shared app card/date functions");
 const escape = value => String(value ?? "").replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
@@ -53,10 +53,12 @@ test("a due-only task omits an empty Work row while the inbox and Tasks-column f
   const f = fixture();
   const dateOnly = f.date(task({ dueTime: "", scheduledStart: null }));
   assert.match(dateOnly, /Fri, Nov 20 · End of day/); assert.doesNotMatch(dateOnly, /task-date-work|Not scheduled/);
+  assert.match(dateOnly, /class="task-date-line task-date-due" data-has-deadline/);
   const timedDueOnly = f.date(task({ scheduledStart: null }));
   assert.match(timedDueOnly, /5:00 PM/); assert.doesNotMatch(timedDueOnly, /task-date-work/);
   const inbox = f.date(task({ dueDate: "", dueTime: "", scheduledStart: null }));
   assert.match(inbox, /No deadline/); assert.match(inbox, /task-date-work/); assert.match(inbox, /Not scheduled/);
+  assert.doesNotMatch(inbox, /data-has-deadline/);
   const externalDue = f.date(task({ scheduledStart: null }), { showDue: false });
   assert.doesNotMatch(externalDue, /task-date-due/); assert.match(externalDue, /task-date-work/); assert.match(externalDue, /Not scheduled/);
 });
@@ -95,6 +97,8 @@ test("completed cards retain dates and logged zero minutes but suppress urgency 
 test("All Tasks keeps one separate Due column, one Work row and its existing edit/check/drag affordances", () => {
   const f = fixture(), value = task({ actualMinutes: 0, axisMissing: true }), before = structuredClone(value), html = f.all(value);
   assert.equal((html.match(/class="task-due"/g) || []).length, 1); assert.doesNotMatch(html, /task-date-due/);
+  assert.match(html, /class="task-due" data-has-deadline/);
+  assert.doesNotMatch(f.all(task({ dueDate: "" })), /data-has-deadline/);
   assert.equal((html.match(/task-date-line task-date-work/g) || []).length, 1);
   assert.match(html, /data-task-id="assignment"/); assert.match(html, /data-edit-task="assignment"/);
   assert.match(html, /draggable="true" data-drag-task="assignment"/); assert.match(html, /class="course-dot"/);
