@@ -1,0 +1,301 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "config": {
+        "width": 1280,
+        "view": "calendar"
+      },
+      "status": "PASS",
+      "initial": [
+        {
+          "id": "completion-20261123-2-0",
+          "tone": "overdue",
+          "fill": "color(srgb 0.978824 0.937529 0.933294)",
+          "line": "color(srgb 0.868706 0.708549 0.65349)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-1",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#538fc5",
+          "dot": "rgb(83, 143, 197)"
+        },
+        {
+          "id": "completion-20261123-2-2",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-3",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#3e946d",
+          "dot": "rgb(62, 148, 109)"
+        },
+        {
+          "id": "completion-20261123-2-4",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-6",
+          "tone": "neutral",
+          "fill": "color(srgb 0.953765 0.953412 0.950941)",
+          "line": "color(srgb 0.779608 0.76502 0.716235)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-7",
+          "tone": "neutral",
+          "fill": "color(srgb 0.953765 0.953412 0.950941)",
+          "line": "color(srgb 0.779608 0.76502 0.716235)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-5",
+          "tone": "due",
+          "fill": "color(srgb 0.989059 0.960824 0.948824)",
+          "line": "color(srgb 0.905098 0.791373 0.708706)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        }
+      ],
+      "completed": {
+        "id": "completion-20261123-2-4",
+        "tone": "completed",
+        "fill": "color(srgb 0.936824 0.964 0.945294)",
+        "line": "color(srgb 0.719373 0.802667 0.696157)",
+        "text": "rgb(104, 103, 94)",
+        "course": "#d96f63",
+        "dot": "rgb(217, 111, 99)"
+      },
+      "headersClear": true,
+      "grouping": {},
+      "edit": "PASS",
+      "completionAndReload": "PASS",
+      "openingAndClosing": "PASS",
+      "errors": [],
+      "minimumTitleContrast": 5.174998820542758
+    },
+    {
+      "config": {
+        "width": 390,
+        "view": "tasks"
+      },
+      "status": "PASS",
+      "initial": [
+        {
+          "id": "completion-20261123-2-0",
+          "tone": "overdue",
+          "fill": "color(srgb 0.978824 0.937529 0.933294)",
+          "line": "color(srgb 0.868706 0.708549 0.65349)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-1",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#538fc5",
+          "dot": "rgb(83, 143, 197)"
+        },
+        {
+          "id": "completion-20261123-2-2",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-3",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#3e946d",
+          "dot": "rgb(62, 148, 109)"
+        },
+        {
+          "id": "completion-20261123-2-4",
+          "tone": "scheduled",
+          "fill": "color(srgb 0.930118 0.954823 0.977765)",
+          "line": "color(srgb 0.695529 0.770039 0.811608)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-5",
+          "tone": "due",
+          "fill": "color(srgb 0.989059 0.960824 0.948824)",
+          "line": "color(srgb 0.905098 0.791373 0.708706)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-6",
+          "tone": "neutral",
+          "fill": "color(srgb 0.953765 0.953412 0.950941)",
+          "line": "color(srgb 0.779608 0.76502 0.716235)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-7",
+          "tone": "neutral",
+          "fill": "color(srgb 0.953765 0.953412 0.950941)",
+          "line": "color(srgb 0.779608 0.76502 0.716235)",
+          "text": "rgb(41, 41, 41)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        }
+      ],
+      "completed": {
+        "id": "completion-20261123-2-4",
+        "tone": "completed",
+        "fill": "color(srgb 0.936824 0.964 0.945294)",
+        "line": "color(srgb 0.719373 0.802667 0.696157)",
+        "text": "rgb(104, 103, 94)",
+        "course": "#d96f63",
+        "dot": "rgb(217, 111, 99)"
+      },
+      "headersClear": true,
+      "grouping": {
+        "class": "PASS",
+        "priority": "PASS",
+        "plan": "PASS"
+      },
+      "edit": "PASS",
+      "completionAndReload": "PASS",
+      "openingAndClosing": "PASS",
+      "errors": [],
+      "minimumTitleContrast": 5.174998820542758
+    },
+    {
+      "config": {
+        "width": 835,
+        "view": "calendar",
+        "dark": true
+      },
+      "status": "PASS",
+      "initial": [
+        {
+          "id": "completion-20261123-2-0",
+          "tone": "overdue",
+          "fill": "oklab(0.960265 0.0104997 0.004785)",
+          "line": "oklab(0.804525 0.0395914 0.0330256)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-1",
+          "tone": "scheduled",
+          "fill": "oklab(0.962512 -0.00418308 -0.0094229)",
+          "line": "oklab(0.810295 -0.0157107 -0.0201859)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#538fc5",
+          "dot": "rgb(83, 143, 197)"
+        },
+        {
+          "id": "completion-20261123-2-2",
+          "tone": "scheduled",
+          "fill": "oklab(0.962512 -0.00418308 -0.0094229)",
+          "line": "oklab(0.810295 -0.0157107 -0.0201859)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#7d6fbd",
+          "dot": "rgb(125, 111, 189)"
+        },
+        {
+          "id": "completion-20261123-2-3",
+          "tone": "scheduled",
+          "fill": "oklab(0.962512 -0.00418308 -0.0094229)",
+          "line": "oklab(0.810295 -0.0157107 -0.0201859)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#3e946d",
+          "dot": "rgb(62, 148, 109)"
+        },
+        {
+          "id": "completion-20261123-2-4",
+          "tone": "scheduled",
+          "fill": "oklab(0.962512 -0.00418308 -0.0094229)",
+          "line": "oklab(0.810295 -0.0157107 -0.0201859)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        },
+        {
+          "id": "completion-20261123-2-6",
+          "tone": "neutral",
+          "fill": "oklab(0.9644 -0.000100225 0.000849068)",
+          "line": "oklab(0.816948 -0.000911623 0.0175908)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-7",
+          "tone": "neutral",
+          "fill": "oklab(0.9644 -0.000100225 0.000849068)",
+          "line": "oklab(0.816948 -0.000911623 0.0175908)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d2a31f",
+          "dot": "rgb(210, 163, 31)"
+        },
+        {
+          "id": "completion-20261123-2-5",
+          "tone": "due",
+          "fill": "oklab(0.974897 0.00627795 0.00618702)",
+          "line": "oklab(0.857301 0.0230162 0.0369853)",
+          "text": "rgb(247, 243, 232)",
+          "course": "#d96f63",
+          "dot": "rgb(217, 111, 99)"
+        }
+      ],
+      "completed": {
+        "id": "completion-20261123-2-4",
+        "tone": "completed",
+        "fill": "color(srgb 0.180275 0.207451 0.163765)",
+        "line": "color(srgb 0.328471 0.30651 0.25349)",
+        "text": "rgb(189, 184, 168)",
+        "course": "#d96f63",
+        "dot": "rgb(217, 111, 99)"
+      },
+      "headersClear": true,
+      "grouping": {},
+      "edit": "PASS",
+      "completionAndReload": "PASS",
+      "openingAndClosing": "PASS",
+      "errors": [],
+      "minimumTitleContrast": 6.390058745254533
+    }
+  ]
+}

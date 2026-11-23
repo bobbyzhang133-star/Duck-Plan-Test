@@ -547,10 +547,17 @@ function priorityBadge(task) {
   return `<span class="priority-tag priority-${priority.toLowerCase()}">${priority}</span>`;
 }
 
+function taskStatusTone(task, timing = Model.taskTiming(task)) {
+  if (task.completed) return "completed";
+  if (timing.overdue) return "overdue";
+  if (Model.scheduledParts(task)) return "scheduled";
+  return task.dueDate === nowKey() ? "due" : "neutral";
+}
+
 function taskCardMarkup(task, mode = "daily") {
   const info = classInfo(task);
   const timing = Model.taskTiming(task);
-  return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${safeAttribute(task.id)}">
+  return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${safeAttribute(task.id)}" data-task-tone="${taskStatusTone(task, timing)}">
     <input class="task-check" type="checkbox" data-task-id="${safeAttribute(task.id)}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeAttribute(task.title)} complete" />
     <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${priorityBadge(task)}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}</span>${taskDateMarkup(task)}</button>
     <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="Edit ${safeAttribute(task.title)}">•••</button>
@@ -645,7 +652,7 @@ function renderDailyPlan() {
 function allTaskMarkup(task) {
   const info = classInfo(task);
   const timing = Model.taskTiming(task);
-  return `<article class="all-task-row ${task.completed ? "completed" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}">
+  return `<article class="all-task-row ${task.completed ? "completed" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-tone="${taskStatusTone(task, timing)}">
     <input class="task-check" type="checkbox" data-task-id="${safeAttribute(task.id)}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeAttribute(task.title)} complete" />
     <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}</span>${taskDateMarkup(task, { showDue: false })}</button>
     <span class="task-due"><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${task.dueDate ? task.dueTime ? formatTime(task.dueTime) : "End of day" : ""}</small></span>
