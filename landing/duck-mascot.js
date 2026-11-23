@@ -24,6 +24,7 @@
         <g class="duck-open-eyes"><g class="duck-pupils"><svg x="240" y="400" width="550" height="92" viewBox="240 400 550 92" overflow="hidden"><use href="#${key}"/></svg></g></g>
         <g class="duck-closed-eyes" stroke="#111113" stroke-width="28" stroke-linecap="round"><path d="M292 453q62-65 124 0m209 0q62-65 124 0"/></g>
         <g class="duck-sleep-eyes" stroke="#111113" stroke-width="28" stroke-linecap="round"><path d="M292 432q62 55 124 0m209 0q62 55 124 0"/></g>
+        <path class="duck-smile" d="M370 601Q515 725 660 601" stroke="#111113" stroke-width="24" stroke-linecap="round" fill="none"/>
         <g class="duck-glasses" stroke="#111113" stroke-width="20"><rect x="232" y="394" width="264" height="120" rx="35" fill="#FFFFFF" fill-opacity=".12"/><rect x="544" y="394" width="264" height="120" rx="35" fill="#FFFFFF" fill-opacity=".12"/><path d="M496 420q24-25 48 0m-345-6 33 16m576 0 32-16"/></g>
       </svg>
     </g>`;

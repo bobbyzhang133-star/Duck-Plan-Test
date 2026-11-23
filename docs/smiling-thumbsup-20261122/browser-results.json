@@ -1,0 +1,33 @@
+{
+  "runtime": "157.0.8103.79",
+  "results": [
+    {
+      "width": 1156,
+      "status": "PASS",
+      "reaction": {
+        "smile": "inline",
+        "closedEyes": "inline",
+        "brows": "none",
+        "openEyes": "none",
+        "thumb": "inline",
+        "head": "v11",
+        "feet": true
+      },
+      "cleanup": true
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "reaction": {
+        "smile": "inline",
+        "closedEyes": "inline",
+        "brows": "none",
+        "openEyes": "none",
+        "thumb": "inline",
+        "head": "v11",
+        "feet": true
+      },
+      "cleanup": true
+    }
+  ]
+}
