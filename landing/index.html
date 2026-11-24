@@ -32,6 +32,7 @@
     <link rel="manifest" href="./app.webmanifest" />
     <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-v11-512.png" />
     <title>DuckPlan | Tasks and time together</title>
+    <link rel="stylesheet" href="./account-connections.css?v=signin-axis-20261123" />
   </head>
   <body class="motion-preview">
     <a class="skip-link" href="#main-content">Skip to planner</a>
@@ -157,14 +158,16 @@
           <div id="personal-notes-root"></div>
         </section>
         <section class="view" id="view-settings" data-page-title="Settings" data-eyebrow="Make DuckPlan yours"><section class="panel settings-panel">
+          <div class="account-connections-grid">
+          <div id="account-settings" class="settings-group"></div>
+          <div id="axis-settings" class="settings-group"></div>
+          </div>
+          <section class="settings-row" id="account-sync-settings" hidden aria-labelledby="account-sync-heading"><div><h2 id="account-sync-heading">Across your devices</h2><p id="account-sync-copy" role="status"></p><p id="native-background-sync-status" hidden></p></div><button type="button" class="secondary-button" id="refresh-account-sync" data-button-icon="refresh">Refresh account</button></section>
           <section class="sync-card" aria-label="Axis connection status"><div class="sync-icon" aria-hidden="true">↻</div><div><p class="sync-title">Axis sync</p><p class="sync-copy">Prototype mode</p></div><button type="button" id="sync-info" aria-label="Learn about Axis sync">i</button></section>
           <section class="settings-row" id="install-app-settings" aria-labelledby="install-app-heading">
             <div><h2 id="install-app-heading">DuckPlan app</h2><p id="install-app-copy">Checking whether DuckPlan can be installed…</p></div>
             <button type="button" class="secondary-button" id="install-app-button" data-button-icon="download" hidden>Install app</button>
           </section>
-          <div id="account-settings" class="settings-group"></div>
-          <section class="settings-row" id="account-sync-settings" hidden aria-labelledby="account-sync-heading"><div><h2 id="account-sync-heading">Across your devices</h2><p id="account-sync-copy" role="status"></p><p id="native-background-sync-status" hidden></p></div><button type="button" class="secondary-button" id="refresh-account-sync" data-button-icon="refresh">Refresh account</button></section>
-          <div id="axis-settings" class="settings-group"></div>
           <section class="settings-row" aria-labelledby="task-alarms-heading"><div><h2 id="task-alarms-heading">Ringing task alarms</h2><p id="task-alarm-status" role="status">Ringing alarms are available in the iPhone app.</p><p id="task-alarms-description">Alarm time follows scheduled work until you choose a custom time. Each task has its own on/off switch.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-alarms" data-button-icon="clock" disabled>Allow iPhone alarms</button><button type="button" class="secondary-button" id="disable-task-alarms" data-button-icon="bell-off" data-button-tone="quiet" hidden>Cancel device alarms</button></div></section>
           <section class="settings-row" aria-labelledby="task-notifications-heading"><div><h2 id="task-notifications-heading">Normal notifications</h2><p id="task-notification-status" role="status">Checking notification availability…</p><p>A normal banner is separate from a ringing alarm. Its time follows the alarm until you choose a custom time.</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="enable-task-notifications" data-button-icon="bell">Enable notifications</button><button type="button" class="secondary-button" id="disable-task-notifications" data-button-icon="bell-off" data-button-tone="quiet" hidden>Disable on this device</button></div></section>
           <section class="settings-row" id="deadline-reminders" aria-labelledby="reminders-heading">
@@ -236,7 +239,7 @@
       </fieldset></details>
       <details class="plain-disclosure" id="task-alarm-options"><summary><svg class="editor-row-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 8H3c0-1 3-1 3-8Zm4 11h4"/></svg><span class="editor-summary-label">Alarm &amp; notification<span class="editor-summary-copy" id="task-alert-summary"></span></span></summary>
         <fieldset class="form-section"><legend id="task-alarm-legend">Ringing alarm</legend><label class="work-alert-toggle"><input name="alarmEnabled" type="checkbox" checked /><span>Ringing alarm</span></label><p id="task-alarm-help">Ringing alarms are available in the iPhone app.</p><label><span id="alarm-date-label">Alarm date and time</span><input name="alarmAt" type="datetime-local" aria-describedby="task-alarm-help alarm-link-status" /></label><div class="work-alert-link"><small id="alarm-link-status">Follows work start</small><button type="button" class="secondary-button" data-follow-alert="alarm" data-button-icon="clock" data-button-tone="quiet">Use work start</button></div><div id="native-alarm-options" class="form-grid" hidden><label>Alarm sound<select name="alarmSound"><option value="system">iPhone default</option><option value="gentle">Gentle chime</option><option value="bright">Bright bells</option></select></label><label>Snooze<select name="alarmSnooze"><option value="0">Off</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label></div></fieldset>
-        <fieldset class="form-section"><legend>Normal notification</legend><label class="work-alert-toggle"><input name="notificationEnabled" type="checkbox" checked /><span>Normal notification</span></label><p id="task-notification-help">Shows a normal banner or an in-app reminder when it is time to start.</p><label>Notification date and time<input name="notificationAt" type="datetime-local" aria-describedby="task-notification-help notification-link-status" /></label><div class="work-alert-link"><small id="notification-link-status">Follows alarm time</small><button type="button" class="secondary-button" data-follow-alert="notification" data-button-icon="bell" data-button-tone="quiet">Use alarm time</button></div><p id="task-alarm-account" hidden><a class="secondary-button" id="task-alarm-signup" href="https://duckplan.duckplan-cloudflare.workers.dev/#settings" target="_blank" rel="noopener noreferrer">Sign up <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></p></fieldset>
+        <fieldset class="form-section"><legend>Normal notification</legend><label class="work-alert-toggle"><input name="notificationEnabled" type="checkbox" checked /><span>Normal notification</span></label><p id="task-notification-help">Shows a normal banner or an in-app reminder when it is time to start.</p><label>Notification date and time<input name="notificationAt" type="datetime-local" aria-describedby="task-notification-help notification-link-status" /></label><div class="work-alert-link"><small id="notification-link-status">Follows alarm time</small><button type="button" class="secondary-button" data-follow-alert="notification" data-button-icon="bell" data-button-tone="quiet">Use alarm time</button></div><p id="task-alarm-account" hidden><a class="secondary-button" id="task-alarm-signup" href="https://duckplan-latest.ocs-learning.workers.dev/#settings" target="_blank" rel="noopener noreferrer">Sign up <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></p></fieldset>
         <p id="task-alert-time-help" class="work-alert-note"></p><p id="task-alert-storage-help" class="work-alert-note" hidden>Alert settings are saved on this device until this server is updated.</p>
       </details>
       </div>
@@ -281,7 +284,7 @@
     <script src="./completion-list-motion.js?v=task-categories-20261122"></script>
     <script src="./completion-demo.js?v=section-fade-20261122"></script>
     <script src="./task-list-groups.js?v=task-categories-20261122"></script>
-    <script src="./app.js?v=button-design-20261123"></script>
+    <script src="./app.js?v=signin-axis-20261123"></script>
     <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
     <script src="./duck-mascot.js?v=original-bill-happy-eyes-20261122"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>

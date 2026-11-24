@@ -724,19 +724,39 @@ function replaceSettings(container, markup) {
 }
 let accountMode = "sign-in";
 let shownRecoveryCode = null;
-const passwordInput = (name, placeholder, autocomplete) => `<label><span class="sr-only">${placeholder}</span><input name="${name}" type="password" required minlength="8" maxlength="200" autocomplete="${autocomplete}" placeholder="${placeholder}" /></label>`;
-const emailInput = `<label><span class="sr-only">Email address</span><input name="email" type="email" required autocomplete="username" placeholder="you@school.org" /></label>`;
+let accountPanelAnimation = null;
+function settleAccountPanelHeight() { accountPanelAnimation?.cancel(); accountPanelAnimation = null; }
+window.addEventListener("resize", settleAccountPanelHeight);
+matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", settleAccountPanelHeight);
+const passwordInput = (name, label, autocomplete) => `<label><span>${label}</span><input name="${name}" type="password" required minlength="8" maxlength="200" autocomplete="${autocomplete}" placeholder="${autocomplete === "new-password" ? "At least 8 characters" : "Your password"}" /></label>`;
+const emailInput = `<label><span>Email address</span><input name="email" type="email" required autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="you@school.org" /></label>`;
+const connectionFeedback = `<p class="connection-feedback" data-connection-feedback role="alert" hidden></p>`;
+const accountPanel = (name, content, active) => `<div class="account-form-panel" data-account-panel="${name}" ${active === name ? "" : "hidden"}>${content}</div>`;
+function accountHeading(title, copy, signedIn = false) {
+  return `<header class="connection-card-heading"><span class="connection-card-symbol account-symbol" aria-hidden="true"><img src="./assets/duckplan-sigma-head-v11-transparent.png" alt="" /></span><div><p class="connection-eyebrow">Your DuckPlan account</p><h2 id="account-heading">${title}</h2><p>${copy}</p></div>${signedIn ? '<span class="connection-badge">Signed in</span>' : ""}</header>`;
+}
 function signedOutAccount() {
-  if (accountMode === "recover") return `<div><h2>Reset your password</h2><p>Use the recovery code you saved when you created your account.</p></div><form class="settings-form" id="recover-form">${emailInput}<label><span class="sr-only">Recovery code</span><input name="recoveryCode" type="text" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" /></label>${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button" data-button-icon="check">Reset password</button><button type="button" class="secondary-button" id="show-sign-in" data-button-icon="login" data-button-tone="quiet">Back to sign in</button></form>`;
-  return `<div><h2>Account</h2><p>Sign in to sync your planner across devices, or create an account with an 8-character password.</p></div><form class="settings-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<button type="submit" class="secondary-button" data-action="sign-in" data-button-icon="login">Sign in</button><button type="submit" class="secondary-button" data-action="sign-up" data-button-icon="plus">Create account</button>${store.providers.google ? `<button type="button" class="secondary-button" id="google-sign-in">Use Google</button>` : ""}<button type="button" class="secondary-button" id="show-recover" data-button-tone="quiet">Forgot password?</button></form>`;
+  const mode = ["sign-up", "recover"].includes(accountMode) ? accountMode : "sign-in";
+  const googleReady = store.configured && store.providers.google;
+  const googleHelp = !store.configured ? "Sign-in is available in the online planner." : googleReady ? "Use your Google account, or continue with email." : "Google sign-in isn’t available on this preview yet. You can use email below.";
+  const signIn = `<form class="settings-form account-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<div class="account-form-tools"><button type="button" class="connection-text-button" id="show-recover">Forgot password?</button></div><button type="submit" class="secondary-button connection-primary" data-action="sign-in" data-button-icon="login" data-pending-label="Signing in…">Sign in</button></form>`;
+  const signUp = `<form class="settings-form account-form" id="sign-up-form">${emailInput}${passwordInput("password", "Create a password", "new-password")}<p class="connection-note">Use at least 8 characters. You’ll receive a recovery code to save after creating your account.</p><button type="submit" class="secondary-button connection-primary" data-action="sign-up" data-button-icon="plus" data-pending-label="Creating account…">Create account</button></form>`;
+  const recover = `<form class="settings-form account-form" id="recover-form"><div class="account-form-intro"><h3>Reset your password</h3><p>Enter the recovery code you saved when you created your account.</p></div>${emailInput}<label><span>Recovery code</span><input name="recoveryCode" type="text" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" /></label>${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button connection-primary" data-button-icon="check" data-pending-label="Resetting password…">Reset password</button><button type="button" class="connection-text-button" id="show-sign-in">Back to sign in</button></form>`;
+  return `${accountHeading("Welcome to DuckPlan", "Keep your tasks, calendar and classes together across your devices.")}
+    ${!store.configured ? `<p class="connection-local-note">Your planner is currently saved on this device. <a href="https://duckplan-latest.ocs-learning.workers.dev/#settings" target="_blank" rel="noopener noreferrer">Open online DuckPlan<span class="sr-only"> (opens in a new tab)</span></a> to sign in and sync.</p>` : ""}
+    <button type="button" class="google-signin-button" id="google-sign-in" aria-label="Sign in with Google" aria-describedby="google-sign-in-help" ${googleReady ? "" : "disabled"}><img src="./assets/google-signin.svg" alt="" width="180" height="40" /></button>
+    <p class="connection-provider-help" id="google-sign-in-help">${googleHelp}</p>
+    <div class="account-method-divider"><span>or use email</span></div>
+    <div class="account-mode-switch" role="group" aria-label="Account action"><button type="button" data-account-mode="sign-in" aria-pressed="${mode === "sign-in"}">Sign in</button><button type="button" data-account-mode="sign-up" aria-pressed="${mode === "sign-up"}">Create account</button></div>
+    <fieldset class="account-fields" ${store.configured ? "" : "disabled"}><legend class="sr-only">Email account</legend><div class="account-form-stage">${accountPanel("sign-in", signIn, mode)}${accountPanel("sign-up", signUp, mode)}${accountPanel("recover", recover, mode)}</div></fieldset>${connectionFeedback}`;
 }
 function signedInAccount(user) {
-  const { name } = PlannerUI.accountIdentity(user);
-  const email = user.email && user.email !== name ? ` · ${safeText(user.email)}` : "";
-  const intro = `<div><h2>Account</h2><p>Signed in as <strong>${safeText(name)}</strong>${email}. Your planner is syncing across devices.</p></div>`;
-  if (accountMode === "change-password") return `${intro}<form class="settings-form" id="password-form">${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button" data-button-icon="check">Save password</button><button type="button" class="secondary-button" id="cancel-account-form" data-button-tone="quiet">Cancel</button></form>`;
-  if (accountMode === "recovery-code") return `${intro}<form class="settings-form" id="recovery-code-form">${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button" data-button-icon="check">Make a new code</button><button type="button" class="secondary-button" id="cancel-account-form" data-button-tone="quiet">Cancel</button></form>`;
-  return `${intro}<div class="settings-actions"><button type="button" class="secondary-button" id="show-change-password" data-button-icon="pen">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code" data-button-icon="plus">New recovery code</button>` : ""}<button type="button" class="secondary-button" id="sign-out" data-button-icon="logout" data-button-tone="quiet">Sign out</button></div>`;
+  const { name, initials } = PlannerUI.accountIdentity(user);
+  const mode = ["change-password", "recovery-code"].includes(accountMode) ? accountMode : "summary";
+  const summary = `<div class="account-identity-summary"><span class="account-identity-avatar" aria-hidden="true">${safeText(initials)}</span><div><strong>${safeText(name)}</strong><span>${safeText(user.email || "")}</span></div></div><p class="connection-note">Your planner is linked to this account. You can connect your Axis calendar alongside it.</p><div class="settings-actions account-management-actions"><button type="button" class="secondary-button" id="show-change-password" data-button-icon="pen">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code" data-button-icon="plus">New recovery code</button>` : ""}<button type="button" class="connection-text-button" id="sign-out">Sign out</button></div>`;
+  const password = `<form class="settings-form account-form" id="password-form"><h3>${user.hasPassword ? "Change password" : "Add a password"}</h3>${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button connection-primary" data-button-icon="check">Save password</button><button type="button" class="connection-text-button" id="cancel-account-form" data-account-cancel>Cancel</button></form>`;
+  const recovery = `<form class="settings-form account-form" id="recovery-code-form"><h3>Make a new recovery code</h3><p class="connection-note">Your previous recovery code will stop working.</p>${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button connection-primary" data-button-icon="check">Make a new code</button><button type="button" class="connection-text-button" data-account-cancel>Cancel</button></form>`;
+  return `${accountHeading("Your planner, everywhere.", "Tasks and classes sync when this device is online.", true)}<div class="account-form-stage">${accountPanel("summary", summary, mode)}${accountPanel("change-password", password, mode)}${user.hasPassword ? accountPanel("recovery-code", recovery, mode) : ""}</div>${connectionFeedback}`;
 }
 function renderAccountIdentity() {
   const identity = PlannerUI.accountIdentity(store.user);
@@ -751,18 +771,44 @@ function renderAccountIdentity() {
 function renderAccount() {
   renderAccountIdentity();
   const user = store.user;
-  const body = !store.configured
-    ? `<div><h2>Account</h2><p>${window.DuckNativeAlarms ? 'Tasks and ringing alarms stay on this iPhone. Cloud account sync is not connected in this native build.' : 'Cloud sync is unavailable on this copy, so tasks stay in this browser.'}</p></div>`
-    : user ? signedInAccount(user) : signedOutAccount();
+  accountPanelAnimation?.cancel();
+  accountPanelAnimation = null;
+  window.DuckExpansionMotion?.settleWithin(els.accountSettings);
+  const body = user ? signedInAccount(user) : signedOutAccount();
   const recovery = user && shownRecoveryCode ? `<div class="settings-row recovery-row" id="recovery-row"><div><h2>Save your recovery code</h2><p>This code is the only way to reset a forgotten password. Store it in a password manager.</p><p class="recovery-code"><code>${safeText(shownRecoveryCode)}</code></p></div><div class="settings-actions"><button type="button" class="secondary-button" id="copy-recovery" data-button-icon="copy">Copy code</button><button type="button" class="secondary-button" id="dismiss-recovery" data-button-icon="check" data-button-tone="quiet">I saved it</button></div></div>` : "";
   const offer = localImportCount ? `<div class="settings-row"><div><h2>Bring your local planner</h2><p>Copy this browser's saved tasks, templates, class resources, goals, habits, notes and preferences into your account?</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="import-local" data-button-icon="upload">Import local planner</button><button type="button" class="secondary-button" id="dismiss-import" data-button-tone="quiet">Not now</button></div></div>` : "";
-  replaceSettings(els.accountSettings, `<div class="settings-row">${body}</div>${recovery}${offer}`);
+  replaceSettings(els.accountSettings, `<section class="connection-card account-card" aria-labelledby="account-heading">${body}</section>${recovery}${offer}`);
   els.resetDemo.closest(".settings-row").hidden = store.mode === "cloud";
 }
 function setAccountMode(mode, { focus = true } = {}) {
   accountMode = mode;
-  renderAccount();
-  if (focus) requestAnimationFrame(() => els.accountSettings.querySelector("form input")?.focus());
+  const activeMode = store.user ? mode || "summary" : mode || "sign-in";
+  const to = els.accountSettings.querySelector(`[data-account-panel="${activeMode}"]`);
+  const stage = to?.parentElement;
+  if (!to || !stage) { renderAccount(); return; }
+  const oldHeight = stage.getBoundingClientRect().height;
+  accountPanelAnimation?.cancel();
+  window.DuckExpansionMotion?.settleWithin(stage);
+  const from = stage.querySelector(":scope > [data-account-panel]:not([hidden])");
+  if (!from) { renderAccount(); return; }
+  const email = from.querySelector("input[name=email]")?.value;
+  if (email && to.querySelector("input[name=email]") && !to.querySelector("input[name=email]").value) to.querySelector("input[name=email]").value = email;
+  const apply = () => {
+    [...stage.children].forEach(panel => { panel.hidden = panel !== to; panel.inert = panel !== to; });
+    els.accountSettings.querySelectorAll("[data-account-mode]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.accountMode === activeMode)));
+    const feedback = els.accountSettings.querySelector("[data-connection-feedback]");
+    if (feedback) { feedback.hidden = true; feedback.textContent = ""; }
+  };
+  if (from !== to) {
+    if (window.DuckExpansionMotion) window.DuckExpansionMotion.swapPanels(from, to, apply); else apply();
+    const newHeight = to.getBoundingClientRect().height;
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && stage.animate && oldHeight && newHeight) {
+      const animation = stage.animate([{ height: `${oldHeight}px` }, { height: `${newHeight}px` }], { duration: window.DuckMotion?.duration.control || 240, easing: window.DuckMotion?.easing || "ease-out" });
+      accountPanelAnimation = animation;
+      animation.finished.catch(() => {}).finally(() => { if (accountPanelAnimation === animation) accountPanelAnimation = null; });
+    }
+  }
+  if (focus) requestAnimationFrame(() => { if (!to.hidden) (to.querySelector("input,button") || els.accountSettings.querySelector("[data-account-mode]"))?.focus({ preventScroll: true }); });
 }
 let nativeAccountSyncState = null;
 let nativeSyncStatusRequest = 0;
@@ -816,13 +862,16 @@ window.addEventListener("duckplan:native-sync-updated", () => {
 });
 window.addEventListener("duckplan:native-sync-status", () => { readNativeAccountSyncStatus(); });
 function renderAxis() {
+  const signedIn = store.mode === "cloud", connected = signedIn && axisStatus.connected;
+  const badge = connected ? axisStatus.lastError ? "Needs attention" : "Connected" : "Not connected";
+  const heading = `<header class="connection-card-heading"><span class="connection-card-symbol axis-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 5h3m4 0h3"/></svg></span><div><p class="connection-eyebrow">School calendar</p><h2 id="axis-heading">${connected ? "Axis is linked." : "Bring Axis into your plan."}</h2><p>Your school assignments, right beside your own plans.</p></div></header><span class="connection-badge axis-connection-badge ${axisStatus.lastError && connected ? "needs-attention" : ""}">${badge}</span>`;
   let body;
-  if (store.mode !== "cloud") body = `<div><h2>Axis connection</h2><p>Sign in, then paste your Axis calendar feed link to import classes and assignments.</p></div><button type="button" class="secondary-button" id="connect-axis" data-button-icon="login">Sign in first</button>`;
-  else if (!axisStatus.connected) body = `<div><h2>Axis connection</h2><p>Copy the private calendar feed link from Axis. It ends in <code>iCal.aspx</code>.</p><p>Your first import marks already-overdue assignments complete.</p></div><form class="settings-form" id="axis-form"><label><span class="sr-only">Axis feed link</span><input name="icalUrl" type="url" required autocomplete="off" spellcheck="false" placeholder="webcal://…iCal.aspx?z=…" /></label><button type="submit" class="secondary-button" data-button-icon="link">Connect Axis</button></form>`;
-  else body = `<div><h2>Axis connection</h2><p>${safeText(relativeSyncTime(axisStatus.lastSyncedAt))}.${axisStatus.lastError ? ` Last problem: ${safeText(axisStatus.lastError)}` : ""}</p></div><div class="settings-actions"><button type="button" class="secondary-button" id="axis-sync-now" data-button-icon="refresh">Sync now</button><button type="button" class="secondary-button" id="axis-disconnect" data-button-icon="link" data-button-tone="quiet">Disconnect</button></div>`;
-  replaceSettings(els.axisSettings, `<div class="settings-row">${body}</div>`);
-  els.syncCopy.textContent = store.mode !== "cloud" ? "Not signed in" : axisStatus.connected ? (axisStatus.lastError ? "Needs attention" : relativeSyncTime(axisStatus.lastSyncedAt)) : "Not connected";
-  els.syncInfo.setAttribute("aria-label", axisStatus.connected ? "Sync Axis now" : "Set up Axis sync");
+  if (!signedIn) body = `<div class="axis-locked-state"><div class="connection-step"><span aria-hidden="true">1</span><div><strong>Sign in to DuckPlan</strong><p>Keep imported classes and assignments in your account.</p></div></div><div class="connection-step"><span aria-hidden="true">2</span><div><strong>Link your Axis calendar</strong><p>Paste your private calendar feed link after signing in.</p></div></div><button type="button" class="secondary-button connection-primary" id="connect-axis" data-button-icon="login" ${store.configured ? "" : "disabled"}>Sign in to link Axis</button></div>`;
+  else if (!connected) body = `<form class="settings-form account-form axis-connect-form" id="axis-form"><label><span>Private Axis calendar link</span><input name="icalUrl" type="url" required autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="axis-feed-help" placeholder="webcal://…/iCal.aspx?z=…" /></label><p class="connection-note" id="axis-feed-help">Use your calendar subscription link, not your Axis password. Your feed link stays private.</p><button type="submit" class="secondary-button connection-primary" data-button-icon="link" data-pending-label="Linking Axis…">Connect Axis</button></form><details class="axis-guide"><summary>Where do I find my calendar link?</summary><div><ol><li>Open your school’s Axis calendar.</li><li>Look for its iCal or calendar subscription option. Your school may name this differently.</li><li>Copy the private feed link and paste it above. It usually contains <code>iCal.aspx</code>.</li></ol></div></details><div class="axis-import-note"><strong>About your first import</strong><p>Newly imported, already-overdue assignments are marked complete on your first import. Assignments due today or later stay open.</p></div>`;
+  else body = `<div class="axis-connected-state"><p class="axis-last-sync">${safeText(relativeSyncTime(axisStatus.lastSyncedAt))}</p><p class="connection-note">New assignments sync automatically. You can also check for updates now.</p>${axisStatus.lastError ? `<p class="connection-feedback" role="alert">${safeText(axisStatus.lastError)}</p>` : ""}<div class="settings-actions axis-connected-actions"><button type="button" class="secondary-button connection-primary" id="axis-sync-now" data-button-icon="refresh" data-pending-label="Syncing…">Sync now</button><button type="button" class="connection-text-button" id="axis-disconnect">Disconnect Axis</button></div><p class="connection-note">Disconnecting stops future imports. Your imported assignments stay in DuckPlan.</p></div>`;
+  replaceSettings(els.axisSettings, `<section class="connection-card axis-card" aria-labelledby="axis-heading">${heading}${body}${connectionFeedback}</section>`);
+  els.syncCopy.textContent = !signedIn ? "Not signed in" : connected ? (axisStatus.lastError ? "Needs attention" : relativeSyncTime(axisStatus.lastSyncedAt)) : "Not connected";
+  els.syncInfo.setAttribute("aria-label", connected ? "Sync Axis now" : "Set up Axis sync");
 }
 async function refreshAccountState() {
   const version = ++accountStateVersion;
@@ -838,14 +887,20 @@ async function refreshAccountState() {
 }
 async function runAction(button, action) {
   const ownerVersion = plannerOwnerVersion;
-  const authForm = button.closest("#sign-in-form, #recover-form");
+  const authForm = button.closest("#sign-in-form, #sign-up-form, #recover-form");
   const signingInAs = authForm?.elements.email.value.trim().toLowerCase();
+  const feedback = button.closest("#account-settings, #axis-settings")?.querySelector("[data-connection-feedback]");
+  if (feedback) { feedback.hidden = true; feedback.textContent = ""; }
   button.disabled = true;
+  button.setAttribute("aria-busy", "true");
   try { await action(); }
   catch (error) {
-    if (ownerVersion === plannerOwnerVersion || (signingInAs && store.user?.email?.toLowerCase() === signingInAs)) reportError(error);
+    if (ownerVersion === plannerOwnerVersion || (signingInAs && store.user?.email?.toLowerCase() === signingInAs)) {
+      if (feedback?.isConnected) { feedback.textContent = error.message || "Something went wrong. Please try again."; feedback.hidden = false; }
+      reportError(error);
+    }
   }
-  finally { if (button.isConnected) button.disabled = false; }
+  finally { if (button.isConnected) { button.disabled = false; button.removeAttribute("aria-busy"); } }
 }
 function axisCompletionNotice(result) {
   const count = result.autoCompleted;
@@ -859,7 +914,8 @@ async function syncAxisNow() {
 function showRecoveryCode(code) {
   if (!code) return;
   shownRecoveryCode = code;
-  setAccountMode(null, { focus: false });
+  accountMode = null;
+  renderAccount();
   els.accountSettings.querySelector("#recovery-row")?.scrollIntoView({ block: "nearest" });
 }
 
@@ -1506,7 +1562,7 @@ function renderTaskAlertFields() {
     ? "Log the total time you worked on this task. It is saved with your account and shared across your devices."
     : "Log the total time you worked on this task. It is saved on this device.";
   document.querySelector("#task-alarm-account").hidden = Boolean(store.user) || Boolean(window.DuckTaskAlarms.native);
-  document.querySelector("#task-alarm-signup").href = store.configured ? new URL("#settings", location.href).href : "https://duckplan.duckplan-cloudflare.workers.dev/#settings";
+  document.querySelector("#task-alarm-signup").href = store.configured ? new URL("#settings", location.href).href : "https://duckplan-latest.ocs-learning.workers.dev/#settings";
 }
 function validateEditedTaskAlerts(task) {
   const prefs = window.DuckWorkAlerts.normalize(task.workAlerts);
@@ -2206,21 +2262,23 @@ reminderLead.addEventListener("change", () => {
 els.accountSettings.addEventListener("submit", (event) => {
   event.preventDefault();
   const form = event.target;
+  const submitter = event.submitter || form.querySelector('button[type="submit"]');
+  if (!submitter || submitter.disabled) return;
   const data = new FormData(form);
   const value = (name) => String(data.get(name) || "");
-  if (form.id === "sign-in-form") {
+  if (form.id === "sign-in-form" || form.id === "sign-up-form") {
     const email = value("email").trim();
-    if (event.submitter?.dataset.action === "sign-up") runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.signUp(email, value("password"))); showToast("Account created. Save your recovery code."); });
-    else runAction(event.submitter, async () => { accountMode = null; await store.signIn(email, value("password")); showToast(`Signed in as ${email}.`); });
+    if (form.id === "sign-up-form") runAction(submitter, async () => { accountMode = null; showRecoveryCode(await store.signUp(email, value("password"))); showToast("Account created. Save your recovery code."); });
+    else runAction(submitter, async () => { accountMode = null; await store.signIn(email, value("password")); showToast(`Signed in as ${email}.`); });
   }
-  if (form.id === "recover-form") runAction(event.submitter, async () => { accountMode = null; showRecoveryCode(await store.recoverAccount(value("email").trim(), value("recoveryCode"), value("newPassword"))); showToast("Password reset. Save your new recovery code."); });
+  if (form.id === "recover-form") runAction(submitter, async () => { accountMode = null; showRecoveryCode(await store.recoverAccount(value("email").trim(), value("recoveryCode"), value("newPassword"))); showToast("Password reset. Save your new recovery code."); });
   const ownerVersion = plannerOwnerVersion;
-  if (form.id === "password-form") runAction(event.submitter, async () => {
+  if (form.id === "password-form") runAction(submitter, async () => {
     const code = await store.changePassword(value("currentPassword"), value("newPassword"));
     if (ownerVersion !== plannerOwnerVersion) return;
     setAccountMode(null, { focus: false }); showRecoveryCode(code); showToast("Password saved.");
   });
-  if (form.id === "recovery-code-form") runAction(event.submitter, async () => {
+  if (form.id === "recovery-code-form") runAction(submitter, async () => {
     const code = await store.newRecoveryCode(value("password"));
     if (ownerVersion !== plannerOwnerVersion) return;
     showRecoveryCode(code); showToast("New recovery code created.");
@@ -2229,13 +2287,14 @@ els.accountSettings.addEventListener("submit", (event) => {
 els.accountSettings.addEventListener("click", (event) => {
   const button = event.target.closest("button"); if (!button) return;
   if (button.id === "google-sign-in") runAction(button, () => store.signInWithGoogle());
+  if (button.dataset.accountMode) setAccountMode(button.dataset.accountMode);
   if (button.id === "show-recover") setAccountMode("recover");
   if (button.id === "show-sign-in") setAccountMode("sign-in");
   if (button.id === "show-change-password") setAccountMode("change-password");
   if (button.id === "show-recovery-code") setAccountMode("recovery-code");
-  if (button.id === "cancel-account-form") setAccountMode(null, { focus: false });
+  if (button.hasAttribute("data-account-cancel")) { setAccountMode(null, { focus: false }); els.accountSettings.querySelector("#show-change-password")?.focus(); }
   if (button.id === "copy-recovery") runAction(button, async () => { await navigator.clipboard.writeText(shownRecoveryCode); showToast("Recovery code copied."); });
-  if (button.id === "dismiss-recovery") { shownRecoveryCode = null; setAccountMode(accountMode, { focus: false }); }
+  if (button.id === "dismiss-recovery") { shownRecoveryCode = null; renderAccount(); }
   if (button.id === "sign-out") runAction(button, async () => { shownRecoveryCode = null; accountMode = "sign-in"; await workAlerts.detach(); await store.signOut(); showToast("Signed out. Showing local tasks."); });
   if (button.id === "dismiss-import") { store.dismissLocalImport(); refreshAccountState(); }
   if (button.id === "import-local") runAction(button, async () => { await store.importLocalTasks(); showToast("Local planner data imported."); await refreshAccountState(); });
@@ -2243,11 +2302,19 @@ els.accountSettings.addEventListener("click", (event) => {
 els.axisSettings.addEventListener("submit", (event) => {
   if (event.target.id !== "axis-form") return;
   event.preventDefault();
+  const submitter = event.submitter || event.target.querySelector('button[type="submit"]');
+  if (!submitter || submitter.disabled) return;
   const input = event.target.elements.icalUrl;
   let link;
+  input.removeAttribute("aria-invalid");
   try { link = window.DuckAxisIcal.normalizeFeedUrl(input.value); }
-  catch (error) { showToast(error.message); input.focus(); return; }
-  runAction(event.submitter, async () => {
+  catch (error) {
+    const feedback = els.axisSettings.querySelector("[data-connection-feedback]");
+    feedback.textContent = error.message; feedback.hidden = false;
+    input.setAttribute("aria-invalid", "true");
+    showToast(error.message); input.focus(); return;
+  }
+  runAction(submitter, async () => {
     showToast("Connecting to Axis…");
     const result = await store.connectAxis(link);
     showToast(`Axis connected: ${result.added} assignments and ${result.classesAdded} classes imported.${axisCompletionNotice(result)}`);
@@ -2256,7 +2323,7 @@ els.axisSettings.addEventListener("submit", (event) => {
 });
 els.axisSettings.addEventListener("click", (event) => {
   const button = event.target.closest("button"); if (!button) return;
-  if (button.id === "connect-axis") { els.accountSettings.querySelector("input[name=email]")?.focus(); showToast(store.configured ? "Sign in first, then connect Axis." : "Cloud sync is unavailable on this copy."); }
+  if (button.id === "connect-axis") { setAccountMode("sign-in"); els.accountSettings.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); }
   if (button.id === "axis-sync-now") runAction(button, syncAxisNow);
   if (button.id === "axis-disconnect") runAction(button, async () => { await store.disconnectAxis(); showToast("Axis disconnected. Imported assignments remain."); await refreshAccountState(); });
 });

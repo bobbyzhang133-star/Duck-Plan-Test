@@ -1,9 +1,11 @@
-const CACHE_VERSION = "duckplan-app-original-duck-preview-v145";
+const CACHE_VERSION = "duckplan-app-original-duck-preview-v146";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./app.webmanifest",
   "./styles.css",
+  "./account-connections.css",
+  "./assets/google-signin.svg",
   "./planner-ui.css",
   "./duck-theme.css",
   "./planner-clarity.css",

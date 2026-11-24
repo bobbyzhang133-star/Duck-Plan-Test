@@ -1,0 +1,102 @@
+{
+  "runtime": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+  "mode": "real local Worker/D1 with synthetic upstream",
+  "results": [
+    {
+      "name": "Signed-in account and Axis connection restored after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Real D1 contains exactly one imported assignment/class",
+      "status": "PASS"
+    },
+    {
+      "name": "Password form opens",
+      "status": "PASS"
+    },
+    {
+      "name": "Account form geometry transitions on opening",
+      "status": "PASS"
+    },
+    {
+      "name": "Account form geometry transitions on closing",
+      "status": "PASS"
+    },
+    {
+      "name": "Cancel restores account summary",
+      "status": "PASS"
+    },
+    {
+      "name": "Disconnect preserves imported assignment identity",
+      "status": "PASS"
+    },
+    {
+      "name": "Guide expands with visible opening transition",
+      "status": "PASS"
+    },
+    {
+      "name": "Guide opening has intermediate layout frames",
+      "status": "PASS"
+    },
+    {
+      "name": "Guide content remains present during closing",
+      "status": "PASS"
+    },
+    {
+      "name": "Guide finishes closed",
+      "status": "PASS"
+    },
+    {
+      "name": "Guide handles rapid reversal cleanly",
+      "status": "PASS"
+    },
+    {
+      "name": "New recovery code is shown after a real backend save",
+      "status": "PASS"
+    },
+    {
+      "name": "Saved recovery code is removed from DOM",
+      "status": "PASS"
+    },
+    {
+      "name": "Sign-out clears account identity",
+      "status": "PASS"
+    },
+    {
+      "name": "Signed-out page does not retain prior owner's imported assignment",
+      "status": "PASS"
+    },
+    {
+      "name": "Google availability matches unconfigured real local backend",
+      "status": "PASS"
+    },
+    {
+      "name": "Rapid account-mode reversal leaves one active panel",
+      "status": "PASS"
+    },
+    {
+      "name": "Account mode changes preserve typed email",
+      "status": "PASS"
+    },
+    {
+      "name": "Failed sign-in preserves entered email for retry",
+      "status": "PASS"
+    },
+    {
+      "name": "Password recovery restores the correct account identity",
+      "status": "PASS"
+    },
+    {
+      "name": "New password restores the same durable account",
+      "status": "PASS"
+    },
+    {
+      "name": "Axis remains disconnected after sign-out and sign-in",
+      "status": "PASS"
+    },
+    {
+      "name": "Assignment remains durable through account recovery",
+      "status": "PASS"
+    }
+  ]
+}
