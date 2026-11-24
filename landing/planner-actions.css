@@ -175,6 +175,13 @@
 }
 @media (max-width: 700px) {
   .motion-preview .task-layout-switch { width: 100%; }
+  .motion-preview .task-layout-switch > button[data-button-icon] {
+    flex: 1 1 auto;
+    min-height: 44px;
+    padding-inline: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
   .motion-preview .task-modal .modal-actions {
     gap: 4px;
     padding-inline: 10px;

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "duckplan-app-original-duck-preview-v146";
+const CACHE_VERSION = "duckplan-app-original-duck-preview-v147";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -75,7 +75,9 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL)));
+  // A new shell must not copy older unversioned assets from the HTTP cache.
+  const requests = APP_SHELL.map((url) => new Request(url, { cache: "reload" }));
+  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(requests)));
   self.skipWaiting();
 });
 
