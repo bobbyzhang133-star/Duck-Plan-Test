@@ -16,6 +16,10 @@ Use the original white Sigma duck identity for mascot artwork, preserving the cu
 Animated poses use a complete duck body and visible orange webbed feet on land. Front views have a plain body outline with no visible tail or feather/wing lines on the chest; a lifted wing appears only to wave. Keep the head-only original for the brand icon.
 The Daily progress pond uses a right-facing side-profile swimming duck; other mascot placements retain their front-facing poses.
 
+## Mandatory Mobile UI Verification
+
+After every UI change, check the affected phone UI at 320×568 and 390×844 portrait and 844×390 landscape, including rendered alignment, clipping/overlap, sticky/bottom navigation, touch/focus and applicable form/motion states. Fix observed mobile positioning defects and repeat the checks before calling the change complete. Record real runtime/input and screenshot evidence; viewport emulation is not physical-device verification. Follow `.cursor/rules/mobile-ui-verification.mdc` and the platform testing procedure. Preserve tablet/desktop layouts and the native/public release gates.
+
 ## Reference-Site Comparison
 
 "Use as a reference" means implement the requested element, check it with Playwright MCP, correct mismatches and repeat the comparison until the requested appearance/behavior requirements pass, unless the user asks for review only. Define observable acceptance checks before tuning, preserve unrelated approved choices and do not stop at a report that it is merely close. Follow the reference rule's evidence and honest-blocker requirements.

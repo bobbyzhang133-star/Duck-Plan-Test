@@ -14,6 +14,7 @@ alwaysApply: true
 - Ordinary local website work must respect `mobile-app-release-gate.mdc`: do not sync/build/install the native app before the user says **"Publish to public"**. Record the unchanged native checkpoint as pending release sync; test responsive web layouts normally.
 - Authorized app updates require actual WKWebView functional checks in an isolated iPhone/iPad simulator or device, native transport tests, preserved signing/native customizations and built-web-file parity.
 - Treat web, installed PWA and bundled native app as separate runtimes. Browser viewport emulation is layout/input evidence, not native or physical Safari verification.
+- Every UI change must pass the affected mobile layout/input checks in `mobile-ui-verification.mdc`; include portrait and landscape rendered evidence, not only a desktop screenshot or overflow assertion.
 - Check phone/iPad layouts, touch targets, keyboard/focus, reduced motion and supported offline behavior where affected.
 - Check account/owner isolation and pending/error states for persistence or authentication changes.
 - Use isolated fixtures and dedicated authorized test accounts. Never use real production records as disposable test data or expose credentials in evidence.
