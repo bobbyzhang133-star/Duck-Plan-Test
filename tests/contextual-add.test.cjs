@@ -7,7 +7,11 @@ test("section Add actions name and open their own editors without creating tasks
   const source = fs.readFileSync("landing/app.js", "utf8");
   const functions = ["updatePrimaryAction", "openPrimaryAction"].map(name => source.match(new RegExp(`^function ${name}\\([^]*?^\\}`, "m"))?.[0]);
   assert.ok(functions.every(Boolean));
-  const button = { setAttribute() {} }, search = {}, calls = [];
+  const markup = fs.readFileSync("landing/index.html", "utf8");
+  const launcher = markup.match(/<button\b(?=[^>]*\bid="open-task-modal")[^>]*>/)?.[0];
+  assert.match(launcher, /\bdata-button-icon="plus"/, "The Add glyph comes from its decorative icon");
+  const attributes = new Map();
+  const button = { setAttribute(name, value) { attributes.set(name, value); } }, search = {}, calls = [];
   const context = vm.createContext({
     document: { body: { dataset: {} }, querySelector: () => button },
     els: { search: { closest: () => search } }, store: { supportsPersonal: true },
@@ -26,7 +30,8 @@ test("section Add actions name and open their own editors without creating tasks
   ]) {
     context.view = view; context.document.body.dataset.view = view;
     vm.runInContext("updatePrimaryAction(view); openPrimaryAction(launcher);", context);
-    assert.equal(button.textContent, `＋ ${label}`);
+    assert.equal(button.textContent, label);
+    assert.equal(attributes.get("aria-haspopup"), "dialog");
     assert.equal(button.hidden, false);
     assert.equal(calls.at(-1)[0], kind);
     assert.equal(calls.at(-1)[1], button, "Editors receive the actual toolbar launcher");
@@ -35,7 +40,7 @@ test("section Add actions name and open their own editors without creating tasks
   context.calendarLibraryTabs.selected = "templates";
   context.document.body.dataset.view = "calendar";
   vm.runInContext('updatePrimaryAction("calendar"); openPrimaryAction(launcher);', context);
-  assert.equal(button.textContent, "＋ New template");
+  assert.equal(button.textContent, "New template");
   assert.deepEqual(calls.at(-1), ["template", button], "The Calendar Templates action creates a template from the actual launcher");
   context.store.supportsOrganization = false;
   vm.runInContext('updatePrimaryAction("calendar")', context);

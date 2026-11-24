@@ -17,6 +17,7 @@ test("inline task panels stay interactive when startup, navigation or resize clo
     };
     const scrim = { hidden: false, setAttribute() {} };
     const context = vm.createContext({
+      window: {},
       compactPlannerQuery: { matches: compact },
       phonePlannerQuery: { matches: false },
       taskLibrary: { closeTemplateMenu() {} },
@@ -60,8 +61,9 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   const navigation = element();
   const scrim = { hidden: false, setAttribute() {} };
   const phoneQuery = { matches: true };
-  let menuClosures = 0;
+  let menuClosures = 0, completionCancels = 0;
   const context = vm.createContext({
+    window: { DuckTaskCompletion: { cancel() { completionCancels += 1; } } },
     taskPanelLauncher: null, phonePlannerQuery: phoneQuery, compactPlannerQuery: { matches: true },
     taskLibrary: { closeTemplateMenu() { menuClosures += 1; } },
     document: {
@@ -78,6 +80,7 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   vm.runInContext(setTaskPanel, context);
   vm.runInContext("setTaskPanel(false)", context);
   assert.equal(menuClosures, 1, "Closing the sheet dismisses any body-level template menu");
+  assert.equal(completionCancels, 1, "A closed sheet cannot retain completion motion");
   assert.equal(panel.inert, true);
   assert.equal(panel.attributes.get("aria-hidden"), "true");
   assert.equal(scrim.hidden, false, "The transparent phone backdrop stays mounted for smooth entry");
@@ -91,8 +94,10 @@ test("phone tasks start collapsed, isolate the sheet, restore its launcher and r
   assert.equal(scrim.hidden, false);
   assert.equal(scrim.inert, false);
   assert.equal(focused, close);
+  assert.equal(completionCancels, 1, "Opening the sheet does not cancel completion motion");
   vm.runInContext("setTaskPanel(false)", context);
   assert.equal(menuClosures, 2);
+  assert.equal(completionCancels, 2);
   assert.equal(focused, launcher);
   assert.equal(calendar.inert, false);
   assert.equal(navigation.inert, false);

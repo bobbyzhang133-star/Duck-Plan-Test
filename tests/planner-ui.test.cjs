@@ -130,7 +130,7 @@ test("planner markup and styles retain the responsive accessibility contract", (
   assert.match(css, /\.planner-glass:not\(\.sidebar-open\) \.unified-shell \.nav-item\.active \.nav-icon/);
   assert.match(css, /\.planner-glass:not\(\.sidebar-open\) \.unified-shell \.nav-item:not\(:disabled\):hover \.nav-icon/);
   assert.match(css, /\.planner-glass:not\(\.sidebar-open\) \.unified-shell \.nav-item:not\(:disabled\):is\(:active,\.interaction-pressed\) \.nav-icon/);
-  assert.match(html, /data-page-navigation="button" href="\.\/fur-lab\.html"/);
+  assert.match(html, /<a\b(?=[^>]*\bdata-page-navigation="button")(?=[^>]*\bhref="\.\/fur-lab\.html")[^>]*>/);
   assert.match(css, /Rule 1: only links that replace the current page/);
   assert.match(css, /Rule 2: native buttons and local button-like controls/);
   assert.match(css, /--page-button-rest-radius: 12px/);

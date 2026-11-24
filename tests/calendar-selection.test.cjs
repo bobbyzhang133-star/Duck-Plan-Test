@@ -14,9 +14,10 @@ test("calendar task selection preserves popup launchers, scroll and focus across
     classList: { toggle(name, enabled) { controls.find((control) => control.classList === this).selected = enabled; } },
   }));
   const calendar = { scrollTop: 360, querySelectorAll() { return controls; } };
-  let dailyRenders = 0;
+  let dailyRenders = 0, completionCancels = 0;
   const context = vm.createContext({
     selectedTaskId: null, els: { calendar }, activeElement: controls[0],
+    window: { DuckTaskCompletion: { cancel() { completionCancels += 1; } } },
     renderDailyPlan() { dailyRenders += 1; }, setupButtonMaterial() {},
     renderCalendar() {
       controls.forEach((control) => { control.isConnected = false; });
@@ -32,6 +33,7 @@ test("calendar task selection preserves popup launchers, scroll and focus across
   assert.deepEqual(controls.map((control) => control.selected), [false, false, false]);
   assert.equal(context.selectedTaskId, null);
   assert.equal(dailyRenders, 3);
+  assert.equal(completionCancels, 3, "Selection cancels any in-progress completion motion");
   assert.ok(controls.every((control) => control.isConnected));
   assert.equal(calendar.scrollTop, 360);
   assert.equal(context.activeElement, controls[0]);
