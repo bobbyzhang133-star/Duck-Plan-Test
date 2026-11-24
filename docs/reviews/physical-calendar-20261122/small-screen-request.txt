@@ -1,0 +1,15 @@
+Repository Overview has reached its conversation limit, so this is a research-only Chat Check continuation in the same Duck Plan project. Treat the following as an alternate under-$50 small-screen hardware study; do not apply it as approval to resize, replace or modify any existing CAD checkpoint.
+
+Chat Check update — physical DuckPlan prototype. The user has superseded the earlier $150 budget with UNDER US$50 before the printed case, and explicitly selected NEW CUSTOM ELECTRONICS WITH A SMALLER SCREEN. Refurbished tablets and the earlier Pi/onn recommendations no longer meet this request.
+
+Updated brief is pushed and remotely verified in Duck-Plan-Test, branch codex/physical-calendar-chat-check-20261122, exact commit 7ed61186f1753a80fdaef22c53967c8bd35f825f:
+https://github.com/bobbyzhang133-star/Duck-Plan-Test/blob/7ed61186f1753a80fdaef22c53967c8bd35f825f/docs/reviews/physical-calendar-20261122/README.md
+Read the final “Confirmed preference: new electronics, smaller screen” addendum; older $150 findings are historical.
+
+Please give a focused research-only update: one preferred new small touchscreen/controller board, one fallback if needed, exact SKU/package and primary source links, audio/power/cable requirements, and the concrete blockers to a complete delivered-under-$50 quote. Tax/shipping must count. Delivery country/postal code has been requested and is not yet supplied, so do not invent a delivered total or assume owned power accessories.
+
+Candidate Waveshare ESP32-Touch-LCD-3.5-EN SKU32871: indexed manufacturer $26.99–28.99 across variants, accessible SpotPear no-battery page $32.49/in stock; 2MB PSRAM/16MB flash, 320x480 touch. Important correction: title says built-in speaker, but current official factory guide says prepare/connect a speaker and Type-C data cable. Resolve exact package rather than assuming included audio. Current official docs: https://docs.waveshare.com/ESP32-Touch-LCD-3.5 and https://docs.waveshare.com/ESP32-Touch-LCD-3.5/Instructions-For-Use
+
+Alternative Elecrow CrowPanel Advance 3.5 DIS01835A-1 has 8MB PSRAM, 480x320, amplifier/speaker port and included USB cable. Indexed base prices conflict ($25.90 vs $32.45); live product fetch was blocked. Speaker is not in its package list. Optional LoRa/Meshtastic add-ons are unnecessary for ordinary Wi-Fi. Do not claim either basket is approved under $50.
+
+Evaluate a simple day/next-task UI and firmware alarm independent of Apple/browser, cached task schedule and a short onboard-flash ringtone to avoid mandatory microSD. Note account pairing/sync/timezone/reboot/time-validity, Stop/Snooze and audio inclusion limitations. No-battery RTC retention cannot be presumed after unplugging. Link any EXACT matching printable case/source if verified; component 2D drawings are not an STL. Preserve approved Sigma branding and all existing CAD/site/native work. No implementation, purchase, deployment, native sync or CAD redesign is authorized by this review; all physical tests remain NOT RUN. Keep this update concise and distinguish facts, proposals and missing quote evidence.
