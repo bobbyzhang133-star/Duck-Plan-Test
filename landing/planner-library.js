@@ -239,10 +239,9 @@
       current.element.inert = true;
       current.element.setAttribute("aria-hidden", "true");
       current.element.removeAttribute("id");
-      const motion = doc.defaultView?.DuckExpansionMotion;
-      if (!immediate && motion) motion.overlay(current.element, false, () => current.element.remove());
-      else current.element.remove();
-      current.animation?.cancel();
+      const motion = doc.defaultView?.DuckPopupMotion;
+      if (!immediate && motion?.close) motion.close(current.element, current.anchor, () => current.element.remove());
+      else { motion?.cancel?.(current.element); current.element.remove(); }
       if (restoreFocus && current.trigger.isConnected) current.trigger.focus({ preventScroll: true });
     }
 
@@ -257,7 +256,8 @@
       element.setAttribute("role", "menu");
       element.setAttribute("aria-label", `Manage ${item.title}`);
       element.innerHTML = [["Details", "eye"], ["Edit", "pen"], ["Delete", "trash"]].map(([label, icon]) => `<button type="button" role="menuitem" tabindex="-1" data-button-icon="${icon}" ${icon === "trash" ? 'data-button-tone="danger"' : ""} data-template-menu-action="${label.toLowerCase()}" aria-label="${label} ${escapeHtml(item.title)}">${label}</button>`).join("");
-      const state = templateMenu = { element, trigger, id: item.id, owner: captureOwner() };
+      const motion = doc.defaultView?.DuckPopupMotion;
+      const state = templateMenu = { element, trigger, id: item.id, owner: captureOwner(), anchor: motion?.capture?.(trigger) };
       trigger.setAttribute("aria-expanded", "true");
       doc.body.append(element);
       positionTemplateMenu(state);
@@ -282,15 +282,7 @@
       });
       refreshButtons(element);
       controls[0].focus({ preventScroll: true });
-      const view = doc.defaultView;
-      if (element.animate && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-        state.animation = element.animate([{ opacity: 0, transform: "scale(.92,.86)" }, { opacity: 1, transform: "scale(1)" }], {
-          duration: view?.DuckMotion?.duration.popupOpen || 240,
-          easing: view?.DuckMotion?.easing || "cubic-bezier(.2,.8,.2,1)",
-        });
-        const animation = state.animation;
-        animation.finished.then(() => { if (state.animation === animation) state.animation = null; }, () => {});
-      }
+      motion?.open?.(element, state.anchor);
     }
 
     function positionTemplateMenu({ element, trigger }) {

@@ -1,0 +1,658 @@
+{
+  "runtime": "158.0.8127.38",
+  "mode": "isolated local demo, real local template storage",
+  "results": [
+    {
+      "width": 1280,
+      "label": "add-task",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": true,
+        "frames": [],
+        "calls": [
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(715.84375px, -198.5px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(709.84375px, -198.5px) scale(0.1942761479591837, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(394px, -198.5px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(715.84375px, -204.5px) scale(0.7857142857142857, 0)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(709.84375px, -204.5px) scale(0.1942761479591837, 0)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(394px, -204.5px) scale(0.7857142857142857, 0)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(715.84375px, -650.5px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(709.84375px, -650.5px) scale(0.1942761479591837, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(394px, -650.5px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "add-class",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(548.867px, -429.5px) scale(0.210443, 0.0712695)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "personal-note-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(548.8671875px, -429.5px) scale(0.21044270833333334, 0.07126948775055679)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "add-note",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(551.195px, -201.719px) scale(0.202682, 0.0615842)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "personal-note-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(551.1953125px, -201.71875px) scale(0.20268229166666665, 0.06158421904387001)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "goal-choice",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(527.711px, -427.5px) scale(0.290652, 0.136872)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "pg-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(527.7109375px, -427.5px) scale(0.2906519396551724, 0.13687177991639934)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "add-goal",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(-112.344px, -186.055px) scale(0.207004, 0.0640073)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "pg-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(-112.34375px, -186.0546875px) scale(0.20700431034482758, 0.06400727355381293)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "add-habit",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(526.062px, -186.055px) scale(0.217026, 0.0764366)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "pg-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(526.0625px, -186.0546875px) scale(0.2170258620689655, 0.07643657881165006)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "new-template",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(485.898px, -236.992px) scale(0.269316, 0.0665076)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "library-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(485.8984375px, -236.9921875px) scale(0.2693157327586207, 0.06650764034859828)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "label": "template-menu",
+      "status": "PASS",
+      "menuFrames": [
+        "translate(77px, -96px) scale(0.189474, 0.25)",
+        "translate(0px, 0px) scale(1, 1)"
+      ],
+      "quickCancel": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "width": 390,
+      "label": "add-task",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": true,
+        "frames": [],
+        "calls": [
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(247.84375px, -142.421875px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(241.84375px, -142.421875px) scale(0.2358047385620915, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(8px, -142.421875px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(247.84375px, -148.421875px) scale(0.7857142857142857, 0)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(241.84375px, -148.421875px) scale(0.2358047385620915, 0)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(8px, -148.421875px) scale(0.7857142857142857, 0)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(247.84375px, -628.421875px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(241.84375px, -628.421875px) scale(0.2358047385620915, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          },
+          {
+            "className": "popup-morph-tile",
+            "frames": [
+              {
+                "transform": "translate(8px, -628.421875px) scale(0.7857142857142857, 0.7857142857142857)"
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)"
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "add-class",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(121.867px, -390.812px) scale(0.33775, 0.0728251)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "personal-note-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(121.8671875px, -390.8125px) scale(0.3377503453038674, 0.07282507499741388)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "add-note",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(122.195px, -150.844px) scale(0.335938, 0.0627423)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "personal-note-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(122.1953125px, -150.84375px) scale(0.3359375, 0.06274230203645113)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "goal-choice",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(100.711px, -389.812px) scale(0.454636, 0.135776)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "pg-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(100.7109375px, -389.8125px) scale(0.4546357044198895, 0.13577627772420445)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "add-goal",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(106.969px, -73.3828px) scale(0.320615, 0.0620059)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "pg-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(106.96875px, -73.3828125px) scale(0.3206146408839779, 0.0620059451722999)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "add-habit",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(104.062px, 221.211px) scale(0.336671, 0.0677102)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "pg-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(104.0625px, 221.2109375px) scale(0.33667127071823205, 0.06771021183486017)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "new-template",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(-70.8984px, -157.82px) scale(0.4315, 0.0650151)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "library-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(-70.8984375px, -157.8203125px) scale(0.4315003453038674, 0.06501512248054857)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "label": "template-menu",
+      "status": "PASS",
+      "menuFrames": [
+        "translate(73px, -100px) scale(0.231579, 0.305556)",
+        "translate(0px, 0px) scale(1, 1)"
+      ],
+      "quickCancel": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "width": 390,
+      "label": "more-navigation",
+      "status": "PASS",
+      "motion": {
+        "open": true,
+        "morph": false,
+        "frames": [
+          "translate(151.188px, 179.5px) scale(0.195256, 0.178686)",
+          "translate(0px, 0px) scale(1, 1)"
+        ],
+        "calls": [
+          {
+            "className": "phone-more-dialog",
+            "open": true,
+            "frames": [
+              {
+                "transform": "translate(151.1875px, 179.5px) scale(0.19525562633167615, 0.1786859888229927)",
+                "opacity": 0
+              },
+              {
+                "transform": "translate(0px, 0px) scale(1, 1)",
+                "opacity": 1
+              }
+            ],
+            "duration": 320
+          }
+        ]
+      }
+    }
+  ]
+}

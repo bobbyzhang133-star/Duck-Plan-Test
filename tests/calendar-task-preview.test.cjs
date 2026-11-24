@@ -286,7 +286,7 @@ test("choosing a grouped deadline waits for closing and opens its editor without
   f.closing.shift()();
   assert.equal(f.dialog(), null);
   assert.deepEqual(f.selections, ["beta"]); assert.equal(f.calls.length, 0);
-  assert.deepEqual(f.editors, [{ id: "beta", source: replacement, fade: true }]);
+  assert.deepEqual(f.editors, [{ id: "beta", source: replacement }]);
   assert.equal(replacement.getAttribute("aria-expanded"), "false");
 });
 

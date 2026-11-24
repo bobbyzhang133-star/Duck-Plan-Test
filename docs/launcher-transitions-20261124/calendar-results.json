@@ -1,0 +1,369 @@
+{
+  "runtime": "158.0.8127.38",
+  "mode": "isolated local demo; phone/tablet touch emulation",
+  "results": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "view": "day",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "view": "week",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "view": "month",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 950
+      },
+      "quickCancelReopen": "PASS",
+      "saveReload": "PASS",
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568,
+        "touch": true
+      },
+      "view": "day",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568,
+        "touch": true
+      },
+      "view": "week",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568,
+        "touch": true
+      },
+      "view": "month",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568,
+        "touch": true
+      },
+      "quickCancelReopen": "PASS",
+      "saveReload": "PASS",
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "view": "day",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "view": "week",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "view": "month",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "quickCancelReopen": "PASS",
+      "saveReload": "PASS",
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "touch": true
+      },
+      "view": "day",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "touch": true
+      },
+      "view": "week",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "touch": true
+      },
+      "view": "month",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "touch": true
+      },
+      "quickCancelReopen": "PASS",
+      "saveReload": "PASS",
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1112,
+        "touch": true
+      },
+      "view": "day",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1112,
+        "touch": true
+      },
+      "view": "week",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1112,
+        "touch": true
+      },
+      "view": "month",
+      "opening": {
+        "open": true,
+        "stage": "morph",
+        "tiles": 9,
+        "title": "Sample: Review physics notes",
+        "animations": 17
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 835,
+        "height": 1112,
+        "touch": true
+      },
+      "quickCancelReopen": "PASS",
+      "saveReload": "PASS",
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true,
+        "reduced": true
+      },
+      "view": "day",
+      "opening": {
+        "open": true,
+        "tiles": 0,
+        "title": "Sample: Review physics notes",
+        "animations": 0
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true,
+        "reduced": true
+      },
+      "view": "week",
+      "opening": {
+        "open": true,
+        "tiles": 0,
+        "title": "Sample: Review physics notes",
+        "animations": 0
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true,
+        "reduced": true
+      },
+      "view": "month",
+      "opening": {
+        "open": true,
+        "tiles": 0,
+        "title": "Sample: Review physics notes",
+        "animations": 0
+      },
+      "closing": "PASS",
+      "focus": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "touch": true,
+        "reduced": true
+      },
+      "quickCancelReopen": "PASS",
+      "saveReload": "PASS",
+      "errors": []
+    }
+  ]
+}

@@ -30,6 +30,13 @@ function fixture(reduced=false,profile=null){
   return {api:ctx.window.DuckPopupMotion,Element,animations,events,timers,ctx,panel};
 }
 const settle=async animation=>{animation.finish();await Promise.resolve();};
+test('calendar-style legacy options cannot bypass launcher geometry for task windows',()=>{
+  const {api,Element,panel}=fixture(),source=new Element({left:20,top:80,width:800,height:46}),p=panel();
+  const anchor=api.capture(source,{fade:true});
+  assert.equal(anchor.rect.width,800);assert.ok(anchor.material);
+  api.open(p,anchor);assert.equal(p.dataset.popupStage,'morph');
+  api.cancel(p);
+});
 test('popup geometry maps its center and size toward the launcher rectangle',()=>{const {api}=fixture();assert.equal(api.__testing.transform({left:100,top:200,width:400,height:300},{left:20,top:30,width:80,height:40}),'translate(-240px, -300px) scale(0.2, 0.13333333333333333)');});
 test('closing waits for motion and keeps original rectangle when source is removed',async()=>{const {api,Element,animations}=fixture(),source=new Element({left:20,top:30,width:80,height:40}),panel=new Element(),anchor=api.capture(source);source.isConnected=false;let closed=false;api.close(panel,anchor,()=>closed=true);assert(!closed);assert.match(animations[0].frames[1].transform,/translate\(-240px, -300px\)/);await settle(animations[0]);assert(closed);assert(animations[0].cancelled);});
 test('reopening cancels a close without firing its stale callback',async()=>{const {api,Element,animations}=fixture(),panel=new Element();let closed=false;api.close(panel,null,()=>closed=true);api.open(panel,null);assert(animations[0].cancelled);assert.equal(animations[1].frames[0].transform,'matrix(1,0,0,1,5,8)');await settle(animations[1]);assert(!closed);});

@@ -228,7 +228,7 @@
         host.onSelectTask?.(id);
         if (!sameOwner(context)) return;
         const source = sourceFor(context) || doc.querySelector("#calendar-today");
-        if (context.type === "deadline-group") host.openTask?.({ id, source, fade: true });
+        if (context.type === "deadline-group") host.openTask?.({ id, source });
         else open(id, source);
       } });
     }

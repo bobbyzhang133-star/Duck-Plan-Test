@@ -1,0 +1,10 @@
+{
+  "state": {
+    "open": true,
+    "inert": true,
+    "stage": "morph",
+    "tiles": 9
+  },
+  "closed": true,
+  "focus": true
+}

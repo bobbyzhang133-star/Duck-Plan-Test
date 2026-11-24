@@ -25,6 +25,7 @@ Use this rule for every native button, role-based button, tab, disclosure, task/
 - The action is immediate. Never wait for the page-navigation wave or add an artificial navigation delay.
 - Hover gives the existing DuckPlan tint/elevation change. Press gives immediate held compression/brightness feedback. Release gives the existing brief expansion/settle response.
 - If the control opens a dialog, sheet, drawer, menu, or panel, expand that UI immediately from the launcher using the established popup/layout motion. Simple toggles and commands keep the tint/press/release response without inventing a popup.
+- Apply that launcher transition to every app-owned window opener, including calendar work/deadline blocks, grouped-task handoffs and management menus. Do not substitute a fade-only/pop-in exception; closing returns smoothly toward the launcher. Reduced motion and OS-owned permission/install windows retain their platform behavior.
 - Repeated calendar cells, time slots, task rows, and event blocks stay lightweight without individual backdrop filters; use their existing tint/outline press states.
 - The sidebar continues to reshape the workspace in the same layout plane. It must not use a page-navigation delay or wave.
 - Popup identity continues its launcher tint/material and action wording. Preserve focus, Escape/backdrop dismissal, interruption cleanup, stable bounds, and reduced-motion behavior.

@@ -1627,7 +1627,7 @@ function openModal(prefill = {}) {
   viewTransitions.settle();
   const source = prefill.source || (document.activeElement?.matches("button,[role='button'],a")
     ? document.activeElement : document.querySelector("#open-task-modal"));
-  modalAnchor = DuckPopupMotion.capture(source, { fade: prefill.fade === true });
+  modalAnchor = DuckPopupMotion.capture(source);
   modalClosing = false;
   els.modal.inert = false;
   editingTaskId = prefill.id || null;
@@ -1745,7 +1745,7 @@ document.addEventListener("click", (event) => {
   if (calendarItem) {
     const taskId = calendarItem.dataset.selectTask;
     if (selectedTaskId !== taskId) selectTask(taskId);
-    openModal({ id: taskId, source: calendarItem, fade: true });
+    openModal({ id: taskId, source: calendarItem });
     return;
   }
   const overflow = event.target.closest("[data-deadline-overflow]");

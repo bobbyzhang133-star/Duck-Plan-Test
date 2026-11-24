@@ -2,9 +2,8 @@
   'use strict';
   const running = new Map();
   const ease = window.DuckMotion?.easing || 'cubic-bezier(.22,.8,.24,1)';
-  function capture(source, { fade = false } = {}) {
+  function capture(source) {
     const element = source instanceof Element ? source : null;
-    if (fade) return { element, fade };
     const capturedAt=window.location?.search.includes('motionAudit=1')?performance.now():null;
     const rect = element?.getBoundingClientRect();
     if (!rect || !rect.width || !rect.height) return null;
@@ -298,24 +297,16 @@
     audit.ready();
   }
   function animate(element, anchor, opening, done=()=>{}) {
-    const fade = anchor?.fade === true;
-    if (!fade && ((element.matches?.('.task-modal') && element.querySelector('form')) || (element.matches?.('.calendar-task-preview') && element.querySelector('.calendar-preview-card')))) return morph(element,anchor,opening,done);
+    if ((element.matches?.('.task-modal') && element.querySelector('form')) || (element.matches?.('.calendar-task-preview') && element.querySelector('.calendar-preview-card'))) return morph(element,anchor,opening,done);
     // Sample an interrupted transform before cancelling, so reversing doesn't jump.
     const previous=running.has(element) ? {transform:getComputedStyle(element).transform,opacity:getComputedStyle(element).opacity} : null;
     cancel(element);
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate;
-    if (fade && opening && !element.open) {
-      removeJob(element);
-      if (!reduced) reserve(element, geometry(element));
-      element.showModal();
-    }
-    if (reduced) { done(); return; }
-    const end=fade ? 'translateY(6px)' : transform(element.getBoundingClientRect(),anchorRect(anchor));
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !element.animate) { done(); return; }
+    const end=transform(element.getBoundingClientRect(),anchorRect(anchor));
     const full={transform:'translate(0px, 0px) scale(1, 1)',opacity:1};
     const small={transform:end,opacity:0};
-    const start=fade && opening ? {...small,opacity:.6} : small;
     if(element.dataset)element.dataset.popupMotion=opening?'opening':'closing';
-    const animation=element.animate([previous || (opening?start:full),opening?full:small],{
+    const animation=element.animate([previous || (opening?small:full),opening?full:small],{
       duration:opening?(window.DuckMotion?.duration.popupOpen || 240):(window.DuckMotion?.duration.popupClose || 220),easing:ease,fill:'both',composite:'replace'
     });
     const entry={animation,finish:null};

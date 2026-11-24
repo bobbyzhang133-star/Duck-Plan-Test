@@ -1,0 +1,74 @@
+[
+  {
+    "width": 1280,
+    "singleDeadline": "PASS",
+    "workSummary": "PASS",
+    "groupedDeadlineHandoff": "PASS",
+    "trace": [
+      {
+        "className": "task-modal",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      },
+      {
+        "className": "calendar-task-preview calendar-day-list-preview",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      },
+      {
+        "className": "calendar-task-preview calendar-deadline-group-preview",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      },
+      {
+        "className": "task-modal",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "singleDeadline": "PASS",
+    "workSummary": "PASS",
+    "groupedDeadlineHandoff": "PASS",
+    "trace": [
+      {
+        "className": "task-modal",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      },
+      {
+        "className": "calendar-task-preview calendar-day-list-preview",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      },
+      {
+        "className": "calendar-task-preview calendar-deadline-group-preview",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      },
+      {
+        "className": "task-modal",
+        "stage": "morph",
+        "morph": true,
+        "anchor": true,
+        "fade": false
+      }
+    ]
+  }
+]
