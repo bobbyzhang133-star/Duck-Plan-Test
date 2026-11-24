@@ -1,0 +1,20 @@
+---
+description: Check rendered phone layouts and affected touch workflows after every DuckPlan UI change.
+alwaysApply: true
+---
+
+# Mandatory Mobile UI Verification
+
+- Every UI change requires mobile verification before it is reported complete, including desktop-originated CSS, shared components, copy, forms, icons and motion. A desktop screenshot or successful build alone is insufficient.
+- Check the affected UI in a rendered browser at minimum at 320×568 and 390×844 portrait, plus 844×390 landscape. Add the reported device size, affected breakpoints and other relevant sizes when known; preserve the approved tablet/desktop layouts.
+- Visually inspect screenshots or rendered frames. Check alignment, spacing, text wrapping, misplaced elements, clipped content, unintended horizontal scrolling, overlapping controls and content hidden behind sticky headers, bottom navigation or safe areas. Zero horizontal overflow alone is not a pass.
+- Exercise affected controls with touch input where supported, and verify keyboard/focus access. Primary controls need usable touch targets (normally at least 44 CSS pixels); retain lightweight calendar cells and their accessible alternatives. Do not depend on hover to expose required actions.
+- For forms, verify labels, validation/errors, loading states and focus scrolling, including with the on-screen keyboard open and the visual viewport resized where supported. Inputs, submit/close controls and important messages must remain reachable. Record unavailable device or keyboard checks honestly.
+- Check affected expanded/collapsed, open/closed and rapid-reversal states. Headings, dividers and content must move together without a final jump. Include long titles/names, relevant empty/error/signed-in/signed-out states, light/dark themes and reduced motion in proportion to the change.
+- Preserve the confirmed phone calendar: full-width schedule, expandable task sheet, visible task summary, Add Task and bottom navigation; phone Week uses seven day selectors and one selected day's schedule. Do not replace the tablet task-column/calendar layout with the phone layout.
+- Reproduce reported mobile positioning problems on the relevant page/runtime before fixing them. If required device/page details are missing, inspect independently and request only the missing information needed to reproduce the problem.
+- Correct observed mobile misalignment, clipping and overlap, then repeat the affected checks. Do not call a feature mobile-ready while a known positioning defect remains.
+- Record checkout/commit, browser/runtime, viewport/orientation, input method, account mode, affected action and screenshot/frame evidence. Use PASS, FAIL, BLOCKED or NOT RUN; emulated viewports/touch do not establish physical Safari, installed PWA or native-app passes.
+- Prefer the intended mobile browser/runtime when available. Report physical-device or environment limits explicitly and continue independent checks; unavailable tests are not passes.
+- This is a proportionate affected-UI gate, not a requirement to rerun unrelated feature suites for every small edit. Follow the platform testing procedure for feature, storage/authentication and release scope.
+- Native synchronization/build/installation and public deployment still require their existing authorization. Apply this UI gate to the app at an authorized release; do not sync or rebuild it just to satisfy this rule during local website work.

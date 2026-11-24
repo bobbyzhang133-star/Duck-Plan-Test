@@ -6,6 +6,8 @@ The aim is to test what the user can do in the runtime they use. Compilation pro
 
 ## Choose a proportionate gate
 
+Every UI change must include the affected mobile checks in [the mobile UI rule](../../.cursor/rules/mobile-ui-verification.mdc): narrow/standard portrait phones, landscape, rendered positioning and relevant input/state checks. Fix observed mobile layout defects before claiming completion. Record emulated versus physical-device evidence and any blockers; this does not authorize native synchronization or a public release.
+
 For a small isolated presentation change, check the affected control/layout, its focus and input behavior, relevant asset/cache handling and existing focused tests. Do not repeat every feature merely because one border changed.
 
 For a feature repair, first reproduce the reported action and error in the affected runtime and account mode. Test its successful path, persistence and relevant failure path after fixing it. Add coverage for shared layers it touches.
