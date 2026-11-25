@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "runtime": "158.0.8127.38",
+  "checks": [
+    "GitHub hover/held press",
+    "390x420 resized viewport recovery/close",
+    "dark mode",
+    "reverse closing"
+  ],
+  "physicalKeyboard": "NOT RUN"
+}

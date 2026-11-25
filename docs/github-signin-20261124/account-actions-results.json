@@ -1,0 +1,41 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "width": 390,
+      "status": "PASS",
+      "mode": "real local Worker/D1 email session; dummy GitHub client; external authorize destination intercepted",
+      "actions": [
+        "enabled GitHub button",
+        "actual server state/PKCE redirect",
+        "cancelled callback cleanup",
+        "explicit link POST",
+        "link cancellation keeps current user",
+        "refresh persistence"
+      ],
+      "realGitHubOAuth": "NOT RUN"
+    },
+    {
+      "width": 1440,
+      "status": "PASS",
+      "mode": "real local Worker/D1 email session; dummy GitHub client; external authorize destination intercepted",
+      "actions": [
+        "enabled GitHub button",
+        "actual server state/PKCE redirect",
+        "cancelled callback cleanup",
+        "explicit link POST",
+        "link cancellation keeps current user",
+        "refresh persistence"
+      ],
+      "realGitHubOAuth": "NOT RUN"
+    },
+    {
+      "status": "PASS",
+      "mode": "static unconfigured local preview, reduced motion",
+      "actions": [
+        "GitHub disabled honestly",
+        "instant opening/closing"
+      ]
+    }
+  ]
+}

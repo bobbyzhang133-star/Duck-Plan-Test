@@ -475,7 +475,7 @@
     let authError = null;
     let settingsSyncError = null;
     let templateSyncError = null;
-    let providers = { password: true, google: false };
+    let providers = { password: true, google: false, github: false };
     let deviceAlertSequence = 0;
     const deviceAlertCommits = new Map();
     const deviceAlertAttempts = new Map();
@@ -855,7 +855,7 @@
       if (generation === backendGeneration) notify("persisted");
     }
 
-    // A failed Google sign-in comes back with ?sign_in_error=…, read once and removed from the address bar.
+    // A failed provider sign-in comes back with ?sign_in_error=…, consumed once.
     function consumeSignInParams() {
       if (!locationRef?.href) return;
       const url = new URL(locationRef.href);
@@ -867,7 +867,7 @@
     }
     async function sessionUser(generation = backendGeneration) {
       const session = await api("GET", "/session");
-      if (generation === backendGeneration) providers = { password: true, google: Boolean(session.providers?.google) };
+      if (generation === backendGeneration) providers = { password: true, google: Boolean(session.providers?.google), github: Boolean(session.providers?.github) };
       return session.user || null;
     }
 
@@ -1171,6 +1171,20 @@
       async signInWithGoogle() {
         if (!configured) throw new Error("Cloud sync isn't set up on this site yet.");
         locationRef.assign(`${apiUrl}/auth/google?next=${encodeURIComponent(redirectPath)}`);
+      },
+      async signInWithGitHub() {
+        if (!configured || !providers.github) throw new Error("GitHub sign-in isn't connected on this copy of DuckPlan yet.");
+        locationRef.assign(`${apiUrl}/auth/github?next=${encodeURIComponent(redirectPath)}`);
+      },
+      async connectGitHub() {
+        if (!configured || !providers.github || !backend.user) throw new Error("Sign in to DuckPlan before connecting GitHub.");
+        const generation = backendGeneration, userId = backend.user.id;
+        const current = locationRef?.href ? new URL(locationRef.href) : null;
+        const result = await accountCall("/auth/github", { next: current ? `${current.pathname}${current.search}${current.hash}` : redirectPath });
+        if (generation !== backendGeneration || backend.user?.id !== userId) throw new Error("Your account changed. Please try again.");
+        const destination = new URL(result.url);
+        if (destination.origin !== "https://github.com" || destination.pathname !== "/login/oauth/authorize") throw new Error("GitHub sign-in couldn't start. Please try again.");
+        locationRef.assign(destination.href);
       },
       async signOut() {
         if (!configured) return;

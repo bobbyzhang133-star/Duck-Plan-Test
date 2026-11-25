@@ -738,6 +738,8 @@ function accountHeading(title, copy, signedIn = false) {
 function signedOutAccount() {
   const mode = ["sign-up", "recover"].includes(accountMode) ? accountMode : "sign-in";
   const googleReady = store.configured && store.providers.google;
+  const githubReady = store.configured && store.providers.github;
+  const githubHelp = !store.configured ? "Sign-in is available in the online planner." : githubReady ? "Uses your GitHub identity and verified email. No repository access." : "GitHub sign-in isn’t connected on this preview yet.";
   const googleHelp = !store.configured ? "Sign-in is available in the online planner." : googleReady ? "Use your Google account, or continue with email." : "Google sign-in isn’t available on this preview yet. You can use email below.";
   const signIn = `<form class="settings-form account-form" id="sign-in-form">${emailInput}${passwordInput("password", "Password", "current-password")}<div class="account-form-tools"><button type="button" class="connection-text-button" id="show-recover">Forgot password?</button></div><button type="submit" class="secondary-button connection-primary" data-action="sign-in" data-button-icon="login" data-pending-label="Signing in…">Sign in</button></form>`;
   const signUp = `<form class="settings-form account-form" id="sign-up-form">${emailInput}${passwordInput("password", "Create a password", "new-password")}<p class="connection-note">Use at least 8 characters. You’ll receive a recovery code to save after creating your account.</p><button type="submit" class="secondary-button connection-primary" data-action="sign-up" data-button-icon="plus" data-pending-label="Creating account…">Create account</button></form>`;
@@ -746,6 +748,8 @@ function signedOutAccount() {
     ${!store.configured ? `<p class="connection-local-note">Your planner is currently saved on this device. <a href="https://duckplan-latest.ocs-learning.workers.dev/#settings" target="_blank" rel="noopener noreferrer">Open online DuckPlan<span class="sr-only"> (opens in a new tab)</span></a> to sign in and sync.</p>` : ""}
     <button type="button" class="google-signin-button" id="google-sign-in" aria-label="Sign in with Google" aria-describedby="google-sign-in-help" ${googleReady ? "" : "disabled"}><img src="./assets/google-signin.svg" alt="" width="180" height="40" /></button>
     <p class="connection-provider-help" id="google-sign-in-help">${googleHelp}</p>
+    <button type="button" class="github-signin-button" id="github-sign-in" aria-describedby="github-sign-in-help" ${githubReady ? "" : "disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.5 21.6c.55.1.75-.24.75-.53v-2.07c-3.1.67-3.75-1.31-3.75-1.31-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.7 1.14 1.7 1.14 1 .17 1.78.12 2.4-.45.1-.72.4-1.21.72-1.49-2.48-.28-5.09-1.24-5.09-5.5 0-1.21.44-2.2 1.14-2.97-.12-.28-.5-1.41.11-2.94 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.66.11 2.94.71.77 1.14 1.76 1.14 2.97 0 4.27-2.61 5.21-5.1 5.49.4.35.75 1.02.75 2.06v3.43c0 .3.2.64.77.53A11.1 11.1 0 0 0 12 .9Z"/></svg><span>Sign in with GitHub</span></button>
+    <p class="connection-provider-help" id="github-sign-in-help">${githubHelp}</p>
     <div class="account-method-divider"><span>or use email</span></div>
     <div class="account-mode-switch" role="group" aria-label="Account action"><button type="button" data-account-mode="sign-in" aria-pressed="${mode === "sign-in"}">Sign in</button><button type="button" data-account-mode="sign-up" aria-pressed="${mode === "sign-up"}">Create account</button></div>
     <fieldset class="account-fields" ${store.configured ? "" : "disabled"}><legend class="sr-only">Email account</legend><div class="account-form-stage">${accountPanel("sign-in", signIn, mode)}${accountPanel("sign-up", signUp, mode)}${accountPanel("recover", recover, mode)}</div></fieldset>${connectionFeedback}`;
@@ -753,10 +757,11 @@ function signedOutAccount() {
 function signedInAccount(user) {
   const { name, initials } = PlannerUI.accountIdentity(user);
   const mode = ["change-password", "recovery-code"].includes(accountMode) ? accountMode : "summary";
+  const githubConnection = user.hasGitHub ? '<p class="connection-note">GitHub is connected to this account.</p>' : store.providers.github ? '<button type="button" class="secondary-button" id="connect-github" data-pending-label="Connecting…">Connect GitHub</button><p class="connection-note">Use GitHub to sign in to this same planner.</p>' : "";
   const summary = `<div class="account-identity-summary"><span class="account-identity-avatar" aria-hidden="true">${safeText(initials)}</span><div><strong>${safeText(name)}</strong><span>${safeText(user.email || "")}</span></div></div><p class="connection-note">Your planner is linked to this account. You can connect your Axis calendar alongside it.</p><div class="settings-actions account-management-actions"><button type="button" class="secondary-button" id="show-change-password" data-button-icon="pen">${user.hasPassword ? "Change password" : "Add a password"}</button>${user.hasPassword ? `<button type="button" class="secondary-button" id="show-recovery-code" data-button-icon="plus">New recovery code</button>` : ""}<button type="button" class="connection-text-button" id="sign-out">Sign out</button></div>`;
   const password = `<form class="settings-form account-form" id="password-form"><h3>${user.hasPassword ? "Change password" : "Add a password"}</h3>${user.hasPassword ? passwordInput("currentPassword", "Current password", "current-password") : ""}${passwordInput("newPassword", "New password", "new-password")}<button type="submit" class="secondary-button connection-primary" data-button-icon="check">Save password</button><button type="button" class="connection-text-button" id="cancel-account-form" data-account-cancel>Cancel</button></form>`;
   const recovery = `<form class="settings-form account-form" id="recovery-code-form"><h3>Make a new recovery code</h3><p class="connection-note">Your previous recovery code will stop working.</p>${passwordInput("password", "Current password", "current-password")}<button type="submit" class="secondary-button connection-primary" data-button-icon="check">Make a new code</button><button type="button" class="connection-text-button" data-account-cancel>Cancel</button></form>`;
-  return `${accountHeading("Your planner, everywhere.", "Tasks and classes sync when this device is online.", true)}<div class="account-form-stage">${accountPanel("summary", summary, mode)}${accountPanel("change-password", password, mode)}${user.hasPassword ? accountPanel("recovery-code", recovery, mode) : ""}</div>${connectionFeedback}`;
+  return `${accountHeading("Your planner, everywhere.", "Tasks and classes sync when this device is online.", true)}<div class="account-form-stage">${accountPanel("summary", summary + githubConnection, mode)}${accountPanel("change-password", password, mode)}${user.hasPassword ? accountPanel("recovery-code", recovery, mode) : ""}</div>${connectionFeedback}`;
 }
 function renderAccountIdentity() {
   const identity = PlannerUI.accountIdentity(store.user);
@@ -2301,6 +2306,8 @@ els.accountSettings.addEventListener("submit", (event) => {
 els.accountSettings.addEventListener("click", (event) => {
   const button = event.target.closest("button"); if (!button) return;
   if (button.id === "google-sign-in") runAction(button, () => store.signInWithGoogle());
+  if (button.id === "github-sign-in") runAction(button, () => store.signInWithGitHub());
+  if (button.id === "connect-github") runAction(button, () => store.connectGitHub());
   if (button.dataset.accountMode) setAccountMode(button.dataset.accountMode);
   if (button.id === "show-recover") setAccountMode("recover");
   if (button.id === "show-sign-in") setAccountMode("sign-in");

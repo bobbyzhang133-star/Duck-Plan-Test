@@ -58,7 +58,7 @@ test("password accounts: sign-up, sign-in, HttpOnly hashed sessions, and no emai
   assert.match(cookie, /^duckplan_session=.*HttpOnly.*Secure/);
   const session = await app.call("/api/session", { cookie: cookie.split(";")[0] });
   assert.equal(session.data.user.id, created.data.user.id);
-  assert.deepEqual(session.data.providers, { password: true, google: false });
+  assert.deepEqual(session.data.providers, { password: true, google: false, github: false });
   assert.ok(!("password_hash" in session.data.user), "the hash never leaves the server");
 
   const row = app.env.DB.raw.prepare("SELECT password_hash, recovery_hash FROM users").get();
@@ -458,4 +458,19 @@ test("browser store: wrong passwords stay local, recovery and password changes w
   await store.signOut();
   await store.signIn("a@a.test", "fresher password");
   assert.equal(store.user.id, created.user.id);
+});
+
+test("browser store: GitHub readiness, sign-in routing and explicit linking preserve the active account", async () => {
+  const app = setup({ GITHUB_CLIENT_ID: "fixture-client", GITHUB_CLIENT_SECRET: "fixture-secret" });
+  const jar = { value: null }, { store, location } = browserStore(app, { cookieJar: jar });
+  await store.init(); assert.equal(store.providers.github, true);
+  await store.signInWithGitHub(); assert.equal(location.assigned, "/api/auth/github?next=%2F");
+  await assert.rejects(store.connectGitHub(), /Sign in to DuckPlan/);
+  await store.signUp("github-link@fixture.test", PASSWORD); const userId = store.user.id;
+  await store.connectGitHub(); const url = new URL(location.assigned);
+  assert.equal(url.origin, "https://github.com"); assert.equal(store.user.id, userId);
+  const transaction = app.env.DB.raw.prepare("SELECT intent, user_id FROM github_oauth_transactions").get();
+  assert.equal(transaction.intent, "link"); assert.equal(transaction.user_id, userId);
+  const disabled = browserStore(setup(), { cookieJar: { value: null } }).store;
+  await disabled.init(); await assert.rejects(disabled.signInWithGitHub(), /isn't connected/);
 });

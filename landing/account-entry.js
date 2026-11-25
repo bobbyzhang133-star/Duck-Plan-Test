@@ -75,7 +75,7 @@
     else finish();
   }
   function focusAccount() {
-    const target = dialog.querySelector("#google-sign-in:enabled, input:enabled, .connection-local-note a, #sign-out");
+    const target = dialog.querySelector("#google-sign-in:enabled, #github-sign-in:enabled, input:enabled, .connection-local-note a, #sign-out");
     const bounds = target?.getBoundingClientRect(), viewport = content.getBoundingClientRect();
     const visible = bounds && bounds.top >= viewport.top && bounds.bottom <= viewport.bottom;
     (visible ? target : dialog.querySelector("[data-close-account]")).focus({ preventScroll: true });

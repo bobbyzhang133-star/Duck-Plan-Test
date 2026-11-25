@@ -1,0 +1,24 @@
+async page=>{
+ const base='/Users/bobbyzhang/Documents/ChatGPT/Duck Plan/DuckPlan-original-duck-preview/docs/github-signin-20261124/';const results=[];
+ for(const width of [390,1440]){
+  const c=await page.context().browser().newContext({viewport:{width,height:width===390?844:900},hasTouch:width===390,isMobile:width===390,serviceWorkers:'block'}),p=await c.newPage();p.setDefaultTimeout(10000);
+  const check=(v,s)=>{if(!v)throw Error(s)};let authorization;
+  try{
+   await p.route('**/api/auth/github?**',async route=>{const response=await route.fetch({maxRedirects:0});if(response.status()!==302)throw Error('Expected local OAuth redirect');authorization=new URL(response.headers().location);await route.fulfill({status:200,headers:{'content-type':'text/html','cache-control':'no-store','set-cookie':response.headers()['set-cookie']},body:'<h1>GitHub routing fixture</h1>'})});
+   await p.route('https://github.com/login/oauth/authorize?**',async route=>{authorization=new URL(route.request().url());await route.fulfill({contentType:'text/html',body:'<h1>GitHub routing fixture</h1>'})});
+   await p.goto('http://127.0.0.1:8788/#calendar');await p.waitForFunction(()=>store.configured&&store.providers.github);
+   const open=async()=>{await p.locator('.calendar-account-entry').click();await p.locator('[data-account-menu-action="sign-in"]').click();await p.waitForFunction(()=>document.querySelector('#account-dialog').open&&!document.querySelector('#account-dialog').dataset.popupMotion)};
+   await open();await p.locator('#github-sign-in').scrollIntoViewIfNeeded();await p.screenshot({path:base+`github-enabled-${width}.png`});await p.locator('#github-sign-in').click();await p.getByRole('heading',{name:'GitHub routing fixture'}).waitFor();
+   check(authorization.searchParams.get('scope')==='read:user user:email','limited scope');check(authorization.searchParams.get('code_challenge_method')==='S256','PKCE');
+   await p.goto('http://127.0.0.1:8788/api/auth/github/callback?error=access_denied&state='+encodeURIComponent(authorization.searchParams.get('state')));await p.waitForFunction(()=>store.configured);check(!await p.evaluate(()=>store.user),'denial creates no session');await p.screenshot({path:base+`cancelled-${width}.png`});
+   const email='github-ui-'+Date.now()+'@example.test',password='Local-test!'+await p.evaluate(()=>crypto.randomUUID());
+   await p.evaluate(()=>setView('calendar'));await open();await p.locator('[data-account-mode="sign-up"]').click();await p.waitForTimeout(350);await p.locator('#sign-up-form [name="email"]').fill(email);await p.locator('#sign-up-form [name="password"]').fill(password);await p.locator('#sign-up-form button[type="submit"]').click();await p.waitForFunction(()=>!!store.user);await p.locator('#dismiss-recovery').click();
+   const id=await p.evaluate(()=>store.user.id);await p.locator('#connect-github').scrollIntoViewIfNeeded();await p.screenshot({path:base+`connect-${width}.png`});await p.locator('#connect-github').click();await p.getByRole('heading',{name:'GitHub routing fixture'}).waitFor();
+   await p.goto('http://127.0.0.1:8788/api/auth/github/callback?error=access_denied&state='+encodeURIComponent(authorization.searchParams.get('state')));await p.waitForFunction(()=>!!store.user);check(await p.evaluate(expected=>store.user.id===expected,id),'cancelled link preserves current account');await p.reload();await p.waitForFunction(()=>!!store.user);check(await p.evaluate(expected=>store.user.id===expected,id),'email session persists');
+   results.push({width,status:'PASS',mode:'real local Worker/D1 email session; dummy GitHub client; external authorize destination intercepted',actions:['enabled GitHub button','actual server state/PKCE redirect','cancelled callback cleanup','explicit link POST','link cancellation keeps current user','refresh persistence'],realGitHubOAuth:'NOT RUN'});
+  }catch(e){results.push({width,status:'FAIL',error:e.message});await p.screenshot({path:base+`actions-failure-${width}.png`})}finally{await c.close()}
+ }
+ const c=await page.context().browser().newContext({viewport:{width:320,height:568},isMobile:true,hasTouch:true,reducedMotion:'reduce',serviceWorkers:'block'}),p=await c.newPage();
+ try{await p.goto('http://127.0.0.1:8799/#calendar');await p.locator('.calendar-account-entry').tap();await p.locator('[data-account-menu-action="sign-in"]').tap();if(!await p.locator('#github-sign-in').isDisabled())throw Error('Unconfigured provider must be disabled');await p.screenshot({path:base+'static-disabled-320.png'});await p.keyboard.press('Escape');await p.locator('#account-dialog').waitFor({state:'hidden'});results.push({status:'PASS',mode:'static unconfigured local preview, reduced motion',actions:['GitHub disabled honestly','instant opening/closing']})}catch(e){results.push({status:'FAIL',mode:'static',error:e.message})}finally{await c.close()}
+ return{runtime:page.context().browser().version(),results};
+}

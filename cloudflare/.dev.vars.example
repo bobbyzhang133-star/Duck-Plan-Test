@@ -3,3 +3,8 @@
 # Optional: Google sign-in on http://127.0.0.1:8787 (add .../api/auth/google/callback as a redirect URI).
 # GOOGLE_CLIENT_ID=
 # GOOGLE_CLIENT_SECRET=
+# Optional: a dedicated GitHub OAuth app (identity/email scopes only).
+# Register the exact local callback: http://127.0.0.1:8787/api/auth/github/callback
+# Apply migration 0010 before enabling these values. Never commit real values.
+# GITHUB_CLIENT_ID=
+# GITHUB_CLIENT_SECRET=

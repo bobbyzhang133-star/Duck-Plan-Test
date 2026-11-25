@@ -1,10 +1,11 @@
 // Accounts without a hosted auth service and without sending email: email + password (PBKDF2
-// via Web Crypto) with a one-time recovery code instead of "reset by email", plus optional Google
-// sign-in (OpenID Connect authorization-code flow with PKCE). Sessions are random tokens in an
+// via Web Crypto) with a one-time recovery code instead of "reset by email", plus Google and
+// GitHub authorization-code sign-in with PKCE. Sessions are random tokens in an
 // HttpOnly cookie; the database stores only their SHA-256 hash.
 //
 // The email is only a login name: it is never verified and nothing is ever sent to it.
 import { HttpError, cookie, isSecure, json, nowIso, parseCookies, randomToken, readJson, redirect, safeNextPath, sha256, sha256Base64Url } from "./http.js";
+import { githubReady, handleGithub } from "./github-auth.js";
 
 export const SESSION_COOKIE = "duckplan_session";
 const OAUTH_COOKIE = "duckplan_oauth";
@@ -26,7 +27,7 @@ const RECOVERY_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
 const addMinutes = (minutes) => new Date(Date.now() + minutes * 60_000).toISOString();
 
 export function publicUser(row) {
-  return row ? { id: row.id, email: row.email, displayName: row.display_name || "", hasPassword: Boolean(row.password_hash) } : null;
+  return row ? { id: row.id, email: row.email, displayName: row.display_name || "", hasPassword: Boolean(row.password_hash), hasGitHub: Boolean(row.github_sub) } : null;
 }
 
 export async function sessionUser(request, env) {
@@ -43,10 +44,13 @@ export async function requireUser(request, env) {
   return user;
 }
 
-async function startSession(request, env, userId) {
+async function startSession(request, env, userId, { rotate = false } = {}) {
   const token = randomToken();
-  await env.DB.prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
-    .bind(await sha256(token), userId, addMinutes(SESSION_DAYS * 24 * 60)).run();
+  const insert = env.DB.prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
+    .bind(await sha256(token), userId, addMinutes(SESSION_DAYS * 24 * 60));
+  const previous = parseCookies(request)[SESSION_COOKIE];
+  if (rotate && previous) await env.DB.batch([insert, env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(await sha256(previous))]);
+  else await insert.run();
   return cookie(SESSION_COOKIE, token, { maxAge: SESSION_DAYS * 86_400, secure: isSecure(request) });
 }
 
@@ -137,6 +141,7 @@ async function signIn(request, env) {
   await assertNotLocked(env, email);
   const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
   if (user && !user.password_hash && user.google_sub) throw new HttpError(400, "That account signs in with Google.");
+  if (user && !user.password_hash && user.github_sub) throw new HttpError(400, "That account signs in with GitHub.");
   if (!user?.password_hash || !(await verifyPassword(password, user.password_hash))) {
     await recordFailure(env, email);
     throw new HttpError(401, "That email and password don't match.");
@@ -218,13 +223,14 @@ export async function findOrCreateGoogleUser(env, { email, googleSub, name = nul
     // Password accounts' emails are never verified, so someone could have registered this address
     // first. Joining it to the Google account would hand them the real owner's planner.
     if (byEmail.password_hash) throw new HttpError(409, "That email already has a DuckPlan password account. Sign in with your password.");
-    if (!byEmail.google_sub) await env.DB.prepare("UPDATE users SET google_sub = ?, updated_at = ? WHERE id = ?").bind(googleSub, nowIso(), byEmail.id).run();
-    return byEmail;
+    throw new HttpError(409, "That email already has a DuckPlan account. Sign in with your existing method.");
   }
   const id = crypto.randomUUID();
   // INSERT OR IGNORE plus a re-read handles two sign-ins racing for the same new email.
   await env.DB.prepare("INSERT OR IGNORE INTO users (id, email, google_sub, display_name) VALUES (?, ?, ?, ?)").bind(id, normalized, googleSub, name || normalized.split("@")[0]).run();
-  return env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(normalized).first();
+  const created = await env.DB.prepare("SELECT * FROM users WHERE google_sub = ?").bind(googleSub).first();
+  if (!created) throw new HttpError(409, "That email already has a DuckPlan account. Sign in with your existing method.");
+  return created;
 }
 
 function googleConfigured(env) { return Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET); }
@@ -301,8 +307,12 @@ async function signOut(request, env) {
 export async function handleAuth(request, env, path) {
   const method = request.method;
   if (path === "/api/session" && method === "GET") {
-    return json({ user: publicUser(await sessionUser(request, env)), providers: { password: true, google: googleConfigured(env) } });
+    const github = await githubReady(env);
+    let user = await sessionUser(request, env);
+    if (github && user) user = { ...user, ...(await env.DB.prepare("SELECT github_sub FROM users WHERE id = ?").bind(user.id).first()) };
+    return json({ user: publicUser(user), providers: { password: true, google: googleConfigured(env), github } });
   }
+  if (path.startsWith("/api/auth/github")) return handleGithub(request, env, path, { sessionUser, startSession });
   if (method === "POST") {
     if (path === "/api/auth/sign-up") return signUp(request, env);
     if (path === "/api/auth/sign-in") return signIn(request, env);
