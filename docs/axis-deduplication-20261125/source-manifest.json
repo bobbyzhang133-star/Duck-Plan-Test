@@ -1,0 +1,6 @@
+{
+  "cloudflare/src/axis.js": "524677e4cac1a042f3f545241976228ff88e0bee80195af08d6557bdd30ae060",
+  "cloudflare/src/axis-identity.js": "13a5c2318d9012fae49b9a86093d367dc2f927095ffd64c18bce580086f5654a",
+  "cloudflare/migrations/0011_axis_assignment_keys.sql": "91150eacf9863abc7c37d2e153b38677dc56a9d6c7c0d2fffa63ba1ab1c1af70",
+  "tests/axis-deduplication.test.mjs": "e46837ec6c2bcfc0f0399105b1d481ad517fbc6e86d200b5e899fc598ddc078a"
+}

@@ -1,0 +1,112 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:18814",
+  "productionWrites": false,
+  "results": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "touchEmulated": true,
+      "input": "emulated touchscreen tap",
+      "errors": [],
+      "fixtureBacked": true,
+      "stage": "POST null Connect Axis",
+      "status": "PASS",
+      "checks": {
+        "connect": true,
+        "repeatedSyncs": 3,
+        "reconnect": true,
+        "reload": true,
+        "taskCount": 4,
+        "identicalSimultaneousAssignments": 2
+      }
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "input": "emulated touchscreen tap",
+      "errors": [],
+      "fixtureBacked": true,
+      "stage": "POST null Connect Axis",
+      "status": "PASS",
+      "checks": {
+        "connect": true,
+        "repeatedSyncs": 3,
+        "reconnect": true,
+        "reload": true,
+        "taskCount": 4,
+        "identicalSimultaneousAssignments": 2
+      }
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "touchEmulated": true,
+      "input": "emulated touchscreen tap",
+      "errors": [],
+      "fixtureBacked": true,
+      "stage": "POST null Connect Axis",
+      "status": "PASS",
+      "checks": {
+        "connect": true,
+        "repeatedSyncs": 3,
+        "reconnect": true,
+        "reload": true,
+        "taskCount": 4,
+        "identicalSimultaneousAssignments": 2
+      }
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "touchEmulated": true,
+      "input": "emulated touchscreen tap",
+      "errors": [],
+      "fixtureBacked": true,
+      "stage": "POST null Connect Axis",
+      "status": "PASS",
+      "checks": {
+        "connect": true,
+        "repeatedSyncs": 3,
+        "reconnect": true,
+        "reload": true,
+        "taskCount": 4,
+        "identicalSimultaneousAssignments": 2
+      }
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "input": "mouse click",
+      "errors": [],
+      "fixtureBacked": true,
+      "stage": "POST null Connect Axis",
+      "status": "PASS",
+      "checks": {
+        "connect": true,
+        "repeatedSyncs": 3,
+        "reconnect": true,
+        "reload": true,
+        "taskCount": 4,
+        "identicalSimultaneousAssignments": 2
+      }
+    }
+  ]
+}
