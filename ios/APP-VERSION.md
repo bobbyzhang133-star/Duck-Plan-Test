@@ -1,5 +1,13 @@
 # Current native app version
 
+## November 25 local app release
+
+The existing local project `DuckPlan-iOS/ios/DuckPlan.xcodeproj` now bundles approved website `edd60c4`, cache153. The public website runs Worker version `3633265e-9405-470a-925c-a84f66f8c0d0`. Both simulator and generic iOS Debug builds passed unsigned, and all133 bundled web files match the synchronized source with documented native overlays. Native signing, alarms, notifications, icon and production API are preserved.
+
+See `docs/public-release-20261125/README.md` and the matching native checkout documentation for actual runtime checks and limits. This release did not push/update the portable GitHub app branch below and did not install a physical phone update.
+
+## Earlier portable GitHub checkpoint
+
 The website is on this repository’s `main` branch. The matching portable iPhone/iPad app is on [`codex/ios-main-release-20261120`](https://github.com/m-mcnicholas/group-project-michael-bobby-priya/tree/codex/ios-main-release-20261120).
 
 The app release bundles website `fb93ff7` (application `c5b5aed`, cache v95), retaining six app-only web overlays and `native-cloud.js`. Its API is **https://duckplan-latest.ocs-learning.workers.dev/api**, using the new site’s separate accounts/data as explicitly selected. Existing original-server records and guest data were not deleted or migrated.

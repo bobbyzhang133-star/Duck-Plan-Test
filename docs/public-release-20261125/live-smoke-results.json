@@ -1,0 +1,81 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "https://duckplan-latest.ocs-learning.workers.dev",
+  "capabilities": {
+    "status": 200,
+    "anonymous": true,
+    "providers": {
+      "password": true,
+      "google": true,
+      "github": true
+    }
+  },
+  "hashes": {
+    "app.js": "d491ce61f0edba07bd09eed6d014491ce59f4fcbf965622b9e410509f2992fd2",
+    "planner-store.js": "1b2822095effb41cb84ae5d2c6453ab92aca400725483db171a8f49a7dedd9f1",
+    "duck-interactions.js": "327b3fd97f6f02fe04e8d10736fec1057f9281e78edaf2158bf686650e77c88b",
+    "completion-list-motion.js": "4c7492255e66910a9ba9723169618b2b96155f265b8e96404a2bc6572ae229c3",
+    "index.html": "6fe6f3938be7a634f865640b9520fd871cd9364acddfac155728d609ea505671",
+    "service-worker.js": "6c2f317574aa971bfb246e6eb270fed083967e360df011b26edd13c2cf4aea7c"
+  },
+  "cases": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "touchEmulated": true,
+      "mode": "isolated guest storage",
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "mode": "isolated guest storage",
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "touchEmulated": true,
+      "mode": "isolated guest storage",
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "touchEmulated": true,
+      "mode": "isolated guest storage",
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "mode": "isolated guest storage",
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "hostedAccountWrites": false,
+  "physicalDeviceClaims": false
+}

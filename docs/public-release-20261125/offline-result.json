@@ -1,0 +1,10 @@
+{
+  "runtime": "158.0.8127.38",
+  "status": 200,
+  "fromServiceWorker": true,
+  "cache": [
+    "duckplan-app-original-duck-preview-v153"
+  ],
+  "guestTaskRetained": true,
+  "mode": "offline browser tab; standalone installed PWA not tested"
+}

@@ -1,0 +1,97 @@
+{
+  "runtime": "iOS27.2 simulator WKWebView",
+  "scriptedDOM": true,
+  "trustedTouch": false,
+  "productionAccountWrites": false,
+  "devices": {
+    "phone": {
+      "requiredModes": {
+        "local-baseline": {
+          "status": "PASS",
+          "runId": "phone-local-baseline-1795594826431191000"
+        },
+        "local-baseline-relaunch": {
+          "status": "PASS",
+          "runId": "phone-local-baseline-relaunch-1795594864177614000"
+        },
+        "local-extended": {
+          "status": "PASS",
+          "runId": "phone-local-extended-1795594910510137000"
+        },
+        "cloud-baseline": {
+          "status": "PASS",
+          "runId": "phone-cloud-baseline-1795595047784505000"
+        },
+        "cloud-baseline-relaunch": {
+          "status": "PASS",
+          "runId": "phone-cloud-baseline-relaunch-1795595101723151000"
+        },
+        "cloud-extended": {
+          "status": "PASS",
+          "runId": "phone-cloud-extended-1795595133995557000"
+        },
+        "cloud-release-controls": {
+          "status": "PASS",
+          "runId": "phone-cloud-release-controls-1795595161369897000"
+        },
+        "cloud-presentation": {
+          "status": "PASS",
+          "runId": "phone-cloud-presentation-1795595205629130000"
+        }
+      },
+      "viewport": [
+        402,
+        812
+      ],
+      "native": true,
+      "bundleFilesVerified": 133
+    },
+    "ipad": {
+      "requiredModes": {
+        "local-baseline": {
+          "status": "PASS",
+          "runId": "ipad-local-baseline-1795595823831558000"
+        },
+        "local-baseline-relaunch": {
+          "status": "PASS",
+          "runId": "ipad-local-baseline-relaunch-1795595901048387000"
+        },
+        "local-extended": {
+          "status": "PASS",
+          "runId": "ipad-local-extended-1795595920036427000"
+        },
+        "cloud-baseline": {
+          "status": "PASS",
+          "runId": "ipad-cloud-baseline-1795595953476623000"
+        },
+        "cloud-baseline-relaunch": {
+          "status": "PASS",
+          "runId": "ipad-cloud-baseline-relaunch-1795595968892931000"
+        },
+        "cloud-extended": {
+          "status": "PASS",
+          "runId": "ipad-cloud-extended-1795595974180820000"
+        },
+        "cloud-release-controls": {
+          "status": "PASS",
+          "runId": "ipad-cloud-release-controls-1795595992005662000"
+        },
+        "cloud-presentation": {
+          "status": "PASS",
+          "runId": "ipad-cloud-presentation-1795596003205413000"
+        }
+      },
+      "viewport": [
+        1032,
+        1344
+      ],
+      "native": true,
+      "bundleFilesVerified": 133
+    }
+  },
+  "requiredModePasses": 16,
+  "initialFailuresRetained": true,
+  "physicalInstall": "NOT RUN",
+  "alarmDelivery": "NOT RUN",
+  "firstIpadSaveStall": "Observed on initial simulator run; warmed rerun passed; root cause not conclusively established"
+}

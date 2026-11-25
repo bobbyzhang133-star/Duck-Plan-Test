@@ -1,0 +1,35 @@
+
+ ⛅️ wrangler 4.157.0 (update available 4.168.0)
+───────────────────────────────────────────────
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+🌀 Building list of assets...
+✨ Read 133 files from the assets directory /private/tmp/duckplan-public-20261125/landing
+🌀 Starting asset upload...
+🌀 Found 6 new or modified static assets to upload. Proceeding with upload...
++ /service-worker.js
++ /index.html
++ /completion-list-motion.js
++ /planner-store.js
++ /duck-interactions.js
++ /app.js
+Uploaded 2 of 6 assets
+Uploaded 4 of 6 assets
+Uploaded 6 of 6 assets
+✨ Success! Uploaded 6 files (125 already uploaded) (2.13 sec)
+
+Total Upload: 123.79 KiB / gzip: 30.04 KiB
+Your Worker has access to the following bindings:
+Binding                                             Resource
+env.LIVE (PlannerLive)                              Durable Object
+env.DB (duckplan-latest)                            D1 Database
+env.ASSETS                                          Assets
+env.AXIS_SYNC_INTERVAL_HOURS ("4")                  Environment Variable
+env.AXIS_SYNC_PER_RUN ("4")                         Environment Variable
+
+Uploaded duckplan-latest (7.28 sec)
+Deployed duckplan-latest triggers (0.84 sec)
+  https://duckplan-latest.ocs-learning.workers.dev
+  schedule: * * * * *
+  schedule: */30 * * * *
+Current Version ID: 3633265e-9405-470a-925c-a84f66f8c0d0
