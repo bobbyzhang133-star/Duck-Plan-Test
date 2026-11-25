@@ -26,7 +26,32 @@
       pendingRender = next;
       return true;
     }
-    function capture() {
+    function replaceSurface(callback) {
+      cancel({ flush: false });
+      const root = getRoot(), context = getContext();
+      if (!enabled() || !root) { callback(); return; }
+      // The Tasks view rebuilds its groups. Fade that one surface before
+      // replacing them, retaining the old content until closing has finished.
+      // Persistence has already committed; only presentation waits here.
+      pendingRender = callback;
+      const out = root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: "ease-out", fill: "forwards" });
+      running.add(out);
+      out.finished.then(() => {
+        if (!running.delete(out)) return;
+        out.cancel();
+        const next = pendingRender; pendingRender = null;
+        if (context !== getContext()) return;
+        next?.();
+        const enter = root.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: "ease-out" });
+        running.add(enter);
+        const finish = () => {
+          if (!running.delete(enter) || running.size || !pendingRender) return;
+          const latest = pendingRender; pendingRender = null; latest();
+        };
+        enter.finished.then(finish, finish);
+      }, () => {});
+    }
+    function capture({ sectionsOnly = false } = {}) {
       const root = getRoot();
       if (!enabled() || !root) { cancel(); return; }
       const origin = root.getBoundingClientRect(), positions = new Map();
@@ -34,7 +59,7 @@
       for (let element = root; element; element = element.parentElement) {
         if (element.scrollTop || element.scrollLeft) scrolls.push({ element, top: element.scrollTop, left: element.scrollLeft });
       }
-      for (const card of cards(root)) {
+      for (const card of sectionsOnly ? [] : cards(root)) {
         const id = idFor(card), rect = card.getBoundingClientRect();
         if (id && rect.width && rect.height) positions.set(id, { x: rect.left - origin.left, y: rect.top - origin.top });
       }
@@ -46,18 +71,28 @@
       });
       const parts = [...root.querySelectorAll(".task-section,[data-complete-overdue],#task-empty,#daily-empty")]
         .filter(element => !element.hasAttribute("data-completion-section-exit"))
+        .filter(element => !sectionsOnly || !element.matches("[data-complete-overdue]") || !element.closest(".task-section"))
         .map(element => {
           const visible = element.checkVisibility?.() !== false && !element.closest("[hidden]");
           if (!visible) return { element, visible: false };
           const style = getComputedStyle(element);
+          const list = sectionsOnly ? element.querySelector(".daily-task-list") : null;
           return { element, visible: true, height: element.getBoundingClientRect().height, display: style.display,
+            list,
             marginTop: style.marginTop, marginBottom: style.marginBottom,
             paddingTop: style.paddingTop, paddingBottom: style.paddingBottom,
             borderTopWidth: style.borderTopWidth, borderBottomWidth: style.borderBottomWidth };
         });
       // Sample an interrupted slide's rendered position before cancelling its old animation.
       pendingRender = null; stop();
-      previous = { context: getContext(), positions, frames, parts, scrolls };
+      previous = { context: getContext(), positions, frames, parts, scrolls, sectionsOnly };
+    }
+    function preserveEmptyList(list) {
+      if (!previous?.sectionsOnly) return false;
+      const part = previous.parts.find(part => part.list === list && part.visible);
+      if (!part) return false;
+      part.preserveList = true;
+      return true;
     }
     function play() {
       const snapshot = previous; previous = null;
@@ -89,6 +124,10 @@
         }
         if (!part.visible || visible) continue;
         const originalStyle = element.style.cssText, wasInert = element.inert;
+        const listWasHidden = part.list?.hidden;
+        // Leave the original list mounted until its section finishes closing.
+        // Avoid detaching/reinserting thousands of cards or cloning their styles.
+        if (part.preserveList) part.list.hidden = false;
         element.setAttribute("data-completion-section-exit", "");
         element.inert = true;
         element.style.setProperty("display", part.display, "important");
@@ -100,6 +139,7 @@
           element.style.cssText = originalStyle;
           element.inert = wasInert;
           element.removeAttribute("data-completion-section-exit");
+          if (part.preserveList) { part.list.replaceChildren(); part.list.hidden = listWasHidden; }
         };
         cleanups.add(cleanup);
         // Restore the old space before measuring survivors; natural height collapse
@@ -118,7 +158,7 @@
         scroll.element.scrollLeft = scroll.left;
       }
       const origin = root.getBoundingClientRect();
-      for (const card of cards(root)) {
+      for (const card of snapshot.sectionsOnly ? [] : cards(root)) {
         const from = snapshot.positions.get(idFor(card));
         if (!from) continue;
         const rect = card.getBoundingClientRect(), x = from.x - (rect.left - origin.left), y = from.y - (rect.top - origin.top);
@@ -126,7 +166,7 @@
         track(card.animate([{ transform: `translate(${x}px,${y}px)` }, { transform: "translate(0,0)" }], timing));
       }
     }
-    return Object.freeze({ capture, play, cancel, deferRender });
+    return Object.freeze({ capture, play, cancel, deferRender, preserveEmptyList, replaceSurface });
   }
   return Object.freeze({ create });
 });

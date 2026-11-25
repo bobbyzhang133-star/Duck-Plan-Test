@@ -589,25 +589,20 @@ async function completeAllOverdue(source) {
   const owner = `${store.mode}:${store.user?.id || "local"}`, ownerVersion = plannerOwnerVersion;
   const currentOwner = () => ownerVersion === plannerOwnerVersion && owner === `${store.mode}:${store.user?.id || "local"}`;
   const operation = overdueCompletion = {};
+  const restoreSourceFocus = document.activeElement === source;
   let completed = 0;
   renderOverdueActions();
   try {
-    // Use the normal persisted completion path, one request at a time. Recheck
-    // each original task so a moved deadline or account switch cannot broaden it.
-    for (const id of ids) {
-      if (!currentOwner()) return;
-      if (!unfinishedOverdueTasks().some(task => task.id === id)) continue;
-      await store.toggleComplete(id, true);
-      completed += 1;
-    }
+    ({ completed } = await store.completeOverdue(ids));
     if (currentOwner()) showToast(`Completed ${completed} overdue ${completed === 1 ? "task" : "tasks"}.`, { duration: 5000 });
   } catch (error) {
-    if (currentOwner()) reportError(new Error(`Completed ${completed} overdue ${completed === 1 ? "task" : "tasks"} before stopping. ${error.message || "Could not save the next task."} Remaining tasks are still open; try again.`));
+    completed = error.completed || 0;
+    if (currentOwner()) reportError(new Error(`Completed ${completed} overdue ${completed === 1 ? "task" : "tasks"} before stopping. ${error.message || "Could not save the next batch."} Saved tasks stay completed; refresh the planner before retrying.`));
   } finally {
     if (overdueCompletion === operation) overdueCompletion = null;
     renderOverdueActions();
-    if (currentOwner() && source?.isConnected && source.hidden && document.activeElement === source) {
-      (source.closest("#overdue-section")?.querySelector("[data-collapse]") || document.querySelector('[data-filter="all"]'))?.focus({ preventScroll: true });
+    if (currentOwner() && restoreSourceFocus && source?.isConnected && source.hidden && [source, document.body].includes(document.activeElement)) {
+      document.querySelector(source.closest("#daily-task-panel") ? "#plan-selected-date" : '[data-filter="all"]')?.focus({ preventScroll: true });
     }
   }
 }
@@ -638,7 +633,9 @@ function renderDailyPlan() {
   els.completionRing.style.setProperty("--completion", `${percent * 3.6}deg`);
   for (const name of Object.keys(els.lists)) {
     els.counts[name].textContent = groups[name].length;
-    els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, ["scheduled", "backlog"].includes(name) ? name : "daily")).join("");
+    if (groups[name].length || !window.DuckTaskCompletion?.preserveBulkList(els.lists[name])) {
+      els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, ["scheduled", "backlog"].includes(name) ? name : "daily")).join("");
+    }
     els.lists[name].hidden = collapsed[name] || groups[name].length === 0;
     els.lists[name].closest(".task-section").classList.toggle("is-empty", groups[name].length === 0);
   }
@@ -2407,9 +2404,10 @@ store.subscribe(({ reason }) => {
     renderAccount();
     renderAxis();
   }
-  renderAll();
+  if (reason === "bulk-completed" && window.DuckTaskCompletion?.forBulkCompletion) window.DuckTaskCompletion.forBulkCompletion(() => renderAll());
+  else renderAll();
   if (["load", "auth"].includes(reason)) workAlertContextReady = true;
-  if (workAlertContextReady && ["load", "auth", "remote", "persisted", "context"].includes(reason)) workAlerts.reconcile({ refresh: ["load", "auth"].includes(reason) }).catch(reportError);
+  if (workAlertContextReady && ["load", "auth", "remote", "persisted", "bulk-completed", "context"].includes(reason)) workAlerts.reconcile({ refresh: ["load", "auth"].includes(reason) }).catch(reportError);
   if (reason === "load" || reason === "auth") refreshAccountState();
   if (["load", "auth", "context"].includes(reason)) readNativeAccountSyncStatus();
 });

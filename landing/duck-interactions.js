@@ -43,6 +43,14 @@
       return taskControl ? () => restoreCompletionFocus(focused, keyboard, view) : null;
     },
     forCheckbox: checkbox => checkboxOperations.get(checkbox),
+    preserveBulkList: list => listMotion.preserveEmptyList(list),
+    forBulkCompletion: callback => {
+      cancelCompletions({ flush: false });
+      if (document.body.dataset.view === "tasks") { listMotion.replaceSurface(callback); return; }
+      listMotion.capture({ sectionsOnly: true });
+      callback();
+      listMotion.play();
+    },
     cancel: cancelCompletions
   });
 

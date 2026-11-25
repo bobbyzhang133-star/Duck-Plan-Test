@@ -47,6 +47,64 @@ function setup(overrides) {
   return { ...fake, ctx, call, signIn, feedRequests, fetchImpl, setFeed: (text) => { feedText = text; } };
 }
 
+test("bulk overdue completion is owner-scoped, conditional, compact and preserves all other fields", async () => {
+  const app = setup(), a = await app.signIn("bulk-a@example.test"), b = await app.signIn("bulk-b@example.test");
+  const source = Array.from({ length: 7 }, (_, i) => ({ id: uuid(8000 + i), title: `Bulk ${i}`, notes: "Preserve full notes", due_date: "2026-11-19", due_time: "12:00", scheduled_start: "2026-11-21T09:00", duration_minutes: 90 }));
+  await app.call("/api/import", { method: "POST", cookie: a.cookie, body: { itemRows: source } });
+  const snapshot = (await app.call("/api/planner", { cookie: a.cookie })).data;
+  assert.equal(snapshot.bulk_completion_supported, true);
+  const selection = snapshot.items.map(item => ({ id: item.id, expected_revision: item.sync_revision, due_date: item.due_date, due_time: item.due_time }));
+  await app.call(`/api/items/${source[0].id}`, { method: "PUT", cookie: a.cookie, body: { ...source[0], due_date: "2026-12-01" } });
+  await app.call(`/api/items/${source[1].id}`, { method: "PATCH", cookie: a.cookie, body: { completed: true } });
+  await app.call(`/api/items/${source[2].id}`, { method: "DELETE", cookie: a.cookie });
+  await app.call(`/api/items/${source[3].id}`, { method: "PUT", cookie: a.cookie, body: { ...source[3], title: "Concurrent edit" } });
+  const foreign = await app.call(`/api/items/${uuid(8999)}`, { method: "PUT", cookie: b.cookie, body: { title: "Other owner", due_date: "2026-11-19" } });
+  selection.push({ id: foreign.data.item.id, expected_revision: foreign.data.item.sync_revision, due_date: "2026-11-19", due_time: null });
+  app.broadcasts.length = 0;
+  const response = await app.call("/api/items/complete-overdue", { method: "POST", cookie: a.cookie, body: { items: selection, before: "2026-11-20T13:00:00.000" } });
+  assert.equal(response.status, 200, JSON.stringify(response.data));
+  assert.deepEqual(response.data.completed.map(item => item.id).sort(), source.slice(4).map(item => item.id).sort());
+  assert.ok(response.data.completed.every(item => Object.keys(item).sort().join() === "id,sync_revision,updated_at"));
+  assert.deepEqual(app.broadcasts, [{ userId: a.user.id, message: { reload: true } }]);
+  const saved = (await app.call("/api/planner", { cookie: a.cookie })).data.items;
+  for (const item of saved.filter(item => source.slice(4).some(value => value.id === item.id))) {
+    assert.equal(item.completed, 1); assert.equal(item.notes, "Preserve full notes"); assert.equal(item.duration_minutes, 90); assert.equal(item.scheduled_start, "2026-11-21T09:00");
+    assert.equal(response.data.completed.find(value => value.id === item.id).sync_revision, item.sync_revision);
+    assert.ok(item.completed_at);
+  }
+  assert.equal(saved.find(item => item.id === source[0].id).completed, 0);
+  assert.equal(saved.find(item => item.id === source[3].id).title, "Concurrent edit");
+  assert.equal((await app.call("/api/planner", { cookie: b.cookie })).data.items[0].completed, 0);
+});
+
+test("bulk cutoff respects floating deadlines, exact-now and date-only today", async () => {
+  const app = setup(), { cookie } = await app.signIn("bulk-boundary@example.test");
+  const deadlines = [["2026-11-19", null], ["2026-11-20", "12:59"], ["2026-11-20", "13:00"], ["2026-11-20", null], ["2026-11-21", "09:00"], [null, null]];
+  await app.call("/api/import", { method: "POST", cookie, body: { itemRows: deadlines.map(([due_date, due_time], i) => ({ id: uuid(8100 + i), title: `Boundary ${i}`, due_date, due_time })) } });
+  const rows = (await app.call("/api/planner", { cookie })).data.items;
+  const items = rows.filter(item => item.due_date).map(item => ({ id: item.id, expected_revision: item.sync_revision, due_date: item.due_date, due_time: item.due_time }));
+  const body = { items, before: "2026-11-20T13:00:00.000" };
+  const result = await app.call("/api/items/complete-overdue", { method: "POST", cookie, body });
+  assert.equal(result.status, 200, JSON.stringify(result.data));
+  assert.deepEqual(result.data.completed.map(item => item.id).sort(), [uuid(8100), uuid(8101)]);
+  assert.equal((await app.call("/api/items/complete-overdue", { method: "POST", cookie, body })).data.completed.length, 0, "safe replay cannot complete extra rows");
+});
+
+test("bulk requests fit D1 binding limits and reject oversized, invalid and cross-site writes", async () => {
+  const app = setup(), { cookie } = await app.signIn("bulk-limit@example.test");
+  await app.call("/api/import", { method: "POST", cookie, body: { itemRows: Array.from({ length: 200 }, (_, i) => ({ id: uuid(8200 + i), title: `Task ${i}`, due_date: "2026-11-19" })) } });
+  const items = (await app.call("/api/planner", { cookie })).data.items.map(item => ({ id: item.id, expected_revision: item.sync_revision, due_date: item.due_date, due_time: item.due_time }));
+  const body = { items, before: "2026-11-20T13:00:00.000" };
+  assert.equal((await app.call("/api/items/complete-overdue", { method: "POST", body })).status, 401);
+  assert.equal((await app.call("/api/items/complete-overdue", { method: "POST", cookie, origin: "https://evil.test", body })).status, 403);
+  for (const invalid of [{ ...body, items: [...items, items[0]] }, { ...body, items: [items[0], items[0]] }, { ...body, items: [{ ...items[0], expected_revision: -1 }] }, { ...body, before: "not a date" }]) {
+    assert.equal((await app.call("/api/items/complete-overdue", { method: "POST", cookie, body: invalid })).status, 400);
+  }
+  app.broadcasts.length = 0;
+  const result = await app.call("/api/items/complete-overdue", { method: "POST", cookie, body });
+  assert.equal(result.status, 200, JSON.stringify(result.data)); assert.equal(result.data.completed.length, 200); assert.equal(app.broadcasts.length, 1);
+});
+
 test("password accounts: sign-up, sign-in, HttpOnly hashed sessions, and no email is ever sent", async () => {
   const app = setup();
   const created = await app.call("/api/auth/sign-up", { method: "POST", body: { email: "Duck@School.test", password: PASSWORD } });
@@ -155,7 +213,7 @@ test("user A can't read or change user B's rows (replaces the Postgres RLS test)
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PUT", cookie: a.cookie, body: { title: "A's task", class_id: uuid(10) } })).status, 200);
 
   const bView = await app.call("/api/planner", { cookie: b.cookie });
-  assert.deepEqual(bView.data, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [], work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true });
+  assert.deepEqual(bView.data, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [], work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true, bulk_completion_supported: true });
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PUT", cookie: b.cookie, body: { title: "hijack" } })).status, 404);
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PATCH", cookie: b.cookie, body: { completed: true } })).status, 404);
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "DELETE", cookie: b.cookie })).status, 200);

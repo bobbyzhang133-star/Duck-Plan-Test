@@ -1,0 +1,396 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:8788",
+  "cases": [
+    {
+      "name": "phone-small",
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "count": 24,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 5898,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "task-section completed-section collapsed",
+              "duration": 240
+            }
+          ],
+          "longTasks": [
+            53
+          ],
+          "elapsedMs": 47.10000002384186,
+          "finished": true
+        },
+        "completed": 24,
+        "savedCompleted": 24,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": [
+          {
+            "id": "overdue-section",
+            "height": 735.59375,
+            "oldCards": 23,
+            "inert": true
+          }
+        ]
+      },
+      "sectionOpenClose": true,
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "count": 24,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 5898,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "task-section completed-section collapsed",
+              "duration": 240
+            }
+          ],
+          "longTasks": [],
+          "elapsedMs": 38.60000002384186,
+          "finished": true
+        },
+        "completed": 24,
+        "savedCompleted": 24,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": [
+          {
+            "id": "overdue-section",
+            "height": 206.984375,
+            "oldCards": 23,
+            "inert": true
+          }
+        ]
+      },
+      "sectionOpenClose": true,
+      "passed": true
+    },
+    {
+      "name": "phone-landscape",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "count": 24,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 5898,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "task-section completed-section collapsed",
+              "duration": 240
+            }
+          ],
+          "longTasks": [],
+          "elapsedMs": 21.69999998807907,
+          "finished": true
+        },
+        "completed": 24,
+        "savedCompleted": 24,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": [
+          {
+            "id": "overdue-section",
+            "height": 2202.90625,
+            "oldCards": 23,
+            "inert": true
+          }
+        ]
+      },
+      "sectionOpenClose": true,
+      "passed": true
+    },
+    {
+      "name": "ipad",
+      "width": 835,
+      "height": 1112,
+      "touch": true,
+      "count": 24,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 5898,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "task-section completed-section collapsed",
+              "duration": 240
+            }
+          ],
+          "longTasks": [],
+          "elapsedMs": 31.799999952316284,
+          "finished": true
+        },
+        "completed": 24,
+        "savedCompleted": 24,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": [
+          {
+            "id": "overdue-section",
+            "height": 1748.671875,
+            "oldCards": 23,
+            "inert": true
+          }
+        ]
+      },
+      "sectionOpenClose": true,
+      "passed": true
+    },
+    {
+      "name": "desktop",
+      "width": 1280,
+      "height": 900,
+      "count": 24,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 5898,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "task-section completed-section collapsed",
+              "duration": 240
+            }
+          ],
+          "longTasks": [],
+          "elapsedMs": 33.30000001192093,
+          "finished": true
+        },
+        "completed": 24,
+        "savedCompleted": 24,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": [
+          {
+            "id": "overdue-section",
+            "height": 1574.265625,
+            "oldCards": 23,
+            "inert": true
+          }
+        ]
+      },
+      "sectionOpenClose": true,
+      "passed": true
+    },
+    {
+      "name": "benchmark100",
+      "width": 1280,
+      "height": 900,
+      "count": 100,
+      "reduced": true,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 23081,
+          "renders": 1,
+          "animations": [],
+          "longTasks": [],
+          "elapsedMs": 27.30000001192093,
+          "finished": true
+        },
+        "completed": 100,
+        "savedCompleted": 100,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": []
+      },
+      "passed": true
+    },
+    {
+      "name": "benchmark1000",
+      "width": 1280,
+      "height": 900,
+      "count": 1000,
+      "reduced": true,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 232781,
+          "renders": 1,
+          "animations": [],
+          "longTasks": [
+            82
+          ],
+          "elapsedMs": 79.29999995231628,
+          "finished": true
+        },
+        "completed": 1000,
+        "savedCompleted": 1000,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": []
+      },
+      "passed": true
+    },
+    {
+      "name": "benchmark2000",
+      "width": 1280,
+      "height": 900,
+      "count": 2000,
+      "reduced": true,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 467781,
+          "renders": 1,
+          "animations": [],
+          "longTasks": [
+            156
+          ],
+          "elapsedMs": 151.4000000357628,
+          "finished": true
+        },
+        "completed": 2000,
+        "savedCompleted": 2000,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": []
+      },
+      "passed": true
+    },
+    {
+      "name": "phone1000",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "count": 1000,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 232781,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "daily-empty",
+              "duration": 240
+            }
+          ],
+          "longTasks": [
+            251
+          ],
+          "elapsedMs": 216.9000000357628,
+          "finished": true
+        },
+        "completed": 1000,
+        "savedCompleted": 1000,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": [
+          {
+            "id": "overdue-section",
+            "height": 1427,
+            "oldCards": 1000,
+            "inert": true
+          }
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "physicalDeviceClaims": false,
+  "productionWrites": false
+}

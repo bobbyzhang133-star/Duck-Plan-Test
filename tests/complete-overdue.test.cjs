@@ -15,7 +15,17 @@ function harness(initial, persist = async () => {}) {
   const writes = [], messages = [], errors = [];
   const buttons = [0, 1].map(() => ({ setAttribute(name, value) { this[name] = value; } }));
   const store = { mode: "local", user: null, listItems: () => items,
-    async toggleComplete(id, completed) { writes.push(id); await persist(id); items = items.map(t => t.id === id ? { ...t, completed } : t); } };
+    async completeOverdue(ids) {
+      const mode = this.mode; let completed = 0;
+      try {
+        for (const id of ids) {
+          if (this.mode !== mode) break;
+          if (!items.some(t => t.id === id && !t.completed && Model.taskTiming(t, "2026-11-20T13:00").overdue)) continue;
+          writes.push(id); await persist(id); items = items.map(t => t.id === id ? { ...t, completed: true } : t); completed++;
+        }
+      } catch (error) { error.completed = completed; throw error; }
+      return { completed };
+    } };
   const context = vm.createContext({ store, Model: { taskTiming: task => Model.taskTiming(task, "2026-11-20T13:00") },
     document: { querySelectorAll: () => buttons }, showToast: m => messages.push(m), reportError: e => errors.push(e.message) });
   vm.runInContext(`let plannerOwnerVersion=0, overdueCompletion=null;\n${functions}`, context);
@@ -62,7 +72,7 @@ test("a save failure stops the queue, retains successful completions and allows 
   let fail = true; const h = harness([overdue("one"), overdue("two"), overdue("three")], async id => { if (id === "two" && fail) throw Error("Network unavailable."); });
   await h.run(); assert.deepEqual(h.writes, ["one", "two"]);
   assert.deepEqual(h.items.map(t => t.completed), [true, false, false]);
-  assert.match(h.errors[0], /Completed 1 overdue task before stopping.*Network unavailable.*Remaining tasks are still open/);
+  assert.match(h.errors[0], /Completed 1 overdue task before stopping.*Network unavailable.*Saved tasks stay completed/);
   assert.ok(h.buttons.every(b => !b.disabled)); fail = false; await h.run();
   assert.deepEqual(h.writes, ["one", "two", "two", "three"]);
   assert.deepEqual(h.messages, ["Completed 2 overdue tasks."]);

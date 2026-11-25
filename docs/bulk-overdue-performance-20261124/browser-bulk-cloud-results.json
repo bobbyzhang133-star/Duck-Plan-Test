@@ -1,0 +1,17 @@
+{
+  "runtime": "158.0.8127.38",
+  "mode": "dedicated local signed-in fixture",
+  "origin": "http://127.0.0.1:8788",
+  "requests": [
+    200,
+    50,
+    50,
+    1
+  ],
+  "errors": [],
+  "partialCommitAndPeer": true,
+  "savedCount": 250,
+  "retryPersistencePeerAndFutureScope": true,
+  "tasksEntryAndReopen": true,
+  "passed": true
+}

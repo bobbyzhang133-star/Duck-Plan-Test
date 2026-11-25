@@ -1,0 +1,28 @@
+✔ 2000 local completions commit once, notify once and survive reload without changing other fields (115.395583ms)
+✔ bulk selection excludes exact-now, date-only today, future, deleted, completed and undated tasks (1.390833ms)
+✔ local quota failure leaves memory and disk untouched and allows retry (2.36625ms)
+✔ signed-in completion uses bounded 200-row requests, revision guards and one presentation refresh (19.788917ms)
+✔ a failed cloud batch keeps committed batches, reports count and can retry (12.508292ms)
+✔ legacy servers use serial PATCH with one final presentation update (8.288833ms)
+✔ account changes stop later batches and never apply old acknowledgements to a new owner (16.353417ms)
+✔ a concurrently moved deadline is not swept into later batches (7.756416ms)
+✔ one action completes past deadlines, including earlier today, while preserving other task details (19.018375ms)
+✔ repeated clicks cannot duplicate work and requests run serially (1.238917ms)
+✔ a changed deadline, deletion or completion is rechecked and newly overdue tasks are not added mid-run (1.469084ms)
+✔ account changes stop queued writes and suppress old-owner feedback (2.031292ms)
+✔ a save failure stops the queue, retains successful completions and allows retry (5.673667ms)
+✔ no overdue tasks produces no write, while both entry points remain independent of task search and filters (2.734708ms)
+✔ late save refreshes wait for the upward slide and coalesce to the latest render (3.507917ms)
+✔ an account change discards the queued refresh even after animation cancellation settles (1.263875ms)
+✔ explicit navigation flushes once and does not replay the refresh from cancelled animation promises (0.609917ms)
+✔ bulk section motion never queries or measures individual task cards (3.066209ms)
+✔ bulk Tasks groups close before replacement and open afterward, coalescing late refreshes (0.716958ms)
+✔ a context change cancels bulk Tasks presentation without rendering old-owner content (0.334042ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 747.332292

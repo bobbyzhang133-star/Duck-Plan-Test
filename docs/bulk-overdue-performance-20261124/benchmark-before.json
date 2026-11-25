@@ -1,0 +1,11 @@
+{
+  "runtime": "158.0.8127.38",
+  "mode": "isolated static local;100 synthetic overdue tasks;reduced motion",
+  "result": {
+    "writes": 100,
+    "bytes": 2313050,
+    "renders": 200,
+    "elapsedMs": 13472.09999999404,
+    "completed": 100
+  }
+}

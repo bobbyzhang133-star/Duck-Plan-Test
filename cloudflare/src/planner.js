@@ -145,7 +145,7 @@ export async function loadPlanner(env, userId) {
     loadOrganization(env, userId),
     loadPersonal(env, userId),
   ]);
-  return { classes: classes.results, items: items.results, ...organization, ...personal, work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true };
+  return { classes: classes.results, items: items.results, ...organization, ...personal, work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true, bulk_completion_supported: true };
 }
 
 // AFTER UPDATE triggers run after RETURNING captures its row. Always read again
@@ -185,6 +185,35 @@ export async function handlePlanner(request, env, ctx, path, user) {
   const notify = (message) => ctx.waitUntil(broadcast(env, user.id, message));
 
   if (path === "/api/planner" && method === "GET") return json(await loadPlanner(env, user.id));
+
+  if (path === "/api/items/complete-overdue" && method === "POST") {
+    const body = await readJson(request, 64_000);
+    if (!Array.isArray(body?.items) || !body.items.length || body.items.length > 200) throw new HttpError(400, "Send between 1 and 200 overdue tasks.");
+    // Deadlines are floating local calendar times, not UTC instants. The client
+    // supplies its local cutoff; revisions and deadlines prevent stale selection.
+    if (typeof body.before !== "string" || !/^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}$/.test(body.before) || !Number.isFinite(Date.parse(`${body.before}Z`))) throw new HttpError(400, "Send a valid local deadline cutoff.");
+    const items = body.items.map(item => {
+      const id = assertId(item?.id, "task id");
+      if (!Number.isSafeInteger(item.expected_revision) || item.expected_revision < 0) throw new HttpError(400, "Refresh your planner before completing overdue tasks.");
+      if (typeof item.due_date !== "string" || !DATE.test(item.due_date) || (item.due_time !== null && (typeof item.due_time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(item.due_time)))) throw new HttpError(400, "Send each task's original deadline.");
+      return { id, expected_revision: item.expected_revision, due_date: item.due_date, due_time: item.due_time };
+    });
+    if (new Set(items.map(item => item.id)).size !== items.length) throw new HttpError(400, "Send each task only once.");
+    const now = nowIso();
+    const result = await runDb(() => db.prepare(`UPDATE items SET completed = 1, completed_at = coalesce(completed_at, ?1), updated_at = ?1
+      WHERE user_id = ?2 AND deleted_at IS NULL AND completed = 0
+        AND id IN (SELECT json_extract(value, '$.id') FROM json_each(?3))
+        AND EXISTS (SELECT 1 FROM json_each(?3) selection WHERE items.id = json_extract(selection.value, '$.id')
+          AND items.sync_revision = json_extract(selection.value, '$.expected_revision')
+          AND items.due_date = json_extract(selection.value, '$.due_date')
+          AND substr(coalesce(items.due_time, ''), 1, 5) = coalesce(json_extract(selection.value, '$.due_time'), ''))
+        AND due_date || 'T' || coalesce(substr(due_time, 1, 5), '23:59') || ':00.000' < ?4
+      RETURNING id, sync_revision + 1 AS sync_revision, updated_at`).bind(now, user.id, JSON.stringify(items), body.before).all());
+    // The 0007 AFTER UPDATE trigger increments each revision exactly once.
+    // Return that revision without another read racing a subsequent user edit.
+    if (result.results.length) notify({ reload: true });
+    return json({ completed: result.results });
+  }
 
   const adoptMatch = /^\/api\/items\/([^/]+)\/adopt-settings$/.exec(path);
   if (adoptMatch && method === "POST") {

@@ -289,6 +289,7 @@
       load: async () => load(),
       saveTask: async (task, state) => write(TASKS_KEY, state.tasks, true),
       setCompleted: async (id, completed, state) => write(TASKS_KEY, state.tasks, true),
+      saveCompletions: (state) => write(TASKS_KEY, state.tasks, true),
       deleteTask: async (id, state) => write(TASKS_KEY, state.tasks, true),
       saveClass: async (item, state) => write(CLASSES_KEY, state.classes.map(({ soft, ...rest }) => rest), true),
       saveTemplate: async (item, state) => write(TEMPLATES_KEY, state.templates, true),
@@ -412,9 +413,9 @@
       mode: "cloud",
       user,
       async load() {
-        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported, task_details_supported, settings_adoption_supported } = await api("GET", "/planner");
+        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported, task_details_supported, settings_adoption_supported, bulk_completion_supported } = await api("GET", "/planner");
         return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization),
-          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true, taskDetailsAvailable: task_details_supported === true, settingsAdoptionAvailable: settings_adoption_supported === true };
+          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true, taskDetailsAvailable: task_details_supported === true, settingsAdoptionAvailable: settings_adoption_supported === true, bulkCompletionAvailable: bulk_completion_supported === true };
       },
       saveTask: (task, state) => {
         const row = taskToRow(task);
@@ -424,6 +425,7 @@
       },
       adoptSettings: (id, body) => api("POST", `/items/${encodeURIComponent(id)}/adopt-settings`, body),
       setCompleted: (id, completed) => api("PATCH", `/items/${encodeURIComponent(id)}`, { completed }),
+      completeOverdue: (items, before) => api("POST", "/items/complete-overdue", { items, before }),
       // Soft delete on the server, so the deletion reaches every device.
       deleteTask: (id) => api("DELETE", `/items/${encodeURIComponent(id)}`),
       saveClass: (item) => api("PUT", `/classes/${encodeURIComponent(item.id)}`, classToRow(item)),
@@ -743,7 +745,7 @@
       if (!context.revision && !context.pendingWrites) replaceState(hydrateDeviceExtras(next));
       unwatch = nextBackend.mode === "local"
         ? nextBackend.watch((value) => { if (generation === backendGeneration) { replaceState(value); notify("remote"); } })
-        : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) applyRowChange(table, row); }, onReload: () => { if (generation === backendGeneration) reloadCloud(); } });
+        : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) { if (context.bulkCompletion) reloadCloud(); else applyRowChange(table, row); } }, onReload: () => { if (generation === backendGeneration) reloadCloud(); } });
       if (nextBackend.mode === "cloud" && (context.revision || context.pendingWrites)) await reloadCloud();
       if (generation !== backendGeneration) return;
       await adoptCachedSettings();
@@ -853,6 +855,86 @@
         throw error;
       }
       if (generation === backendGeneration) notify("persisted");
+    }
+
+    async function completeOverdue(ids, { onProgress, reference = new Date() } = {}) {
+      const target = backend, generation = backendGeneration, context = synchronization;
+      const current = () => generation === backendGeneration && context === synchronization;
+      const selected = new Set(ids), initial = new Map(state.tasks.filter(task => selected.has(task.id)).map(task => [task.id, task]));
+      const eligible = task => task && !task.deleted && !task.deleted_at && model.taskTiming(task, reference).overdue;
+      const before = `${reference.getFullYear()}-${String(reference.getMonth() + 1).padStart(2, "0")}-${String(reference.getDate()).padStart(2, "0")}T${String(reference.getHours()).padStart(2, "0")}:${String(reference.getMinutes()).padStart(2, "0")}:${String(reference.getSeconds()).padStart(2, "0")}.${String(reference.getMilliseconds()).padStart(3, "0")}`;
+      let completed = 0, dirty = false, failure = null, needsReload = false;
+      await waitForWrites(context);
+      if (!current()) return { completed: 0 };
+      context.pendingWrites += 1;
+      context.revision += 1;
+      try {
+        if (target.mode === "local") {
+          const changed = new Set(state.tasks.filter(task => initial.get(task.id) === task && eligible(task)).map(task => task.id));
+          if (changed.size) {
+            const next = { ...state, tasks: state.tasks.map(task => changed.has(task.id) ? { ...task, completed: true } : task) };
+            // localStorage is synchronous: commit once before publishing any state.
+            // A quota failure leaves both memory and saved tasks untouched.
+            target.saveCompletions(next);
+            state = next;
+            completed = changed.size; dirty = true;
+          }
+        } else {
+          const acknowledgements = new Map(), candidates = [...initial.values()].filter(eligible);
+          const batchSize = state.bulkCompletionAvailable ? 200 : 1;
+          let indexedTasks = null, byId;
+          const latest = id => {
+            if (indexedTasks !== state.tasks) { indexedTasks = state.tasks; byId = new Map(indexedTasks.map(task => [task.id, task])); }
+            return byId.get(id);
+          };
+          try {
+            for (let offset = 0; offset < candidates.length; offset += batchSize) {
+              if (!current()) break;
+              const batch = candidates.slice(offset, offset + batchSize).filter(task => latest(task.id) === task && eligible(task));
+              if (!batch.length) continue;
+              let saved;
+              if (batchSize > 1) {
+                if (batch.some(task => !Number.isSafeInteger(task.syncRevision))) throw new Error("Refresh your planner before completing overdue tasks.");
+                const result = await target.completeOverdue(batch.map(task => ({ id: task.id, expected_revision: task.syncRevision, due_date: task.dueDate, due_time: task.dueTime || null })), before);
+                saved = result.completed;
+                if (saved.length < batch.length) needsReload = true;
+              } else {
+                // Older servers remain usable without flooding them with parallel
+                // PATCH requests. Coalesce their live echoes into one reload.
+                const result = await target.setCompleted(batch[0].id, true);
+                saved = [{ id: batch[0].id, sync_revision: result?.item?.sync_revision }];
+              }
+              if (!current()) break;
+              const sent = new Set(batch.map(task => task.id));
+              for (const row of saved) if (sent.has(row.id) && !acknowledgements.has(row.id)) { acknowledgements.set(row.id, row); completed += 1; }
+              onProgress?.(completed, candidates.length);
+            }
+          } finally {
+            if (current() && acknowledgements.size) {
+              // One linear merge, preserving edits/deletions made while saving.
+              state = { ...state, tasks: state.tasks.map(task => {
+                const row = acknowledgements.get(task.id);
+                return row && initial.get(task.id) === task ? { ...task, completed: true, ...(Number.isSafeInteger(row.sync_revision) ? { syncRevision: row.sync_revision } : {}) } : task;
+              }) };
+              dirty = true;
+            }
+          }
+        }
+      } catch (error) { failure = error; }
+      finally {
+        context.pendingWrites -= 1;
+        if (!context.pendingWrites) wakeWrites(context);
+        if (current() && dirty) { context.revision += 1; notify("bulk-completed"); }
+        if (current() && needsReload) reloadCloud();
+      }
+      if (failure) {
+        failure.completed = completed;
+        // A lost response can follow a successful server commit. Reconcile once
+        // rather than optimistically undoing saved work or blindly retrying it.
+        if (current() && target.mode === "cloud") reloadCloud();
+        throw failure;
+      }
+      return { completed };
     }
 
     // A failed provider sign-in comes back with ?sign_in_error=…, consumed once.
@@ -1117,6 +1199,13 @@
       },
       toggleComplete(id, completed) {
         return mutate((current) => ({ ...current, tasks: current.tasks.map((task) => (task.id === id ? { ...task, completed } : task)) }), (current, target) => target.setCompleted(id, completed, current));
+      },
+      completeOverdue(ids, options) {
+        const context = synchronization;
+        if (context.bulkCompletion) return context.bulkCompletion;
+        const pending = completeOverdue(ids, options).finally(() => { if (context.bulkCompletion === pending) context.bulkCompletion = null; });
+        context.bulkCompletion = pending;
+        return pending;
       },
       deleteItem(id) {
         return mutate((current) => ({ ...current, tasks: current.tasks.filter((task) => task.id !== id) }), (current, target) => target.deleteTask(id, current));

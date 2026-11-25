@@ -16,7 +16,7 @@ function fixture() {
       animations.push(animation); return animation;
     }
   };
-  const root = { querySelectorAll: selector => selector.includes(".daily-task-card") ? [card] : [], querySelector: () => null, getBoundingClientRect: () => ({ top: 0, left: 0 }) };
+  const root = { animate: (...args) => card.animate(...args), querySelectorAll: selector => selector.includes(".daily-task-card") ? [card] : [], querySelector: () => null, getBoundingClientRect: () => ({ top: 0, left: 0 }) };
   const motion = create({ getRoot: () => root, getContext: () => "same owner and view", enabled: () => true });
   const slide = () => { motion.capture(); top = 100; motion.play(); };
   return { motion, animations, slide };
@@ -45,4 +45,29 @@ test("explicit navigation flushes once and does not replay the refresh from canc
   s.slide(); s.motion.deferRender(() => renders.push("refresh"));
   s.motion.cancel(); s.motion.cancel(); await Promise.resolve();
   assert.deepEqual(renders, ["refresh"]);
+});
+
+test("bulk section motion never queries or measures individual task cards", () => {
+  let queries = 0;
+  const root = { getBoundingClientRect: () => ({ left: 0, top: 0 }), querySelector: () => null,
+    querySelectorAll(selector) { if (selector.includes(".daily-task-card")) { queries++; throw Error("Per-card scan in bulk path"); } return []; } };
+  const motion = create({ getRoot: () => root, getContext: () => "same", enabled: () => true });
+  motion.capture({ sectionsOnly: true }); motion.play(); assert.equal(queries, 0);
+});
+
+test("bulk Tasks groups close before replacement and open afterward, coalescing late refreshes", async () => {
+  const s = fixture(), renders = [];
+  s.motion.replaceSurface(() => renders.push("initial"));
+  assert.deepEqual(renders, []);
+  assert.equal(s.motion.deferRender(() => renders.push("latest")), true);
+  s.animations[0].resolve(); await Promise.resolve();
+  assert.deepEqual(renders, ["latest"]); assert.equal(s.animations.length, 2);
+  s.animations[1].resolve(); await Promise.resolve();
+  assert.equal(s.motion.deferRender(() => renders.push("unexpected")), false);
+});
+
+test("a context change cancels bulk Tasks presentation without rendering old-owner content", async () => {
+  const s = fixture(), renders = [];
+  s.motion.replaceSurface(() => renders.push("old owner")); s.motion.cancel({ flush: false });
+  await Promise.resolve(); assert.deepEqual(renders, []);
 });

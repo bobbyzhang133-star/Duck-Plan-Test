@@ -1,0 +1,242 @@
+{
+  "runtime": "158.0.8127.38",
+  "cases": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "touchEmulated": true,
+      "mode": "local storage",
+      "errors": [],
+      "state": {
+        "animations": [
+          {
+            "frames": [
+              {
+                "opacity": 1
+              },
+              {
+                "opacity": 0
+              }
+            ],
+            "duration": 120,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 25
+          },
+          {
+            "frames": [
+              {
+                "opacity": 0
+              },
+              {
+                "opacity": 1
+              }
+            ],
+            "duration": 240,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 1
+          }
+        ],
+        "remaining": 1,
+        "overflow": false,
+        "focused": "all",
+        "completed": 24
+      },
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "mode": "local storage",
+      "errors": [],
+      "state": {
+        "animations": [
+          {
+            "frames": [
+              {
+                "opacity": 1
+              },
+              {
+                "opacity": 0
+              }
+            ],
+            "duration": 120,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 25
+          },
+          {
+            "frames": [
+              {
+                "opacity": 0
+              },
+              {
+                "opacity": 1
+              }
+            ],
+            "duration": 240,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 1
+          }
+        ],
+        "remaining": 1,
+        "overflow": false,
+        "focused": "all",
+        "completed": 24
+      },
+      "passed": true
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "touchEmulated": true,
+      "mode": "local storage",
+      "errors": [],
+      "state": {
+        "animations": [
+          {
+            "frames": [
+              {
+                "opacity": 1
+              },
+              {
+                "opacity": 0
+              }
+            ],
+            "duration": 120,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 25
+          },
+          {
+            "frames": [
+              {
+                "opacity": 0
+              },
+              {
+                "opacity": 1
+              }
+            ],
+            "duration": 240,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 1
+          }
+        ],
+        "remaining": 1,
+        "overflow": false,
+        "focused": "all",
+        "completed": 24
+      },
+      "passed": true
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "touchEmulated": true,
+      "mode": "local storage",
+      "errors": [],
+      "state": {
+        "animations": [
+          {
+            "frames": [
+              {
+                "opacity": 1
+              },
+              {
+                "opacity": 0
+              }
+            ],
+            "duration": 120,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 25
+          },
+          {
+            "frames": [
+              {
+                "opacity": 0
+              },
+              {
+                "opacity": 1
+              }
+            ],
+            "duration": 240,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 1
+          }
+        ],
+        "remaining": 1,
+        "overflow": false,
+        "focused": "all",
+        "completed": 24
+      },
+      "passed": true
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "mode": "local storage",
+      "errors": [],
+      "state": {
+        "animations": [
+          {
+            "frames": [
+              {
+                "opacity": 1
+              },
+              {
+                "opacity": 0
+              }
+            ],
+            "duration": 120,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 25
+          },
+          {
+            "frames": [
+              {
+                "opacity": 0
+              },
+              {
+                "opacity": 1
+              }
+            ],
+            "duration": 240,
+            "completed": 24,
+            "saved": 24,
+            "oldRows": 1
+          }
+        ],
+        "remaining": 1,
+        "overflow": false,
+        "focused": "all",
+        "completed": 24
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "physicalDeviceClaims": false
+}
