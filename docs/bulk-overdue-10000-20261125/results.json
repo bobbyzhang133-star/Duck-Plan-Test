@@ -1,0 +1,88 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:8799",
+  "cases": [
+    {
+      "name": "benchmark10000",
+      "width": 1280,
+      "height": 900,
+      "count": 10000,
+      "reduced": true,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 2347781,
+          "renders": 1,
+          "animations": [],
+          "longTasks": [
+            361
+          ],
+          "elapsedMs": 353.5999999642372,
+          "finished": true
+        },
+        "completed": 10000,
+        "savedCompleted": 10000,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": []
+      },
+      "passed": true
+    },
+    {
+      "name": "phone10000",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "count": 10000,
+      "mode": "local browser storage",
+      "errors": [],
+      "result": {
+        "metrics": {
+          "writes": 1,
+          "bytes": 2347781,
+          "renders": 1,
+          "animations": [
+            {
+              "target": "overdue-section",
+              "duration": 400
+            },
+            {
+              "target": "daily-empty",
+              "duration": 240
+            }
+          ],
+          "longTasks": [
+            119,
+            58,
+            2642,
+            103,
+            89
+          ],
+          "elapsedMs": 2152.400000035763,
+          "finished": true
+        },
+        "completed": 10000,
+        "savedCompleted": 10000,
+        "futureOpen": true,
+        "overflow": false,
+        "exitNodes": 0,
+        "echoes": 0,
+        "focused": "plan-selected-date"
+      },
+      "closing": {
+        "sections": []
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "physicalDeviceClaims": false,
+  "productionWrites": false
+}
