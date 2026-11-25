@@ -57,7 +57,7 @@ test("GitHub is unavailable until both credentials and its additive schema are p
   assert.equal((await (await app.call("/api/session")).json()).providers.github, false);
 });
 test("GitHub uses opaque provider-specific browser state, server PKCE, limited scopes and safe return paths", async () => {
-  const app = setup(); app.env.DB.raw.exec("DROP TABLE oauth_transactions"); // Google draft is not a dependency.
+  const app = setup(); app.env.DB.raw.exec("DROP TABLE IF EXISTS oauth_transactions"); // Google draft is not a dependency.
   const start = await app.begin({ next: "/?view=week#calendar" });
   assert.equal(start.url.origin, "https://github.com");
   assert.equal(start.url.searchParams.get("redirect_uri"), ORIGIN + "/api/auth/github/callback");

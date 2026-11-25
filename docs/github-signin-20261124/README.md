@@ -40,6 +40,7 @@ Playwright MCP Chromium **158.0.8127.38**. UI screenshots were visually inspecte
 | Full existing automated suite plus initial GitHub coverage | PASS647/647 | `full-tests.log` (before the final current-location return-path refinement and4 additional auth regressions) |
 | Final auth/Worker focused suite | PASS32/32 | `focused-tests.log`, `tests/github-auth.test.mjs`, `tests/cloudflare-worker.test.mjs` |
 | State, PKCE, verified identity/email, bad/expired/denied/replayed callbacks, conflicts and revocation during exchange | PASS, provider API mocked | SQLite-backed final focused suite; not real GitHub OAuth |
+| Clean exported source without preexisting HTTP/0009 drafts | PASS32/32 | `clean-checkpoint-tests.log` (includes corrected fixture teardown) |
 | Existing-data migration, stable IDs, GitHub A/B owner isolation and explicit linking | PASS | Populated migration0010 fixture, full and focused suites |
 | 320x568,390x844 portrait;844x390 landscape touch | PASS | `layout-results.json`, corresponding menu/signin/settings frames |
 | 1024x768 tablet,1440x900 desktop; folded/expanded sidebar | PASS | `layout-results.json` and sidebar frames |
@@ -54,6 +55,8 @@ Playwright MCP Chromium **158.0.8127.38**. UI screenshots were visually inspecte
 | Real GitHub consent/token exchange in browser | BLOCKED | OAuth registration, secret configuration and controlled user sign-in still required |
 | Production activation and native/PWA/physical Safari/keyboard | NOT RUN | Release/device gates preserved |
 
-An initial routing fixture tried to intercept only the external URL of a302 chain; Playwright routed only the initial URL. Final routing checks fetch the real local authorization response without following redirects, preserve its cookie and render a neutral destination, then exercise real callback cancellation. One pointer-test release dismissed the dialog outside its bounds; the final test explicitly dismisses then reopens for recovery. A cold8s navigation timeout was increased to25s; the final interaction check passes. None of these fixture changes alter production login behavior.
+An initial routing fixture tried to intercept only the external URL of a302 chain; Playwright routed only the initial URL. Final routing checks fetch the real local authorization response without following redirects, preserve its cookie and render a neutral destination, then exercise real callback cancellation. The independent clean-checkpoint run exposed a test fixture that unconditionally dropped the uncommitted Google table; it now uses DROP TABLE IF EXISTS so the same suite runs without that draft. One pointer-test release dismissed the dialog outside its bounds; the final test explicitly dismisses then reopens for recovery. A cold8s navigation timeout was increased to25s; the final interaction check passes. None of these fixture changes alter production login behavior.
 
 The scripts in this directory are Playwright MCP browser_run_code_unsafe functions. Run only against the isolated local Worker on8788 and static preview8799. Never run synthetic account actions against production. The tests use no production credentials/data.
+
+The owned dummy-credential QA Worker was stopped after verification. The preexisting static preview on8799 remains available; its GitHub button is honestly unavailable until a real configured backend is used.

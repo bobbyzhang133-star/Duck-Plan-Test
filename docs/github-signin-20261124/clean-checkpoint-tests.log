@@ -1,0 +1,41 @@
+✔ password accounts: sign-up, sign-in, HttpOnly hashed sessions, and no email is ever sent (469.095083ms)
+✔ wrong passwords are limited per account, and a right one clears the count (1374.538584ms)
+✔ a recovery code resets a forgotten password once, signs out other devices, and is replaced (156.37425ms)
+✔ signed in, changing the password needs the current one and signs out other devices (315.824583ms)
+✔ the API needs a session and refuses cross-site writes (31.7715ms)
+✔ user A can't read or change user B's rows (replaces the Postgres RLS test) (42.308083ms)
+✔ items keep the deadline/schedule split, track completed_at, soft-delete, and broadcast (34.1645ms)
+✔ schema checks reject bad colors, dates, and times even without the Worker's validation (17.36525ms)
+✔ the live endpoint requires a session and same-origin, then hands off to the user's Durable Object (29.160917ms)
+✔ Axis connect imports classes and items, re-syncs without duplicates, and never returns the link (135.735708ms)
+axis sync failed 1350d130-76e0-4f34-a239-af978c3df165 That link didn't return an Axis calendar feed.
+✔ a failing feed records the error without leaking details (65.234542ms)
+✔ the cron trigger re-syncs only connections that are due, oldest first (60.307292ms)
+✔ Google sign-in uses state, nonce, and PKCE, and never takes over a password account (61.01275ms)
+✔ the Worker serves a cloud-config.js that turns cloud sync on, and passes other paths to static assets (23.767292ms)
+✔ browser store: creating an account signs in, imports local tasks once, and syncs writes to D1 (49.425625ms)
+✔ browser store: live messages from another device update the cache, and failed writes roll back (37.328875ms)
+✔ browser store: wrong passwords stay local, recovery and password changes work, and Google errors show once (320.636959ms)
+✔ browser store: GitHub readiness, sign-in routing and explicit linking preserve the active account (55.324542ms)
+✔ GitHub is unavailable until both credentials and its additive schema are present (392.264833ms)
+✔ GitHub uses opaque provider-specific browser state, server PKCE, limited scopes and safe return paths (74.251125ms)
+✔ successful GitHub callback verifies API identity/email, issues a hashed session and rejects replay (51.6515ms)
+✔ expired, wrong-state, wrong-origin, duplicate and cross-provider cookies fail before provider access (811.423959ms)
+✔ denial consumes the transaction and clears its cookie without changing accounts (52.468125ms)
+✔ unverified email and upstream failures never issue a session or reflect provider details (74.524666ms)
+✔ email equality cannot merge GitHub with password or Google accounts, in either direction (383.230875ms)
+✔ explicit linking preserves existing ID/data, rotates the session and supports later GitHub sign-in (94.967166ms)
+✔ linking requires an authenticated same-origin POST and the same live session after return (45.31ms)
+✔ a GitHub identity bound to one user cannot be linked to a second account (66.143917ms)
+✔ revoking the original session during GitHub's response prevents linking (194.150541ms)
+✔ GitHub accounts retain stable ownership when profile email changes; logout revokes the session (47.065209ms)
+✔ GitHub-authenticated users cannot read or modify another planner (38.524917ms)
+✔ migration 0010 preserves populated legacy accounts, sessions and tasks without Google draft 0009 (15.4035ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5017.25725
