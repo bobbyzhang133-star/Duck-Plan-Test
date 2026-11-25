@@ -1,6 +1,6 @@
 # GitHub sign-in integration
 
-Local branch `codex/github-signin-20261124`, based on `c76de01`; website cache v152. GitHub integration is implemented and locally verified. Real OAuth app registration/configuration and end-to-end GitHub authentication are pending. No production code/schema deployment, GitHub push or native synchronization is authorized or performed by this checkpoint.
+Local branch `codex/github-signin-20261124`, based on `c76de01`; website cache v152. GitHub integration is implemented and locally verified. The user approved registration and GitHub confirmed the new DuckPlan OAuth application4052699 and its exact registered callbacks. Client-secret configuration and end-to-end GitHub authentication remain pending. No production code/schema deployment, GitHub push or native synchronization is authorized or performed by this checkpoint.
 
 ## Behavior and security
 
@@ -27,9 +27,11 @@ Wildcard redirects and device flow are off. Expiring user tokens remain on (the 
 
 Environment names: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`. The latter belongs only in Cloudflare's Secret storage or an ignored local `.dev.vars` file. Never paste it into chat, source, screenshots or evidence. Existing Google settings must remain intact. The example file contains names only. Match the actual local port with its registered callback.
 
-Registration is waiting for the user's action-time confirmation, required by the computer-use policy for a persistent OAuth client. GitHub sign-in to the developer settings was confirmed after the user completed it. No OAuth app existed in that account before setup. This registration state is separate from a successful user login to DuckPlan.
+The user confirmed ‘Register the DuckPlan GitHub OAuth app’. Registration completed at https://github.com/settings/applications/4052699. The page explicitly shows DuckPlan, client ID `Ov23lijR5sDGw4LqDgq0`, both exact callback URLs, wildcard redirects off and device flow off. The new-window control initially returned blank content; opening the same settings page beside Cloudflare in the main window made its details readable. No duplicate OAuth app was created.
 
-Public activation remains a separate release decision: use a clean committed checkout (no unrelated http.js or0009 drafts), inspect pending migration list, apply only the reviewed additive schema and deploy the approved source to the intended Worker after authorization. Existing public site/auth settings and the frozen native bundle are preserved meanwhile. Do not run all migrations from the dirty development checkout against production.
+Cloudflare's existing duckplan-latest Production settings have an unsaved two-variable form prepared: GITHUB_CLIENT_ID is filled with the matching public ID, and GITHUB_CLIENT_SECRET is marked Secret with an empty focused Value field. The user was asked to generate the first GitHub client secret, paste it directly into Cloudflare and submit the configuration. This credential-entry handoff is required by the computer-use policy. No secret has been read, printed or entered by the agent. Configuration save is pending user confirmation; no code/schema deployment or real GitHub user authorization has occurred. Registration and secret configuration are separate from a completed user login to DuckPlan.
+
+Public activation remains a separate release decision: use a clean committed checkout (no unrelated http.js or0009 drafts), inspect pending migration list, apply only the reviewed additive schema and deploy the approved source with existing dashboard variables preserved (`--keep-vars`, including GOOGLE_CLIENT_ID and GITHUB_CLIENT_ID) to the intended Worker after authorization. Existing public site/auth settings and the frozen native bundle are preserved meanwhile. Do not run all migrations from the dirty development checkout against production.
 
 ## Verification evidence
 
@@ -52,7 +54,7 @@ Playwright MCP Chromium **158.0.8127.38**. UI screenshots were visually inspecte
 | Controlled v152 source hashes/offline menu/dialog | PASS | `cache-results.json`; all six hashes match source |
 | Worker bundle dry run | PASS |122.51KiB /29.68KiB gzip,133 assets; no deployment |
 | Syntax and whitespace | PASS | Changed JS node --check and git diff --check |
-| Real GitHub consent/token exchange in browser | BLOCKED | OAuth registration, secret configuration and controlled user sign-in still required |
+| Real GitHub consent/token exchange in browser | BLOCKED | OAuth registration/client ID verified; secret configuration, public code/schema activation and controlled user sign-in still required |
 | Production activation and native/PWA/physical Safari/keyboard | NOT RUN | Release/device gates preserved |
 
 An initial routing fixture tried to intercept only the external URL of a302 chain; Playwright routed only the initial URL. Final routing checks fetch the real local authorization response without following redirects, preserve its cookie and render a neutral destination, then exercise real callback cancellation. The independent clean-checkpoint run exposed a test fixture that unconditionally dropped the uncommitted Google table; it now uses DROP TABLE IF EXISTS so the same suite runs without that draft. One pointer-test release dismissed the dialog outside its bounds; the final test explicitly dismisses then reopens for recovery. A cold8s navigation timeout was increased to25s; the final interaction check passes. None of these fixture changes alter production login behavior.
