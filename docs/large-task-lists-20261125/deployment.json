@@ -1,0 +1,10 @@
+{
+  "status": "BLOCKED pending explicit publication approval",
+  "source": "dd182d2",
+  "publicVersionUnchanged": "3633265e-9405-470a-925c-a84f66f8c0d0",
+  "cachePrepared": 154,
+  "deploymentExecuted": false,
+  "reason": "Automatic approval review rejected deploying a new production correction because the prior Publish to public approval predates this separate change; root AGENTS.md requires publication authorization.",
+  "approvalQuestion": "Publish the tested website-only fix, preserving all tasks with40cards per page?",
+  "nativeCheckpointUnchanged": true
+}
