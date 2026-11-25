@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "providers": {
+    "password": true,
+    "google": true,
+    "github": true
+  },
+  "menu": true,
+  "version": "preview-v152",
+  "githubStart": {
+    "status": 302,
+    "authorizationOrigin": "https://github.com",
+    "clientIdMatches": true,
+    "callback": "https://duckplan-latest.ocs-learning.workers.dev/api/auth/github/callback",
+    "scope": "read:user user:email",
+    "pkce": "S256",
+    "httpOnlyCookie": true
+  }
+}

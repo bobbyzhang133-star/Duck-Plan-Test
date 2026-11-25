@@ -1,0 +1,45 @@
+{
+  "source": "b23a92027483602254a90f876ace48fe2846d965",
+  "releaseRoot": "/tmp/duckplan-github-release-26ec_9n3",
+  "worker": "duckplan-latest",
+  "origin": "https://duckplan-latest.ocs-learning.workers.dev",
+  "migration": "0010_github_sign_in.sql",
+  "rollbackVersion": "7f3a3da4-c9a7-4aca-8922-f9ff96f670f2",
+  "githubClientId": "Ov23lijR5sDGw4LqDgq0",
+  "secretValueRead": false,
+  "githubSecretEncryptedEntryVerified": true,
+  "productionSchemaReadOnly": {
+    "github_subject_column": 0,
+    "github_transactions_table": 0,
+    "rowsWritten": 0
+  },
+  "publicGithubProviderReported": false,
+  "preserveDashboardVars": true,
+  "status": "public website active; real GitHub account linking verification awaiting user consent",
+  "activationConfig": "cloudflare/wrangler.github-activation.jsonc",
+  "isolatedMigrationDirectory": "cloudflare/github-activation-migrations",
+  "migrationSha256": "32f17b1c1bc14deebc8457757107fadb03bb9a612b7a835e8d3e1242bc490a2c",
+  "fullNodeTests": "651/651 PASS",
+  "browserBaselines": "desktop/phone/iPad, signed-in and local:6/6 PASS",
+  "scope": "public website and migration0010 only; native app and GitHub main unchanged",
+  "cleanDryRun": {
+    "workerKiB": 121.5,
+    "gzipKiB": 29.54,
+    "assets": 133
+  },
+  "preMigrationBookmark": "0000001a-0000007a-0000512e-7695836cad5d6f5f4469aea459519fc3",
+  "productionMigration": "0010_github_sign_in.sql applied successfully; exactly one migration,5 SQL commands",
+  "deployedVersion": "cb22f5ca-f4f3-4803-9f3c-23bfdb9d3826",
+  "deployedAssetsChanged": 13,
+  "workerStartupMs": 1,
+  "liveProviders": {
+    "password": true,
+    "google": true,
+    "github": true
+  },
+  "liveUi": "5/5 Chromium viewport cases PASS; both providers enabled; open/close/focus pass",
+  "liveAssets": "6/6 source hashes match",
+  "liveOAuthStarts": "Google and GitHub:302 to correct provider with intended callback/PKCE",
+  "liveGitHubCancellation": "PASS; transient transaction/cookie cleared; no app account created",
+  "realGitHubAccountVerification": "pending user Connect GitHub and provider consent"
+}

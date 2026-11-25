@@ -1,0 +1,35 @@
+{
+  "runtime": "158.0.8127.38",
+  "assets": {
+    "account-entry.js": {
+      "match": true,
+      "sha256": "112e5eeecb13fe70b0f2ef26b50681d2c3044c00352c87a901a9285f994a8d0f"
+    },
+    "account-entry.css": {
+      "match": true,
+      "sha256": "69140cc84b227d716a41936bc4797cea7bd3c5bc4efad14f0bd5e63735517155"
+    },
+    "account-connections.css": {
+      "match": true,
+      "sha256": "b4630586e2f9a03d0de0e9820cf415141c746b7f8c031aa73912a14d1b806337"
+    },
+    "popup-motion.js": {
+      "match": true,
+      "sha256": "118de23a992ff82eb403013b37c26eb1085c5f54754587c5c0c69765c9335aaf"
+    },
+    "app.js": {
+      "match": true,
+      "sha256": "181d5d104d9310e16c7443b04ef545b62fc94b2eb32678928f6d0a924d931423"
+    },
+    "planner-store.js": {
+      "match": true,
+      "sha256": "e2a4818d9389a4769aa04b675109bfb404d36aee38a92d39dd02e5858b8a3917"
+    }
+  },
+  "googleStart": {
+    "status": 302,
+    "origin": "https://accounts.google.com",
+    "callback": "https://duckplan-latest.ocs-learning.workers.dev/api/auth/google/callback",
+    "pkce": "S256"
+  }
+}

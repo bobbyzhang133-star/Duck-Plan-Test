@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "duckplan-latest",
+  "account_id": "cf5bc9e4aab2bf80065e1858fe3c9449",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "../landing",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/*",
+      "/cloud-config.js"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "duckplan-latest",
+      "database_id": "cc1e0a1f-6def-44e1-a111-b79ad30a356f",
+      "migrations_dir": "github-activation-migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "LIVE",
+        "class_name": "PlannerLive"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "PlannerLive"
+      ]
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "* * * * *",
+      "*/30 * * * *"
+    ]
+  },
+  "vars": {
+    "AXIS_SYNC_INTERVAL_HOURS": "4",
+    "AXIS_SYNC_PER_RUN": "4"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "keep_vars": true
+}

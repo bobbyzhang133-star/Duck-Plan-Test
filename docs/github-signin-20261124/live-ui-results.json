@@ -1,0 +1,72 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "https://duckplan-latest.ocs-learning.workers.dev",
+  "results": [
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "googleEnabled": true,
+      "githubEnabled": true,
+      "openClose": true,
+      "publicAccountMutations": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "googleEnabled": true,
+      "githubEnabled": true,
+      "openClose": true,
+      "publicAccountMutations": false
+    },
+    {
+      "viewport": [
+        844,
+        390
+      ],
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "googleEnabled": true,
+      "githubEnabled": true,
+      "openClose": true,
+      "publicAccountMutations": false
+    },
+    {
+      "viewport": [
+        835,
+        1112
+      ],
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "googleEnabled": true,
+      "githubEnabled": true,
+      "openClose": true,
+      "publicAccountMutations": false
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "input": "mouse + keyboard",
+      "status": "PASS",
+      "googleEnabled": true,
+      "githubEnabled": true,
+      "openClose": true,
+      "publicAccountMutations": false
+    },
+    {
+      "status": "PASS",
+      "check": "real public cancellation clears transient transaction/cookie, leaves anonymous session",
+      "publicAccountMutations": false,
+      "realGitHubConsent": "NOT RUN"
+    }
+  ]
+}
