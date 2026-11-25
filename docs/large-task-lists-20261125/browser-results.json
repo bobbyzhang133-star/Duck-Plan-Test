@@ -1,0 +1,103 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:8798",
+  "cases": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "touchEmulated": true,
+      "errors": [],
+      "initial": {
+        "nodes": 3238,
+        "cards": 40,
+        "total": "9119",
+        "range": "1–40 of 9,119"
+      },
+      "calendarPagingAndOpenClose": true,
+      "searchEditAndMatrix": true,
+      "bulkAcrossAllPagesAndReload": true,
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "errors": [],
+      "initial": {
+        "nodes": 3238,
+        "cards": 40,
+        "total": "9119",
+        "range": "1–40 of 9,119"
+      },
+      "calendarPagingAndOpenClose": true,
+      "searchEditAndMatrix": true,
+      "bulkAcrossAllPagesAndReload": true,
+      "passed": true
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "touchEmulated": true,
+      "errors": [],
+      "initial": {
+        "nodes": 3238,
+        "cards": 40,
+        "total": "9119",
+        "range": "1–40 of 9,119"
+      },
+      "calendarPagingAndOpenClose": true,
+      "searchEditAndMatrix": true,
+      "bulkAcrossAllPagesAndReload": true,
+      "passed": true
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "touchEmulated": true,
+      "errors": [],
+      "initial": {
+        "nodes": 3418,
+        "cards": 40,
+        "total": "9119",
+        "range": "1–40 of 9,119"
+      },
+      "calendarPagingAndOpenClose": true,
+      "searchEditAndMatrix": true,
+      "bulkAcrossAllPagesAndReload": true,
+      "passed": true
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "errors": [],
+      "initial": {
+        "nodes": 3418,
+        "cards": 40,
+        "total": "9119",
+        "range": "1–40 of 9,119"
+      },
+      "calendarPagingAndOpenClose": true,
+      "searchEditAndMatrix": true,
+      "bulkAcrossAllPagesAndReload": true,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "physicalDeviceClaims": false
+}

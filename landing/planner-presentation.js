@@ -88,9 +88,9 @@
     let ordered = [...todayTasks].sort((a, b) => (priorityOrder[a.priority] ?? 1) - (priorityOrder[b.priority] ?? 1));
     if (window.DuckPlanClarity) ordered = window.DuckPlanClarity.orderTasks(ordered, today);
     document.querySelector("#dashboard-add-task").hidden = ordered.length > 0;
-    document.querySelector("#dashboard-task-list").innerHTML = ordered.length ? ordered.map((task, index) => window.DuckPlanClarity ? window.DuckPlanClarity.cardMarkup(task, index) : taskCardMarkup(task).replace("data-select-task=", "data-edit-task=")).join("") : emptyMessage("You’re all caught up for today", "Add a task or enjoy a little space in your day.");
+    document.querySelector("#dashboard-task-list").innerHTML = ordered.length ? pagedTaskMarkup(ordered, `dashboard:${today}:active`, (task, index) => window.DuckPlanClarity ? window.DuckPlanClarity.cardMarkup(task, index) : taskCardMarkup(task).replace("data-select-task=", "data-edit-task="), "Today’s tasks") : emptyMessage("You’re all caught up for today", "Add a task or enjoy a little space in your day.");
     document.querySelector("#dashboard-completed-label").textContent = `Completed today · ${groups.completed.length}`;
-    document.querySelector("#dashboard-completed-list").innerHTML = groups.completed.map((task) => taskCardMarkup(task)).join("") || '<p class="section-helper">Completed tasks will appear here.</p>';
+    document.querySelector("#dashboard-completed-list").innerHTML = pagedTaskMarkup(groups.completed, `dashboard:${today}:completed`, task => taskCardMarkup(task), "Completed tasks") || '<p class="section-helper">Completed tasks will appear here.</p>';
     document.querySelector("#dashboard-percent").textContent = `${percent}%`;
     document.querySelector("#dashboard-progress-copy").textContent = total ? `${groups.completed.length} of ${total} tasks completed today.` : "Your progress will appear when you plan a task.";
     const progress = document.querySelector("#dashboard-progress-bar");

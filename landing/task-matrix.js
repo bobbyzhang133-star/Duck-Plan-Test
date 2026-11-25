@@ -85,6 +85,7 @@
     const showToast = host.showToast || (() => {});
     const reportError = host.reportError || ((error) => showToast(error.message || "The task could not be updated."));
     let lastTasks = [];
+    let visibleIds = null;
     let draggedTaskId = null;
     let destroyed = false;
     const pending = new Map();
@@ -122,7 +123,8 @@
       </li>`;
     }
 
-    function render(filteredTasks) {
+    function render(filteredTasks, page) {
+      visibleIds = page ? new Set(page.visibleTasks.map(task => String(task.id))) : null;
       if (destroyed) return;
       lastTasks = Array.isArray(filteredTasks) ? filteredTasks.slice() : [];
       const active = root.contains(document.activeElement) ? document.activeElement : null;
@@ -132,13 +134,14 @@
       const unknownOpen = root.querySelector(".matrix-unclassified")?.open === true;
       const options = settings();
       const groups = groupTasks(lastTasks, options);
+      const shown = rows => visibleIds ? rows.filter(task => visibleIds.has(String(task.id))) : rows;
       const count = Object.values(groups).reduce((total, items) => total + items.length, 0);
       const unknown = groups.unclassified;
       const disabled = canOrganize() ? "" : " disabled";
-      const quadrants = QUADRANTS.map((item) => `<section class="matrix-quadrant" data-matrix-quadrant="${item.id}" aria-labelledby="matrix-heading-${item.id}"><header><div><h3 id="matrix-heading-${item.id}">${item.title}</h3><p>${item.description}</p></div><span class="matrix-count">${groups[item.id].length}</span></header><ul class="matrix-task-list">${groups[item.id].map((task) => taskMarkup(task, options, expanded)).join("")}</ul>${groups[item.id].length ? "" : '<p class="matrix-empty">Move a task here using its controls or drag handle.</p>'}</section>`).join("");
+      const quadrants = QUADRANTS.map((item) => `<section class="matrix-quadrant" data-matrix-quadrant="${item.id}" aria-labelledby="matrix-heading-${item.id}"><header><div><h3 id="matrix-heading-${item.id}">${item.title}</h3><p>${item.description}</p></div><span class="matrix-count">${groups[item.id].length}</span></header><ul class="matrix-task-list">${shown(groups[item.id]).map((task) => taskMarkup(task, options, expanded)).join("")}</ul>${groups[item.id].length ? "" : '<p class="matrix-empty">Move a task here using its controls or drag handle.</p>'}</section>`).join("");
       root.innerHTML = `<div class="task-matrix">${canOrganize() ? "" : '<p class="matrix-availability" role="status">Matrix classification is not available for this connection yet. You can still edit and complete your tasks.</p>'}<header class="matrix-intro"><div><h3 class="matrix-main-heading" tabindex="-1">Priority matrix</h3><p>Choose importance yourself. Urgency can follow a deadline or your own choice.</p></div><form class="matrix-settings-form"><label>Auto urgency window <span><input type="number" name="urgencyDays" min="0" max="30" step="1" required value="${options.urgencyDays}" data-matrix-field="threshold" aria-label="Days before a deadline becomes urgent"${disabled} /> days</span></label><button type="submit" class="secondary-button" data-matrix-field="threshold-save"${disabled}>Update</button></form></header>
-        <p class="matrix-summary" role="status">${count} task${count === 1 ? "" : "s"} shown · ${unknown.length} need classification. Auto urgency includes overdue tasks and deadlines within ${options.urgencyDays} day${options.urgencyDays === 1 ? "" : "s"}.</p>
-        <details class="matrix-unclassified"${unknownOpen && unknown.length ? " open" : ""}><summary>Needs classification <span class="matrix-count">${unknown.length}</span></summary><p class="matrix-field-help">${unknown.length ? "Choose any missing axis below. A task without a deadline needs a manual urgency choice; priority never sets importance automatically." : "Every task shown has both axes classified."}</p><ul class="matrix-task-list">${unknown.map((task) => taskMarkup(task, options, expanded)).join("")}</ul></details>
+        <p class="matrix-summary" role="status">${count} task${count === 1 ? "" : "s"}${visibleIds && count > visibleIds.size ? " total" : " shown"} · ${unknown.length} need classification. Auto urgency includes overdue tasks and deadlines within ${options.urgencyDays} day${options.urgencyDays === 1 ? "" : "s"}.</p>
+        <details class="matrix-unclassified"${unknownOpen && unknown.length ? " open" : ""}><summary>Needs classification <span class="matrix-count">${unknown.length}</span></summary><p class="matrix-field-help">${unknown.length ? "Choose any missing axis below. A task without a deadline needs a manual urgency choice; priority never sets importance automatically." : "Every task shown has both axes classified."}</p><ul class="matrix-task-list">${shown(unknown).map((task) => taskMarkup(task, options, expanded)).join("")}</ul></details>
         <div class="matrix-grid">${quadrants}</div>
       </div>`;
       host.setupButtons?.(root);
@@ -153,7 +156,8 @@
 
     function refresh() {
       const current = new Map(store.listItems().map((task) => [String(task.id), task]));
-      render(lastTasks.map((task) => current.get(String(task.id))).filter(Boolean));
+      const visibleTasks = visibleIds ? lastTasks.filter(task => visibleIds.has(String(task.id))) : null;
+      render(lastTasks.map((task) => current.get(String(task.id))).filter(Boolean), visibleTasks ? { visibleTasks } : undefined);
     }
 
     function persistChange(id, fields, message) {

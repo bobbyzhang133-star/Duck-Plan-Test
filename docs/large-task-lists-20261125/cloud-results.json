@@ -1,0 +1,32 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:18763",
+  "cases": [
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "touchEmulated": false,
+      "errors": [],
+      "pagedEditFailureRetryAndReload": true,
+      "ownerIsolationAndPageReset": true,
+      "passed": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "touchEmulated": true,
+      "errors": [],
+      "pagedEditFailureRetryAndReload": true,
+      "ownerIsolationAndPageReset": true,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "productionWrites": false
+}

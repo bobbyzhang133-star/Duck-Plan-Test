@@ -1,0 +1,32 @@
+
+ ⛅️ wrangler 4.157.0 (update available 4.168.0)
+───────────────────────────────────────────────
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mFailed to write to log file [Error: EPERM: operation not permitted, open '/Users/bobbyzhang/Library/Preferences/.wrangler/logs/wrangler-2026-11-25_18-53-19_892.log'] {[0m
+
+    errno: -1,
+    code: 'EPERM',
+    syscall: 'open',
+    path: '/Users/bobbyzhang/Library/Preferences/.wrangler/logs/wrangler-2026-11-25_18-53-19_892.log'
+  }
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mWould have written: [0m
+
+  --- 2026-11-25T18:53:20.047Z debug
+  🪵  Writing logs to "/Users/bobbyzhang/Library/Preferences/.wrangler/logs/wrangler-2026-11-25_18-53-19_892.log"
+  ---
+
+
+
+✨ Read 134 files from the assets directory /private/tmp/duckplan-large-list-worker-20261125/landing
+Total Upload: 123.79 KiB / gzip: 30.04 KiB
+Your Worker has access to the following bindings:
+Binding                                             Resource
+env.LIVE (PlannerLive)                              Durable Object
+env.DB (duckplan-latest)                            D1 Database
+env.ASSETS                                          Assets
+env.AXIS_SYNC_INTERVAL_HOURS ("4")                  Environment Variable
+env.AXIS_SYNC_PER_RUN ("4")                         Environment Variable
+
+--dry-run: exiting now.
+🪵  Logs were written to "/Users/bobbyzhang/Library/Preferences/.wrangler/logs/wrangler-2026-11-25_18-53-19_892.log"

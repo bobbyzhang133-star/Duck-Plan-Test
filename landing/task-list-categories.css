@@ -1,4 +1,9 @@
 /* Shared category hierarchy; task contents keep their existing Due/Work layout. */
+.task-pages { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+.task-page-range { flex: 1 1 90px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.task-pages > div { display: flex; justify-content: flex-end; flex: 1 0 auto; gap: 6px; }
+.task-pages button { min-height: 44px; padding: 8px 10px; font-size: 12px; }
+.task-pages button:disabled { opacity: .45; }
 .motion-preview :is(#daily-task-panel,#view-tasks) .task-section {
   --category-ink: var(--muted);
   --category-fill: var(--surface);

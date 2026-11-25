@@ -1,0 +1,16 @@
+{
+  "runtime": "158.0.8127.38",
+  "taskCount": 9119,
+  "startupMs": 475,
+  "initial": {
+    "nodes": 3411,
+    "cards": 80,
+    "range": "1–40 of 9,119"
+  },
+  "accountMenuOpenMs": [
+    42,
+    39,
+    37
+  ],
+  "errors": []
+}

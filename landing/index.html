@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="./calendar-date-clarity.css?v=task-due-highlight-20261123" />
     <link rel="stylesheet" href="./calendar-task-preview.css?v=due-header-tints-20261120" />
     <link rel="stylesheet" href="./task-editor.css?v=section-tinted-fields-20261120" />
-    <link rel="stylesheet" href="./task-list-categories.css?v=purple-task-tints-20261123" />
+    <link rel="stylesheet" href="./task-list-categories.css?v=large-task-lists-20261125" />
     <link rel="stylesheet" href="./planner-actions.css?v=mobile-ui-20261124" />
     <meta name="application-name" content="DuckPlan" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -145,8 +145,9 @@
           <div class="panel-heading task-heading"><div><p class="section-kicker">Everything in one place</p><h2>Tasks</h2><p class="task-category-summary" id="task-category-summary" aria-live="polite"></p></div></div>
           <div class="task-category-toolbar"><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Active <span data-task-filter-count="all">0</span></button><button class="filter-chip" type="button" data-filter="today" aria-pressed="false">Today <span data-task-filter-count="today">0</span></button><button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Upcoming <span data-task-filter-count="upcoming">0</span></button><button class="filter-chip" type="button" data-filter="done" aria-pressed="false">Done <span data-task-filter-count="done">0</span></button></div><label class="task-group-control" id="task-group-control"><span>Group by</span><select id="task-grouping" aria-label="Group tasks by"><option value="plan">Plan</option><option value="class">Class</option><option value="priority">Priority</option></select></label></div>
           <button class="secondary-button overdue-complete-button" type="button" data-button-icon="check-all" data-complete-overdue hidden>Complete all overdue</button>
-          <div class="task-list expanded" id="all-task-list"></div><div class="empty-state" id="task-empty" hidden><span class="empty-duck" data-duck-state="encouraging" aria-hidden="true"></span><h3>A little room to plan.</h3><p>Try another filter or add a new task.</p></div>
+          <div id="task-pages-top"></div><div class="task-list expanded" id="all-task-list"></div><div class="empty-state" id="task-empty" hidden><span class="empty-duck" data-duck-state="encouraging" aria-hidden="true"></span><h3>A little room to plan.</h3><p>Try another filter or add a new task.</p></div>
           <div id="task-matrix-root" hidden></div>
+          <div id="task-pages-bottom"></div>
         </section></section>
         <section class="view" id="view-classes" data-page-title="Classes" data-eyebrow="Keep every class sorted"><div class="class-grid" id="class-grid"></div><div id="class-library"></div></section>
         <section class="view" id="view-goals" data-page-title="Goals &amp; habits" data-eyebrow="Build a rhythm">
@@ -271,7 +272,7 @@
     <script src="./ui-expansion-motion.js?v=expand-close-final-20261123"></script>
     <script src="./planner-library.js?v=launcher-transitions-20261124"></script>
     <script src="./calendar-library-tabs.js?v=expand-close-final-20261123"></script>
-    <script src="./task-matrix.js?v=button-design-20261123"></script>
+    <script src="./task-matrix.js?v=large-task-lists-20261125"></script>
     <script src="./personal-notes.js?v=button-design-20261123"></script>
     <script src="./personal-goals.js?v=button-design-20261123"></script>
     <script src="./reminder-domain.js?v=2"></script>
@@ -295,11 +296,12 @@
     <script src="./completion-list-motion.js?v=bulk-overdue-20261124"></script>
     <script src="./completion-demo.js?v=section-fade-20261122"></script>
     <script src="./task-list-groups.js?v=task-categories-20261122"></script>
-    <script src="./app.js?v=bulk-overdue-20261124"></script>
+    <script src="./task-pages.js?v=large-task-lists-20261125"></script>
+    <script src="./app.js?v=large-task-lists-20261125"></script>
     <script src="./account-entry.js?v=github-signin-20261124"></script>
     <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
     <script src="./duck-mascot.js?v=original-bill-happy-eyes-20261122"></script>
-    <script src="./planner-presentation.js?v=contextual-add-20261112"></script>
+    <script src="./planner-presentation.js?v=large-task-lists-20261125"></script>
     <script src="./duck-interactions.js?v=bulk-overdue-20261124"></script>
     <script src="./planner-clarity.js"></script>
   </body>

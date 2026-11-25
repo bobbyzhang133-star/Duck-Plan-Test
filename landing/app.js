@@ -39,6 +39,7 @@ let tasks = [];
 let renderedPlannerOwner = "local";
 let plannerOwnerVersion = 0;
 let overdueCompletion = null;
+const taskPages = window.DuckTaskPages.create();
 const REMINDER_KEY = "duckplan-deadline-reminders-v1";
 const reminderSettings = loadReminderSettings();
 const reminderLedger = ReminderLedger.createLedger({ storage: localStorage });
@@ -607,6 +608,15 @@ async function completeAllOverdue(source) {
   }
 }
 
+function taskPageMarkup(page, label, position = "top") {
+  if (page.count < 2) return "";
+  return `<nav class="task-pages" aria-label="${safeAttribute(label)} pages" data-task-page-position="${position}"><span class="task-page-range" role="status">${(page.start + 1).toLocaleString()}–${page.end.toLocaleString()} of ${page.total.toLocaleString()}</span><div><button type="button" class="secondary-button compact-button" data-task-page="${safeAttribute(page.key)}" data-task-page-direction="-1" aria-label="Previous ${safeAttribute(label.toLowerCase())} page" ${page.page === 0 ? "disabled" : ""}>Previous</button><button type="button" class="secondary-button compact-button" data-task-page="${safeAttribute(page.key)}" data-task-page-direction="1" aria-label="Next ${safeAttribute(label.toLowerCase())} page" ${page.page === page.count - 1 ? "disabled" : ""}>Next</button></div></nav>`;
+}
+function pagedTaskMarkup(rows, key, render, label) {
+  const page = taskPages.slice(rows, key);
+  return taskPageMarkup(page, label) + page.items.map((task, index) => render(task, page.start + index)).join("") + taskPageMarkup(page, label, "bottom");
+}
+
 function renderDailyPlan() {
   window.DuckExpansionMotion?.settleWithin(els.taskPanel);
   renderOverdueActions();
@@ -634,7 +644,7 @@ function renderDailyPlan() {
   for (const name of Object.keys(els.lists)) {
     els.counts[name].textContent = groups[name].length;
     if (groups[name].length || !window.DuckTaskCompletion?.preserveBulkList(els.lists[name])) {
-      els.lists[name].innerHTML = groups[name].map((task) => taskCardMarkup(task, ["scheduled", "backlog"].includes(name) ? name : "daily")).join("");
+      els.lists[name].innerHTML = pagedTaskMarkup(groups[name], `calendar:${selectedDate}:${name}`, task => taskCardMarkup(task, ["scheduled", "backlog"].includes(name) ? name : "daily"), "Tasks");
     }
     els.lists[name].hidden = collapsed[name] || groups[name].length === 0;
     els.lists[name].closest(".task-section").classList.toggle("is-empty", groups[name].length === 0);
@@ -676,10 +686,15 @@ function renderAllTasks() {
   const groups = window.DuckTaskListGroups.groupTasks(filtered, {
     mode: taskGrouping, today: nowKey(), isOverdue: task => Model.taskTiming(task).overdue, classInfo
   });
-  els.allList.innerHTML = groups.map((group, index) => {
+  const pageKey = `tasks:${currentFilter}:${taskGrouping}:${searchTerm}`;
+  const page = taskPages.groups(groups, pageKey);
+  const pageTasks = page.groups.flatMap(group => group.tasks);
+  document.querySelector("#task-pages-top").innerHTML = taskPageMarkup(page, "Tasks");
+  document.querySelector("#task-pages-bottom").innerHTML = taskPageMarkup(page, "Tasks", "bottom");
+  els.allList.innerHTML = taskLayout === "list" ? page.groups.map((group, index) => {
     const key = `${taskGrouping}:${group.key}`, open = !collapsedTaskGroups.has(key), id = `task-browser-group-${index}`;
-    return `<section class="task-section task-browser-group" data-category-tone="${group.tone}"><button class="task-section-heading" type="button" data-task-group-toggle="${safeAttribute(key)}" aria-expanded="${open}" aria-controls="${id}"><span><span class="status-dot"></span>${safeText(group.label)}</span><strong>${group.tasks.length}</strong></button><div class="daily-task-list" id="${id}" ${open ? "" : "hidden"}>${group.tasks.map(allTaskMarkup).join("")}</div></section>`;
-  }).join("");
+    return `<section class="task-section task-browser-group" data-category-tone="${group.tone}"><button class="task-section-heading" type="button" data-task-group-toggle="${safeAttribute(key)}" aria-expanded="${open}" aria-controls="${id}"><span><span class="status-dot"></span>${safeText(group.label)}</span><strong>${group.totalCount}</strong></button><div class="daily-task-list" id="${id}" ${open ? "" : "hidden"}>${group.tasks.map(allTaskMarkup).join("")}</div></section>`;
+  }).join("") : "";
   const groupingLabels = { plan: "plan", class: "class", priority: "priority" };
   document.querySelector("#task-category-summary").textContent = `${filtered.length} ${currentFilter === "done" ? "completed" : "active"} ${filtered.length === 1 ? "task" : "tasks"}${taskLayout === "list" ? ` · Grouped by ${groupingLabels[taskGrouping]}` : ""}`;
   document.querySelector("#task-group-control").hidden = taskLayout !== "list";
@@ -687,7 +702,7 @@ function renderAllTasks() {
   els.taskEmpty.hidden = taskLayout !== "list" || filtered.length > 0;
   const matrixRoot = document.querySelector("#task-matrix-root");
   matrixRoot.hidden = taskLayout !== "matrix";
-  if (taskLayout === "matrix") taskMatrix?.render(filtered.filter((task) => currentFilter === "done" || !task.completed));
+  if (taskLayout === "matrix") taskMatrix?.render(filtered.filter((task) => currentFilter === "done" || !task.completed), { visibleTasks: pageTasks });
   document.querySelectorAll("[data-task-layout]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.taskLayout === taskLayout)));
   els.taskCount.textContent = tasks.filter((task) => !task.completed).length;
 }
@@ -1733,6 +1748,22 @@ function commitMaterialAction(source, update, event) {
 }
 
 document.addEventListener("click", (event) => {
+  const taskPage = event.target.closest("[data-task-page]");
+  if (taskPage) {
+    window.DuckTaskCompletion?.cancel();
+    taskListDrag?.cancel();
+    const key = taskPage.dataset.taskPage, direction = Number(taskPage.dataset.taskPageDirection);
+    if (!taskPages.move(key, direction)) return;
+    if (key.startsWith("calendar:")) renderDailyPlan();
+    else if (key.startsWith("dashboard:")) { document.dispatchEvent(new Event("planner:render")); }
+    else renderAllTasks();
+    setupButtonMaterial();
+    const controls = [...document.querySelectorAll('[data-task-page-position="top"] [data-task-page]')].filter(button => button.dataset.taskPage === key && !button.disabled);
+    const target = controls.find(button => Number(button.dataset.taskPageDirection) === direction) || controls[0];
+    target?.scrollIntoView({ block: "nearest" });
+    target?.focus({ preventScroll: true });
+    return;
+  }
   if (performance.now() < suppressCalendarEventClickUntil && event.target.closest(".calendar-event-block")) {
     suppressCalendarEventClickUntil = 0;
     event.preventDefault();
@@ -2380,6 +2411,7 @@ updateNotificationPermission();
 
 
 store.subscribe(({ reason }) => {
+  if (reason === "context") taskPages.clear();
   if (reason === "context") window.DuckExpansionMotion?.settleWithin();
   if (["context", "error"].includes(reason)) window.DuckTaskCompletion?.cancel({ flush: false });
   if (reason === "context") { taskListDrag?.cancel(); cancelCalendarDrag(); clearTemplateDrag(); hideToast(); calendarTaskPreview.close({ immediate: true, restoreFocus: false }); expandedDeadlineDates.clear(); }

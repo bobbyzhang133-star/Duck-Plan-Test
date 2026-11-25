@@ -1,0 +1,13 @@
+{
+  "initial": {
+    "nodes": 10527,
+    "dashboard": 40,
+    "completedDashboard": 40
+  },
+  "keyboard": {
+    "range": "41–80 of 5,000",
+    "focus": "1"
+  },
+  "dashboardPaging": true,
+  "dataCount": 9119
+}
