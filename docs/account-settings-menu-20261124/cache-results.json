@@ -1,0 +1,13 @@
+{
+  "runtime": "158.0.8127.38",
+  "status": "PASS",
+  "offlineMenuAndDialog": "PASS",
+  "version": "duckplan-app-original-duck-preview-v151",
+  "assets": {
+    "account-entry.js": "ce6bbe56ea4ec8201655186a2e69d644138450e002458c783a57502cd6c52f78",
+    "account-entry.css": "69140cc84b227d716a41936bc4797cea7bd3c5bc4efad14f0bd5e63735517155",
+    "popup-motion.js": "118de23a992ff82eb403013b37c26eb1085c5f54754587c5c0c69765c9335aaf",
+    "app.js": "52a6739c8c3dd6b5d3f29389aa8b62aceb3adfb94625cdf3cf58c76145b31076"
+  },
+  "controller": true
+}

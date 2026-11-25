@@ -1,0 +1,28 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "status": "PASS",
+      "actions": [
+        "folded avatar hover/held press",
+        "menu hover/press",
+        "Enter/Tab",
+        "rapid menu/dialog reversal",
+        "focus trap",
+        "rendered nine-slice opening/closing at 35% (1440/390)",
+        "dark mode",
+        "390x420 resized viewport scroll and close",
+        "shared task editor and calendar preview smoke"
+      ]
+    },
+    {
+      "status": "PASS",
+      "mode": "reduced motion + static local preview",
+      "actions": [
+        "instant open/close",
+        "honest disabled provider/local note"
+      ]
+    }
+  ],
+  "physicalKeyboard": "NOT RUN; viewport resize only"
+}

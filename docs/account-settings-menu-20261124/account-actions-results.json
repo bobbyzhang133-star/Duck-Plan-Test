@@ -1,0 +1,39 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "width": 390,
+      "mode": "real isolated local Worker/D1",
+      "status": "PASS",
+      "actions": [
+        "invalid password feedback",
+        "create account in moved form",
+        "matching account name",
+        "long-name layout",
+        "session after refresh",
+        "sign out",
+        "email sign in"
+      ]
+    },
+    {
+      "width": 1440,
+      "mode": "real isolated local Worker/D1",
+      "status": "PASS",
+      "actions": [
+        "invalid password feedback",
+        "create account in moved form",
+        "matching account name",
+        "long-name layout",
+        "session after refresh",
+        "sign out",
+        "email sign in"
+      ]
+    },
+    {
+      "mode": "stubbed Google readiness and navigation destination",
+      "status": "PASS",
+      "action": "moved Google button reaches existing sign-in endpoint",
+      "realGoogleOAuth": "NOT RUN"
+    }
+  ]
+}

@@ -6,7 +6,7 @@ function fixture(reduced=false,profile=null){
       this.rect=rect;this.isConnected=true;this.style={opacity:'',visibility:'visible'};this.dataset={};this.children=[];this.attributes={};this.inert=false;this.open=false;this.reads=0;
     }
     matches(s){return s==='.task-modal'&&this.className==='task-modal'||s==='.calendar-task-preview'&&this.className==='calendar-task-preview';}
-    querySelector(s){return s==='form'?this.form:s==='#modal-title'||s==='#calendar-preview-title'?this.heading:s==='.calendar-preview-card'?this.card:null;}
+    querySelector(s){return s==='form'?this.form:s==='#modal-title'||s==='#calendar-preview-title'||s==='[data-popup-heading]'?this.heading:s==='.calendar-preview-card'||s==='[data-popup-surface]'?this.card:null;}
     append(...nodes){this.children.push(...nodes);nodes.forEach(n=>n.removed=false);}
     setAttribute(name,value){this.attributes[name]=String(value);}
     getAttribute(name){return this.attributes[name]??null;}
@@ -193,4 +193,19 @@ test('compact previews release temporary bounds on finish and interrupted resize
   assert.equal(preview.dataset.popupStaged,'true');assert(preview.card.inert);
   await settle(animations[0]);assert.equal(ready,1);assert.equal(preview.style.width,'min(520px, 90vw)');assert.equal(preview.dataset.popupStaged,undefined);assert(!preview.card.inert);
   api.open(preview,api.capture(new Element()),()=>ready++);events.resize();assert.equal(ready,2);assert.equal(preview.style.width,'min(520px, 90vw)');assert(!preview.card.inert);assert(preview.children.every(n=>n.removed));
+});
+
+// Account dialogs opt in to the same crisp-content shell used by calendar previews.
+test('custom surface opens and closes through sliced chrome without scaling fields', async()=>{
+  const {api,Element,animations}=fixture(),p=new Element(),source=new Element({left:20,top:30,width:44,height:44});
+  p.dataset.popupLayout='surface';p.card=new Element();p.heading=new Element();p.heading.textContent='Sign in';p.open=true;
+  let opened=false,closed=false;const anchor=api.capture(source);api.open(p,anchor,()=>opened=true);
+  assert.equal(p.children[0].children.length,9);assert.equal(source.style.visibility,'hidden');
+  assert(animations.filter(a=>a.target===p.card).every(a=>a.frames.every(f=>!f.transform)));
+  await settle(animations[0]);await settle(animations.find(a=>a.target===p.card));
+  assert(opened);assert.equal(p.dataset.popupStaged,undefined);assert.equal(source.style.visibility,'visible');
+  const start=animations.length;api.close(p,anchor,()=>closed=true);assert(!closed);
+  await settle(animations.slice(start).find(a=>a.target===p.card));assert(!closed);
+  await settle(animations.slice(start).find(a=>a.target===p.children.at(-3)&&a.options.duration===240));
+  assert(closed);assert.equal(source.style.visibility,'visible');assert(p.children.every(n=>n.removed));
 });

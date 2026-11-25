@@ -760,22 +760,25 @@ function signedInAccount(user) {
 }
 function renderAccountIdentity() {
   const identity = PlannerUI.accountIdentity(store.user);
-  document.querySelector("#profile-name").textContent = identity.signedIn ? identity.name : "Sign in";
+  document.querySelector("#profile-name").textContent = identity.signedIn ? identity.name : "Account";
   document.querySelector("#profile-initials").textContent = identity.initials;
-  document.querySelector("#profile-status").textContent = identity.signedIn ? "Signed in" : "Sync your planner";
+  document.querySelector("#profile-status").textContent = identity.signedIn ? "Account and settings" : "Settings and sign in";
   const card = document.querySelector(".profile-card");
-  const label = identity.signedIn ? `Open ${identity.name}'s account` : "Sign in to DuckPlan";
+  const label = identity.signedIn ? `Open ${identity.name}'s account menu` : "Account and settings";
   card.setAttribute("aria-label", label);
   card.title = label;
-  document.querySelectorAll("[data-open-account]").forEach(button => {
+  document.querySelectorAll("[data-open-account-menu]").forEach(button => {
     button.dataset.signedIn = String(identity.signedIn);
     button.setAttribute("aria-label", label);
     button.title = label;
     const name = button.querySelector("[data-account-label]");
     const initials = button.querySelector("[data-account-initials]");
-    if (name) name.textContent = identity.signedIn ? identity.name : "Sign in";
+    if (name) name.textContent = identity.signedIn ? identity.name : "Account";
     if (initials) initials.textContent = identity.initials;
   });
+  document.querySelector("#account-menu-name").textContent = identity.signedIn ? identity.name : "Your DuckPlan";
+  document.querySelector("#account-menu-status").textContent = identity.signedIn ? store.user.email || "Signed in" : "Sign in to sync your planner";
+  document.querySelector("#account-menu-sign-in-label").textContent = identity.signedIn ? "Your account" : "Sign in";
   const accountTitle = document.querySelector("#account-dialog-title");
   if (accountTitle) accountTitle.textContent = identity.signedIn ? "Your DuckPlan account" : "Sign in to DuckPlan";
 }

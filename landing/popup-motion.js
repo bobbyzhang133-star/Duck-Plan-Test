@@ -180,9 +180,9 @@
   }
   function morph(element, anchor, opening, done) {
     removeJob(element);
-    const editor=element.matches('.task-modal');
+    const editor=element.matches('.task-modal'),custom=element.dataset?.popupLayout==='surface';
     if(editor)known.add(element);
-    const audit=auditMotion(opening,anchor),form=element.querySelector(editor?'form':'.calendar-preview-card'),heading=element.querySelector(editor?'#modal-title':'#calendar-preview-title');
+    const audit=auditMotion(opening,anchor),form=element.querySelector(editor?'form':custom?'[data-popup-surface]':'.calendar-preview-card'),heading=element.querySelector(editor?'#modal-title':custom?'[data-popup-heading]':'#calendar-preview-title');
     const previous=running.get(element),oldLayers=previous?.layers;
     // Only reversal reads live animation state; the normal opening uses idle geometry.
     const interrupted=oldLayers?{
@@ -203,7 +203,7 @@
       previewBox={left:rect.left,top:rect.top,width:rect.width,height:rect.height,radius:parseFloat(getComputedStyle(element).borderRadius)||20,titleX:title.left-rect.left,titleY:title.top-rect.top,prepared:true};
     }
     const box=interrupted?.box || (!opening&&used.get(element)?.box) || previewBox || geometry(element);
-    const destinationStyle=getComputedStyle(editor?form:element);
+    const destinationStyle=getComputedStyle(editor||custom?form:element);
     const destinationPaint=previous?.paint||{tint:destinationStyle.backgroundColor||'#fffdf7',sheen:destinationStyle.backgroundImage||'none',border:destinationStyle.border||'0'};
     reserve(element,box);
     const sourceBox=previous?.sourceBox||anchorRect(anchor)||{left:box.left+box.width/2-24,top:box.top+box.height/2-20,width:48,height:40};
@@ -297,7 +297,7 @@
     audit.ready();
   }
   function animate(element, anchor, opening, done=()=>{}) {
-    if ((element.matches?.('.task-modal') && element.querySelector('form')) || (element.matches?.('.calendar-task-preview') && element.querySelector('.calendar-preview-card'))) return morph(element,anchor,opening,done);
+    if ((element.matches?.('.task-modal') && element.querySelector('form')) || (element.matches?.('.calendar-task-preview') && element.querySelector('.calendar-preview-card')) || (element.dataset?.popupLayout==='surface' && element.querySelector('[data-popup-surface]') && element.querySelector('[data-popup-heading]'))) return morph(element,anchor,opening,done);
     // Sample an interrupted transform before cancelling, so reversing doesn't jump.
     const previous=running.has(element) ? {transform:getComputedStyle(element).transform,opacity:getComputedStyle(element).opacity} : null;
     cancel(element);
