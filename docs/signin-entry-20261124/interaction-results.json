@@ -1,0 +1,45 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "status": "PASS",
+      "mode": "mouse + keyboard",
+      "actions": [
+        "folded icon hover",
+        "held press",
+        "keyboard focus trap",
+        "Enter",
+        "close-button dismissal",
+        "rapid reversal",
+        "rendered opening/closing frames paused at 100ms"
+      ]
+    },
+    {
+      "mode": "resized viewport 390x420; physical on-screen keyboard NOT RUN",
+      "status": "PASS",
+      "closeOverlapsField": false,
+      "closeVisible": true,
+      "close": {
+        "x": 321,
+        "y": 23,
+        "width": 44,
+        "height": 44
+      },
+      "field": {
+        "x": 31,
+        "y": 77.890625,
+        "width": 328,
+        "height": 48
+      }
+    },
+    {
+      "mode": "static preview + reduced motion",
+      "status": "PASS",
+      "actions": [
+        "instant accessible open/close",
+        "local-only explanation",
+        "disabled unconfigured Google method"
+      ]
+    }
+  ]
+}

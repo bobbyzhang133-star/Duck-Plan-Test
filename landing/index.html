@@ -33,6 +33,7 @@
     <link rel="apple-touch-icon" href="./assets/duckplan-sigma-icon-v11-512.png" />
     <title>DuckPlan | Tasks and time together</title>
     <link rel="stylesheet" href="./account-connections.css?v=signin-axis-20261123" />
+    <link rel="stylesheet" href="./account-entry.css?v=visible-signin-20261124" />
   </head>
   <body class="motion-preview">
     <a class="skip-link" href="#main-content">Skip to planner</a>
@@ -54,14 +55,14 @@
         </nav>
 
         <div class="sidebar-spacer"></div>
-        <button class="profile-card" type="button" data-go="settings" aria-label="Open account settings"><span class="avatar" id="profile-initials" aria-hidden="true">?</span><span><strong id="profile-name">Guest</strong><small id="profile-status">Local planner</small></span><span aria-hidden="true">›</span></button>
+        <button class="profile-card" type="button" data-open-account aria-label="Sign in to DuckPlan" aria-haspopup="dialog" aria-controls="account-dialog" aria-expanded="false"><span class="avatar" aria-hidden="true"><svg class="account-person-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-2a7 7 0 0 1 14 0v2"/></svg><span id="profile-initials">?</span></span><span class="profile-copy"><strong id="profile-name">Sign in</strong><small id="profile-status">Sync your planner</small></span></button>
       </aside>
       <button class="sidebar-scrim" type="button" aria-label="Close navigation" tabindex="-1" hidden></button>
 
       <main class="workspace unified-workspace" id="main-content" tabindex="-1">
         <p class="sr-only" id="task-scheduling-instructions">Drag a task onto a calendar time to schedule it. From Tasks, hold it over Calendar in the navigation to open the calendar. You can also click the task to edit its work date and time.</p>
         <header class="topbar compact-topbar">
-          <div class="topbar-title"><button class="nav-open-button topbar-nav-open-button" type="button" data-open-navigation aria-label="Open navigation" aria-controls="planner-sidebar">☰</button><div><p class="eyebrow" id="page-eyebrow">Your time, thoughtfully planned</p><h1 id="page-title">Calendar</h1></div></div>
+          <div class="topbar-title"><button class="nav-open-button topbar-nav-open-button" type="button" data-open-navigation aria-label="Open navigation" aria-controls="planner-sidebar">☰</button><div><p class="eyebrow" id="page-eyebrow">Your time, thoughtfully planned</p><h1 id="page-title">Calendar</h1></div><button class="account-entry" type="button" data-open-account aria-label="Sign in to DuckPlan" aria-haspopup="dialog" aria-controls="account-dialog" aria-expanded="false"><span class="account-entry-avatar" aria-hidden="true"><svg class="account-person-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-2a7 7 0 0 1 14 0v2"/></svg><span data-account-initials></span></span><span data-account-label>Sign in</span></button></div>
           <div class="topbar-actions">
             <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">Search tasks</span><input id="global-search" type="search" placeholder="Search tasks" autocomplete="off" /></label>
 
@@ -127,6 +128,7 @@
                 <div class="calendar-toolbar-actions"><button class="secondary-button task-panel-toggle" type="button" id="toggle-task-panel" aria-controls="daily-task-panel" aria-expanded="false">Tasks</button>
                   <button class="primary-button phone-calendar-add" type="button" id="phone-add-task" aria-label="Add task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
                   <div class="view-switcher" role="group" aria-label="Calendar view"><button type="button" data-calendar-view="day" aria-pressed="false">Day</button><button type="button" data-calendar-view="week" aria-pressed="true">Week</button><button type="button" data-calendar-view="month" aria-pressed="false">Month</button></div>
+                  <button class="account-entry calendar-account-entry" type="button" data-open-account aria-label="Sign in to DuckPlan" aria-haspopup="dialog" aria-controls="account-dialog" aria-expanded="false"><span class="account-entry-avatar" aria-hidden="true"><svg class="account-person-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-2a7 7 0 0 1 14 0v2"/></svg><span data-account-initials></span></span><span data-account-label>Sign in</span></button>
                 </div>
               </div>
               <div class="phone-week-strip" id="phone-week-strip" role="group" aria-label="Choose a day" hidden></div>
@@ -201,6 +203,11 @@
         </section></section>
       </main>
     </div>
+
+    <dialog class="account-dialog" id="account-dialog" tabindex="-1" aria-labelledby="account-dialog-title">
+      <header class="account-dialog-heading"><h2 id="account-dialog-title">Sign in to DuckPlan</h2><button class="close-button account-dialog-close" type="button" data-close-account aria-label="Close account window">×</button></header>
+      <div class="account-dialog-content account-connections-grid"></div>
+    </dialog>
 
     <nav class="phone-bottom-nav" aria-label="Phone planner navigation">
       <button class="nav-item phone-nav-button active" type="button" data-view="calendar"><span class="nav-icon" aria-hidden="true"></span><span>Calendar</span></button>
@@ -284,7 +291,8 @@
     <script src="./completion-list-motion.js?v=task-categories-20261122"></script>
     <script src="./completion-demo.js?v=section-fade-20261122"></script>
     <script src="./task-list-groups.js?v=task-categories-20261122"></script>
-    <script src="./app.js?v=launcher-transitions-20261124"></script>
+    <script src="./app.js?v=visible-signin-20261124"></script>
+    <script src="./account-entry.js?v=visible-signin-20261124"></script>
     <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
     <script src="./duck-mascot.js?v=original-bill-happy-eyes-20261122"></script>
     <script src="./planner-presentation.js?v=contextual-add-20261112"></script>

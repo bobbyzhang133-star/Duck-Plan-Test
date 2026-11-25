@@ -228,8 +228,8 @@ function setSidebar(open) {
   workspace.inert = false;
   sidebarScrim.hidden = true;
   const profile = sidebar.querySelector(".profile-card");
-  profile.inert = !open;
-  profile.setAttribute("aria-hidden", String(!open));
+  profile.inert = false;
+  profile.setAttribute("aria-hidden", "false");
   sidebarToggles.forEach((toggle) => toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"));
   sidebarScrim.tabIndex = -1;
   const railToggle = sidebar.querySelector(".sidebar-rail-toggle");
@@ -760,13 +760,24 @@ function signedInAccount(user) {
 }
 function renderAccountIdentity() {
   const identity = PlannerUI.accountIdentity(store.user);
-  document.querySelector("#profile-name").textContent = identity.name;
+  document.querySelector("#profile-name").textContent = identity.signedIn ? identity.name : "Sign in";
   document.querySelector("#profile-initials").textContent = identity.initials;
-  document.querySelector("#profile-status").textContent = identity.signedIn ? "Signed in" : "Local planner";
+  document.querySelector("#profile-status").textContent = identity.signedIn ? "Signed in" : "Sync your planner";
   const card = document.querySelector(".profile-card");
-  const label = identity.signedIn ? `Open ${identity.name}'s settings` : "Open account settings";
+  const label = identity.signedIn ? `Open ${identity.name}'s account` : "Sign in to DuckPlan";
   card.setAttribute("aria-label", label);
   card.title = label;
+  document.querySelectorAll("[data-open-account]").forEach(button => {
+    button.dataset.signedIn = String(identity.signedIn);
+    button.setAttribute("aria-label", label);
+    button.title = label;
+    const name = button.querySelector("[data-account-label]");
+    const initials = button.querySelector("[data-account-initials]");
+    if (name) name.textContent = identity.signedIn ? identity.name : "Sign in";
+    if (initials) initials.textContent = identity.initials;
+  });
+  const accountTitle = document.querySelector("#account-dialog-title");
+  if (accountTitle) accountTitle.textContent = identity.signedIn ? "Your DuckPlan account" : "Sign in to DuckPlan";
 }
 function renderAccount() {
   renderAccountIdentity();

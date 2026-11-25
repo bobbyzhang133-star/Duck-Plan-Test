@@ -1,0 +1,62 @@
+{
+  "runtime": "158.0.8127.38",
+  "references": [
+    {
+      "site": "https://linear.app/",
+      "width": 1440,
+      "loginVisible": true,
+      "bounds": {
+        "x": 1218.46875,
+        "y": 20,
+        "width": 61.609375,
+        "height": 32
+      }
+    },
+    {
+      "site": "https://linear.app/",
+      "width": 390,
+      "loginVisible": true,
+      "bounds": {
+        "x": 188.46875,
+        "y": 16,
+        "width": 61.609375,
+        "height": 32
+      }
+    },
+    {
+      "site": "https://linear.app/",
+      "action": "login navigation",
+      "destination": "https://linear.app/login"
+    },
+    {
+      "site": "https://www.notion.com/",
+      "width": 1440,
+      "loginVisible": true,
+      "bounds": {
+        "x": 1206.859375,
+        "y": 10,
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "site": "https://www.notion.com/",
+      "width": 390,
+      "loginVisible": false,
+      "bounds": null
+    },
+    {
+      "site": "https://www.notion.com/",
+      "action": "login navigation",
+      "destination": "https://app.notion.com/login"
+    }
+  ],
+  "cache": {
+    "version": "v150",
+    "controller": true,
+    "css": true,
+    "js": true,
+    "finalCss": true,
+    "status": "PASS"
+  }
+}

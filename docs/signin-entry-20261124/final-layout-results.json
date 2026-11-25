@@ -1,0 +1,110 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:8788",
+  "mode": "signed out, actual isolated local Worker/D1",
+  "results": [
+    {
+      "viewport": "320x568",
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "entry": {
+        "x": 175,
+        "y": 74,
+        "width": 74,
+        "height": 44
+      },
+      "dialog": {
+        "x": 12,
+        "y": 12,
+        "width": 296,
+        "height": 544
+      },
+      "launcherMotion": "open + close",
+      "forms": "sign in, create account, recovery",
+      "focus": "PASS"
+    },
+    {
+      "viewport": "390x844",
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "entry": {
+        "x": 245,
+        "y": 74,
+        "width": 74,
+        "height": 44
+      },
+      "dialog": {
+        "x": 12,
+        "y": 45.609375,
+        "width": 366,
+        "height": 752.78125
+      },
+      "launcherMotion": "open + close",
+      "forms": "sign in, create account, recovery",
+      "focus": "PASS"
+    },
+    {
+      "viewport": "844x390",
+      "input": "emulated touch + keyboard",
+      "status": "PASS",
+      "entry": {
+        "x": 695,
+        "y": 26,
+        "width": 74,
+        "height": 44
+      },
+      "dialog": {
+        "x": 182,
+        "y": 12,
+        "width": 480,
+        "height": 366
+      },
+      "launcherMotion": "open + close",
+      "forms": "sign in, create account, recovery",
+      "focus": "PASS"
+    },
+    {
+      "viewport": "1024x768",
+      "input": "mouse + keyboard",
+      "status": "PASS",
+      "entry": {
+        "x": 876.859375,
+        "y": 35,
+        "width": 106.140625,
+        "height": 44
+      },
+      "dialog": {
+        "x": 272,
+        "y": 12,
+        "width": 480,
+        "height": 744
+      },
+      "launcherMotion": "open + close",
+      "forms": "sign in, create account, recovery",
+      "focus": "PASS"
+    },
+    {
+      "viewport": "1440x900",
+      "input": "mouse + keyboard",
+      "status": "PASS",
+      "entry": {
+        "x": 1292.859375,
+        "y": 35,
+        "width": 106.140625,
+        "height": 44
+      },
+      "dialog": {
+        "x": 480,
+        "y": 66.96875,
+        "width": 480,
+        "height": 766.046875
+      },
+      "launcherMotion": "open + close",
+      "forms": "sign in, create account, recovery",
+      "focus": "PASS"
+    }
+  ],
+  "notes": [
+    "One final cold local navigation timed out at 7 seconds; the affected 320x568 case passed when repeated with a 25-second navigation limit."
+  ]
+}

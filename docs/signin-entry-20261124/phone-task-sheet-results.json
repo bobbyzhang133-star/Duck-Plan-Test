@@ -1,0 +1,26 @@
+[
+  {
+    "viewport": "320x568",
+    "weekSelectorDays": 7,
+    "taskSheetOpen": true,
+    "taskSheetClose": true,
+    "addTaskVisible": true,
+    "status": "PASS"
+  },
+  {
+    "viewport": "390x844",
+    "weekSelectorDays": 7,
+    "taskSheetOpen": true,
+    "taskSheetClose": true,
+    "addTaskVisible": true,
+    "status": "PASS"
+  },
+  {
+    "viewport": "844x390",
+    "weekSelectorDays": 7,
+    "taskSheetOpen": true,
+    "taskSheetClose": true,
+    "addTaskVisible": true,
+    "status": "PASS"
+  }
+]
