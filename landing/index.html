@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="./page-stack.css?v=calendar-outline-20261113" />
     <link rel="stylesheet" href="./calendar-date-clarity.css?v=assignment-tints-20261126" />
     <link rel="stylesheet" href="./calendar-task-preview.css?v=task-card-tints-20261126" />
-    <link rel="stylesheet" href="./task-editor.css?v=section-tinted-fields-20261120" />
+    <link rel="stylesheet" href="./task-editor.css?v=start-end-20261126" />
     <link rel="stylesheet" href="./task-list-categories.css?v=task-card-tints-20261126" />
     <link rel="stylesheet" href="./planner-actions.css?v=mobile-ui-20261124" />
     <meta name="application-name" content="DuckPlan" />
@@ -234,7 +234,19 @@
       <div class="modal-heading"><div class="modal-duck" data-duck-state="focused" aria-hidden="true"></div><div><p class="section-kicker" id="modal-kicker">Plan your work</p><h2 id="modal-title">New task</h2></div><button class="close-button" type="button" id="close-task-modal" aria-label="Close">×</button></div>
       <div class="task-editor-content">
       <label class="task-editor-title"><span class="sr-only">Task name (required)</span><input name="title" required maxlength="80" placeholder="Add title" /></label>
-      <details class="schedule-disclosure editor-work" id="task-schedule-options"><summary><svg class="editor-row-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><span class="editor-summary-label">Work time<span class="editor-summary-copy" id="task-work-summary">Not scheduled</span></span></summary><fieldset class="form-section"><legend class="sr-only">Scheduled work</legend><div class="form-grid schedule-grid"><label>Work date<input name="scheduledDate" type="date" /></label><label>Start time<input name="scheduledTime" type="time" /></label><label>Duration<select name="durationMinutes"><option value="30">30 min</option><option value="45" selected>45 min</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option></select></label></div><p class="field-help">Work time is separate from the deadline.</p></fieldset></details>
+      <details class="schedule-disclosure editor-work" id="task-schedule-options"><summary><svg class="editor-row-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><span class="editor-summary-label">Work time<span class="editor-summary-copy" id="task-work-summary">Not scheduled</span></span></summary>
+        <fieldset class="form-section"><legend class="sr-only">Scheduled work</legend>
+          <div class="form-grid schedule-grid">
+            <label class="work-date-field">Start date<input name="scheduledDate" type="date" /></label>
+            <label>Start time<input name="scheduledTime" type="time" /></label>
+            <label>End time<input name="scheduledEndTime" type="time" /></label>
+            <label class="work-date-field">End date<input name="scheduledEndDate" type="date" /></label>
+          </div>
+          <input name="durationMinutes" type="hidden" value="45" />
+          <p class="field-help" id="work-range-help">Choose when work starts and ends. For overnight work, set the next end date. This does not change the deadline.</p>
+          <button type="button" class="text-link work-clear-button" data-clear-work-time>Clear work time</button>
+        </fieldset>
+      </details>
       <section class="task-editor-deadline" aria-label="Deadline"><svg class="editor-row-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg><div><div class="editor-deadline-fields"><label>Due date<input name="dueDate" type="date" /></label><label>Due time <span class="sr-only">(optional)</span><input name="dueTime" type="time" /></label></div><p class="field-help">No time means end of day. Clear the date for no deadline.</p></div></section>
       <details class="plain-disclosure task-extra-options" id="task-detail-options"><summary><svg class="editor-row-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span class="editor-summary-label">Class, priority &amp; details<span class="editor-summary-copy" id="task-detail-summary"></span></span></summary><div class="form-grid"><label>Class<select name="classId"></select></label><label>Priority<select name="priority"><option>Medium</option><option>High</option><option>Low</option></select></label><label>Deadline reminder<select name="reminderChoice">
             <option value="default">Use Settings default</option>
@@ -262,6 +274,7 @@
     <aside class="completion-note" id="completion-note" role="status" aria-live="polite" hidden><div class="completion-note-duck" data-duck-state="celebrating" aria-hidden="true"></div><div><strong>Today’s plan is complete!</strong><p id="completion-note-copy"></p></div><button type="button" id="dismiss-celebration" aria-label="Dismiss celebration">×</button></aside>
     <div class="completion-effects" id="completion-effects" aria-hidden="true"></div>
     <script src="./planner-model.js?v=fold-counts-20261117"></script>
+    <script src="./work-time-range.js?v=start-end-20261126"></script>
     <script src="./calendar-viewport.js?v=immediate-working-spring-20261119"></script>
     <script src="./calendar-swipe.js?v=calendar-swipe-20261120-final"></script>
     <script src="./calendar-date-presentation.js?v=day-summary-windows-20261120-final"></script>
@@ -297,12 +310,12 @@
     <script src="./completion-demo.js?v=section-fade-20261122"></script>
     <script src="./task-list-groups.js?v=task-categories-20261122"></script>
     <script src="./task-pages.js?v=large-task-lists-20261125"></script>
-    <script src="./app.js?v=task-card-tints-20261126"></script>
+    <script src="./app.js?v=start-end-20261126"></script>
     <script src="./account-entry.js?v=github-signin-20261124"></script>
-    <script src="./task-editor.js?v=compact-editor-20261120-final"></script>
+    <script src="./task-editor.js?v=start-end-20261126"></script>
     <script src="./duck-mascot.js?v=original-bill-happy-eyes-20261122"></script>
     <script src="./planner-presentation.js?v=large-task-lists-20261125"></script>
     <script src="./duck-interactions.js?v=bulk-overdue-20261124"></script>
-    <script src="./planner-clarity.js"></script>
+    <script src="./planner-clarity.js?v=start-end-20261126"></script>
   </body>
 </html>

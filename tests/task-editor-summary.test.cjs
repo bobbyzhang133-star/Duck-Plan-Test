@@ -5,7 +5,7 @@ const vm = require("node:vm");
 const source = fs.readFileSync("landing/task-editor.js", "utf8");
 function fixture() {
   const events = {}, observers = [], microtasks = [], nodes = new Map();
-  const elements = { scheduledDate: { value: "" }, scheduledTime: { value: "" }, durationMinutes: { value: "45" },
+  const elements = { scheduledDate: { value: "" }, scheduledTime: { value: "" }, scheduledEndDate: { value: "" }, scheduledEndTime: { value: "" }, durationMinutes: { value: "45" },
     classId: { selectedOptions: [{ textContent: "Calculus" }] }, priority: { value: "Medium" }, actualMinutes: { value: "" },
     alarmEnabled: { checked: true }, notificationEnabled: { checked: true } };
   const form = { elements, addEventListener(name, callback) { events[name] = callback; } }, modal = {};
@@ -29,11 +29,15 @@ test("editor summaries are read-only and distinguish unscheduled work and zero l
   f.elements.actualMinutes.value = "0"; f.events.change(); assert.equal(f.text("task-time-summary"), "0 minutes logged");
 });
 
-test("work summaries show the work date, local time and saved custom duration without using the deadline", () => {
+test("work summaries show the start/end range without using the deadline", () => {
   const f = fixture(); Object.assign(f.elements.scheduledDate, { value: "2030-05-02" });
   f.events.input(); assert.equal(f.text("task-work-summary"), "May 2 · Choose a start time");
-  f.elements.scheduledTime.value = "13:15"; f.elements.durationMinutes.value = "75"; f.events.input();
-  assert.equal(f.text("task-work-summary"), "May 2 · 1:15 PM · 75 min");
+  f.elements.scheduledTime.value = "13:15"; f.events.input();
+  assert.equal(f.text("task-work-summary"), "May 2 · 1:15 PM · Choose an end time");
+  f.elements.scheduledEndDate.value = "2030-05-02"; f.elements.scheduledEndTime.value = "14:30"; f.events.input();
+  assert.equal(f.text("task-work-summary"), "May 2 · 1:15 PM–2:30 PM");
+  f.elements.scheduledEndDate.value = "2030-05-03"; f.elements.scheduledEndTime.value = "01:00"; f.events.input();
+  assert.equal(f.text("task-work-summary"), "May 2 · 1:15 PM–May 3 · 1:00 AM");
   f.elements.scheduledDate.value = ""; f.events.input(); assert.equal(f.text("task-work-summary"), "Choose a work date");
 });
 

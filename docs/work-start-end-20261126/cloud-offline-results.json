@@ -1,0 +1,24 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "mode": "signed-in",
+      "input": "emulated touch",
+      "failedSaveStayedOpen": true,
+      "status": "PASS",
+      "rangeSaveReload": true,
+      "deadlineNotesPreserved": true
+    },
+    {
+      "mode": "offline",
+      "input": "emulated touch",
+      "caches": [
+        "duckplan-app-original-duck-preview-v158"
+      ],
+      "status": "PASS",
+      "rangeSaveReload": true,
+      "deadlineNotesPreserved": true
+    }
+  ],
+  "productionWrites": false
+}

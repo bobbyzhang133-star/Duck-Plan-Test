@@ -10,7 +10,10 @@
     const parsed = /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T12:00:00`) : null;
     const day = parsed && Number.isFinite(parsed.getTime()) ? new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(parsed) : date;
     const workTime = /^\d{2}:\d{2}$/.test(time) ? new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date(`2000-01-01T${time}:00`)) : "";
-    setText("task-work-summary", date && time ? `${day} · ${workTime} · ${fields.durationMinutes.value} min` : date ? `${day} · Choose a start time` : time ? "Choose a work date" : "Not scheduled");
+    const endDate = fields.scheduledEndDate.value, endTime = fields.scheduledEndTime.value;
+    const endDay = /^\d{4}-\d{2}-\d{2}$/.test(endDate) ? new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date(`${endDate}T12:00:00`)) : endDate;
+    const endLabel = /^\d{2}:\d{2}$/.test(endTime) ? new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date(`2000-01-01T${endTime}:00`)) : "";
+    setText("task-work-summary", date && time ? `${day} · ${workTime}${endDate && endLabel ? `–${endDate === date ? "" : `${endDay} · `}${endLabel}` : " · Choose an end time"}` : date ? `${day} · Choose a start time` : time || endDate || endTime ? "Choose a work date" : "Not scheduled");
     setText("task-detail-summary", `${fields.classId.selectedOptions[0]?.textContent || "No class"} · ${fields.priority.value}`);
     setText("task-time-summary", fields.actualMinutes.value === "" ? "No time logged" : `${fields.actualMinutes.value} minutes logged`);
     const alarm = fields.alarmEnabled.checked, notification = fields.notificationEnabled.checked;

@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const vm = require("node:vm");
 const Alerts = require("../landing/work-alerts.js");
+const WorkRange = require("../landing/work-time-range.js");
 
 const source = fs.readFileSync("landing/app.js", "utf8");
 const hydration = source.match(/^function hydrateTaskAlertEditor\(.*\) \{[\s\S]*?^\}/m)?.[0];
@@ -19,12 +20,13 @@ function fixture() {
   const work = future(4), legacyAlarm = future(2), legacyNotification = future(1), chosenAlarm = future(5);
   const values = { id: "legacy", title: "Legacy task", scheduledStart: work, dueDate: "", dueTime: "", durationMinutes: 45, completed: false };
   const formValues = { title: values.title, classId: "", priority: "Medium", dueDate: "", dueTime: "", scheduledDate: work.slice(0, 10), scheduledTime: work.slice(11), durationMinutes: "45", notes: "", reminderChoice: "off", actualMinutes: "", importance: "", urgency: "auto", alarmAt: work, notificationAt: work, alarmSound: "system", alarmSnooze: "5" };
+  Object.assign(formValues, WorkRange.fromStart(work.slice(0, 10), work.slice(11), 45));
   const elements = Object.fromEntries(Object.keys(formValues).map(name => [name, { get value() { return formValues[name]; }, set value(value) { formValues[name] = value; }, focus() {} }]));
   const listeners = {}, writes = [], notices = [], messages = new Map(), pending = deferred();
   let legacy = {}, renders = 0;
   const form = { elements, values: formValues, addEventListener(name, callback) { listeners[name] = callback; } };
   const context = vm.createContext({
-    window: { DuckWorkAlerts: Alerts },
+    window: { DuckWorkAlerts: Alerts, DuckWorkTimeRange: WorkRange },
     document: { querySelector(selector) { if (!messages.has(selector)) messages.set(selector, { hidden: true, textContent: "" }); return messages.get(selector); } },
     els: { form, modal: { open: true }, saveTask: { disabled: false } },
     taskAlertPreferences: Alerts.preferences(values, { timeZone: "UTC" }),

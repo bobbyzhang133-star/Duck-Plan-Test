@@ -1,0 +1,150 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:8798",
+  "cases": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "input": "emulated touch",
+      "dark": false,
+      "reduced": false,
+      "mode": "local storage",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "customLegacy": true,
+        "openClose": true,
+        "startMovesEnd": true,
+        "invalidNoWrite": true,
+        "sameDaySaveReload": true,
+        "overnightSaveReload": true,
+        "clearWork": true,
+        "reschedule": true,
+        "deadlineUnchanged": true
+      }
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch",
+      "dark": false,
+      "reduced": false,
+      "mode": "local storage",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "customLegacy": true,
+        "openClose": true,
+        "startMovesEnd": true,
+        "invalidNoWrite": true,
+        "sameDaySaveReload": true,
+        "overnightSaveReload": true,
+        "clearWork": true,
+        "reschedule": true,
+        "deadlineUnchanged": true
+      }
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "input": "emulated touch",
+      "dark": false,
+      "reduced": false,
+      "mode": "local storage",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "customLegacy": true,
+        "openClose": true,
+        "startMovesEnd": true,
+        "invalidNoWrite": true,
+        "sameDaySaveReload": true,
+        "overnightSaveReload": true,
+        "clearWork": true,
+        "reschedule": true,
+        "deadlineUnchanged": true
+      }
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "input": "emulated touch",
+      "dark": false,
+      "reduced": false,
+      "mode": "local storage",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "customLegacy": true,
+        "openClose": true,
+        "startMovesEnd": true,
+        "invalidNoWrite": true,
+        "sameDaySaveReload": true,
+        "overnightSaveReload": true,
+        "clearWork": true,
+        "reschedule": true,
+        "deadlineUnchanged": true
+      }
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "input": "mouse/keyboard",
+      "dark": false,
+      "reduced": false,
+      "mode": "local storage",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "customLegacy": true,
+        "openClose": true,
+        "startMovesEnd": true,
+        "invalidNoWrite": true,
+        "sameDaySaveReload": true,
+        "overnightSaveReload": true,
+        "clearWork": true,
+        "reschedule": true,
+        "deadlineUnchanged": true
+      }
+    },
+    {
+      "name": "dark-reduced",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch",
+      "dark": true,
+      "reduced": true,
+      "mode": "local storage",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "customLegacy": true,
+        "openClose": true,
+        "startMovesEnd": true,
+        "invalidNoWrite": true,
+        "sameDaySaveReload": true,
+        "overnightSaveReload": true,
+        "clearWork": true,
+        "reschedule": true,
+        "deadlineUnchanged": true
+      }
+    }
+  ]
+}

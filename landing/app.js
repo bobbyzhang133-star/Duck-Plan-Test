@@ -137,6 +137,7 @@ const els = {
   },
 };
 
+const workTimeEditor = window.DuckWorkTimeRange.createEditor(els.form);
 const calendarViewport = window.DuckCalendarViewport?.create({ calendar: els.calendar });
 
 const calendarDates = window.DuckCalendarDatePresentation.create({
@@ -1681,16 +1682,7 @@ function openModal(prefill = {}) {
   els.form.elements.notes.value = values.notes || "";
   els.form.elements.importance.value = values.importance || "";
   els.form.elements.urgency.value = values.urgency || "auto";
-  els.form.elements.scheduledDate.value = scheduled?.date || prefill.scheduledDate || "";
-  els.form.elements.scheduledTime.value = scheduled?.time || prefill.scheduledTime || "";
-  const duration = String(values.durationMinutes || prefill.durationMinutes || 45);
-  els.form.elements.durationMinutes.querySelectorAll("[data-custom-duration]").forEach((option) => option.remove());
-  if (![...els.form.elements.durationMinutes.options].some((option) => option.value === duration)) {
-    const option = new Option(`${duration} min`, duration);
-    option.dataset.customDuration = "true";
-    els.form.elements.durationMinutes.add(option);
-  }
-  els.form.elements.durationMinutes.value = duration;
+  workTimeEditor.reset(scheduled?.date || prefill.scheduledDate || "", scheduled?.time || prefill.scheduledTime || "", values.durationMinutes || prefill.durationMinutes || 45, Model.scheduledEndAt(values));
   const choice = values.reminderChoice;
   els.form.elements.reminderChoice.value = taskReminderChoices.includes(choice) ? choice : "default";
   els.form.elements.actualMinutes.value = task?.actualMinutes ?? "";
@@ -2228,9 +2220,15 @@ els.form.addEventListener("submit", async (event) => {
   }
   const form = new FormData(els.form); const title = form.get("title").trim(); if (!title) return;
   const wasEditing = Boolean(editingTaskId);
-  const scheduledDate = form.get("scheduledDate"); const scheduledTime = form.get("scheduledTime");
+  let workRange;
+  try { workRange = window.DuckWorkTimeRange.read(Object.fromEntries(["scheduledDate", "scheduledTime", "scheduledEndDate", "scheduledEndTime", "durationMinutes"].map(name => [name, form.get(name)]))); }
+  catch (error) {
+    const message = document.querySelector("#task-form-error"); message.hidden = false; message.textContent = error.message;
+    document.querySelector("#task-schedule-options").open = true;
+    els.form.elements[error.field]?.focus(); return;
+  }
   const existing = editingTaskId ? tasks.find((task) => task.id === editingTaskId) : null;
-  const next = { ...pendingTaskDraft, ...existing, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledStart: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null, scheduledEnd: null, durationMinutes: Number(form.get("durationMinutes") || 45), notes: String(form.get("notes") || ""), importance: form.get("importance") || null, urgency: form.get("urgency") || "auto", schemaVersion: 2 };
+  const next = { ...pendingTaskDraft, ...existing, ...workRange, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledEnd: null, notes: String(form.get("notes") || ""), importance: form.get("importance") || null, urgency: form.get("urgency") || "auto", schemaVersion: 2 };
   const reminderChoice = form.get("reminderChoice");
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");

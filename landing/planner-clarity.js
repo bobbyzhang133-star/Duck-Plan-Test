@@ -105,10 +105,8 @@
   form.addEventListener("submit", (event) => {
     clearErrors();
     if (!form.elements.title.value.trim()) form.elements.title.setCustomValidity("Enter a task name so you can find it later.");
-    const date = form.elements.scheduledDate;
-    const time = form.elements.scheduledTime;
-    if (date.value && !time.value) time.setCustomValidity("Choose a start time for your scheduled work.");
-    if (time.value && !date.value) date.setCustomValidity("Choose a work date for your scheduled work.");
+    try { window.DuckWorkTimeRange.read(Object.fromEntries(["scheduledDate", "scheduledTime", "scheduledEndDate", "scheduledEndTime", "durationMinutes"].map(name => [name, form.elements[name].value]))); }
+    catch (rangeError) { form.elements[rangeError.field].setCustomValidity(rangeError.message); }
     const invalid = [...form.elements].find((field) => field.willValidate && !field.validity.valid);
     if (!invalid) return;
     event.preventDefault(); event.stopImmediatePropagation();
