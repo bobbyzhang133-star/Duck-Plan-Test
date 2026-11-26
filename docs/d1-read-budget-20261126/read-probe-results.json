@@ -1,0 +1,25 @@
+{
+  "runtime": "158.0.8127.38",
+  "scope": "isolated loopback real Worker/D1",
+  "taskCount": 10000,
+  "full": {
+    "queries": 12,
+    "rowsRead": 20011,
+    "rowsWritten": 0,
+    "bytes": 5719220,
+    "metaAvailable": true
+  },
+  "unchanged50": {
+    "queries": 100,
+    "rowsRead": 150,
+    "rowsReadPerRequest": 3,
+    "bytesPerRequest": 79
+  },
+  "changedReload": {
+    "taskCount": 10000,
+    "completed": true,
+    "versionChanged": true
+  },
+  "productionWrites": false,
+  "status": "PASS"
+}

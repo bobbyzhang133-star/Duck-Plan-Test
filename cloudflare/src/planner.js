@@ -184,7 +184,18 @@ export async function handlePlanner(request, env, ctx, path, user) {
   const db = env.DB;
   const notify = (message) => ctx.waitUntil(broadcast(env, user.id, message));
 
-  if (path === "/api/planner" && method === "GET") return json(await loadPlanner(env, user.id));
+  if (path === "/api/planner" && method === "GET") {
+    const version = async () => {
+      const row = await db.prepare("SELECT scope, revision FROM planner_versions WHERE user_id = ?").bind(user.id).first();
+      return row ? `1:${row.scope}:${row.revision}` : null;
+    };
+    const before = await version();
+    if (before && new URL(request.url).searchParams.get("since") === before) return json({ unchanged: true, planner_version: before });
+    const planner = await loadPlanner(env, user.id), after = await version();
+    // A concurrent write can interleave the existing collection queries. Never
+    // label that response as cacheable under a version it did not fully capture.
+    return json({ ...planner, planner_version: before === after ? after : null });
+  }
 
   if (path === "/api/items/complete-overdue" && method === "POST") {
     const body = await readJson(request, 64_000);
@@ -211,7 +222,7 @@ export async function handlePlanner(request, env, ctx, path, user) {
       RETURNING id, sync_revision + 1 AS sync_revision, updated_at`).bind(now, user.id, JSON.stringify(items), body.before).all());
     // The 0007 AFTER UPDATE trigger increments each revision exactly once.
     // Return that revision without another read racing a subsequent user edit.
-    if (result.results.length) notify({ reload: true });
+    if (result.results.length) notify({ reload: true, item_completions: result.results });
     return json({ completed: result.results });
   }
 

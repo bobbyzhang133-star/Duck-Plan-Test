@@ -1,0 +1,14 @@
+
+ ⛅️ wrangler 4.157.0
+────────────────────
+✨ Read 135 files from the assets directory /private/tmp/duckplan-read-budget-20261126/landing
+Total Upload: 130.44 KiB / gzip: 31.71 KiB
+Your Worker has access to the following bindings:
+Binding                                             Resource                  
+env.LIVE (PlannerLive)                              Durable Object            
+env.DB (duckplan-latest)                            D1 Database               
+env.ASSETS                                          Assets                    
+env.AXIS_SYNC_INTERVAL_HOURS ("4")                  Environment Variable      
+env.AXIS_SYNC_PER_RUN ("4")                         Environment Variable      
+
+--dry-run: exiting now.

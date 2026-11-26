@@ -65,7 +65,7 @@ test("bulk overdue completion is owner-scoped, conditional, compact and preserve
   assert.equal(response.status, 200, JSON.stringify(response.data));
   assert.deepEqual(response.data.completed.map(item => item.id).sort(), source.slice(4).map(item => item.id).sort());
   assert.ok(response.data.completed.every(item => Object.keys(item).sort().join() === "id,sync_revision,updated_at"));
-  assert.deepEqual(app.broadcasts, [{ userId: a.user.id, message: { reload: true } }]);
+  assert.deepEqual(app.broadcasts, [{ userId: a.user.id, message: { reload: true, item_completions: response.data.completed } }]);
   const saved = (await app.call("/api/planner", { cookie: a.cookie })).data.items;
   for (const item of saved.filter(item => source.slice(4).some(value => value.id === item.id))) {
     assert.equal(item.completed, 1); assert.equal(item.notes, "Preserve full notes"); assert.equal(item.duration_minutes, 90); assert.equal(item.scheduled_start, "2026-11-21T09:00");
@@ -213,7 +213,9 @@ test("user A can't read or change user B's rows (replaces the Postgres RLS test)
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PUT", cookie: a.cookie, body: { title: "A's task", class_id: uuid(10) } })).status, 200);
 
   const bView = await app.call("/api/planner", { cookie: b.cookie });
-  assert.deepEqual(bView.data, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [], work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true, bulk_completion_supported: true });
+  assert.match(bView.data.planner_version, /^1:[a-f0-9]{32}:\d+$/);
+  const { planner_version, ...bPlanner } = bView.data;
+  assert.deepEqual(bPlanner, { classes: [], items: [], templates: [], resources: [], organization: { urgency_days: 2 }, goals: [], habits: [], habit_checkins: [], notes: [], work_alerts_supported: true, task_details_supported: true, settings_adoption_supported: true, bulk_completion_supported: true });
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PUT", cookie: b.cookie, body: { title: "hijack" } })).status, 404);
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "PATCH", cookie: b.cookie, body: { completed: true } })).status, 404);
   assert.equal((await app.call(`/api/items/${uuid(20)}`, { method: "DELETE", cookie: b.cookie })).status, 200);
@@ -488,7 +490,7 @@ test("browser store: live messages from another device update the cache, and fai
   store.subscribe(({ reason }) => reasons.push(reason));
   await assert.rejects(store.upsertItem({ title: "" }), /Title is required/);
   assert.equal(store.listItems().length, 0);
-  assert.deepEqual(reasons, ["local", "error", "remote"], "failed writes roll back, then revalidate through the shared cloud snapshot flow");
+  assert.deepEqual(reasons, ["local", "error"], "failed writes roll back; unchanged revalidation avoids another redraw");
 
   await store.signOut();
   assert.equal(store.mode, "local");
@@ -531,4 +533,123 @@ test("browser store: GitHub readiness, sign-in routing and explicit linking pres
   assert.equal(transaction.intent, "link"); assert.equal(transaction.user_id, userId);
   const disabled = browserStore(setup(), { cookieJar: { value: null } }).store;
   await disabled.init(); await assert.rejects(disabled.signInWithGitHub(), /isn't connected/);
+});
+
+test("10,000 tasks: 50 unchanged refreshes read only owner version, never planner collections", async () => {
+  const app = setup(), a = await app.signIn("budget-a@fixture.test"), b = await app.signIn("budget-b@fixture.test");
+  app.env.DB.raw.prepare(`WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i+1 FROM n WHERE i<10000)
+    INSERT INTO items(id,user_id,title) SELECT 'budget-'||i, ?, 'Task '||i FROM n`).run(a.user.id);
+  const initial = (await app.call("/api/planner", { cookie: a.cookie })).data;
+  assert.equal(initial.items.length, 10000); assert.match(initial.planner_version, /^1:[a-f0-9]{32}:\d+$/);
+  const queries = [], prepare = app.env.DB.prepare;
+  app.env.DB.prepare = sql => { queries.push(sql); return prepare(sql); };
+  for (let i=0; i<50; i++) {
+    const result = await app.call(`/api/planner?since=${encodeURIComponent(initial.planner_version)}`, { cookie: a.cookie });
+    assert.equal(result.status, 200); assert.deepEqual(result.data, { unchanged: true, planner_version: initial.planner_version });
+    assert.match(result.headers.get("cache-control"), /no-store/);
+  }
+  assert.equal(queries.filter(sql => /FROM planner_versions/.test(sql)).length, 50);
+  assert.equal(queries.filter(sql => /FROM (items|classes|task_templates|class_resources|planner_preferences|goals|habits|habit_checkins|notes)\b/.test(sql)).length, 0);
+  const foreign = (await app.call(`/api/planner?since=${initial.planner_version}`, { cookie: b.cookie })).data;
+  assert.deepEqual(foreign.items, []); assert.notEqual(foreign.planner_version, initial.planner_version); assert.equal(foreign.unchanged, undefined);
+  app.env.DB.raw.prepare("UPDATE items SET title='Changed by old writer' WHERE id='budget-1'").run();
+  const changed = (await app.call(`/api/planner?since=${initial.planner_version}`, { cookie: a.cookie })).data;
+  assert.equal(changed.items.length, 10000); assert.notEqual(changed.planner_version, initial.planner_version);
+  assert.equal(changed.items.find(row=>row.id==='budget-1').title, 'Changed by old writer');
+  assert.equal((await app.call('/api/planner', { cookie: a.cookie })).data.items.length, 10000, 'old clients retain full response');
+});
+
+test("snapshot versions cover every planner collection, rollbacks and owner cascades", async () => {
+  const app = setup(), a = await app.signIn('versions@fixture.test'), b = await app.signIn('versions-other@fixture.test'), db=app.env.DB.raw;
+  const revision = id => db.prepare('SELECT revision FROM planner_versions WHERE user_id=?').get(id)?.revision;
+  db.prepare("INSERT INTO classes(id,user_id,name) VALUES ('support-class',?,'Support')").run(a.user.id);
+  db.prepare("INSERT INTO habits(id,user_id,title) VALUES ('support-habit',?,'Support')").run(a.user.id);
+  const otherBefore=revision(b.user.id);
+  const cases=[
+    ['items', "INSERT INTO items(id,user_id,title) VALUES ('v-item',?,'Item')", "id='v-item'", "title='Updated'"],
+    ['classes', "INSERT INTO classes(id,user_id,name) VALUES ('v-class',?,'Class')", "id='v-class'", "name='Updated'"],
+    ['task_templates', "INSERT INTO task_templates(id,user_id,title) VALUES ('v-template',?,'Template')", "id='v-template'", "title='Updated'"],
+    ['class_resources', "INSERT INTO class_resources(id,user_id,class_id,title,url) VALUES ('v-resource',?,'support-class','Resource','https://example.com')", "id='v-resource'", "title='Updated'"],
+    ['planner_preferences', "INSERT INTO planner_preferences(user_id) VALUES (?)", 'user_id=?', 'urgency_days=3'],
+    ['goals', "INSERT INTO goals(id,user_id,title) VALUES ('v-goal',?,'Goal')", "id='v-goal'", "title='Updated'"],
+    ['habits', "INSERT INTO habits(id,user_id,title) VALUES ('v-habit',?,'Habit')", "id='v-habit'", "title='Updated'"],
+    ['habit_checkins', "INSERT INTO habit_checkins(user_id,habit_id,date) VALUES (?,'support-habit','2026-11-26')", "habit_id='support-habit'", 'completed=0'],
+    ['notes', "INSERT INTO notes(id,user_id,title) VALUES ('v-note',?,'Note')", "id='v-note'", "title='Updated'"],
+  ];
+  for(const [table,insert,where,update] of cases){
+    let before=revision(a.user.id); db.prepare(insert).run(a.user.id); assert.equal(revision(a.user.id),before+1,`${table} insert`);
+    const params=where.includes('?')?[a.user.id]:[];
+    before=revision(a.user.id); db.prepare(`UPDATE ${table} SET ${update} WHERE ${where}`).run(...params); assert.equal(revision(a.user.id),before+1,`${table} update exactly once`);
+    before=revision(a.user.id); db.prepare(`DELETE FROM ${table} WHERE ${where}`).run(...params); assert.equal(revision(a.user.id),before+1,`${table} delete`);
+  }
+  assert.equal(revision(b.user.id),otherBefore,'other owner is unchanged');
+  const before=revision(a.user.id); db.exec('BEGIN'); db.prepare("INSERT INTO notes(id,user_id,title) VALUES ('rollback',?,'Rollback')").run(a.user.id); db.exec('ROLLBACK'); assert.equal(revision(a.user.id),before);
+  db.prepare('DELETE FROM users WHERE id=?').run(a.user.id); assert.equal(revision(a.user.id),undefined); assert.equal(revision(b.user.id),otherBefore);
+});
+
+test("a snapshot interleaved with a database write never acknowledges a stable version", async()=>{
+  const app=setup(), a=await app.signIn('interleave@fixture.test'), prepare=app.env.DB.prepare;
+  let injected=false;
+  app.env.DB.prepare=sql=>{
+    if(!injected && /SELECT \* FROM classes/.test(sql)) { injected=true; app.env.DB.raw.prepare("INSERT INTO notes(id,user_id,title) VALUES ('interleaved',?,'New note')").run(a.user.id); }
+    return prepare(sql);
+  };
+  const snapshot=(await app.call('/api/planner',{cookie:a.cookie})).data;
+  assert.ok(injected); assert.equal(snapshot.planner_version,null);
+  assert.match((await app.call('/api/planner',{cookie:a.cookie})).data.planner_version,/^1:/);
+});
+
+test("browser unchanged refreshes skip collection scans and compact peer completion preserves fields",async()=>{
+  const app=setup(), a=await app.signIn('peer-budget@fixture.test');
+  await app.call(`/api/items/${uuid(9801)}`,{method:'PUT',cookie:a.cookie,body:{title:'Peer task',notes:'Keep notes',due_date:'2026-11-19',scheduled_start:'2026-11-20T09:00',duration_minutes:90}});
+  const {store}=browserStore(app,{cookieJar:{value:a.cookie}}); await store.init();
+  const socket=FakeSocket.sockets.at(-1), events=[],queries=[],prepare=app.env.DB.prepare;
+  store.subscribe(e=>events.push(e.reason)); app.env.DB.prepare=sql=>{queries.push(sql);return prepare(sql);};
+  for(let i=0;i<20;i++) await store.refresh();
+  assert.deepEqual(events,[]); assert.equal(queries.filter(sql=>/SELECT \* FROM items/.test(sql)).length,0);
+  const task=store.listItems()[0];
+  const result=await app.call('/api/items/complete-overdue',{method:'POST',cookie:a.cookie,body:{items:[{id:task.id,expected_revision:task.syncRevision,due_date:'2026-11-19',due_time:null}],before:'2026-11-20T13:00:00.000'}});
+  queries.length=0; socket.receive(app.broadcasts.at(-1).message);
+  const saved=store.listItems()[0]; assert.equal(saved.completed,true); assert.equal(saved.notes,'Keep notes'); assert.equal(saved.durationMinutes,90); assert.equal(saved.syncRevision,result.data.completed[0].sync_revision);
+  assert.equal(queries.length,0,'peer applies compact completion without any database reload');
+  socket.receive(app.broadcasts.at(-1).message); assert.equal(events.filter(e=>e==='remote').length,1,'duplicate event is ignored');
+  await store.signOut();
+});
+
+test("discarded cloud snapshot does not advance version or lose an intervening unseen edit", { timeout: 10000 },async()=>{
+  const app=setup(), a=await app.signIn('ack-race@fixture.test');
+  for(let i=0;i<2;i++) await app.call(`/api/items/${uuid(9900+i)}`,{method:'PUT',cookie:a.cookie,body:{title:`Original ${i}`}});
+  const {store}=browserStore(app,{cookieJar:{value:a.cookie}}); await store.init(); const socket=FakeSocket.sockets.at(-1);
+  for(let i=0;i<2;i++) await app.call(`/api/items/${uuid(9900+i)}`,{method:'PUT',cookie:a.cookie,body:{title:`Updated ${i}`}});
+  const batch=app.env.DB.batch.bind(app.env.DB); let release,seen; const held=new Promise(r=>release=r),started=new Promise(r=>seen=r); let once=true;
+  app.env.DB.batch=async statements=>{
+    const data=await batch(statements);
+    if(once&&statements.some(s=>/SELECT \* FROM items/.test(s.sql))){once=false;seen();await held;} return data;
+  };
+  const refresh=store.refresh(); await started;
+  socket.receive(app.broadcasts.findLast(e=>e.message.row?.id===uuid(9900)).message); release(); await refresh;
+  assert.deepEqual(store.listItems().map(t=>t.title).sort(),['Updated 0','Updated 1']);
+  await store.signOut();
+});
+
+test("version migration backfills existing owners without rewriting their task data", async()=>{
+  const {DatabaseSync}=await import('node:sqlite'), db=new DatabaseSync(':memory:'); db.exec('PRAGMA foreign_keys=ON');
+  for(const name of fs.readdirSync(path.join(repoRoot,'cloudflare/migrations')).filter(n=>n.endsWith('.sql')&&n<'0012'&&n!=='0009_oauth_transactions.sql').sort()) db.exec(fs.readFileSync(path.join(repoRoot,'cloudflare/migrations',name),'utf8'));
+  db.exec("INSERT INTO users(id,email) VALUES ('legacy-a','legacy-a@fixture.test'),('legacy-b','legacy-b@fixture.test'); INSERT INTO items(id,user_id,title) VALUES ('legacy-item','legacy-a','Keep legacy item')");
+  db.exec(fs.readFileSync(path.join(repoRoot,'cloudflare/migrations/0012_planner_versions.sql'),'utf8'));
+  const versions=db.prepare('SELECT * FROM planner_versions ORDER BY user_id').all(); assert.equal(versions.length,2); assert.equal(versions[0].revision,1); assert.notEqual(versions[0].scope,versions[1].scope);
+  assert.equal(db.prepare('SELECT title FROM items').get().title,'Keep legacy item');db.exec("UPDATE items SET title='Old SQL writer still invalidates' WHERE id='legacy-item'");assert.equal(db.prepare("SELECT revision FROM planner_versions WHERE user_id='legacy-a'").get().revision,2);db.close();
+});
+
+test("compact completion cannot clobber newer edits, and revision gaps reload authoritative state",async()=>{
+  const app=setup(),a=await app.signIn('compact-gap@fixture.test'),id=uuid(9990);
+  await app.call(`/api/items/${id}`,{method:'PUT',cookie:a.cookie,body:{title:'Original',due_date:'2026-11-19'}});
+  const {store}=browserStore(app,{cookieJar:{value:a.cookie}});await store.init();const socket=FakeSocket.sockets.at(-1),task=store.listItems()[0];
+  const result=await app.call('/api/items/complete-overdue',{method:'POST',cookie:a.cookie,body:{items:[{id,expected_revision:task.syncRevision,due_date:'2026-11-19',due_time:null}],before:'2026-11-20T13:00:00.000'}});
+  const event=app.broadcasts.at(-1).message;
+  const edited=await app.call(`/api/items/${id}`,{method:'PUT',cookie:a.cookie,body:{title:'Newer reopened edit',completed:false,due_date:'2026-11-19'}});socket.receive({table:'items',row:edited.data.item});socket.receive(event);
+  assert.equal(store.listItems()[0].title,'Newer reopened edit');assert.equal(store.listItems()[0].completed,false);
+  const skipped=await app.call(`/api/items/${id}`,{method:'PUT',cookie:a.cookie,body:{title:'Unseen edit',completed:false,due_date:'2026-11-19'}});
+  const later=await app.call('/api/items/complete-overdue',{method:'POST',cookie:a.cookie,body:{items:[{id,expected_revision:skipped.data.item.sync_revision,due_date:'2026-11-19',due_time:null}],before:'2026-11-20T13:00:00.000'}});assert.equal(later.data.completed.length,1);
+  socket.receive(app.broadcasts.at(-1).message);await store.refresh();assert.equal(store.listItems()[0].title,'Unseen edit');assert.equal(store.listItems()[0].completed,true);assert.ok(later.data.completed[0].sync_revision>result.data.completed[0].sync_revision);await store.signOut();
 });

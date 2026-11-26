@@ -1,0 +1,195 @@
+{
+  "source": "Wrangler D1 Query Insights, read-only November26 2026; rolling windows, sampled estimates, not exact UTC daily totals",
+  "sevenDaysAccount": [
+    {
+      "query": "SELECT * FROM items WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id",
+      "totalRowsRead": 4725850,
+      "numberOfTimesRun": 496,
+      "avgRowsRead": 9527,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "UPDATE items SET axis_missing = 1, updated_at = ?1 WHERE user_id = ?2 AND id IN (SELECT value FROM json_each(?3))",
+      "totalRowsRead": 292775,
+      "numberOfTimesRun": 37,
+      "avgRowsRead": 7912,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT id, axis_uid, title, due_date, class_id, notes, completed, deleted_at, axis_missing FROM items WHERE user_id = ? AND axis_uid IS NOT NULL",
+      "totalRowsRead": 149082,
+      "numberOfTimesRun": 22,
+      "avgRowsRead": 6776,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "INSERT INTO items (user_id, id, title, due_date, class_id, notes, type, due_time, source, axis_uid, axis_missing, updated_at) SELECT ?1, json_extract(value, '$.id'), json_extract(value, '$.title'), json_extract(value, '$.due_date'), json_extract(value, '$.class_id'), json_extract(value, '$.notes'), json_extract(value, '$.type'), json_extract(value, '$.due_time'), json_extract(value, '$.source'), json_extract(value, '$.axis_uid'), json_extract(value, '$.axis_missing'), ?3 FROM json_each(?2) WHERE true ON CONFLICT (user_id, axis_uid) DO NOTHING",
+      "totalRowsRead": 91312,
+      "numberOfTimesRun": 33,
+      "avgRowsRead": 2767,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT COUNT(*) AS exact_groups, COALESCE(SUM(n-1),0) AS exact_extra_rows, MAX(n) AS most_copies FROM (SELECT COUNT(*) AS n FROM items WHERE source='axis' AND deleted_at IS NULL GROUP BY user_id,class_id,title,type,due_date,due_time,notes HAVING COUNT(*)>1)",
+      "totalRowsRead": 19389,
+      "numberOfTimesRun": 1,
+      "avgRowsRead": 19389,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT COUNT(*) AS repeated_groups, COALESCE(SUM(n-1),0) AS extra_rows, MAX(n) AS most_copies FROM (SELECT COUNT(*) AS n FROM items WHERE source='axis' AND deleted_at IS NULL GROUP BY user_id, class_id, title, due_date, due_time HAVING COUNT(*)>1)",
+      "totalRowsRead": 19389,
+      "numberOfTimesRun": 1,
+      "avgRowsRead": 19389,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT u.id, u.email, u.display_name, u.password_hash FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ?",
+      "totalRowsRead": 11038,
+      "numberOfTimesRun": 5523,
+      "avgRowsRead": 1,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT COUNT(*) AS axis_rows, COUNT(DISTINCT axis_uid) AS unique_uids, SUM(axis_missing) AS missing_rows FROM items WHERE source='axis'",
+      "totalRowsRead": 9713,
+      "numberOfTimesRun": 1,
+      "avgRowsRead": 9713,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT COUNT(*) AS linked_descriptions FROM items WHERE source='axis' AND notes LIKE '%https://%'",
+      "totalRowsRead": 9713,
+      "numberOfTimesRun": 1,
+      "avgRowsRead": 9713,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "DELETE FROM task_alarms WHERE fire_at<?",
+      "totalRowsRead": 9581,
+      "numberOfTimesRun": 9784,
+      "avgRowsRead": 0,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT * FROM classes WHERE user_id = ? ORDER BY created_at, id",
+      "totalRowsRead": 6741,
+      "numberOfTimesRun": 583,
+      "avgRowsRead": 11,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "select \"users\".\"id\", \"users\".\"email\", \"users\".\"phone_number\", \"users\".\"display_name\", \"users\".\"avatar_url\" from \"sessions\" inner join \"users\" on \"sessions\".\"user_id\" = \"users\".\"id\" where (\"sessions\".\"token_hash\" = ? and \"sessions\".\"expires_at\" > ?) limit ?",
+      "totalRowsRead": 4238,
+      "numberOfTimesRun": 2119,
+      "avgRowsRead": 2,
+      "database": "Other account database"
+    },
+    {
+      "query": "update \"learning_progress\" set \"activity_type\" = ?, \"schema_version\" = ?, \"payload\" = ?, \"revision\" = \"learning_progress\".\"revision\" + 1, \"deleted\" = ?, \"updated_at\" = ? where (\"learning_progress\".\"user_id\" = ? and \"learning_progress\".\"activity_id\" = ? and \"learning_progress\".\"activity_type\" = ? and \"learning_progress\".\"revision\" = ? and \"learning_progress\".\"generation\" = ?) returning \"user_id\", \"activity_id\", \"activity_type\", \"schema_version\", \"payload\", \"revision\", \"generation\", \"deleted\", \"updated_at\"",
+      "totalRowsRead": 2786,
+      "numberOfTimesRun": 1393,
+      "avgRowsRead": 2,
+      "database": "Other account database"
+    },
+    {
+      "query": "ALTER TABLE planner_imports ADD COLUMN goals_added INTEGER NOT NULL DEFAULT 0 CHECK (goals_added >= 0)",
+      "totalRowsRead": 1785,
+      "numberOfTimesRun": 21,
+      "avgRowsRead": 85,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "UPDATE items SET completed = ?1, completed_at = CASE WHEN ?1 = 0 THEN NULL ELSE coalesce(completed_at, ?2) END, updated_at = ?2 WHERE id = ?3 AND user_id = ?4 AND deleted_at IS NULL RETURNING *",
+      "totalRowsRead": 1650,
+      "numberOfTimesRun": 330,
+      "avgRowsRead": 5,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "insert into \"users\" (\"id\", \"email\", \"phone_number\", \"display_name\", \"avatar_url\", \"created_at\", \"updated_at\") values (?, ?, ?, ?, ?, ?, ?) on conflict (\"users\".\"id\") do update set \"email\" = ?, \"phone_number\" = ?, \"display_name\" = ?, \"avatar_url\" = ?, \"updated_at\" = ?",
+      "totalRowsRead": 1552,
+      "numberOfTimesRun": 1552,
+      "avgRowsRead": 1,
+      "database": "Other account database"
+    },
+    {
+      "query": "-- SHA-256 of the current recovery code\n\nDROP TABLE login_tokens",
+      "totalRowsRead": 1410,
+      "numberOfTimesRun": 10,
+      "avgRowsRead": 141,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT * FROM goals WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id",
+      "totalRowsRead": 849,
+      "numberOfTimesRun": 749,
+      "avgRowsRead": 1,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "SELECT * FROM task_templates WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id",
+      "totalRowsRead": 713,
+      "numberOfTimesRun": 664,
+      "avgRowsRead": 1,
+      "database": "DuckPlan"
+    },
+    {
+      "query": "select \"user_id\", \"activity_id\", \"activity_type\", \"schema_version\", \"payload\", \"revision\", \"generation\", \"deleted\", \"updated_at\" from \"learning_progress\" where \"learning_progress\".\"user_id\" = ?",
+      "totalRowsRead": 684,
+      "numberOfTimesRun": 57,
+      "avgRowsRead": 12,
+      "database": "Other account database"
+    }
+  ],
+  "latest24hDuckPlan": [
+    {
+      "query": "SELECT * FROM items WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at, id",
+      "totalRowsRead": 698132,
+      "numberOfTimesRun": 32,
+      "avgRowsRead": 21816
+    },
+    {
+      "query": "SELECT id, axis_uid, title, due_date, class_id, notes, completed, deleted_at, axis_missing FROM items WHERE user_id = ? AND axis_uid IS NOT NULL",
+      "totalRowsRead": 51544,
+      "numberOfTimesRun": 5,
+      "avgRowsRead": 10308
+    },
+    {
+      "query": "UPDATE items SET axis_missing = 1, updated_at = ?1 WHERE user_id = ?2 AND id IN (SELECT value FROM json_each(?3))",
+      "totalRowsRead": 45764,
+      "numberOfTimesRun": 4,
+      "avgRowsRead": 11441
+    },
+    {
+      "query": "INSERT INTO items (user_id, id, title, due_date, class_id, notes, type, due_time, source, axis_uid, axis_missing, updated_at) SELECT ?1, json_extract(value, '$.id'), json_extract(value, '$.title'), json_extract(value, '$.due_date'), json_extract(value, '$.class_id'), json_extract(value, '$.notes'), json_extract(value, '$.type'), json_extract(value, '$.due_time'), json_extract(value, '$.source'), json_extract(value, '$.axis_uid'), json_extract(value, '$.axis_missing'), ?3 FROM json_each(?2) WHERE true ON CONFLICT (user_id, axis_uid) DO NOTHING",
+      "totalRowsRead": 13840,
+      "numberOfTimesRun": 5,
+      "avgRowsRead": 2768
+    },
+    {
+      "query": "DELETE FROM task_alarms WHERE fire_at<?",
+      "totalRowsRead": 1322,
+      "numberOfTimesRun": 1465,
+      "avgRowsRead": 0
+    },
+    {
+      "query": "SELECT * FROM classes WHERE user_id = ? ORDER BY created_at, id",
+      "totalRowsRead": 465,
+      "numberOfTimesRun": 31,
+      "avgRowsRead": 15
+    },
+    {
+      "query": "SELECT u.id, u.email, u.display_name, u.password_hash FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ?",
+      "totalRowsRead": 224,
+      "numberOfTimesRun": 116,
+      "avgRowsRead": 1
+    },
+    {
+      "query": "SELECT user_id, ical_url FROM axis_connections WHERE coalesce(last_attempted_at, '') < ? ORDER BY coalesce(last_attempted_at, '') LIMIT ?",
+      "totalRowsRead": 94,
+      "numberOfTimesRun": 47,
+      "avgRowsRead": 2
+    }
+  ]
+}

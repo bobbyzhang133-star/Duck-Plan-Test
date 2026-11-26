@@ -1,0 +1,10 @@
+{
+  "name": "duckplan-read-budget-qa",
+  "main": "server.mjs",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "../../landing", "binding": "ASSETS", "run_worker_first": ["/api/*", "/cloud-config.js", "/__axis-qa", "/__metrics"] },
+  "d1_databases": [{ "binding": "DB", "database_name": "duckplan-read-budget-qa", "database_id": "00000000-0000-4000-8000-000000000159", "migrations_dir": "../../cloudflare/migrations" }],
+  "durable_objects": { "bindings": [{ "name": "LIVE", "class_name": "PlannerLive" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["PlannerLive"] }],
+  "observability": { "enabled": false }
+}

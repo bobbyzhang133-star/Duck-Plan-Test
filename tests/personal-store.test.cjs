@@ -262,6 +262,9 @@ test("cloud personal CRUD round-trips through the real Worker and live rows, inc
   assert.equal(store.listGoals()[0].currentCount, 3); assert.deepEqual(store.listNotes(), []);
   socket.receive({ table: "habits", row: { ...Store.habitToRow(habit), deleted_at: "2026-11-12T12:00:00Z" } });
   assert.deepEqual(store.listHabitCheckins(), []);
+  // The artificial socket deletion above never changed D1. Force an authoritative
+  // revalidation by advancing its version, as a real committed live event would.
+  app.env.DB.raw.prepare("UPDATE habits SET title=title WHERE id=?").run(habit.id);
   await store.refresh();
   await store.setHabitCheckin(habit.id, "2026-11-12", false);
   await store.refresh(); assert.deepEqual(store.listHabitCheckins(), []);

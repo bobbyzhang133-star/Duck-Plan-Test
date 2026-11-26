@@ -1,0 +1,85 @@
+{
+  "runtime": "158.0.8127.38",
+  "source": "d23fb66 + read-budget fix; cache159; schema0012",
+  "cases": [
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "orientation": "portrait",
+      "mode": "signed-in local Worker/D1",
+      "input": "emulated touch",
+      "scrolledActionsReachable": true,
+      "unchangedRefreshes": 10,
+      "focusRetained": true,
+      "compactLiveCompletion": true,
+      "durablePeerChange": true,
+      "status": "PASS"
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "orientation": "portrait",
+      "mode": "signed-in local Worker/D1",
+      "input": "emulated touch",
+      "scrolledActionsReachable": true,
+      "unchangedRefreshes": 10,
+      "focusRetained": true,
+      "compactLiveCompletion": true,
+      "durablePeerChange": true,
+      "status": "PASS"
+    },
+    {
+      "viewport": [
+        844,
+        390
+      ],
+      "orientation": "landscape",
+      "mode": "signed-in local Worker/D1",
+      "input": "emulated touch",
+      "scrolledActionsReachable": true,
+      "unchangedRefreshes": 10,
+      "focusRetained": true,
+      "compactLiveCompletion": true,
+      "durablePeerChange": true,
+      "status": "PASS"
+    },
+    {
+      "viewport": [
+        835,
+        1112
+      ],
+      "orientation": "portrait",
+      "mode": "signed-in local Worker/D1",
+      "input": "emulated touch",
+      "scrolledActionsReachable": true,
+      "unchangedRefreshes": 10,
+      "focusRetained": true,
+      "compactLiveCompletion": true,
+      "durablePeerChange": true,
+      "status": "PASS"
+    },
+    {
+      "viewport": [
+        1280,
+        900
+      ],
+      "orientation": "landscape",
+      "mode": "signed-in local Worker/D1",
+      "input": "mouse/keyboard",
+      "scrolledActionsReachable": true,
+      "unchangedRefreshes": 10,
+      "focusRetained": true,
+      "compactLiveCompletion": true,
+      "durablePeerChange": true,
+      "status": "PASS"
+    }
+  ],
+  "productionWrites": false,
+  "physicalSafari": "NOT RUN",
+  "nativeApp": "NOT RUN: frozen release checkpoint",
+  "passed": true
+}

@@ -133,9 +133,9 @@ export async function syncUser(env, userId, icalUrl, { fetchImpl, now = Date.now
     // One transaction: a sync applies completely or not at all.
     const results = await db.batch(statements);
     const autoCompleted = completionStatement < 0 ? 0 : results[completionStatement].results.length;
-    await broadcast(env, userId, { reload: true });
     const added = insertStatement < 0 ? 0 : results[insertStatement].results.length;
     const classesAdded = classStatement < 0 ? 0 : results[classStatement].results.length;
+    if (added || classesAdded || plan.counts.updated || plan.counts.removed || autoCompleted) await broadcast(env, userId, { reload: true });
     return { ...plan.counts, added, autoCompleted, classesAdded, lastSyncedAt: finishedAt };
   } catch (error) {
     const message = error instanceof HttpError ? error.message : "Sync failed unexpectedly.";

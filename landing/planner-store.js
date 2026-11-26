@@ -409,14 +409,18 @@
   }
 
   function createCloudBackend({ api, user, liveUrl, WebSocketImpl }) {
+    let plannerVersion = null;
     return {
       mode: "cloud",
       user,
       async load() {
-        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported, task_details_supported, settings_adoption_supported, bulk_completion_supported } = await api("GET", "/planner");
+        const data = await api("GET", `/planner${plannerVersion ? `?since=${encodeURIComponent(plannerVersion)}` : ""}`);
+        if (plannerVersion && data.unchanged === true && data.planner_version === plannerVersion) return { unchanged: true };
+        const { classes, items, templates, resources, organization, goals, habits, habit_checkins, notes, work_alerts_supported, task_details_supported, settings_adoption_supported, bulk_completion_supported } = data;
         return { classes: classes.map(rowToClass), tasks: items.map(rowToTask), templates: (templates || []).map(rowToTemplate), resources: (resources || []).map(rowToResource), organization: organizationPreferences(organization || {}), organizationAvailable: Array.isArray(templates) && Array.isArray(resources) && Boolean(organization),
-          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true, taskDetailsAvailable: task_details_supported === true, settingsAdoptionAvailable: settings_adoption_supported === true, bulkCompletionAvailable: bulk_completion_supported === true };
+          goals: (goals || []).map(rowToGoal), habits: (habits || []).map(rowToHabit), habitCheckins: (habit_checkins || []).map(rowToHabitCheckin), notes: (notes || []).map(rowToNote), personalAvailable: [goals, habits, habit_checkins, notes].every(Array.isArray), workAlertsAvailable: work_alerts_supported === true, taskDetailsAvailable: task_details_supported === true, settingsAdoptionAvailable: settings_adoption_supported === true, bulkCompletionAvailable: bulk_completion_supported === true, plannerVersion: typeof data.planner_version === "string" ? data.planner_version : null };
       },
+      acceptSnapshot: snapshot => { plannerVersion = snapshot.plannerVersion || null; },
       saveTask: (task, state) => {
         const row = taskToRow(task);
         if (state.workAlertsAvailable !== true) delete row.work_alerts;
@@ -441,10 +445,10 @@
       saveHabitCheckin: (habitId, date, completed) => api("PUT", `/habit-checkins/${encodeURIComponent(habitId)}/${encodeURIComponent(date)}`, { completed }),
       saveNote: (item) => api("PUT", `/notes/${encodeURIComponent(item.id)}`, noteToRow(item)),
       deleteNote: (id) => api("DELETE", `/notes/${encodeURIComponent(id)}`),
-      watch({ onRow, onReload }) {
+      watch({ onRow, onReload, onCompletions }) {
         return openLiveSocket({
           url: liveUrl, WebSocketImpl,
-          onMessage: (message) => (message.reload ? onReload() : message.table && message.row && onRow(message.table, message.row)),
+          onMessage: (message) => (message.reload ? Array.isArray(message.item_completions) && onCompletions ? onCompletions(message.item_completions) : onReload() : message.table && message.row && onRow(message.table, message.row)),
           onReconnect: onReload,
         });
       },
@@ -742,15 +746,15 @@
       notify("context");
       const next = await nextBackend.load();
       if (generation !== backendGeneration) return;
-      if (!context.revision && !context.pendingWrites) replaceState(hydrateDeviceExtras(next));
+      if (!context.revision && !context.pendingWrites) { replaceState(hydrateDeviceExtras(next)); nextBackend.acceptSnapshot?.(next); }
       unwatch = nextBackend.mode === "local"
         ? nextBackend.watch((value) => { if (generation === backendGeneration) { replaceState(value); notify("remote"); } })
-        : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) { if (context.bulkCompletion) reloadCloud(); else applyRowChange(table, row); } }, onReload: () => { if (generation === backendGeneration) reloadCloud(); } });
+        : nextBackend.watch({ onRow: (table, row) => { if (generation === backendGeneration) { if (context.bulkCompletion) reloadCloud(); else applyRowChange(table, row); } }, onReload: () => { if (generation === backendGeneration) reloadCloud(); }, onCompletions: rows => { if (generation === backendGeneration) applyCompletionChanges(rows); } });
       if (nextBackend.mode === "cloud" && (context.revision || context.pendingWrites)) await reloadCloud();
       if (generation !== backendGeneration) return;
       await adoptCachedSettings();
       if (generation !== backendGeneration) return;
-      if (await adoptDeviceTemplates()) await reloadCloud();
+      if (await adoptDeviceTemplates()) { nextBackend.acceptSnapshot?.({}); await reloadCloud(); }
       if (generation !== backendGeneration) return;
       notify("load");
     }
@@ -773,9 +777,15 @@
               context.reloadRequested = true;
               continue;
             }
+            if (next.unchanged === true) {
+              await adoptCachedSettings();
+              if (current() && await adoptDeviceTemplates()) { activeBackend.acceptSnapshot?.({}); context.reloadRequested = true; }
+              continue;
+            }
             replaceState(hydrateDeviceExtras(next));
+            activeBackend.acceptSnapshot?.(next);
             await adoptCachedSettings();
-            if (current() && await adoptDeviceTemplates()) context.reloadRequested = true;
+            if (current() && await adoptDeviceTemplates()) { activeBackend.acceptSnapshot?.({}); context.reloadRequested = true; }
             if (current()) notify("remote");
           } catch (error) {
             if (!current()) return;
@@ -811,6 +821,22 @@
         const others = state.habitCheckins.filter((item) => item.habitId !== row.habit_id || item.date !== row.date);
         state = { ...state, habitCheckins: row.deleted_at || !row.completed ? others : [...others, rowToHabitCheckin(row)] };
       }
+      notify("remote");
+    }
+    function applyCompletionChanges(rows) {
+      const context = synchronization;
+      if (context.pendingWrites || !rows.length || rows.length > 200) { reloadCloud(); return; }
+      const changes = new Map(), tasksById = new Map(state.tasks.map(task => [task.id, task]));
+      for (const row of rows) {
+        const task = row && tasksById.get(row.id);
+        if (!task || !Number.isSafeInteger(task.syncRevision) || !Number.isSafeInteger(row.sync_revision) || row.sync_revision < 1 || typeof row.updated_at !== "string") { reloadCloud(); return; }
+        if (row.sync_revision <= task.syncRevision) continue;
+        if (row.sync_revision !== task.syncRevision + 1) { reloadCloud(); return; }
+        changes.set(row.id, row);
+      }
+      if (!changes.size) return;
+      state = { ...state, tasks: state.tasks.map(task => changes.has(task.id) ? { ...task, completed: true, syncRevision: changes.get(task.id).sync_revision } : task) };
+      context.revision += 1;
       notify("remote");
     }
     function rollbackMutation(previous, applied) {

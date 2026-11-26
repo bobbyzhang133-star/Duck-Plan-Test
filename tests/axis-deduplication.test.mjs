@@ -8,12 +8,12 @@ const NOW = Date.parse("2026-11-25T20:00:00Z");
 const item = (uid, changes = {}) => ({ uid, title: "Math - 1: Worksheet", date: "20261126", notes: "Bring a pencil", ...changes });
 const feed = rows => "BEGIN:VCALENDAR\n" + rows.map(row => `BEGIN:VEVENT\nUID:${row.uid}\nDTSTART:${row.date}T120000\nSUMMARY:${row.title}\nDESCRIPTION:${row.notes}\nEND:VEVENT`).join("\n") + "\nEND:VCALENDAR";
 function setup() {
-  const { env } = createFakeEnv();
+  const { env, broadcasts } = createFakeEnv();
   const owner = crypto.randomUUID(), other = crypto.randomUUID();
   for (const id of [owner, other]) env.DB.raw.prepare("INSERT INTO users (id,email) VALUES (?,?)").run(id, id + "@fixture.test");
   const sync = (rows, user = owner) => syncUser(env, user, LINK, { fetchImpl: async () => new Response(feed(rows)), now: () => NOW });
   const rows = (user = owner) => env.DB.raw.prepare("SELECT * FROM items WHERE user_id=? ORDER BY created_at,id").all(user);
-  return { env, owner, other, sync, rows };
+  return { env, owner, other, sync, rows, broadcasts };
 }
 
 test("28 feeds with regenerated UIDs retain one assignment and its saved work/preferences", async () => {
@@ -22,6 +22,7 @@ test("28 feeds with regenerated UIDs retain one assignment and its saved work/pr
   const original = a.rows()[0];
   a.env.DB.raw.prepare("UPDATE items SET scheduled_start='2026-11-26T10:00', duration_minutes=90, priority='high' WHERE id=?").run(original.id);
   for (let i = 1; i < 28; i += 1) assert.equal((await a.sync([item("regenerated-" + i)])).added, 0);
+  assert.equal(a.broadcasts.length, 1, "unchanged imports do not broadcast planner reloads");
   assert.equal(a.rows().length, 1);
   assert.equal(a.rows()[0].id, original.id);
   assert.equal(a.rows()[0].scheduled_start, "2026-11-26T10:00");

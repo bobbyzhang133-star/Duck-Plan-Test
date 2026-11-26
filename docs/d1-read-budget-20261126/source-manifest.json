@@ -1,0 +1,22 @@
+{
+  "base": "d23fb66",
+  "cache": 159,
+  "verifiedCleanStage": "/tmp/duckplan-read-budget-20261126",
+  "excludedDrafts": [
+    "cloudflare/src/http.js",
+    "cloudflare/migrations/0009_oauth_transactions.sql"
+  ],
+  "sha256": {
+    "cloudflare/src/axis.js": "e9bf2037705b1ed55ac6e9b87977c48461b2e8b236e978685f447308ca96ec9d",
+    "cloudflare/src/planner.js": "2e05a4afd071ea357a12f34ad58a34f692673dd37dc490732cd65950fbbba660",
+    "cloudflare/migrations/0011_axis_assignment_keys.sql": "91150eacf9863abc7c37d2e153b38677dc56a9d6c7c0d2fffa63ba1ab1c1af70",
+    "cloudflare/migrations/0012_planner_versions.sql": "94731d739b8567325eae34e5a0c1905b91498a1122d8f6c5240e4f197ad3eea0",
+    "landing/planner-store.js": "c30d4d4714dbd1186e14499f73dfb0f19643b6207ca83cce95e40ef320ed44ae",
+    "landing/index.html": "15cb645f3a19f3f61b576dbc46e3c7859728af339a4fdf9c556a200b3fd63dd3",
+    "landing/service-worker.js": "212dffa7b13e52c203b8b5486a4945356605ecbc12da1f7573174455234dd914",
+    "tests/cloudflare-worker.test.mjs": "c672580963d3f91a9ce75c705554e67bdcce7cc405f72aba6fd6d11893cdf6cd",
+    "tests/axis-deduplication.test.mjs": "4c6f18456761e52e7d0cf9239a4350f3ba8fec9bc1b6315889ffdd837a82f1fd",
+    "tests/organization-api.test.mjs": "0a39625e0d9f54c1601cf897afdb9ec96109acf3562e401ed4748ff86593a3a6",
+    "tests/personal-store.test.cjs": "6561538f41eb5d7cb00a06307df2d94e25f86fd77d36955ac07b020401bdbb6f"
+  }
+}
