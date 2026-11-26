@@ -40,10 +40,10 @@
       if (context.source?.isConnected) return context.source;
       if (context.type === "deadline-group") return groupSource(context.key, context.date);
       if (context.type === "day-list") return daySource(context.date, context.kind, context.phoneSource);
-      const calendar = doc.querySelector("#planner-calendar");
-      return [...(calendar?.querySelectorAll("[data-edit-task],[data-calendar-preview-task],[data-calendar-drag-task]") || [])]
+      const root = doc.querySelector(`#view-${context.view}`) || doc.querySelector("#planner-calendar");
+      return [...(root?.querySelectorAll("[data-edit-task],[data-calendar-preview-task],[data-calendar-drag-task]") || [])]
         .find(element => [element.dataset.editTask, element.dataset.calendarPreviewTask, element.dataset.calendarDragTask].some(id => String(id) === context.id)
-          && (!context.kind || sourceKind(element) === context.kind))
+          && (!context.kind || sourceKind(element) === context.kind) && (!context.launcherClass || element.classList.contains(context.launcherClass)))
         || (context.returnGroup ? groupSource(context.returnGroup.key, context.returnGroup.date) : null)
         || (context.returnDayList ? daySource(context.returnDayList.date, context.returnDayList.kind, context.returnDayList.phone) : null);
     }
@@ -88,6 +88,9 @@
     function render(context, task) {
       const fields = context.fields, info = host.classInfo?.(task) || {};
       const timing = model.taskTiming(task);
+      context.element.dataset.assignmentKind = context.kind === "deadline" ? "deadline" : "work";
+      context.element.style.setProperty("--course-color", info.color || "#d2a31f");
+      context.element.style.setProperty("--course-default-fill", info.defaultWorkFill || "initial");
       text(fields.title, task.title || "Untitled task");
       text(fields.meta, `${info.name || "Personal"} · ${task.priority || "Medium"} priority · ${task.durationMinutes || 45} min`);
       fields.meta.style.setProperty("--calendar-preview-class-color", info.color || "var(--muted)");
@@ -187,10 +190,10 @@
     function renderDeadlineGroup(context, group) {
       const fields = context.fields, count = group.tasks.length, formatTime = host.formatTime || (value => value);
       const work = context.type === "day-list" && context.kind === "work", noun = work ? "work session" : "deadline";
-      const action = context.type === "deadline-group" ? "Edit task" : "View task details";
+      const action = "View task details";
       text(fields.title, `${count} ${noun}${count === 1 ? "" : "s"}`);
       text(fields.meta, (host.formatLongDate || (value => value))(context.date));
-      text(fields.status, count ? `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to ${context.type === "deadline-group" ? "edit it" : "view its details"}.` : `No remaining ${work ? "work sessions" : "deadlines"} for this day.`);
+      text(fields.status, count ? `${count} unfinished ${count === 1 ? "task" : "tasks"}. Select a task to view its details.` : `No remaining ${work ? "work sessions" : "deadlines"} for this day.`);
       const signature = JSON.stringify(group.tasks.map(task => String(task.id)));
       const focusedID = doc.activeElement?.dataset?.deadlinePreviewTask;
       for (const task of group.tasks) {
@@ -228,8 +231,7 @@
         host.onSelectTask?.(id);
         if (!sameOwner(context)) return;
         const source = sourceFor(context) || doc.querySelector("#calendar-today");
-        if (context.type === "deadline-group") host.openTask?.({ id, source });
-        else open(id, source);
+        open(id, source);
       } });
     }
     function positionDayList(context) {
@@ -341,6 +343,7 @@
       completeButton.dataset.buttonIcon = "check";
       actions.append(edit, reschedule, completeButton); card.append(heading, status, dates, warning, notesSection, error, actions); element.append(card);
       const context = { id, source, kind: sourceKind(source), owner: ownerKey(), view: viewKey(), generation: ++generation, element,
+        launcherClass: ["task-select", "task-edit", "schedule-item", "upcoming-item"].find(name => source?.classList?.contains(name)),
         returnGroup: source?.dataset?.timedDeadlineGroup ? { key: source.dataset.timedDeadlineGroup, date: source.dataset.deadlineDate } : null,
         returnDayList: source?.dataset?.dayList ? { date: source.dataset.summaryDate, kind: source.dataset.dayList, phone: Boolean(source.closest?.("#phone-week-strip")) } : null,
         fields: { title, meta, status, work, due, warning, notesSection, notes, error, edit, reschedule, complete: completeButton },

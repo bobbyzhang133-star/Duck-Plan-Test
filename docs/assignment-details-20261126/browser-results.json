@@ -1,0 +1,217 @@
+{
+  "runtime": "158.0.8127.38",
+  "origin": "http://127.0.0.1:8798",
+  "results": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "input": "emulated touch",
+      "mode": "local browser storage",
+      "reducedMotion": false,
+      "dark": false,
+      "errors": [],
+      "workMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.898823 0.934118 0.965882)",
+        "metaContrast": 6.303318977643673
+      },
+      "personalMaterial": {
+        "kind": "work",
+        "background": "rgb(255, 243, 191)",
+        "metaContrast": 6.6317890590453
+      },
+      "deadlineMaterial": {
+        "kind": "deadline",
+        "background": "rgb(255, 240, 235)",
+        "metaContrast": 6.963981727604388
+      },
+      "status": "PASS",
+      "checks": {
+        "blockDetailsThenEdit": true,
+        "saveReload": true,
+        "singleDeadline": true,
+        "groupedDeadline": true,
+        "listDetailsAndFocus": true
+      }
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch",
+      "mode": "local browser storage",
+      "reducedMotion": false,
+      "dark": false,
+      "errors": [],
+      "workMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.898823 0.934118 0.965882)",
+        "metaContrast": 6.303318977643673
+      },
+      "personalMaterial": {
+        "kind": "work",
+        "background": "rgb(255, 243, 191)",
+        "metaContrast": 6.6317890590453
+      },
+      "deadlineMaterial": {
+        "kind": "deadline",
+        "background": "rgb(255, 240, 235)",
+        "metaContrast": 6.963981727604388
+      },
+      "status": "PASS",
+      "checks": {
+        "blockDetailsThenEdit": true,
+        "saveReload": true,
+        "singleDeadline": true,
+        "groupedDeadline": true,
+        "listDetailsAndFocus": true
+      }
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "input": "emulated touch",
+      "mode": "local browser storage",
+      "reducedMotion": false,
+      "dark": false,
+      "errors": [],
+      "workMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.898823 0.934118 0.965882)",
+        "metaContrast": 6.303318977643673
+      },
+      "personalMaterial": {
+        "kind": "work",
+        "background": "rgb(255, 243, 191)",
+        "metaContrast": 6.6317890590453
+      },
+      "deadlineMaterial": {
+        "kind": "deadline",
+        "background": "rgb(255, 240, 235)",
+        "metaContrast": 6.963981727604388
+      },
+      "status": "PASS",
+      "checks": {
+        "blockDetailsThenEdit": true,
+        "saveReload": true,
+        "singleDeadline": true,
+        "groupedDeadline": true,
+        "listDetailsAndFocus": true
+      }
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "input": "emulated touch",
+      "mode": "local browser storage",
+      "reducedMotion": false,
+      "dark": false,
+      "errors": [],
+      "workMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.898823 0.934118 0.965882)",
+        "metaContrast": 6.303318977643673
+      },
+      "personalMaterial": {
+        "kind": "work",
+        "background": "rgb(255, 243, 191)",
+        "metaContrast": 6.6317890590453
+      },
+      "deadlineMaterial": {
+        "kind": "deadline",
+        "background": "rgb(255, 240, 235)",
+        "metaContrast": 6.963981727604388
+      },
+      "status": "PASS",
+      "checks": {
+        "blockDetailsThenEdit": true,
+        "saveReload": true,
+        "singleDeadline": true,
+        "groupedDeadline": true,
+        "listDetailsAndFocus": true
+      }
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "input": "mouse and keyboard",
+      "mode": "local browser storage",
+      "reducedMotion": false,
+      "dark": false,
+      "errors": [],
+      "workMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.898823 0.934118 0.965882)",
+        "metaContrast": 6.303318977643673
+      },
+      "personalMaterial": {
+        "kind": "work",
+        "background": "rgb(255, 243, 191)",
+        "metaContrast": 6.6317890590453
+      },
+      "deadlineMaterial": {
+        "kind": "deadline",
+        "background": "rgb(255, 240, 235)",
+        "metaContrast": 6.963981727604388
+      },
+      "status": "PASS",
+      "checks": {
+        "blockDetailsThenEdit": true,
+        "saveReload": true,
+        "singleDeadline": true,
+        "groupedDeadline": true,
+        "listDetailsAndFocus": true
+      }
+    },
+    {
+      "name": "dark-reduced",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch",
+      "mode": "local browser storage",
+      "reducedMotion": true,
+      "dark": true,
+      "errors": [],
+      "workMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.209412 0.270588 0.305333)",
+        "metaContrast": 6.1478361673615085
+      },
+      "personalMaterial": {
+        "kind": "work",
+        "background": "color(srgb 0.338902 0.29098 0.136078)",
+        "metaContrast": 5.743915647900053
+      },
+      "deadlineMaterial": {
+        "kind": "deadline",
+        "background": "color(srgb 0.268863 0.20251 0.168706)",
+        "metaContrast": 8.526278764436405
+      },
+      "status": "PASS",
+      "checks": {
+        "blockDetailsThenEdit": true,
+        "saveReload": true,
+        "singleDeadline": true,
+        "groupedDeadline": true,
+        "listDetailsAndFocus": true
+      }
+    }
+  ],
+  "physicalDeviceClaims": false
+}

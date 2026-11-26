@@ -562,7 +562,7 @@ function taskCardMarkup(task, mode = "daily") {
   return `<article class="daily-task-card ${task.completed ? "completed" : ""} ${task.id === selectedTaskId ? "selected" : ""}${timing.overdue ? " is-overdue" : ""}${timing.plannedAfterDeadline ? " is-work-after-deadline" : ""}" style="--course-color:${info.color};--course-soft:${info.soft}" data-task-card="${safeAttribute(task.id)}" data-task-tone="${taskStatusTone(task, timing)}">
     <input class="task-check" type="checkbox" data-task-id="${safeAttribute(task.id)}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeAttribute(task.title)} complete" />
     <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${priorityBadge(task)}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}</span>${taskDateMarkup(task)}</button>
-    <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="Edit ${safeAttribute(task.title)}">•••</button>
+    <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="View details for ${safeAttribute(task.title)}">•••</button>
     ${taskRescheduleMarkup(task)}
   </article>`;
 }
@@ -664,7 +664,7 @@ function allTaskMarkup(task) {
     <input class="task-check" type="checkbox" data-task-id="${safeAttribute(task.id)}" ${task.completed ? "checked" : ""} aria-label="Mark ${safeAttribute(task.title)} complete" />
     <button class="task-select" type="button" data-edit-task="${safeAttribute(task.id)}" ${task.completed ? "" : `draggable="true" data-drag-task="${safeAttribute(task.id)}"`} aria-describedby="task-scheduling-instructions"><span class="task-title">${safeText(task.title)}</span><span class="task-meta"><span class="category-tag"><span class="course-dot"></span>${safeText(info.name)}</span>${task.axisMissing ? " · No longer in Axis" : ""}${priorityBadge(task)}${Number.isInteger(task.actualMinutes) ? ` · ${task.actualMinutes} min spent` : ""}</span>${taskDateMarkup(task, { showDue: false })}</button>
     <span class="task-due"${task.dueDate ? " data-has-deadline" : ""}><strong>${task.dueDate ? formatShortDate(task.dueDate) : "No due date"}</strong><small>${task.dueDate ? task.dueTime ? formatTime(task.dueTime) : "End of day" : ""}</small></span>
-    <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="Edit ${safeAttribute(task.title)}">•••</button>
+    <button class="task-edit" type="button" data-edit-task="${safeAttribute(task.id)}" aria-label="View details for ${safeAttribute(task.title)}">•••</button>
     ${taskRescheduleMarkup(task)}
   </article>`;
 }
@@ -1792,7 +1792,7 @@ document.addEventListener("click", (event) => {
   if (calendarItem) {
     const taskId = calendarItem.dataset.selectTask;
     if (selectedTaskId !== taskId) selectTask(taskId);
-    openModal({ id: taskId, source: calendarItem });
+    calendarTaskPreview.open(taskId, calendarItem);
     return;
   }
   const overflow = event.target.closest("[data-deadline-overflow]");
@@ -1810,7 +1810,7 @@ document.addEventListener("click", (event) => {
   const dateButton = event.target.closest("[data-date]"); if (dateButton?.matches("button,.month-day")) selectDate(dateButton.dataset.date);
   const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
-  const edit = event.target.closest("[data-edit-task]"); if (edit) openModal({ source: edit, id: edit.dataset.editTask });
+  const edit = event.target.closest("[data-edit-task]"); if (edit) calendarTaskPreview.open(edit.dataset.editTask, edit);
   const classButton = event.target.closest("[data-open-class]");
   if (classButton) {
     taskLibrary?.selectClass(classButton.dataset.openClass);

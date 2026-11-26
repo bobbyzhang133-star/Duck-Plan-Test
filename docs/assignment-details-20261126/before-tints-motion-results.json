@@ -1,0 +1,23 @@
+{
+  "opening": {
+    "state": "opening",
+    "tiles": 9,
+    "bounds": {
+      "x": 14,
+      "y": 203.015625,
+      "width": 362,
+      "height": 437.96875,
+      "top": 203.015625,
+      "right": 376,
+      "bottom": 640.984375,
+      "left": 14
+    }
+  },
+  "closing": {
+    "state": "closing",
+    "inert": true
+  },
+  "closed": true,
+  "focusRestored": true,
+  "reopened": true
+}

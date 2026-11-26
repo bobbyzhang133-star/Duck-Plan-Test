@@ -451,7 +451,7 @@
   border-left-color: var(--calendar-grid-line);
   background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--hour-height) - 1px), var(--calendar-grid-line) calc(var(--hour-height) - 1px), var(--calendar-grid-line) var(--hour-height));
 }
-:root[data-theme="dark"] :is(.calendar-event-block,.library-template-block) {
+:root[data-theme="dark"] :is(.calendar-event-block,.library-template-block,.calendar-task-preview[data-assignment-kind="work"]) {
   --calendar-event-fill: color-mix(in srgb,var(--course-color) 26%,var(--card));
   --calendar-event-title: var(--ink-deep);
   --calendar-event-secondary: color-mix(in srgb,var(--ink) 82%,var(--course-color));

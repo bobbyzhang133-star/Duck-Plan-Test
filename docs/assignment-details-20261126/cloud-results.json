@@ -1,0 +1,44 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "mode": "signed-in isolated local Worker/D1",
+      "input": "mouse",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "detailsBeforeEdit": true,
+        "workAndDeadlineTints": true,
+        "fixture503Retry": true,
+        "saveReload": true,
+        "completeReload": true,
+        "stableTaskCount": 2
+      }
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "signed-in isolated local Worker/D1",
+      "input": "emulated touchscreen",
+      "errors": [],
+      "status": "PASS",
+      "checks": {
+        "detailsBeforeEdit": true,
+        "workAndDeadlineTints": true,
+        "fixture503Retry": true,
+        "saveReload": true,
+        "completeReload": true,
+        "stableTaskCount": 2
+      }
+    }
+  ],
+  "productionWrites": false
+}

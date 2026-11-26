@@ -239,6 +239,18 @@ test("sync closes deleted or routed-away previews and keeps live details/focus w
   f.api.open("beta", f.today); f.setView("tasks"); f.api.sync(); assert.equal(f.api.isOpen, false);
 });
 
+test("task-list details restore the matching launcher after a list rerender and require Edit to open the editor", () => {
+  const f = fixture({ deferredClose: true });
+  const list = f.doc.createElement("section"); list.id = "view-tasks"; f.doc.body.append(list);
+  const source = f.doc.createElement("button"); source.className = "task-select"; source.dataset.editTask = "alpha"; list.append(source);
+  f.setView("tasks"); f.api.open("alpha", source);
+  assert.equal(f.editors.length, 0);
+  source.remove();
+  const replacement = f.doc.createElement("button"); replacement.className = "task-select"; replacement.dataset.editTask = "alpha"; list.append(replacement);
+  f.click("edit"); assert.equal(f.editors.length, 0);
+  f.closing.shift()(); assert.deepEqual(f.editors, [{ id: "alpha", source: replacement }]);
+});
+
 test("Escape/backdrop dismissal and Tab wrap preserve keyboard access and rebind detached source by kind", () => {
   const f = fixture(); f.api.open("alpha", f.source); const dialog = f.dialog(), controls = dialog.querySelectorAll("button");
   controls.at(-1).focus(); const forward = { key: "Tab", shiftKey: false }; dialog.fire("keydown", forward);
@@ -275,7 +287,7 @@ test("a grouped deadline list uses plaintext exact times, current unfinished tas
   assert.equal(f.calls.length, 0); assert.equal(f.editors.length, 0);
 });
 
-test("choosing a grouped deadline waits for closing and opens its editor without a write", () => {
+test("choosing a grouped deadline waits for closing and shows its details before Edit, without a write", () => {
   const f = fixture({ deferredClose: true }); f.replaceTask("beta", { dueDate: "2030-05-02", dueTime: "00:15" });
   const group = f.group(); f.api.openDeadlineGroup(group, group.source);
   const list = f.dialog(), entry = list.querySelectorAll(".calendar-deadline-group-item")[1];
@@ -284,9 +296,11 @@ test("choosing a grouped deadline waits for closing and opens its editor without
   assert.equal(f.selections.length, 0); assert.equal(f.editors.length, 0);
   group.source.remove(); const replacement = f.doc.createElement("button"); replacement.dataset = { ...group.source.dataset }; f.calendar.append(replacement);
   f.closing.shift()();
-  assert.equal(f.dialog(), null);
+  assert.equal(f.dialog().querySelector("#calendar-preview-title").textContent, "Beta");
   assert.deepEqual(f.selections, ["beta"]); assert.equal(f.calls.length, 0);
-  assert.deepEqual(f.editors, [{ id: "beta", source: replacement }]);
+  assert.deepEqual(f.editors, []);
+  f.click("edit"); assert.equal(f.editors.length, 0);
+  f.closing.shift()(); assert.deepEqual(f.editors, [{ id: "beta", source: replacement }]);
   assert.equal(replacement.getAttribute("aria-expanded"), "false");
 });
 

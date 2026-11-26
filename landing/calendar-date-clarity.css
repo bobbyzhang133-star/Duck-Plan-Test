@@ -158,7 +158,7 @@
 .motion-preview #view-calendar .current-time-line { z-index: 6; height: 1px; }
 
 /* Timed due dates are point annotations, never blocks of reserved work time. */
-.motion-preview #view-calendar .timeline-calendar {
+.motion-preview #view-calendar .timeline-calendar, .calendar-task-preview[data-assignment-kind="deadline"] {
   --timed-deadline-accent: #c45949;
   --timed-deadline-ink: #843e32;
   --timed-deadline-surface: #fff0eb;
@@ -225,7 +225,8 @@
 .motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):hover::before { background: color-mix(in srgb,var(--timed-deadline-surface) 82%,var(--timed-deadline-line)); }
 .motion-preview #view-calendar :is(.timed-deadline-marker,.timed-deadline-group-trigger):is(:focus-visible,.selected,[aria-expanded="true"])::before { border-color: var(--timed-deadline-accent); border-width: 2px; }
 .motion-preview #view-calendar .timed-deadline-marker.is-overdue { font-weight: 700; }
-:root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar {
+:root[data-theme="dark"] .motion-preview #view-calendar .timeline-calendar,
+:root[data-theme="dark"] .calendar-task-preview[data-assignment-kind="deadline"] {
   --timed-deadline-accent: #ef9b85; --timed-deadline-ink: #ffd1c4;
   --timed-deadline-surface: color-mix(in srgb,#b95b4b 18%,var(--card)); --timed-deadline-line: #8d594e;
 }

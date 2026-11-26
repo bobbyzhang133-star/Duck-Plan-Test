@@ -1,0 +1,56 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "mode": "rendered motion",
+      "input": "emulated touchscreen",
+      "frames": [
+        {
+          "kind": "work",
+          "opening": {
+            "state": "opening",
+            "paint": "color(srgb 0.886471 0.937059 0.914118)"
+          }
+        },
+        {
+          "kind": "work",
+          "closing": {
+            "state": "closing",
+            "inert": true,
+            "paint": "color(srgb 0.886471 0.937059 0.914118)"
+          }
+        },
+        {
+          "kind": "deadline",
+          "opening": {
+            "state": "opening",
+            "paint": "rgb(255, 240, 235)"
+          }
+        },
+        {
+          "kind": "deadline",
+          "closing": {
+            "state": "closing",
+            "inert": true,
+            "paint": "rgb(255, 240, 235)"
+          }
+        }
+      ],
+      "status": "PASS",
+      "taskCount": 2,
+      "standalonePWA": false
+    },
+    {
+      "mode": "offline browser tab",
+      "input": "emulated touchscreen",
+      "frames": [],
+      "caches": [
+        "duckplan-app-original-duck-preview-v156"
+      ],
+      "reload": true,
+      "status": "PASS",
+      "taskCount": 2,
+      "standalonePWA": false
+    }
+  ]
+}
