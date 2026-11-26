@@ -144,7 +144,7 @@ const calendarDates = window.DuckCalendarDatePresentation.create({
   selectedTaskId: () => selectedTaskId,
 });
 const calendarTaskPreview = window.DuckCalendarTaskPreview.create({
-  store, model: Model, classInfo, formatLongDate, formatShortDate, formatTime,
+  store, model: Model, classInfo, taskStatusTone, formatLongDate, formatShortDate, formatTime,
   getOwnerVersion: () => plannerOwnerVersion,
   getView: () => document.body.dataset.view || "calendar",
   getDeadlineGroup: (key, date) => calendarDates.timedDeadlineGroups(tasks, date).find(group => group.key === key),

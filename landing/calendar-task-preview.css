@@ -12,6 +12,7 @@
   color: var(--calendar-event-title);
 }
 .calendar-task-preview[data-assignment-kind="work"] :is(.calendar-preview-kicker,.calendar-preview-meta,.calendar-preview-status:not([data-completed="true"]),.calendar-preview-dates dt,.calendar-preview-notes h3) { color: var(--calendar-event-secondary); }
+.calendar-task-preview[data-assignment-kind="task"] { --calendar-preview-surface: var(--task-card-surface); }
 .calendar-task-preview[data-assignment-kind="deadline"] {
   --calendar-preview-surface: var(--timed-deadline-surface);
   --ink-deep: var(--timed-deadline-ink);

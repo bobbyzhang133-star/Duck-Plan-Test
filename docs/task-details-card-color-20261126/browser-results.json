@@ -1,0 +1,275 @@
+{
+  "runtime": "158.0.8127.38",
+  "cases": [
+    {
+      "name": "small",
+      "viewport": [
+        320,
+        568
+      ],
+      "input": "emulated touch",
+      "mode": "local storage",
+      "colors": [
+        {
+          "id": "neutral",
+          "fill": "color(srgb 0.945216 0.927529 0.971961)",
+          "tone": "neutral",
+          "kind": "task"
+        },
+        {
+          "id": "due",
+          "fill": "color(srgb 0.986627 0.952118 0.937451)",
+          "tone": "due",
+          "kind": "task"
+        },
+        {
+          "id": "overdue",
+          "fill": "color(srgb 0.974118 0.923647 0.918471)",
+          "tone": "overdue",
+          "kind": "task"
+        },
+        {
+          "id": "scheduled",
+          "fill": "color(srgb 0.914588 0.944784 0.972824)",
+          "tone": "scheduled",
+          "kind": "task"
+        },
+        {
+          "id": "completed",
+          "fill": "color(srgb 0.922784 0.956 0.933137)",
+          "tone": "completed",
+          "kind": "task"
+        }
+      ],
+      "errors": [],
+      "status": "PASS",
+      "editReload": true,
+      "calendarTaskColumn": true
+    },
+    {
+      "name": "phone",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch",
+      "mode": "local storage",
+      "colors": [
+        {
+          "id": "neutral",
+          "fill": "color(srgb 0.945216 0.927529 0.971961)",
+          "tone": "neutral",
+          "kind": "task"
+        },
+        {
+          "id": "due",
+          "fill": "color(srgb 0.986627 0.952118 0.937451)",
+          "tone": "due",
+          "kind": "task"
+        },
+        {
+          "id": "overdue",
+          "fill": "color(srgb 0.974118 0.923647 0.918471)",
+          "tone": "overdue",
+          "kind": "task"
+        },
+        {
+          "id": "scheduled",
+          "fill": "color(srgb 0.914588 0.944784 0.972824)",
+          "tone": "scheduled",
+          "kind": "task"
+        },
+        {
+          "id": "completed",
+          "fill": "color(srgb 0.922784 0.956 0.933137)",
+          "tone": "completed",
+          "kind": "task"
+        }
+      ],
+      "errors": [],
+      "status": "PASS",
+      "editReload": true,
+      "calendarTaskColumn": true
+    },
+    {
+      "name": "landscape",
+      "viewport": [
+        844,
+        390
+      ],
+      "input": "emulated touch",
+      "mode": "local storage",
+      "colors": [
+        {
+          "id": "neutral",
+          "fill": "color(srgb 0.945216 0.927529 0.971961)",
+          "tone": "neutral",
+          "kind": "task"
+        },
+        {
+          "id": "due",
+          "fill": "color(srgb 0.986627 0.952118 0.937451)",
+          "tone": "due",
+          "kind": "task"
+        },
+        {
+          "id": "overdue",
+          "fill": "color(srgb 0.974118 0.923647 0.918471)",
+          "tone": "overdue",
+          "kind": "task"
+        },
+        {
+          "id": "scheduled",
+          "fill": "color(srgb 0.914588 0.944784 0.972824)",
+          "tone": "scheduled",
+          "kind": "task"
+        },
+        {
+          "id": "completed",
+          "fill": "color(srgb 0.922784 0.956 0.933137)",
+          "tone": "completed",
+          "kind": "task"
+        }
+      ],
+      "errors": [],
+      "status": "PASS",
+      "editReload": true,
+      "calendarTaskColumn": true
+    },
+    {
+      "name": "ipad",
+      "viewport": [
+        835,
+        1112
+      ],
+      "input": "emulated touch",
+      "mode": "local storage",
+      "colors": [
+        {
+          "id": "neutral",
+          "fill": "color(srgb 0.945216 0.927529 0.971961)",
+          "tone": "neutral",
+          "kind": "task"
+        },
+        {
+          "id": "due",
+          "fill": "color(srgb 0.986627 0.952118 0.937451)",
+          "tone": "due",
+          "kind": "task"
+        },
+        {
+          "id": "overdue",
+          "fill": "color(srgb 0.974118 0.923647 0.918471)",
+          "tone": "overdue",
+          "kind": "task"
+        },
+        {
+          "id": "scheduled",
+          "fill": "color(srgb 0.914588 0.944784 0.972824)",
+          "tone": "scheduled",
+          "kind": "task"
+        },
+        {
+          "id": "completed",
+          "fill": "color(srgb 0.922784 0.956 0.933137)",
+          "tone": "completed",
+          "kind": "task"
+        }
+      ],
+      "errors": [],
+      "status": "PASS",
+      "editReload": true,
+      "calendarTaskColumn": true
+    },
+    {
+      "name": "desktop",
+      "viewport": [
+        1280,
+        900
+      ],
+      "input": "mouse",
+      "mode": "local storage",
+      "colors": [
+        {
+          "id": "neutral",
+          "fill": "color(srgb 0.945216 0.927529 0.971961)",
+          "tone": "neutral",
+          "kind": "task"
+        },
+        {
+          "id": "due",
+          "fill": "color(srgb 0.986627 0.952118 0.937451)",
+          "tone": "due",
+          "kind": "task"
+        },
+        {
+          "id": "overdue",
+          "fill": "color(srgb 0.974118 0.923647 0.918471)",
+          "tone": "overdue",
+          "kind": "task"
+        },
+        {
+          "id": "scheduled",
+          "fill": "color(srgb 0.914588 0.944784 0.972824)",
+          "tone": "scheduled",
+          "kind": "task"
+        },
+        {
+          "id": "completed",
+          "fill": "color(srgb 0.922784 0.956 0.933137)",
+          "tone": "completed",
+          "kind": "task"
+        }
+      ],
+      "errors": [],
+      "status": "PASS",
+      "editReload": true,
+      "calendarTaskColumn": true
+    },
+    {
+      "name": "dark",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch",
+      "mode": "local storage",
+      "colors": [
+        {
+          "id": "neutral",
+          "fill": "color(srgb 0.205294 0.187608 0.207608)",
+          "tone": "neutral",
+          "kind": "task"
+        },
+        {
+          "id": "due",
+          "fill": "color(srgb 0.246706 0.212196 0.173098)",
+          "tone": "due",
+          "kind": "task"
+        },
+        {
+          "id": "overdue",
+          "fill": "color(srgb 0.234196 0.183725 0.154118)",
+          "tone": "overdue",
+          "kind": "task"
+        },
+        {
+          "id": "scheduled",
+          "fill": "color(srgb 0.174667 0.204863 0.208471)",
+          "tone": "scheduled",
+          "kind": "task"
+        },
+        {
+          "id": "completed",
+          "fill": "color(srgb 0.182863 0.216078 0.168784)",
+          "tone": "completed",
+          "kind": "task"
+        }
+      ],
+      "errors": [],
+      "status": "PASS",
+      "editReload": true,
+      "calendarTaskColumn": true
+    }
+  ]
+}

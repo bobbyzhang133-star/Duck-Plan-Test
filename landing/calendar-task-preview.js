@@ -24,7 +24,7 @@
       if (value !== undefined) element.textContent = value;
       return element;
     };
-    const sourceKind = source => source?.dataset?.calendarKind || source?.dataset?.calendarTaskKind || (source?.dataset?.dayList === "due" ? "deadline" : source?.dataset?.dayList === "work" ? "work" : source?.dataset?.timedDeadlineGroup || source?.classList?.contains("deadline-chip") ? "deadline" : source?.classList?.contains("calendar-event-block") ? "work" : "");
+    const sourceKind = source => source?.dataset?.calendarKind || source?.dataset?.calendarTaskKind || (source?.dataset?.dayList === "due" ? "deadline" : source?.dataset?.dayList === "work" ? "work" : source?.dataset?.timedDeadlineGroup || source?.classList?.contains("deadline-chip") ? "deadline" : source?.classList?.contains("calendar-event-block") ? "work" : source?.closest?.("#daily-task-panel,#view-tasks") && source.closest(".daily-task-card,.all-task-row") ? "task" : "");
     function daySource(date, kind, phone = false) {
       const root = doc.querySelector("#view-calendar") || doc.querySelector("#planner-calendar");
       const sources = [...(root?.querySelectorAll("[data-day-list]") || [])]
@@ -63,7 +63,7 @@
       motion?.cancel?.(context.element);
       if (context.element.open) context.element.close();
       context.element.remove();
-      if (canRestore && restoreFocus) (sourceFor(context) || doc.querySelector("#calendar-today") || doc.querySelector("#planner-calendar"))?.focus({ preventScroll: true });
+      if (canRestore && restoreFocus) (sourceFor(context) || (context.view !== "calendar" ? doc.querySelector("#open-task-modal") : null) || doc.querySelector("#calendar-today") || doc.querySelector("#planner-calendar"))?.focus({ preventScroll: true });
       if (canRestore) afterClose?.();
     }
     function close({ immediate = false, restoreFocus = true, afterClose } = {}) {
@@ -88,7 +88,8 @@
     function render(context, task) {
       const fields = context.fields, info = host.classInfo?.(task) || {};
       const timing = model.taskTiming(task);
-      context.element.dataset.assignmentKind = context.kind === "deadline" ? "deadline" : "work";
+      context.element.dataset.assignmentKind = ["deadline", "task"].includes(context.kind) ? context.kind : "work";
+      if (context.kind === "task") context.element.dataset.taskTone = host.taskStatusTone?.(task, timing) || (task.completed ? "completed" : "neutral");
       context.element.style.setProperty("--course-color", info.color || "#d2a31f");
       context.element.style.setProperty("--course-default-fill", info.defaultWorkFill || "initial");
       text(fields.title, task.title || "Untitled task");

@@ -251,6 +251,14 @@ test("task-list details restore the matching launcher after a list rerender and 
   f.closing.shift()(); assert.deepEqual(f.editors, [{ id: "alpha", source: replacement }]);
 });
 
+test("closing task details after its filtered row disappears focuses the visible Add task action", () => {
+  const f = fixture();
+  const add = f.doc.createElement("button"); add.id = "open-task-modal"; f.doc.body.append(add);
+  const source = f.doc.createElement("button"); source.className = "task-select"; source.dataset.editTask = "alpha"; f.doc.body.append(source);
+  f.setView("tasks"); f.api.open("alpha", source); source.remove();
+  f.api.close(); assert.equal(f.doc.activeElement, add);
+});
+
 test("Escape/backdrop dismissal and Tab wrap preserve keyboard access and rebind detached source by kind", () => {
   const f = fixture(); f.api.open("alpha", f.source); const dialog = f.dialog(), controls = dialog.querySelectorAll("button");
   controls.at(-1).focus(); const forward = { key: "Tab", shiftKey: false }; dialog.fire("keydown", forward);

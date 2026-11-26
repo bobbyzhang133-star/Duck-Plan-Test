@@ -1,0 +1,35 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "mode": "signed-in",
+      "input": "emulated touch",
+      "sourceFill": "color(srgb 0.974118 0.923647 0.918471)",
+      "preview": {
+        "fill": "color(srgb 0.974118 0.923647 0.918471)",
+        "kind": "task",
+        "tone": "overdue"
+      },
+      "status": "PASS",
+      "colorsMatch": true,
+      "editReload": true
+    },
+    {
+      "mode": "offline",
+      "input": "emulated touch",
+      "caches": [
+        "duckplan-app-original-duck-preview-v157"
+      ],
+      "sourceFill": "color(srgb 0.974118 0.923647 0.918471)",
+      "preview": {
+        "fill": "color(srgb 0.974118 0.923647 0.918471)",
+        "kind": "task",
+        "tone": "overdue"
+      },
+      "status": "PASS",
+      "colorsMatch": true,
+      "editReload": true
+    }
+  ],
+  "productionWrites": false
+}

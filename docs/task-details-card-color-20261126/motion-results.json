@@ -1,0 +1,15 @@
+{
+  "runtime": "158.0.8127.38",
+  "fill": "color(srgb 0.974118 0.923647 0.918471)",
+  "opening": {
+    "state": "opening",
+    "paint": "color(srgb 0.974118 0.923647 0.918471)"
+  },
+  "closing": {
+    "state": "closing",
+    "inert": true,
+    "paint": "color(srgb 0.974118 0.923647 0.918471)"
+  },
+  "passed": true,
+  "focusRestored": true
+}
