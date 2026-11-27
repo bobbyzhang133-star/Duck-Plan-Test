@@ -79,7 +79,7 @@
   });
   document.addEventListener("click", (event) => {
     const quickAdd = event.target.closest("[data-quick-add]");
-    if (quickAdd) openModal({ source: quickAdd, dueDate: nowKey() });
+    if (quickAdd) openModal({ source: quickAdd });
   });
 
   // Keep the existing form field names and submit handler, adding UI validation before it runs.
@@ -111,7 +111,7 @@
     if (!invalid) return;
     event.preventDefault(); event.stopImmediatePropagation();
     for (let parent = invalid.parentElement; parent && parent !== form; parent = parent.parentElement) {
-      if (parent.tagName === "DETAILS") parent.open = true;
+      if (parent.tagName === "DETAILS") window.DuckExpansionMotion.setExpanded(parent, true);
     }
     error.textContent = invalid.validationMessage;
     error.hidden = false;

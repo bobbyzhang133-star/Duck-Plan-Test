@@ -18,7 +18,7 @@ function fixture({ nativeFocus = "close", immediate = false, geometry = null } =
     fire(type, target) { for (const callback of [...(listeners.get(type) || [])]) callback({ type, target }); },
     focus() { document.activeElement = modal; modal.fire("focusin", modal); },
   };
-  const fields = Object.fromEntries(["title", "scheduledDate", "scheduledTime", "notes", "close"].map(name => [name, {
+  const fields = Object.fromEntries(["title", "scheduledDate", "scheduledTime", "dueDate", "notes", "close"].map(name => [name, {
     name: name === "close" ? "" : name, id: name === "close" ? "close-task-modal" : name,
     focus(options) { document.activeElement = this; focusCalls.push(name); focusOptions.push({ name, options }); modal.fire("focusin", this); },
     scrollIntoView(options) { scrollCalls.push({ name, options }); },
@@ -44,7 +44,7 @@ function fixture({ nativeFocus = "close", immediate = false, geometry = null } =
   vm.runInContext(focusEditor, context);
   return {
     context, document, modal, form, fields, outside, callbacks, focusCalls, focusOptions, scrollCalls,
-    open(reschedule = true) { context.openTaskEditorWithFocus(reschedule, context.taskAlertEditorVersion, context.plannerOwnerVersion); },
+    open(reschedule = true) { context.openTaskEditorWithFocus(typeof reschedule === "string" ? reschedule : reschedule ? "scheduledDate" : "title", context.taskAlertEditorVersion, context.plannerOwnerVersion); },
     settle() { callbacks.shift()?.(); },
     listenerCount: () => [...listeners.values()].reduce((sum, values) => sum + values.size, 0),
     cancel() { context.cancelModalFocus(); },
@@ -156,4 +156,12 @@ test("Add/Edit reveal their title after Reschedule has scrolled, while early use
   const focusCount = chosen.focusCalls.length; chosen.settle();
   assert.equal(chosen.document.activeElement, chosen.fields.notes);
   assert.equal(chosen.focusCalls.length, focusCount); assert.equal(chosen.scrollCalls.length, 0);
+});
+
+test("Add due date focuses its date field without overriding early user intent", () => {
+  for (const immediate of [false, true]) {
+    const f = fixture({ immediate }); f.open("dueDate"); if (!immediate) f.settle();
+    assert.equal(f.document.activeElement, f.fields.dueDate); assert.equal(f.listenerCount(), 0);
+  }
+  const f = fixture(); f.open("dueDate"); f.fields.notes.focus(); f.settle(); assert.equal(f.document.activeElement, f.fields.notes);
 });

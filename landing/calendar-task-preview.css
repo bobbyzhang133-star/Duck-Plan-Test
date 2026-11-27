@@ -95,3 +95,5 @@
 .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #adc7ec; background: #dce8fc; }
 :root[data-theme="dark"] .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item { border-color: #446083; background: #243a56; }
 :root[data-theme="dark"] .calendar-day-list-preview[data-day-list-kind="work"] .calendar-deadline-group-item:is(:hover,:active,.interaction-pressed) { border-color: #6085b6; background: #2e486a; }
+
+.calendar-preview-dates .calendar-preview-add { min-height: 44px; max-width: 100%; padding: 6px 12px; font-size: 13px; white-space: normal; text-align: left; }

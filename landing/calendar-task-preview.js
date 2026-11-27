@@ -93,18 +93,21 @@
       context.element.style.setProperty("--course-color", info.color || "#d2a31f");
       context.element.style.setProperty("--course-default-fill", info.defaultWorkFill || "initial");
       text(fields.title, task.title || "Untitled task");
-      text(fields.meta, `${info.name || "Personal"} · ${task.priority || "Medium"} priority · ${task.durationMinutes || 45} min`);
+      text(fields.meta, `${info.name || "Personal"} · ${task.priority || "Medium"} priority${timing.workStart ? ` · ${task.durationMinutes || 45} min` : ""}`);
       fields.meta.style.setProperty("--calendar-preview-class-color", info.color || "var(--muted)");
       text(fields.status, context.busy ? context.pendingCompleted ? "Marking complete…" : "Marking incomplete…" : task.completed ? "Completed" : "Not completed");
       fields.status.dataset.completed = String(Boolean(task.completed));
-      text(fields.work, workLabel(timing, task));
+      text(fields.workValue, workLabel(timing, task));
+      fields.workValue.hidden = !timing.workStart; fields.addWork.hidden = Boolean(timing.workStart);
+      fields.reschedule.hidden = !timing.workStart;
       const dueDate = timing.deadlineAt?.split("T")[0], dueTime = timing.deadlineAt?.split("T")[1];
-      text(fields.due, dueDate ? `${(host.formatLongDate || (value => value))(dueDate)} · ${task.dueTime ? (host.formatTime || (value => value))(dueTime) : "End of day"}` : "No deadline");
+      fields.dueValue.hidden = !dueDate; fields.addDue.hidden = Boolean(dueDate);
+      text(fields.dueValue, dueDate ? `${(host.formatLongDate || (value => value))(dueDate)} · ${task.dueTime ? (host.formatTime || (value => value))(dueTime) : "End of day"}` : "No deadline");
       const warning = [timing.overdue ? "Overdue." : "", timing.plannedAfterDeadline ? "Work ends after the deadline." : ""].filter(Boolean).join(" ");
       text(fields.warning, warning); fields.warning.hidden = !warning;
       text(fields.notes, task.notes || ""); fields.notesSection.hidden = !String(task.notes || "").trim();
       text(fields.complete, context.busy ? "Saving…" : task.completed ? "Mark incomplete" : "Mark complete");
-      for (const button of [fields.edit, fields.reschedule, fields.complete]) button.disabled = context.busy;
+      for (const button of [fields.edit, fields.reschedule, fields.addWork, fields.addDue, fields.complete]) button.disabled = context.busy;
       if (context.busy) context.element.setAttribute("aria-busy", "true"); else context.element.removeAttribute("aria-busy");
     }
     function sync() {
@@ -150,12 +153,12 @@
         }
       }
     }
-    function handoff(context, reschedule) {
+    function handoff(context, reschedule, addDueDate = false) {
       if (!current(context) || context.busy || context.closing) return;
       if (!taskFor(context.id)) { close({ immediate: true }); return; }
       close({ restoreFocus: false, afterClose: () => {
         if (!taskFor(context.id)) return;
-        host.openTask?.({ id: context.id, source: sourceFor(context) || doc.querySelector("#calendar-today"), ...(reschedule ? { reschedule: true } : {}) });
+        host.openTask?.({ id: context.id, source: sourceFor(context) || doc.querySelector("#calendar-today"), ...(reschedule ? { reschedule: true } : {}), ...(addDueDate ? { addDueDate: true } : {}) });
       } });
     }
     function deadlineGroupFor(context) {
@@ -332,6 +335,9 @@
       headingText.append(node("p", "calendar-preview-kicker", "Task details"), title, meta); heading.append(headingText, dismiss);
       const status = node("p", "calendar-preview-status"); status.id = "calendar-preview-status"; status.setAttribute("role", "status");
       const dates = node("dl", "calendar-preview-dates"), work = node("dd"), due = node("dd");
+      const workValue = node("span"), dueValue = node("span"), addWork = node("button", "secondary-button calendar-preview-add", "Add work time"), addDue = node("button", "secondary-button calendar-preview-add", "Add due date");
+      for (const [button, name] of [[addWork, "add-work"], [addDue, "add-due"]]) { button.type = "button"; button.id = `calendar-preview-${name}`; button.dataset.buttonIcon = "plus"; button.dataset.buttonTone = "quiet"; }
+      work.append(workValue, addWork); due.append(dueValue, addDue);
       for (const [label, value] of [["Work", work], ["Due", due]]) { const row = node("div"); row.append(node("dt", "", label), value); dates.append(row); }
       const warning = node("p", "calendar-preview-warning"); warning.setAttribute("role", "status");
       const notesSection = node("section", "calendar-preview-notes"), notes = node("p"); notesSection.append(node("h3", "", "Notes"), notes);
@@ -347,12 +353,13 @@
         launcherClass: ["task-select", "task-edit", "schedule-item", "upcoming-item"].find(name => source?.classList?.contains(name)),
         returnGroup: source?.dataset?.timedDeadlineGroup ? { key: source.dataset.timedDeadlineGroup, date: source.dataset.deadlineDate } : null,
         returnDayList: source?.dataset?.dayList ? { date: source.dataset.summaryDate, kind: source.dataset.dayList, phone: Boolean(source.closest?.("#phone-week-strip")) } : null,
-        fields: { title, meta, status, work, due, warning, notesSection, notes, error, edit, reschedule, complete: completeButton },
+        fields: { title, meta, status, work, due, workValue, dueValue, addWork, addDue, warning, notesSection, notes, error, edit, reschedule, complete: completeButton },
         busy: false, closing: false, anchor: motion?.capture?.(source) || null };
       dialog = context; render(context, task);
       show(context, dismiss, button => {
         if (button === edit) handoff(context, false);
-        else if (button === reschedule) handoff(context, true);
+        else if (button === reschedule || button === addWork) handoff(context, true);
+        else if (button === addDue) handoff(context, false, true);
         else if (button === completeButton) return complete(context);
       });
       return true;

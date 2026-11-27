@@ -67,7 +67,7 @@
       renderAllTasks();
     }
   });
-  document.querySelector("#dashboard-add-task").addEventListener("click", (event) => openModal({ source: event.currentTarget, dueDate: nowKey() }));
+  document.querySelector("#dashboard-add-task").addEventListener("click", (event) => openModal({ source: event.currentTarget }));
 
   const emptyMessage = (title, copy) => `<div class="compact-empty"><span class="empty-duck" aria-hidden="true">${window.DuckPlanMascot.markup("swimming")}</span><h3>${title}</h3><p>${copy}</p></div>`;
   function renderDashboard() {

@@ -60,8 +60,10 @@
 .motion-preview .task-modal #task-detail-options > label { margin-top: 10px; }
 .motion-preview .task-modal .editor-work { --task-editor-field: #dce8fc; background: #e8f0fe; }
 .motion-preview .task-modal .editor-work > summary:is(:hover,:focus-visible) { background: #dce8fc; }
-.motion-preview .task-modal .task-editor-deadline { --task-editor-field: #f6dedd; display: grid; grid-template-columns: 20px minmax(0,1fr); align-items: start; gap: 12px; margin-top: 8px; padding: 10px; border-radius: 10px; background: #fbeeed; }
-.motion-preview .task-modal .task-editor-deadline > .editor-row-icon { margin-top: 21px; }
+.motion-preview .task-modal .task-editor-deadline { --task-editor-field: #f6dedd; background: #fbeeed; }
+.motion-preview .task-modal .task-editor-deadline > summary:is(:hover,:focus-visible) { background: #f6dedd; }
+.motion-preview .task-modal :is(.editor-work,.task-editor-deadline) > summary:active,
+.motion-preview .task-modal :is(.editor-work,.task-editor-deadline) > summary.interaction-pressed { filter: brightness(.94); }
 .motion-preview .task-modal .editor-deadline-fields { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 8px; }
 .motion-preview .task-modal #task-alarm-options .form-section + .form-section { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); }
 .motion-preview .task-modal #task-alarm-options > :is(.work-alert-note,[role="alert"]) { margin: 8px 10px 8px 42px; }
@@ -79,6 +81,7 @@
 :root[data-theme="dark"] .motion-preview .task-modal .editor-work { --task-editor-field: #2e486a; background: #243a56; }
 :root[data-theme="dark"] .motion-preview .task-modal .editor-work > summary:is(:hover,:focus-visible) { background: #2e486a; }
 :root[data-theme="dark"] .motion-preview .task-modal .task-editor-deadline { --task-editor-field: #603e3a; background: #4a302e; }
+:root[data-theme="dark"] .motion-preview .task-modal .task-editor-deadline > summary:is(:hover,:focus-visible) { background: #603e3a; }
 @media (max-width: 700px), (pointer: coarse) {
   .motion-preview .task-modal .modal-heading .close-button { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
   .motion-preview .task-modal :is(input,select,textarea):not([type="checkbox"]) { min-height: 44px; font-size: 16px; }

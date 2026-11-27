@@ -180,7 +180,7 @@
   }
   function morph(element, anchor, opening, done) {
     removeJob(element);
-    const editor=element.matches('.task-modal'),custom=element.dataset?.popupLayout==='surface';
+    const editor=element.matches('.task-modal'),custom=element.dataset?.popupLayout==='surface',flexible=element.dataset?.popupFlexible==='true';
     if(editor)known.add(element);
     const audit=auditMotion(opening,anchor),form=element.querySelector(editor?'form':custom?'[data-popup-surface]':'.calendar-preview-card'),heading=element.querySelector(editor?'#modal-title':custom?'[data-popup-heading]':'#calendar-preview-title');
     const previous=running.get(element),oldLayers=previous?.layers;
@@ -197,8 +197,11 @@
       form.inert=false;form.removeAttribute('aria-hidden');delete element.dataset.popupStage;element.removeAttribute('aria-busy');
       if(opening&&!element.open)element.showModal();audit.finish('reduced');done();return;
     }
+    // Optional task sections change the editor's content between openings. Measure
+    // this small form once at entrance, then let its disclosures size it naturally.
+    if(editor&&flexible&&opening&&!previous)prepare(element);
     let previewBox;
-    if(!editor){
+    if(!editor||(flexible&&!opening)){
       const rect=element.getBoundingClientRect(),title=heading.getBoundingClientRect();
       previewBox={left:rect.left,top:rect.top,width:rect.width,height:rect.height,radius:parseFloat(getComputedStyle(element).borderRadius)||20,titleX:title.left-rect.left,titleY:title.top-rect.top,prepared:true};
     }
@@ -246,8 +249,8 @@
       if(anchor?.element?.isConnected)anchor.element.style.visibility=oldVisibility||'';
       delete element.dataset.popupStage;element.removeAttribute('aria-busy');
       // Dynamic previews return to native responsive sizing as soon as motion
-      // ends (or reverses); only the reusable editor keeps its prepared frame.
-      if(!editor){
+      // ends (or reverses). Flexible task editors release the frame too.
+      if(!editor||flexible){
         const saved=used.get(element);if(saved)Object.assign(element.style,saved.original);used.delete(element);
         delete element.dataset.popupStaged;delete element.dataset.popupPrepared;
       }
@@ -321,7 +324,7 @@
     for(const element of known){
       prepared.delete(element);const saved=used.get(element);if(saved)Object.assign(element.style,saved.original);used.delete(element);
       delete element.dataset.popupStaged;
-      if(element.open){
+      if(element.open&&element.dataset.popupFlexible!=='true'){
         // Temporarily restore native responsive sizing before measuring. Leaving
         // percentage form heights on an auto-height dialog can overflow it.
         const form=element.querySelector('form'),heading=element.querySelector('#modal-title');

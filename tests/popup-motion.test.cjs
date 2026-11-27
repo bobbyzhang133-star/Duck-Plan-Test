@@ -209,3 +209,10 @@ test('custom surface opens and closes through sliced chrome without scaling fiel
   await settle(animations.slice(start).find(a=>a.target===p.children.at(-3)&&a.options.duration===240));
   assert(closed);assert.equal(source.style.visibility,'visible');assert(p.children.every(n=>n.removed));
 });
+
+test('flexible task editor remeasures current form and releases its frame after opening',async()=>{
+ const f=fixture(),p=f.panel();p.dataset.popupFlexible='true';p.form.rect.height=420;f.api.prepare(p);p.form.rect.height=300;
+ f.api.open(p,null);assert.equal(p.style.height,'300px','stale prepared height is replaced before entrance');
+ await settle(f.animations[0]);
+ assert.equal(p.dataset.popupStaged,undefined);assert.equal(p.style.height,'');assert.equal(p.form.inert,false);
+});

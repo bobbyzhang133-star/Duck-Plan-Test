@@ -1209,7 +1209,7 @@ function openPrimaryAction(source) {
   else if (view === "calendar" && calendarLibraryTabs?.selected === "templates") taskLibrary?.openNewTemplate?.({ source });
   else if (view === "notes") personalNotes?.openNote({ source });
   else if (view === "classes") openClassEditor(source);
-  else if (view !== "settings") openModal({ source, dueDate: view === "calendar" ? selectedDate : nowKey() });
+  else if (view !== "settings") openModal({ source });
 }
 
 function openClassEditor(source) {
@@ -1517,7 +1517,7 @@ function currentCalendarDrag() {
 let modalAnchor = null;
 let modalClosing = false;
 let cancelModalFocus = () => {};
-function openTaskEditorWithFocus(reschedule, editorVersion, ownerVersion) {
+function openTaskEditorWithFocus(focusField, editorVersion, ownerVersion) {
   cancelModalFocus();
   let cancelled = false, interacted = false, armed = false;
   const intent = () => { interacted = true; };
@@ -1539,7 +1539,7 @@ function openTaskEditorWithFocus(reschedule, editorVersion, ownerVersion) {
     if (!untouched || modalClosing || !els.modal.open || editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion) return;
     const active = document.activeElement;
     if (!els.modal.contains(active) || active === els.modal || active === els.form || active === els.form.elements.title || active?.id === "close-task-modal") {
-      const target = reschedule ? els.form.elements.scheduledDate : els.form.elements.title;
+      const target = els.form.elements[focusField] || els.form.elements.title;
       target.focus({ preventScroll: true });
       if (modalClosing || !els.modal.open || editorVersion !== taskAlertEditorVersion || ownerVersion !== plannerOwnerVersion || document.activeElement !== target) return;
       const form = els.form, bounds = form.getBoundingClientRect?.(), field = target.getBoundingClientRect?.();
@@ -1677,7 +1677,7 @@ function openModal(prefill = {}) {
   els.form.elements.title.value = values.title || "";
   els.form.elements.classId.value = values.classId !== undefined ? values.classId || "" : store.listClasses()[0]?.id || "";
   els.form.elements.priority.value = values.priority || "Medium";
-  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate ?? values.dueDate ?? selectedDate;
+  els.form.elements.dueDate.value = task ? task.dueDate || "" : prefill.dueDate ?? values.dueDate ?? "";
   els.form.elements.dueTime.value = values.dueTime || prefill.dueTime || "";
   els.form.elements.notes.value = values.notes || "";
   els.form.elements.importance.value = values.importance || "";
@@ -1702,12 +1702,14 @@ function openModal(prefill = {}) {
   document.querySelector("#task-alarm-options").open = false;
   // Set this before synchronous reduced-motion focus measures the form; the
   // clarity observer applies the same state after the dialog opens.
+  window.DuckExpansionMotion?.settleWithin(els.modal);
   document.querySelector("#task-detail-options").open = Boolean(editingTaskId);
   document.querySelector("#task-schedule-options").open = Boolean(els.form.elements.scheduledDate.value || prefill.reschedule);
+  document.querySelector("#task-deadline-options").open = Boolean(els.form.elements.dueDate.value || prefill.addDueDate);
   document.querySelector("#actual-time-options").open = Boolean(task && Number.isInteger(task.actualMinutes));
   taskLibrary?.renderTaskResources(els.form.elements.classId.value);
   DuckPopupMotion.mark(modalAnchor, "fields");
-  openTaskEditorWithFocus(Boolean(prefill.reschedule), editorVersion, ownerVersion);
+  openTaskEditorWithFocus(prefill.addDueDate ? "dueDate" : prefill.reschedule ? "scheduledDate" : "title", editorVersion, ownerVersion);
 }
 function closeModal() {
   if (!els.modal.open || modalClosing) return;
@@ -1800,7 +1802,7 @@ document.addEventListener("click", (event) => {
   const reschedule = event.target.closest("[data-reschedule-task]");
   if (reschedule) { openModal({ id: reschedule.dataset.rescheduleTask, source: reschedule, reschedule: true }); return; }
   const dateButton = event.target.closest("[data-date]"); if (dateButton?.matches("button,.month-day")) selectDate(dateButton.dataset.date);
-  const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: slot.dataset.slotDate }); }
+  const slot = event.target.closest("[data-slot-date]"); if (slot) { calendarFocusSlot = { date: slot.dataset.slotDate, time: slot.dataset.slotTime }; openModal({ source: slot, scheduledDate: slot.dataset.slotDate, scheduledTime: slot.dataset.slotTime, dueDate: "" }); }
   const select = event.target.closest("[data-select-task]"); if (select) selectTask(select.dataset.selectTask);
   const edit = event.target.closest("[data-edit-task]"); if (edit) calendarTaskPreview.open(edit.dataset.editTask, edit);
   const classButton = event.target.closest("[data-open-class]");
@@ -2194,8 +2196,8 @@ els.calendar.addEventListener("keydown", (event) => {
   target.focus({ preventScroll: true });
   target.scrollIntoView({ block: "nearest", inline: "nearest" });
 });
-document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
-document.querySelector("#phone-add-task")?.addEventListener("click", event => openModal({ source: event.currentTarget, dueDate: selectedDate }));
+document.querySelector("#plan-selected-date").addEventListener("click", event => openModal({ source: event.currentTarget }));
+document.querySelector("#phone-add-task")?.addEventListener("click", event => openModal({ source: event.currentTarget }));
 document.querySelector("#open-task-modal").addEventListener("click", event => openPrimaryAction(event.currentTarget));
 document.querySelector("#close-task-modal").addEventListener("click", closeModal);
 document.querySelector("#cancel-task").addEventListener("click", closeModal);
@@ -2224,11 +2226,11 @@ els.form.addEventListener("submit", async (event) => {
   try { workRange = window.DuckWorkTimeRange.read(Object.fromEntries(["scheduledDate", "scheduledTime", "scheduledEndDate", "scheduledEndTime", "durationMinutes"].map(name => [name, form.get(name)]))); }
   catch (error) {
     const message = document.querySelector("#task-form-error"); message.hidden = false; message.textContent = error.message;
-    document.querySelector("#task-schedule-options").open = true;
+    window.DuckExpansionMotion.setExpanded(document.querySelector("#task-schedule-options"), true);
     els.form.elements[error.field]?.focus(); return;
   }
   const existing = editingTaskId ? tasks.find((task) => task.id === editingTaskId) : null;
-  const next = { ...pendingTaskDraft, ...existing, ...workRange, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueTime"), scheduledEnd: null, notes: String(form.get("notes") || ""), importance: form.get("importance") || null, urgency: form.get("urgency") || "auto", schemaVersion: 2 };
+  const next = { ...pendingTaskDraft, ...existing, ...workRange, title, classId: form.get("classId") || null, priority: form.get("priority"), dueDate: form.get("dueDate"), dueTime: form.get("dueDate") ? form.get("dueTime") : "", scheduledEnd: null, notes: String(form.get("notes") || ""), importance: form.get("importance") || null, urgency: form.get("urgency") || "auto", schemaVersion: 2 };
   const reminderChoice = form.get("reminderChoice");
   next.reminderChoice = taskReminderChoices.includes(reminderChoice) ? reminderChoice : "default";
   const loggedMinutes = form.get("actualMinutes");

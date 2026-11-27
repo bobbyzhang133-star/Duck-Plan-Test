@@ -1,0 +1,21 @@
+{
+  "base": "2d9b5cf",
+  "cache": 160,
+  "backend": "unchanged 0012, clean isolated local Worker",
+  "excludedDrafts": [
+    "cloudflare/src/http.js",
+    "cloudflare/migrations/0009_oauth_transactions.sql"
+  ],
+  "sha256": {
+    "landing/app.js": "1c6acb0241530329a17865d3f2ff90167b50227142af3f4a494001ee7407e2ad",
+    "landing/index.html": "b8f184c3ac4ec7020e0b645b358ced390135893c5e011c59bda30ca29cbe8965",
+    "landing/calendar-task-preview.js": "eae5766a9aa8dbafe82b9ac11f14f685e44d1b4a38ce76a090db38e64ac20b20",
+    "landing/calendar-task-preview.css": "1c1a69d667d9aac55533417f535d600b63c0bd6ca3fb6514a45cfb7696a40dd5",
+    "landing/task-editor.css": "76b48af4aaf5ca47779444af9731f5d4219911494862d55361827b27f4d9de8f",
+    "landing/task-editor.js": "947a8971f97936b32fafe5570b493fc2ec9f5ec574c6c9e5e7bad560126d35ff",
+    "landing/popup-motion.js": "203e796f5a40a83e8b4b7190ae25a0be4d3691966266fdaf640556e3a2bf7052",
+    "landing/planner-clarity.js": "09b79f990002816ceb7cd182ac221c939f848af2d3f3b6ae9ff126a6231fcd13",
+    "landing/service-worker.js": "29fc47534954d222e20e88ca57f823643664394261f1d8b22a1b743fed83da96",
+    "landing/planner-presentation.js": "d085770821178786446115e864a006b7391ce99fb2c8383824a4cb742c45264a"
+  }
+}

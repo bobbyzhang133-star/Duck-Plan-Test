@@ -1,0 +1,4 @@
+{
+  "status": "PASS",
+  "check": "Interrupted disclosure cannot override a newly opened editor"
+}

@@ -1,0 +1,118 @@
+{
+  "runtime": "158.0.8127.38",
+  "source": "2d9b5cf + optional timing UI; cache160",
+  "backend": "local Worker/D1 schema0012 (cloud fixtures only)",
+  "results": [
+    {
+      "mode": "local",
+      "viewport": [
+        320,
+        568
+      ],
+      "input": "emulated touch + keyboard",
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "local",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch + keyboard",
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "local",
+      "viewport": [
+        844,
+        390
+      ],
+      "input": "emulated touch + keyboard",
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "local",
+      "viewport": [
+        835,
+        1112
+      ],
+      "input": "emulated touch + keyboard",
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "local",
+      "viewport": [
+        1280,
+        900
+      ],
+      "input": "mouse + keyboard",
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "cloud",
+      "viewport": [
+        390,
+        844
+      ],
+      "input": "emulated touch + keyboard",
+      "failedSaveRetry": true,
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "cloud",
+      "viewport": [
+        835,
+        1112
+      ],
+      "input": "emulated touch + keyboard",
+      "failedSaveRetry": true,
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    },
+    {
+      "mode": "cloud",
+      "viewport": [
+        1280,
+        900
+      ],
+      "input": "mouse + keyboard",
+      "failedSaveRetry": true,
+      "workSaveReloadSameId": true,
+      "dueAddedIndependently": true,
+      "independentRemoval": true,
+      "cancelAndRapidReversal": true,
+      "status": "PASS"
+    }
+  ],
+  "productionWrites": false,
+  "physicalSafari": "NOT RUN",
+  "nativeApp": "NOT RUN: frozen checkpoint",
+  "passed": true
+}

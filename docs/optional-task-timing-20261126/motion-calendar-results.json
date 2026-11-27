@@ -1,0 +1,154 @@
+{
+  "runtime": "158.0.8127.38",
+  "results": [
+    {
+      "name": "phone-motion",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "mode": "local browser storage",
+      "calendarLinkedMarkers": true,
+      "calendarWorkAddDue": true,
+      "geometry": {
+        "before": {
+          "section": 50,
+          "footer": 763,
+          "modal": 812,
+          "phase": null,
+          "open": false
+        },
+        "initial": {
+          "section": 50,
+          "footer": 763,
+          "modal": 812,
+          "phase": "opening",
+          "open": true
+        },
+        "middle": {
+          "section": 200.3125,
+          "footer": 763,
+          "modal": 812,
+          "phase": "opening",
+          "open": true
+        },
+        "open": {
+          "section": 219,
+          "footer": 763,
+          "modal": 812,
+          "phase": null,
+          "open": true
+        },
+        "closed": {
+          "section": 50,
+          "footer": 763,
+          "modal": 812,
+          "phase": null,
+          "open": false
+        }
+      },
+      "keyboardAndBothDisclosureDirections": true,
+      "slotSaveAndLinkedDue": true,
+      "status": "PASS"
+    },
+    {
+      "name": "small-dark-reduced",
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "reduced": true,
+      "mode": "local browser storage",
+      "calendarLinkedMarkers": true,
+      "calendarWorkAddDue": true,
+      "geometry": {
+        "before": {
+          "section": 50,
+          "footer": 487,
+          "modal": 536,
+          "phase": null,
+          "open": false
+        },
+        "initial": {
+          "section": 293,
+          "footer": 487,
+          "modal": 536,
+          "phase": null,
+          "open": true
+        },
+        "middle": {
+          "section": 293,
+          "footer": 487,
+          "modal": 536,
+          "phase": null,
+          "open": true
+        },
+        "open": {
+          "section": 293,
+          "footer": 487,
+          "modal": 536,
+          "phase": null,
+          "open": true
+        },
+        "closed": {
+          "section": 50,
+          "footer": 487,
+          "modal": 536,
+          "phase": null,
+          "open": false
+        }
+      },
+      "keyboardAndBothDisclosureDirections": true,
+      "slotSaveAndLinkedDue": true,
+      "status": "PASS"
+    },
+    {
+      "name": "desktop-motion",
+      "width": 1280,
+      "height": 900,
+      "mode": "local browser storage",
+      "calendarLinkedMarkers": true,
+      "calendarWorkAddDue": true,
+      "geometry": {
+        "before": {
+          "section": 50,
+          "footer": 820,
+          "modal": 868,
+          "phase": null,
+          "open": false
+        },
+        "initial": {
+          "section": 50,
+          "footer": 820,
+          "modal": 868,
+          "phase": "opening",
+          "open": true
+        },
+        "middle": {
+          "section": 188.140625,
+          "footer": 820,
+          "modal": 868,
+          "phase": "opening",
+          "open": true
+        },
+        "open": {
+          "section": 198,
+          "footer": 820,
+          "modal": 868,
+          "phase": null,
+          "open": true
+        },
+        "closed": {
+          "section": 50,
+          "footer": 820,
+          "modal": 868,
+          "phase": null,
+          "open": false
+        }
+      },
+      "keyboardAndBothDisclosureDirections": true,
+      "slotSaveAndLinkedDue": true,
+      "status": "PASS"
+    }
+  ],
+  "productionWrites": false,
+  "passed": true
+}

@@ -368,3 +368,21 @@ test("events from a detached deadline dialog cannot dismiss its replacement prev
   assert.equal(f.dialog(), next); assert.equal(f.api.isOpen, true);
   assert.equal(next.querySelector("#calendar-preview-title").textContent, "Beta");
 });
+
+
+test("deadline-only and work-only details offer only the missing linked component", () => {
+  const due = fixture({ deferredClose: true }); due.replaceTask("alpha", { scheduledStart: null }); due.api.open("alpha", due.source);
+  assert.equal(due.button("add-work").hidden, false); assert.equal(due.button("add-due").hidden, true); assert.equal(due.button("reschedule").hidden, true);
+  const before = JSON.stringify(due.tasks); due.click("add-work"); assert.equal(due.editors.length, 0, "handoff waits for closing motion"); due.closing.shift()();
+  assert.equal(due.editors[0].id, "alpha"); assert.equal(due.editors[0].reschedule, true); assert.equal(JSON.stringify(due.tasks), before, "opening creates no duplicate or draft write");
+  const work = fixture(); work.replaceTask("alpha", { dueDate: "", dueTime: "" }); work.api.open("alpha", work.source);
+  assert.equal(work.button("add-due").hidden, false); assert.equal(work.button("add-work").hidden, true); work.click("add-due");
+  assert.equal(work.editors[0].id, "alpha"); assert.equal(work.editors[0].addDueDate, true); assert.equal(work.editors[0].reschedule, undefined);
+});
+
+test("details update missing-component actions after saved changes without replacing the dialog", () => {
+  const f = fixture(); f.api.open("beta", f.source); const dialog = f.dialog();
+  assert.equal(f.button("add-work").hidden, false); assert.equal(f.button("add-due").hidden, false);
+  f.replaceTask("beta", { dueDate: "2030-05-02", scheduledStart: "2030-05-01T10:00" }); f.api.sync();
+  assert.equal(f.dialog(), dialog); assert.equal(f.button("add-work").hidden, true); assert.equal(f.button("add-due").hidden, true); assert.equal(f.button("reschedule").hidden, false);
+});
